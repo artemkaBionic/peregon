@@ -22,6 +22,8 @@ Install `bower` dependencies:
 bower install
 ```
 
+Note: to make bower works you will probably need to generate SSh keys and register on GitHub (https://help.github.com/articles/generating-ssh-keys/)
+
 ### Gulp tasks
 
 * `gulp` or `gulp build` to build an optimized version of your application in `/dist`
