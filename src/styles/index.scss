@@ -1,0 +1,17 @@
+$apc-icons-path: '../bower_components/p0rtal/src/package/fonts/apc-icons/fonts';
+$icon-font-path: '../bower_components/bootstrap-sass-official/assets/fonts/bootstrap/';
+$open-sans-path: '../bower_components/open-sans/fonts';
+
+@import "../../bower_components/p0rtal/src/package/scss/p0rtal";
+
+@import 'app/variables';
+@import 'app/mixins';
+@import 'app/globals';
+@import 'app/layout';
+@import 'app/components';
+@import 'app/override-libs';
+@import 'app/typography';
+@import 'app/decorations';
+
+// injector
+// endinjector

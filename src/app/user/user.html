@@ -1,0 +1,69 @@
+<section horizontal-ui-sheet class="apc-sheet-full gray-light-bg">
+    <header user-header></header>
+    <section horizontal-ui-sheet-content>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="row">
+            <div class="col-sm-6">
+              <article class="card">
+                <div class="card-body h-110">
+                  <div class="card-title">Blog posts</div>
+                  <div class="text-sm">Blog posts</div>
+                </div>
+                <div class="card-footer">
+                  <div class="card-action">
+                    <a ui-sref=".posts">Posts</a>
+                  </div>
+                </div>
+              </article>
+            </div>
+            <div class="col-sm-6">
+              <article class="card">
+                <div class="card-body h-110">
+                  <div class="card-title">Bring your own device</div>
+                  <div class="text-sm">Use own mobile devices to access company information and applications</div>
+                </div>
+                <div class="card-footer">
+                  <div class="card-action">
+                    <a ui-sref=".device-new()">Begin Activation</a>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="row">
+            <div class="col-sm-6">
+              <article class="card">
+                <div class="card-body h-110">
+                  <div class="card-title">Can we help you?</div>
+                  <div class="text-sm">Create an Incident record to report and request assistance with an issue you are having</div>
+                </div>
+                <div class="card-footer">
+                  <div class="card-action">
+                    <a ui-sref=".device({device: device.id})" class="main">Open a Ticket</a>
+                  </div>
+                </div>
+              </article>
+            </div>
+            <div class="col-sm-6">
+              <article class="card">
+                <div class="card-body h-110">
+                  <div class="card-title">Can't find an answer?</div>
+                  <div class="text-sm">Ask a question when you need to know something and can’t find the answer.</div>
+                </div>
+                <div class="card-footer">
+                  <div class="card-action">
+                    <a ui-sref=".device({device: device.id})">Ask a Question</a>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+</section>

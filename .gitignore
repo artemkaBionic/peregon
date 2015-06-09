@@ -1,0 +1,10 @@
+deploy/
+node_modules/
+bower_components/
+.sass-cache/
+.tmp/
+dist/
+.idea/
+*.log
+sn.conf.js
+aws.*

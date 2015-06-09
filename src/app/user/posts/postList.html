@@ -1,0 +1,28 @@
+<horizontal-ui-sheet class="sheet-md">
+
+  <header horizontal-ui-sheet-header title="Posts">
+  </header>
+
+  <div horizontal-ui-sheet-content class="gray-light-bg" id="container">
+
+    <div class="section-title">Posts  <i class="fa fa-spinner fa-pulse fa-spin" data-ng-hide="vm.ready"></i></div>
+    <div class="row">
+      <div class="col-md-6 col-sm-12" data-ng-repeat="post in vm.posts">
+        <article class="card" ui-sref=".post({post: post.id})">
+          <div class="card-body">
+            <div class="h-110">
+              <div class="card-title text-ellipsis">{{::post.title}}</div>
+              <div class="text-sm text-ellipsis">{{::post.body}}</div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <div class="card-action pull-right">
+              <a ui-sref=".post({post: post.id})">Details</a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+
+</horizontal-ui-sheet>

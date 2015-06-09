@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html data-ng-app="app" ng-strict-di>
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+  <title data-ng-bind="title">Aarons Portal</title>
+  <style>
+    /* This helps the ng-show/ng-hide animations start at the right place. */
+    /* Since Angular has this but needs to load, this gives us the class early. */
+    .ng-hide {
+      display: none!important;
+    }
+
+    .loading-container {
+      background-color: #555
+    }
+
+    .loading-panel {
+      width: 100px;
+      height: 100px;
+      color: #FFF;
+
+      position: absolute;
+      top:0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+
+      margin: auto;
+    }
+  </style>
+
+  <!-- build:css({.tmp,src}) styles/vendor.css -->
+  <!-- inject:css -->
+  <link rel="stylesheet" href="app/vendor.css">
+  <!-- endinject -->
+  <!-- endbuild -->
+
+  <!-- build:css({.tmp,src}) styles/app.css -->
+  <!-- inject:css -->
+  <link rel="stylesheet" href="app/index.css">
+  <!-- endinject -->
+  <!-- endbuild -->
+</head>
+<body class="loading-container">
+
+<ui-view>
+  <!-- splashscreen -->
+  <div class="loading-panel text-center">
+    <div>
+      <i class="fa fa-4x fa-spinner fa-spin"></i>
+    </div>
+  </div>
+</ui-view>
+
+
+<!-- build:js scripts/vendor.js -->
+<!-- bower:js -->
+<script src="../bower_components/modernizr/modernizr.js"></script>
+<script src="../bower_components/jquery/dist/jquery.js"></script>
+<script src="../bower_components/angular/angular.js"></script>
+<script src="../bower_components/angular-animate/angular-animate.js"></script>
+<script src="../bower_components/angular-cookies/angular-cookies.js"></script>
+<script src="../bower_components/angular-touch/angular-touch.js"></script>
+<script src="../bower_components/angular-sanitize/angular-sanitize.js"></script>
+<script src="../bower_components/angular-resource/angular-resource.js"></script>
+<script src="../bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+<script src="../bower_components/extras.angular.plus/ngplus-overlay.js"></script>
+<script src="../bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+<script src="../bower_components/ui-select/dist/select.js"></script>
+<script src="../bower_components/bootstrap-select/bootstrap-select.js"></script>
+<script src="../bower_components/angular-bootstrap-select/build/angular-bootstrap-select.js"></script>
+<script src="../bower_components/moment/moment.js"></script>
+<script src="../bower_components/angular-bootstrap-datetimepicker/src/js/datetimepicker.js"></script>
+<script src="../bower_components/bootstrap/dist/js/bootstrap.js"></script>
+<script src="../bower_components/jasny-bootstrap/dist/js/jasny-bootstrap.js"></script>
+<script src="../bower_components/parsleyjs/dist/parsley.js"></script>
+<script src="../bower_components/twitter-bootstrap-wizard/jquery.bootstrap.wizard.min.js"></script>
+<script src="../bower_components/angular-toastr/dist/angular-toastr.js"></script>
+<script src="../bower_components/angular-loading-bar/build/loading-bar.js"></script>
+<script src="../bower_components/angular-ui-utils/ui-utils.js"></script>
+<script src="../bower_components/p0rtal/src/package/js/app.module.js"></script>
+<script src="../bower_components/p0rtal/src/package/js/util/util.module.js"></script>
+<script src="../bower_components/p0rtal/src/package/js/util/jquery.js"></script>
+<script src="../bower_components/p0rtal/src/package/js/util/notification.js"></script>
+<script src="../bower_components/p0rtal/src/package/js/util/errorhandling.js"></script>
+<script src="../bower_components/p0rtal/src/package/js/layout/layout.module.js"></script>
+<script src="../bower_components/p0rtal/src/package/js/layout/scroll.js"></script>
+<script src="../bower_components/p0rtal/src/package/js/layout/sidebar.js"></script>
+<script src="../bower_components/p0rtal/src/package/js/layout/view.js"></script>
+<script src="../bower_components/p0rtal/src/package/js/ui/ui.module.js"></script>
+<script src="../bower_components/p0rtal/src/package/js/ui/wizard.js"></script>
+<script src="../bower_components/p0rtal/src/package/js/ui/progress-button.js"></script>
+<script src="../bower_components/angular-moment/angular-moment.js"></script>
+<script src="../bower_components/angular-mocks/angular-mocks.js"></script>
+<!-- endbower -->
+<!-- endbuild -->
+
+<!-- build:js({.tmp,src}) scripts/app.js -->
+<!-- inject:js -->
+<script src="app/user/user.module.js"></script>
+<script src="app/user/posts/details/postDetails.js"></script>
+<script src="app/user/posts/postList.js"></script>
+<script src="components/lib/external.js"></script>
+<script src="components/data/data.module.js"></script>
+<script src="components/data/data.service.js"></script>
+<script src="components/core/core.module.js"></script>
+<script src="components/core/underscore.service.js"></script>
+<script src="components/core/security.service.js"></script>
+<script src="app/index.js"></script>
+<script src="components/core/roleSecurity.directive.js"></script>
+<script src="components/core/navigation.service.js"></script>
+<script src="app/user/user.js"></script>
+<script src="app/home/userHeader.js"></script>
+<script src="app/home/userHeader.directive.js"></script>
+<script src="app/app.js"></script>
+<script src="app/app.env.js"></script>
+<script src="app/app.config.js"></script>
+<!-- endinject -->
+
+<!-- inject:partials -->
+<!-- angular templates will be automaticaly converted in js and inserted here -->
+<!-- endinject -->
+<!-- endbuild -->
+</body>
+</html>

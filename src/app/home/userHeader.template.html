@@ -1,0 +1,18 @@
+<div class="main-header clearfix">
+  <div class="userbar">
+    <div class="user-info pull-left" data-ng-show="user.currentUser">
+      <div>{{::user.currentUser.firstName}} {{::user.currentUser.lastName}}</div>
+      <div>{{::user.currentUser.email}}</div>
+    </div>
+
+    <div class="user-image text-center pull-right">
+      <div ng-if=" user.currentUser.photo == '' ">
+        <i class="apci apci-user apci-3x"></i>
+      </div>
+      <div ng-if="user.currentUser.photo">
+        <img ng-src="{{::user.currentUser.photo}}">
+      </div>
+    </div>
+  </div>
+  <h2 class="logo pull-left"><img ng-src="{{user.logoImage}}" height="60"></h2>
+</div>

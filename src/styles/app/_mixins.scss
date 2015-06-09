@@ -1,0 +1,92 @@
+// Removes padding
+// Example: @include no-padding("left");
+@mixin no-padding($side) {
+  @if $side == 'all' {
+    .no-padding {
+      padding: 0 !important;
+    }
+  } @else {
+    .no-padding-#{$side} {
+      padding-#{$side}: 0 !important;
+    }
+  }
+}
+
+@include no-padding("left");
+@include no-padding("right");
+@include no-padding("top");
+@include no-padding("bottom");
+@include no-padding("all");
+
+
+@mixin item-linked {
+  cursor: pointer;
+
+  &:hover{
+    color: $brand-primary-700;
+    text-decoration: none;
+  }
+
+  &:focus {
+    text-decoration: none;
+  }
+
+  &.active{
+    background-color: $brand-primary-600;
+    color: $white;
+    text-decoration: none;
+    i, p {
+      color: $white;
+    }
+  }
+}
+
+.item-linked {
+  @include item-linked();
+}
+
+@mixin list-group-linked-font-color($fontColor: $white) {
+  .list-group-item.active {
+    .title-important, .list-group-item-text, .list-group-item-details, .fa, a {
+      color: $fontColor;
+    }
+  }
+}
+
+@mixin list-group-linked-bg($bgColor: $brand-primary-600) {
+  border: none;
+
+  .list-group-item.active {
+    background-color: $bgColor;
+    border-color: $bgColor;
+  }
+}
+
+@mixin list-group-linked($bgColor: $brand-primary-600, $fontColor: $white) {
+  @include list-group-linked-bg($bgColor);
+  @include list-group-linked-font-color($fontColor);
+}
+
+.list-group-linked {
+  @include list-group-linked();
+}
+
+@mixin item-box-panel {
+  background-color: $white;
+  margin-bottom: $line-height-computed / 2;
+  padding: $panel-body-padding;
+}
+
+@mixin item-box() {
+  height: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  @include item-box-panel;
+}
+
+@mixin box-shadow($args1, $args2) {
+  -webkit-box-shadow: $args1, $args2;
+  -moz-box-shadow: $args1, $args2;
+  box-shadow: $args1, $args2;
+}
