@@ -17,15 +17,15 @@
             var deferred = $q.defer();
 
             var getRegExChar = function(char) {
-                return (char === "_" ? "." : char);
+                return (char === '_' ? '.' : char);
             };
 
             $http.get(config.packageIndex).then(function(result) {
                 for (var guideIndex = 0, len = result.data.length; guideIndex < len; ++guideIndex) {
                     var charIndex = result.data[guideIndex].SKU.length - 1;
                     var pattern = getRegExChar(result.data[guideIndex].SKU[charIndex]);
-                    for ( ; charIndex-- > 0; ) {
-                        pattern = getRegExChar(result.data[guideIndex].SKU[charIndex]) + "(" + pattern + ")?";
+                    for (; charIndex-- > 0;) {
+                        pattern = getRegExChar(result.data[guideIndex].SKU[charIndex]) + '(' + pattern + ')?';
                     }
                     result.data[guideIndex].SkuRegEx = new RegExp(pattern);
                 }
