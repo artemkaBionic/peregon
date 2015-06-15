@@ -15,20 +15,11 @@
                 controller: 'UserController',
                 controllerAs: 'vm'
             })
-            .state('root.user.posts', {
-                url: '/posts',
-                templateUrl: 'app/user/posts/postList.html',
-                controller: 'PostListController',
+            .state('root.user.guide', {
+                url: '/guides/:guide',
+                templateUrl: 'app/user/guide/guide.html',
+                controller: 'GuideController',
                 controllerAs: 'vm'
-            })
-            .state('root.user.posts.post', {
-                url: '/posts/:post',
-                templateUrl: 'app/user/posts/details/postDetails.html',
-                controller: 'PostDetailsController',
-                controllerAs: 'vm',
-                resolve:{
-                    post: getPost
-                }
             });
 
         $apcSidebarProvider.config('home', {

@@ -9,6 +9,7 @@
         'app.env',
         'app.core',
         'app.data',
+        'app.guide',
         'app.user',
         /*
         * 3-rd Party

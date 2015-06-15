@@ -5,13 +5,15 @@
         .module('app')
         .controller('UserHeaderController', UserHeaderController);
 
-    UserHeaderController.$inject = ['$q', '$log', 'config'];
+    UserHeaderController.$inject = ['$scope', '$q', '$log', 'config', 'guideService'];
 
-    function UserHeaderController($q, $log, config) {
+    function UserHeaderController($scope, $q, $log, config, guideService) {
         /*jshint validthis: true */
         var vm = this;
         vm.currentUser = undefined;
         vm.logoImage = config.logoImage;
+        vm.guide = guideService;
+        $scope.searchString = guideService.searchString;
 
         activate();
 
