@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('app.guide')
+        .module('app.event')
         .factory('eventService', eventService);
 
     eventService.$inject = ['socketService', '$location', 'notificationService'];
