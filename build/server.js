@@ -5,10 +5,13 @@ var gulp = require('gulp');
 var util = require('util');
 var browserSync = require('browser-sync');
 var middleware = require('./proxy');
+var nodemon = require('gulp-nodemon');
 
 var $ = require('gulp-load-plugins')({
     pattern: ['gulp-*']
 });
+
+var BROWSER_SYNC_RELOAD_DELAY = 500;
 
 function browserSyncInit(baseDir, files, browser) {
     if ($.util.env.nosync) {
@@ -29,7 +32,7 @@ function browserSyncInit(baseDir, files, browser) {
     }
 
     browserSync.instance = browserSync.init(files, {
-        startPath: '/',
+        startPath: '/index.html',
         server: {
             baseDir: baseDir,
             middleware: middleware,
@@ -40,7 +43,7 @@ function browserSyncInit(baseDir, files, browser) {
     });
 }
 
-gulp.task('serve', ['watch'], function () {
+gulp.task('serve', ['nodemon', 'watch'], function () {
     browserSyncInit([
         'src',
         '.tmp',
@@ -65,4 +68,27 @@ gulp.task('serve:e2e', ['wiredep', 'injector:js', 'injector:css'], function () {
 
 gulp.task('serve:e2e-dist', ['build'], function () {
     browserSyncInit('dist', null, []);
+});
+
+gulp.task('nodemon', function (cb) {
+    var called = false;
+    return nodemon({
+        // nodemon our expressjs server
+        script: "srv/bin/www",
+        // watch core server file(s) that require server restart on change
+        watch: ["srv/**/*.*"]
+    })
+        .on('start', function onStart() {
+            // ensure start only got called once
+            if (!called) { cb(); }
+            called = true;
+        })
+        .on('restart', function onRestart() {
+            // reload connected browsers after a slight delay
+            setTimeout(function reload() {
+                browserSync.reload({
+                    stream: false   //
+                });
+            }, BROWSER_SYNC_RELOAD_DELAY);
+        });
 });
