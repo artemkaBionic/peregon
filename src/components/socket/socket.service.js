@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('app.guide')
+        .module('app.socket')
         .factory('socketService', socketService);
 
     socketService.$inject = ['$rootScope'];
