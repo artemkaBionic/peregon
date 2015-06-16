@@ -1,6 +1,6 @@
 <horizontal-ui-sheet class="sheet-lg">
-  <header horizontal-ui-sheet-header title="Guide">
-    {{::vm.guideName}}
+  <header horizontal-ui-sheet-header title="Refresh Guide">
+    <span class="apc-sheet-subtitle">{{::vm.guide.SKU}}:</span><span class="apc-sheet-subtitle2"> {{::vm.guide.Model}}</span>
   </header>
   <div horizontal-ui-sheet-content>
     <iframe class="content-frame" ng-src="{{::vm.guideUrl}}"></iframe>

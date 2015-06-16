@@ -3,13 +3,12 @@
   <section horizontal-ui-sheet-content>
 
     <div class="row">
-      <p>{{searchString}}</p>
-      <div class="col-md-6 col-sm-12" ng-repeat="guide in guides | filter: guideFilter">
-        <article class="card" ui-sref=".guide({guide: guide.GuideName})">
-          <a ui-sref=".guide({guide: guide.GuideName})">
+      <div class="col-md-3 col-sm-4 col-xs-5" ng-repeat="guide in guides | filter: guideFilter">
+        <article class="card" ui-sref=".guide({guide: guide.SKU})">
+          <a ui-sref=".guide({guide: guide.SKU})">
             <div class="card-body">
-              <div class="h-110">
-                <div class="card-title text-ellipsis">{{::guide.GuideName}}</div>
+              <div class="h-80">
+                <div class="card-title text-ellipsis">{{::guide.SKU}}</div>
                 <div class="text-sm text-ellipsis">{{::guide.Model}}</div>
               </div>
             </div>
