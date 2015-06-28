@@ -15,14 +15,14 @@
     </div>
   </div>
 
-  <div class="pull-right">
-    <form ui-keypress="{13:'selectGuide($event)'}">
-      <div class="search">
-        <span class="fa fa-search"></span>
-        <input class="form-control sku-input" placeholder="Enter SKU" type="text" ng-model="searchString">
+  <div class="row">
+    <div class="col-md-4">
+      <h2 class="logo"><img ng-src="{{user.logoImage}}"></h2>
+    </div>
+    <div class="col-md-4">
+      <div class="text-center">
+        <h3>Device Refurbishing Station</h3>
       </div>
-    </form>
+    </div>
   </div>
-
-  <h2 class="logo pull-left"><img ng-src="{{user.logoImage}}" height="60"></h2>
 </div>

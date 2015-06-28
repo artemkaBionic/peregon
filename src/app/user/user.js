@@ -5,9 +5,9 @@
         .module('app.user')
         .controller('UserController', UserController);
 
-    UserController.$inject = ['$scope', '$q', 'config', '$http', 'guideService'];
+    UserController.$inject = ['$rootScope', '$scope', '$q', 'config', '$http', 'guideService'];
 
-    function UserController($scope, $q, config, $http, guideService) {
+    function UserController($rootScope, $scope, $q, config, $http, guideService) {
         /*jshint validthis: true */
         var vm = this;
         vm.ready = false;

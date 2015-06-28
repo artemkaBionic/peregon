@@ -15,8 +15,7 @@ app.io           = io;
 
 // Common data
 var data = {};
-data.media = {};
-data.media.usb = [];
+data.devices = [];
 
 var routes = require('./routes')(io, data);
 
@@ -30,7 +29,7 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, '../dist')));
+app.use(express.static(path.join(__dirname, '/public')));
 
 app.use('/', routes);
 
@@ -64,16 +63,24 @@ app.use(function(err, req, res, next) {
   });
 });
 
+function sleep(time, callback) {
+    var stop = new Date().getTime();
+    while(new Date().getTime() < stop + time) {
+        ;
+    }
+    callback();
+}
+
 // socket.io events
 io.on( 'connection', function( socket )
 {
     console.log( 'A client connected' );
-    socket.on('media_update', function (data) {
-        if (data.action === 'format') {
-            console.log( 'A client requested to format ' + data.mediaType + ' media' );
-        } else if (data.action === 'apply') {
-            console.log( 'A client requested to format and apply files to ' + data.mediaType + ' media' );
-        }
+    socket.on('device_apply', function (data) {
+        console.log( 'A client requested to apply "' + data.media.name + '" to the ' + data.device.type + ' device ' + data.device.id );
+        sleep(5000, function() {
+            // executes after one second, and blocks the thread
+        });
+        io.emit('device_apply_progress', 100);
     });
 });
 

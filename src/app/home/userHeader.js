@@ -5,9 +5,9 @@
         .module('app')
         .controller('UserHeaderController', UserHeaderController);
 
-    UserHeaderController.$inject = ['$scope', '$q', '$log', 'config', 'guideService', '$state'];
+    UserHeaderController.$inject = ['$rootScope', '$scope', '$q', '$log', 'config', 'guideService', '$state'];
 
-    function UserHeaderController($scope, $q, $log, config, guideService, $state) {
+    function UserHeaderController($rootScope, $scope, $q, $log, config, guideService, $state) {
         /*jshint validthis: true */
         var vm = this;
         vm.currentUser = undefined;

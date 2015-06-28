@@ -5,8 +5,8 @@
         .module('app')
         .controller('ApplicationController', AppController);
 
-    AppController.$inject = ['config', '$scope', '$rootScope', '$apcSidebar', 'notificationService', '$log'];
-    function AppController(config, $scope, $rootScope, $apcSidebar, notificationService, $log) {
+    AppController.$inject = ['config', '$scope', '$rootScope', '$apcSidebar', 'notificationService', 'eventService', '$log'];
+    function AppController(config, $scope, $rootScope, $apcSidebar, notificationService, eventService, $log) {
         /*jshint validthis: true */
         var vm = this;
 

@@ -8,13 +8,19 @@
          */
         'app.env',
         'app.core',
-        'app.data',
         'app.guide',
+        'app.socket',
+        'app.device',
+        'app.event',
         'app.user',
+        'app.package',
         /*
         * 3-rd Party
          */
-        'angularMoment'
+        'angularMoment',
+        'ui.select',
+        'ngSanitize',
+        'angular-ladda'
     ]);
 
     app.config(appConfig);

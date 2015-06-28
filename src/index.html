@@ -41,6 +41,11 @@
   <!-- inject:css -->
   <link rel="stylesheet" href="app/index.css">
   <!-- endinject -->
+
+  <!-- build:css({.tmp,src}) styles/ladda-themeless.min.css -->
+  <!-- inject:css -->
+  <link rel="stylesheet" href="../bower_components/ladda/dist/ladda-themeless.min.css">
+  <!-- endinject -->
   <!-- endbuild -->
 </head>
 <body class="loading-container">
@@ -77,7 +82,7 @@
 <script src="../bower_components/jasny-bootstrap/dist/js/jasny-bootstrap.js"></script>
 <script src="../bower_components/parsleyjs/dist/parsley.js"></script>
 <script src="../bower_components/twitter-bootstrap-wizard/jquery.bootstrap.wizard.min.js"></script>
-<script src="../bower_components/angular-toastr/dist/angular-toastr.js"></script>
+<script src="../bower_components/angular-toastr/dist/angular-toastr.tpls.js"></script>
 <script src="../bower_components/angular-loading-bar/build/loading-bar.js"></script>
 <script src="../bower_components/angular-ui-utils/ui-utils.js"></script>
 <script src="../bower_components/p0rtal/src/package/js/app.module.js"></script>
@@ -93,6 +98,9 @@
 <script src="../bower_components/p0rtal/src/package/js/ui/wizard.js"></script>
 <script src="../bower_components/p0rtal/src/package/js/ui/progress-button.js"></script>
 <script src="../bower_components/angular-moment/angular-moment.js"></script>
+<script src="../bower_components/spin.js/spin.js"></script>
+<script src="../bower_components/ladda/dist/ladda.min.js"></script>
+<script src="../bower_components/angular-ladda/dist/angular-ladda.min.js"></script>
 <script src="../bower_components/angular-mocks/angular-mocks.js"></script>
 <!-- endbower -->
 <!-- endbuild -->
@@ -100,16 +108,20 @@
 <!-- build:js({.tmp,src}) scripts/app.js -->
 <!-- inject:js -->
 <script src="app/user/user.module.js"></script>
+<script src="app/user/media/package/package.js"></script>
+<script src="app/user/media/media.js"></script>
 <script src="app/user/guide/guide.js"></script>
 <script src="components/socket/socket.module.js"></script>
 <script src="components/socket/socket.service.js"></script>
+<script src="components/package/package.module.js"></script>
+<script src="components/package/package.service.js"></script>
 <script src="components/lib/external.js"></script>
 <script src="components/guide/guide.module.js"></script>
 <script src="components/guide/guide.service.js"></script>
 <script src="components/event/event.module.js"></script>
 <script src="components/event/event.service.js"></script>
-<script src="components/data/data.module.js"></script>
-<script src="components/data/data.service.js"></script>
+<script src="components/device/device.module.js"></script>
+<script src="components/device/device.service.js"></script>
 <script src="components/core/core.module.js"></script>
 <script src="components/core/underscore.service.js"></script>
 <script src="components/core/security.service.js"></script>

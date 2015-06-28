@@ -17,33 +17,44 @@ $open-sans-path: '../bower_components/open-sans/fonts';
 // endinjector
 
 .content-frame {
-  width: 100%;
+  width: calc(100% - 16px);
   height: 100%;
   margin: 0;
   padding: 0;
-  padding-right: 13px;
+  //padding-right: 13px;
   border: none;
   position: absolute;
 }
 
+.center {
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}
+
 .search {
   position: relative;
+  padding: 14px;
 }
 
 .search input {
-  text-indent: 40px;
+  text-indent: 30px;
   height: 50px;
-  width: 256px;
   line-height: normal;
-  margin: 13px;
-  font-size: 34px;
+  font-size: x-large;
   color: #5e5e5e;
+  border-radius: 4px;
 }
 
 .search .fa-search {
   position: absolute;
-  top: 8px;
-  left: 25px;
-  font-size: 34px;
+  top: 28px;
+  left: 28px;
+  font-size: x-large;
+  text-align: center;
   color: #999999;
+}
+
+.card {
+  border-radius: 4px;
 }
