@@ -5,6 +5,7 @@ var path = require('path');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var childProcess = require('child_process');
 
 // Express
 var app = express();
@@ -63,24 +64,16 @@ app.use(function(err, req, res, next) {
   });
 });
 
-function sleep(time, callback) {
-    var stop = new Date().getTime();
-    while(new Date().getTime() < stop + time) {
-        ;
-    }
-    callback();
-}
-
 // socket.io events
 io.on( 'connection', function( socket )
 {
     console.log( 'A client connected' );
     socket.on('device_apply', function (data) {
         console.log( 'A client requested to apply "' + data.media.name + '" to the ' + data.device.type + ' device ' + data.device.id );
-        sleep(5000, function() {
-            // executes after one second, and blocks the thread
+        var python = childProcess.spawn( 'python', ['/opt/kiosk/apply_media.py', '--package', data.media.id, '--device', data.device.id] );
+        python.on('close', function(code){
+            io.emit('device_apply_progress', 100);
         });
-        io.emit('device_apply_progress', 100);
     });
 });
 

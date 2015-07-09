@@ -25,24 +25,35 @@ module.exports = function(io, data) {
     });
 
     router.get('/data/packages/:contentType', function (req, res) {
-        switch(req.params.contentType) {
-            case 'media':
-                //var packagePath = '/srv/media';
-                var packagePath = 'D:\\srv\\media';
-                var packages = [];
-                var dirs = getDirectories(packagePath);
-                var len = dirs.length;
-                for (var i = 0; i < len; ++i) {
-                    var fullDir = path.join(packagePath, dirs[i]);
-                    var packageFile = path.join(fullDir, 'package.json');
-                    var package = JSON.parse(fs.readFileSync(packageFile, 'utf8'));
-                    packages.push(package);
-                }
-                res.send(packages);
-                break;
-            default:
-                res.send(null);
-                break;
+        try {
+            switch (req.params.contentType) {
+                case 'media':
+                    var packagePath = '/srv/media';
+                    var packages = [];
+                    console.log('Searching for media packages in ' + packagePath);
+                    var dirs = getDirectories(packagePath);
+                    var len = dirs.length;
+                    for (var i = 0; i < len; ++i) {
+                        var fullDir = path.join(packagePath, dirs[i]);
+                        var packageFile = path.join(fullDir, '.package.json');
+                        console.log('Attempting to parse ' + packageFile);
+                        try {
+                            var package = JSON.parse(fs.readFileSync(packageFile, 'utf8'));
+                            packages.push(package);
+                        } catch (e) {
+                            console.log('Error trying to read ' + packageFile);
+                            console.log(e);
+                        }
+                    }
+                    res.send(packages);
+                    break;
+                default:
+                    res.send(null);
+                    break;
+            }
+        } catch (e) {
+            console.log('Unable to get ' + req.params.contentType + ' packages.');
+            console.log(e);
         }
     });
 
