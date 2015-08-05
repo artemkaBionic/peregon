@@ -9,7 +9,7 @@
       <div class="col-md-6">
         <h3>Apply Media to USB</h3>
         <p>This action will apply "{{mediaPackage.name}}" to the {{device.type}} device, using {{mediaPackage.size | kilobytes:0}} of the {{device.size | kilobytes:0}} available on the device.</p>
-        <p><strong>Warning,</strong> this action cannot be undone. Click Apply to continue.</p>
+        <p><strong>Warning,</strong> this action will erase the disk and cannot be undone. Click Apply to continue.</p>
       </div>
     </div>
     <div class="row" ng-show="started && !finished">
