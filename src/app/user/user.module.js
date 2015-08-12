@@ -58,9 +58,8 @@
             return dataService.getPost(id);
         }
 
-        $filterProvider.register('kilobytes', function() {
-            return function(kilobytes, precision) {
-                var bytes = kilobytes * 1024;
+        $filterProvider.register('bytes', function() {
+            return function(bytes, precision) {
                 if (bytes === 0) {
                     return '0 MB';
                 } else if (isNaN(parseFloat(bytes)) || !isFinite(bytes)) {
@@ -69,7 +68,7 @@
                 if (typeof precision === 'undefined') {
                     precision = 1;
                 }
-                var units = ['KB', 'MB', 'GB', 'TB', 'PB'];
+                var units = ['bytes', 'kB', 'MB', 'GB', 'TB', 'PB'];
                 var number = Math.floor(Math.log(bytes) / Math.log(1024));
                 return (bytes / Math.pow(1024, Math.floor(number))).toFixed(precision) + ' ' + units[number];
             };

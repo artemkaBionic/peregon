@@ -1,6 +1,6 @@
 <horizontal-ui-sheet class="sheet-md">
   <header horizontal-ui-sheet-header title="USB Media">
-    <span class="apc-sheet-subtitle" ng-show="selectedDevice !== null">{{selectedDevice.size | kilobytes:0}}</span>
+    <span class="apc-sheet-subtitle" ng-show="selectedDevice !== null">{{selectedDevice.size | bytes:0}}</span>
   </header>
   <div horizontal-ui-sheet-content>
     <div class="row" ng-show="devices.length === 0">
@@ -12,13 +12,13 @@
       </div>
     </div>
     <div class="row" ng-show="devices.length > 0">
-      <div class="col-md-12" ng-repeat="mediaPackage in mediaPackages">
+      <div class="col-md-12" ng-repeat="mediaPackage in mediaPackages | orderBy:'name'">
         <article class="card">
           <a ui-sref=".package({device: selectedDevice, package: mediaPackage})">
             <div class="card-body">
               <div class="h-80">
                 <div class="card-title text-ellipsis">{{mediaPackage.name}}</div>
-                <div class="text-sm text-ellipsis">{{mediaPackage.size | kilobytes:0}}</div>
+                <div class="text-sm text-ellipsis">{{mediaPackage.size | bytes:0}}</div>
               </div>
             </div>
           </a>
