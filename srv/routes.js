@@ -39,7 +39,9 @@ module.exports = function(io, data) {
                         console.log('Attempting to parse ' + packageFile);
                         try {
                             var package = JSON.parse(fs.readFileSync(packageFile, 'utf8'));
-                            packages.push(package);
+                            if (package.type === "media" && package.subtype === "advertisement") {
+                                packages.push(package);
+                            }
                         } catch (e) {
                             console.log('Error trying to read ' + packageFile);
                             console.log(e);
