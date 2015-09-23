@@ -21,7 +21,6 @@ $open-sans-path: '../bower_components/open-sans/fonts';
   height: 100%;
   margin: 0;
   padding: 0;
-  //padding-right: 13px;
   border: none;
   position: absolute;
 }
@@ -32,29 +31,57 @@ $open-sans-path: '../bower_components/open-sans/fonts';
   display: block;
 }
 
-.search {
+.text-input {
   position: relative;
   padding: 14px;
 }
 
-.search input {
-  text-indent: 30px;
-  height: 50px;
+.text-input input {
+  text-indent: 48px;
+  height: 48px;
   line-height: normal;
-  font-size: x-large;
+  font-size: 32px;
+  padding-top: 2px;
   color: #5e5e5e;
   border-radius: 4px;
 }
 
-.search .fa-search {
+.text-input .fa {
   position: absolute;
-  top: 28px;
-  left: 28px;
-  font-size: x-large;
+  top: 24px;
+  left: 24px;
+  font-size: 26px;
   text-align: center;
   color: #999999;
 }
 
+.text-input .fa-barcode {
+  top: 26px;
+}
+
+.guide .logo img {
+  height:80px;
+  display:block;
+  margin:64px auto;
+}
+
 .card {
   border-radius: 4px;
+}
+
+.card .logo img {
+  height:25px;
+}
+
+.card .icon img {
+  position: absolute;
+  right: 10px;
+}
+
+.card.XboxOne {
+  background-color:#107c10;
+}
+
+.card.XboxOne .card-title,.card.XboxOne a {
+  color:white;
 }

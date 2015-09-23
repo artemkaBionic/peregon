@@ -8,7 +8,7 @@
         </div>
         <div class="col-md-6">
           <form ui-keypress="{13:'selectGuide($event)'}">
-            <div class="search">
+            <div class="text-input">
               <span class="fa fa-search"></span>
               <input class="form-control sku-input" placeholder="Enter SKU" type="text" ng-model="searchString">
             </div>
@@ -18,12 +18,20 @@
 
     <div class="row">
       <div class="col-md-3" ng-repeat="guide in guides | filter: guideFilter">
-        <article class="card" ui-sref=".guide({guide: guide.SKU})">
+        <article class="card" ng-class="guide.DynamicGuideName" ui-sref=".guide({guide: guide.SKU})">
           <a ui-sref=".guide({guide: guide.SKU})">
             <div class="card-body">
               <div class="h-80">
-                <div class="card-title text-ellipsis">{{::guide.SKU}}</div>
-                <div class="text-sm text-ellipsis">{{::guide.Model}}</div>
+                <div class="row">
+                  <div class="col-md-7">
+                    <div class="card-title text-ellipsis">{{::guide.SKU}}</div>
+                    <div class="text-sm text-ellipsis"  ng-if="guide.DynamicGuideName===undefined">{{::guide.Model}}</div>
+                    <div class="logo" ng-if="guide.DynamicGuideName!==undefined"><img ng-src="/assets/images/{{::guide.DynamicGuideName}}CardLogo.png"></div>
+                  </div>
+                  <div class="col-md-5">
+                    <div class="icon" ng-if="guide.DynamicGuideName!==undefined"><img ng-src="/assets/images/{{::guide.DynamicGuideName}}CardIcon.png"></div>
+                  </div>
+                </div>
               </div>
             </div>
           </a>

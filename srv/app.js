@@ -6,6 +6,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var childProcess = require('child_process');
+var config = require('./config');
 
 // Express
 var app = express();
@@ -70,7 +71,17 @@ io.on( 'connection', function( socket )
     console.log( 'A client connected' );
     socket.on('device_apply', function (data) {
         console.log( 'A client requested to apply "' + data.media.name + '" to the ' + data.device.type + ' device ' + data.device.id );
-        var python = childProcess.spawn( 'python', ['/opt/kiosk/apply_media.py', '--package', data.media.id, '--device', data.device.id] );
+
+        var mediaPackagePath = path.join(config.mediaPackagePath, data.media.id);
+        var mediaPackageFile = path.join(mediaPackagePath, '.package.json');
+        var mediaPackage = JSON.parse(fs.readFileSync(mediaPackageFile, 'utf8'));
+
+        var fileSystem = 'fat32';
+        if (mediaPackage.subtype === "xbox-one") {
+            fileSystem = 'ntfs';
+        }
+
+        var python = childProcess.spawn( 'python', ['/opt/kiosk/apply_media.py', '--package', data.media.id, '--device', data.device.id, '--file-system', fileSystem] );
         python.on('close', function(code){
             io.emit('device_apply_progress', 100);
         });

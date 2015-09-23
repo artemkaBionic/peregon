@@ -1,6 +1,7 @@
-var express = require('express'),
-    fs = require('fs'),
-    path = require('path');
+var express = require('express');
+var fs = require('fs');
+var path = require('path');
+var config = require('./config');
 
 module.exports = function(io, data) {
 // Express Router
@@ -12,7 +13,7 @@ module.exports = function(io, data) {
                 data.devices.splice(i, 1);
             }
         }
-    };
+    }
 
     function getDirectories(srcpath) {
         return fs.readdirSync(srcpath).filter(function(file) {
@@ -24,22 +25,22 @@ module.exports = function(io, data) {
         res.send(data.devices);
     });
 
-    router.get('/data/packages/:contentType', function (req, res) {
+    router.get('/data/packages/:contentType/:contentSubtype?', function (req, res) {
         try {
+            console.log('Client requests ' + req.params.contentSubtype + ' ' + req.params.contentType + ' packages');
             switch (req.params.contentType) {
                 case 'media':
-                    var packagePath = '/srv/media';
                     var packages = [];
-                    console.log('Searching for media packages in ' + packagePath);
-                    var dirs = getDirectories(packagePath);
+                    console.log('Searching for media packages in ' + config.mediaPackagePath);
+                    var dirs = getDirectories(config.mediaPackagePath);
                     var len = dirs.length;
                     for (var i = 0; i < len; ++i) {
-                        var fullDir = path.join(packagePath, dirs[i]);
+                        var fullDir = path.join(config.mediaPackagePath, dirs[i]);
                         var packageFile = path.join(fullDir, '.package.json');
                         console.log('Attempting to parse ' + packageFile);
                         try {
                             var package = JSON.parse(fs.readFileSync(packageFile, 'utf8'));
-                            if (package.type === "media" && package.subtype === "advertisement") {
+                            if (package.type === "media" && ((req.params.contentSubtype === undefined && package.subtype === 'advertisement') || (req.params.contentSubtype !== undefined && package.subtype === req.params.contentSubtype))) {
                                 packages.push(package);
                             }
                         } catch (e) {
@@ -73,7 +74,7 @@ module.exports = function(io, data) {
             removeDevice(event.data.id);
         }
 
-        io.emit('event', event);
+        //io.emit('event', event);
         res.send();
     });
 

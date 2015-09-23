@@ -17,8 +17,8 @@
             })
             .state('root.user.guide', {
                 url: '/guides/:guide',
-                templateUrl: 'app/user/guide/guide.html',
-                controller: 'GuideController',
+                templateProvider: guideTemplate,
+                controllerProvider: guideController,
                 controllerAs: 'vm'
             })
             .state('root.user.media', {
@@ -40,6 +40,30 @@
                 controller: 'MediaPackageController',
                 controllerAs: 'vm'
             });
+
+        guideTemplate.$inject = ['$stateParams', '$templateCache', '$http', 'guideService'];
+        function guideTemplate($stateParams, $templateCache, $http, guideService) {
+            return guideService.getGuide($stateParams.guide).then(function(guide){
+                var templateUrl = 'app/user/guide/guide.html';
+                if (guide.DynamicGuideName !== undefined) {
+                    templateUrl = 'app/user/guide/' + guide.DynamicGuideName + '/' + guide.DynamicGuideName + '.html';
+                }
+                var templateContent = $templateCache.get(templateUrl);
+                if (templateContent === undefined) {
+                    return $http.get(templateUrl).then(function(tpl) {
+                        $templateCache.put(templateUrl, tpl.data);
+                        return tpl.data;
+                    });
+                } else {
+                    return templateContent;
+                }
+            });
+        }
+
+        guideController.$inject = ['$stateParams', 'guideService'];
+        function guideController($stateParams, guideService) {
+            return 'GuideController';
+        }
 
         $apcSidebarProvider.config('home', {
             title: 'Home',

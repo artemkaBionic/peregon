@@ -11,6 +11,10 @@
 
         var service = {};
 
+        var dynamicGuides = [
+            {SKU: '7339XC2', GuideName: '7339XC2', Model: 'Xbox One', IsRefereshSupported: true, Manufacturer: 'Microsoft', DynamicGuideName: 'XboxOne'}
+        ];
+
         service.searchString = '';
         service.guides = null;
 
@@ -22,15 +26,15 @@
             };
 
             $http.get(config.packageIndex).then(function(result) {
-                for (var guideIndex = 0, len = result.data.length; guideIndex < len; ++guideIndex) {
-                    var charIndex = result.data[guideIndex].SKU.length - 1;
-                    var pattern = getRegExChar(result.data[guideIndex].SKU[charIndex]);
+                service.guides = dynamicGuides.concat(result.data);
+                for (var guideIndex = 0, len = service.guides.length; guideIndex < len; ++guideIndex) {
+                    var charIndex = service.guides[guideIndex].SKU.length - 1;
+                    var pattern = getRegExChar(service.guides[guideIndex].SKU[charIndex]);
                     for (; charIndex-- > 0;) {
-                        pattern = getRegExChar(result.data[guideIndex].SKU[charIndex]) + '(' + pattern + ')?';
+                        pattern = getRegExChar(service.guides[guideIndex].SKU[charIndex]) + '(' + pattern + ')?';
                     }
-                    result.data[guideIndex].SkuRegEx = new RegExp(pattern, 'i');
+                    service.guides[guideIndex].SkuRegEx = new RegExp(pattern, 'i');
                 }
-                service.guides = result.data;
                 deferred.resolve(service.guides);
             });
 
