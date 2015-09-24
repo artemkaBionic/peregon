@@ -1,32 +1,49 @@
 <horizontal-ui-sheet class="sheet-md guide xbox-one">
   <header horizontal-ui-sheet-header title="Refresh Guide">
-    <span class="apc-sheet-subtitle">{{::vm.guide.SKU}}: {{::vm.guide.Manufacturer}} {{::vm.guide.Model}}</span>
+    <span class="apc-sheet-subtitle">{{::vm.guide.SKU}}: {{::vm.guide.Manufacturer}} {{::vm.guide.Model}} (Step {{vm.step}})</span>
   </header>
   <div horizontal-ui-sheet-content>
-    <div class="row">
-      <div class="row">
-        <div class="col-md-3">
+    <div ng-init="on=true">
+      <button ng-click="on=!on">Toggle On/Off</button>
+      <div class="my-special-animation" ng-if="on">
+        This content will enter and leave
+      </div>
+    </div>
+    <div ng-switch="vm.step" class="wizard">
+      <div class="wizard-step" ng-switch-when="1">
+        <div class="row">
+          <div class="col-md-3">
+          </div>
+          <div class="col-md-6">
+            <h2 class="logo"><img src="/assets/images/XboxOneGuideLogo.png"></h2>
+          </div>
         </div>
-        <div class="col-md-6">
-          <h2 class="logo"><img src="/assets/images/XboxOneGuideLogo.png"></h2>
+        <div class="row">
+          <div class="col-md-3">
+          </div>
+          <div class="col-md-6">
+            <form ui-keypress="{13:'selectGuide($event)'}">
+              <div class="text-input">
+                <span class="fa fa-barcode"></span>
+                <input class="form-control item-number-input" placeholder="Item Number" type="text" ng-model="searchString">
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="footer">
+          <button class="btn btn-primary btn-rounded pull-right" ng-click="vm.setStep(2)">
+            Next &nbsp; <i class="fa fa-caret-right"></i>
+          </button>
         </div>
       </div>
-      <div class="row">
-        <div class="col-md-3">
-        </div>
-        <div class="col-md-6">
-          <form ui-keypress="{13:'selectGuide($event)'}">
-            <div class="text-input">
-              <span class="fa fa-barcode"></span>
-              <input class="form-control item-number-input" placeholder="Item Number" type="text" ng-model="searchString">
-            </div>
-          </form>
+      <div class="wizard-step" ng-switch-when="2">
+        <p>STEP 2 of wizard</p>
+        <div class="footer">
+          <button class="btn btn-primary btn-rounded pull-right" ng-click="vm.setStep(1)">
+            <i class="fa fa-caret-left"></i> &nbsp; Back
+          </button>
         </div>
       </div>
-      <div class="footer">
-        <button class="btn btn-primary btn-rounded pull-right" ng-click="next()">
-          Next &nbsp; <i class="fa fa-caret-right"></i>
-        </button>
-      </div>
+    </ng-switch>
   </div>
 </horizontal-ui-sheet>

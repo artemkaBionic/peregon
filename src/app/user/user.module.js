@@ -62,7 +62,12 @@
 
         guideController.$inject = ['$stateParams', 'guideService'];
         function guideController($stateParams, guideService) {
-            return 'GuideController';
+            var guide = guideService.getGuideSync($stateParams.guide);
+            var controllerName = 'GuideController';
+            if (guide.DynamicGuideName !== undefined) {
+                controllerName = 'GuideController' + guide.DynamicGuideName;
+            }
+            return controllerName;
         }
 
         $apcSidebarProvider.config('home', {

@@ -13,6 +13,7 @@
         vm.guide = {};
         vm.guideUrl = config.guidesPath + '/' + $stateParams.guide + '/' + config.guidesIndexFile;
         vm.ready = false;
+        vm.step = 1;
 
         activate();
 
@@ -25,5 +26,9 @@
                 vm.ready = true;
             });
         }
+
+        vm.setStep = function(step) {
+            vm.step = step;
+        };
     }
 })();

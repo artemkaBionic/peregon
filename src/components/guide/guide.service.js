@@ -41,6 +41,19 @@
             return deferred.promise;
         };
 
+        service.getGuideSync = function(sku) {
+            var len = service.guides.length;
+            for (var i = 0; i < len; ++i) {
+                if (sku.length === service.guides[i].SKU.length) {
+                    var match = sku.match(service.guides[i].SkuRegEx);
+                    if (match !== null && match[0] === sku) {
+                        return service.guides[i];
+                    }
+                }
+            }
+            return null;
+        };
+
         service.getGuide = function(sku) {
             var promise = $q.when(null); //initial start promise that's already resolved
 
@@ -49,16 +62,7 @@
             }
 
             promise = promise.then(function() {
-                var len = service.guides.length;
-                for (var i = 0; i < len; ++i) {
-                    if (sku.length === service.guides[i].SKU.length) {
-                        var match = sku.match(service.guides[i].SkuRegEx);
-                        if (match !== null && match[0] === sku) {
-                            return service.guides[i];
-                        }
-                    }
-                }
-                return null;
+                return service.getGuideSync(sku);
             });
 
             return promise;

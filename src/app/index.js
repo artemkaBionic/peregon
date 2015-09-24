@@ -20,7 +20,8 @@
         'angularMoment',
         'ui.select',
         'ngSanitize',
-        'angular-ladda'
+        'angular-ladda',
+        'ngAnimate'
     ]);
 
     app.config(appConfig);
