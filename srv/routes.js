@@ -67,14 +67,14 @@ module.exports = function(io, data) {
 
         console.log(event.name + ' event has been reported.');
 
-        if (event.name === "device_add") {
+        if (event.name === "device-add") {
             removeDevice(event.data.id); //Ensure that there are no duplicate devices
             data.devices.push(event.data);
-        } else if (event.name === "device_remove") {
+        } else if (event.name === "device-remove") {
             removeDevice(event.data.id);
         }
 
-        //io.emit('event', event);
+        io.emit('event', event);
         res.send();
     });
 

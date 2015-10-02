@@ -27,7 +27,7 @@ function processScss(file, container) {
         .pipe(gulp.dest('.tmp/app/'));
 }
 
-gulp.task('styles:index', ['wiredep', 'injector:css:preprocessor'], function () {
+gulp.task('styles:index', ['wiredep'], function () {
     return processScss('src/styles/index.scss', 'index');
 });
 
@@ -36,28 +36,6 @@ gulp.task('styles:vendor', function () {
 });
 
 gulp.task('styles', ['styles:index', 'styles:vendor']);
-
-gulp.task('injector:css:preprocessor', function () {
-    return gulp.src('src/styles/index.scss')
-        .pipe($.inject(gulp.src([
-            'src/{app,components}/**/*.scss',
-            '!src/styles/index.scss',
-            '!src/styles/vendor.scss',
-            '!src/styles/**/*.scss'
-        ], {read: true}), {
-            transform: function (filePath) {
-                filePath = filePath.replace('src/app/', '');
-                filePath = filePath.replace('src/components/', '../components/');
-                util.log('injecting ' + filePath);
-                return '@import \'' + filePath + '\';';
-            },
-            starttag: '// injector',
-            endtag: '// endinjector',
-            addRootSlash: false
-        }))
-        //.pipe($.changed('src/styles/'))
-        .pipe(gulp.dest('src/styles/'));
-});
 
 gulp.task('injector:css', ['styles'], function () {
     return gulp.src('src/index.html')

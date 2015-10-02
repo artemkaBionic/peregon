@@ -18,16 +18,17 @@
 var httpProxy = require('http-proxy');
 var chalk = require('chalk');
 
+var $ = require('gulp-load-plugins')({
+    pattern: ['gulp-*']
+});
+
 /*
  * Location of your backend server
  */
+var proxyTarget = 'http://localhost:4000';
 
 var proxy = httpProxy.createProxyServer({
-    target: {
-        host: 'localhost',
-        port: 3000
-    },
-    ws: true
+    target: proxyTarget
 });
 
 proxy.on('error', function(error, req, res) {
@@ -38,9 +39,9 @@ proxy.on('error', function(error, req, res) {
     console.error(chalk.red('[Proxy]'), error);
 });
 
-proxy.on('upgrade', function (req, socket, head) {
+/*proxy.on('upgrade', function (req, socket, head) {
     proxy.ws(req, socket, head);
-});
+});*/
 
 /*
  * The proxy middleware is an Express middleware added to BrowserSync to
@@ -55,10 +56,11 @@ function proxyMiddleware(req, res, next) {
      * for your needs. If you can, you could also check on a context in the url which
      * may be more reliable but can't be generic.
      */
-    if (req.url.match(/\/socket.io\//)) {
+    /*if (req.url.match(/\/socket.io\//)) {
         console.log('socket: ' + req.url);
         proxy.ws(req, res);
-    } else if (/\.(json|html|css|map|js|png|jpg|jpeg|gif|ico|xml|rss|txt|eot|svg|ttf|woff|cur)(\?((r|v|rel|rev)=[\-\.\w]*)?)?$/.test(req.url)) {
+    } else */
+    if (/\.(json|html|css|map|js|png|jpg|jpeg|gif|ico|mp4|xml|rss|txt|eot|svg|ttf|woff|cur)(\?((r|v|rel|rev)=[\-\.\w]*)?)?$/.test(req.url)) {
         console.log('proxy: ' + req.url);
         next();
     } else {

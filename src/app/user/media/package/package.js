@@ -20,17 +20,18 @@
         $scope.apply = function() {
             $scope.started = true;
             $scope.progress = 0;
+
+            socketService.once('device-apply-progress', function(data) {
+                $scope.progress = data.progress;
+                if ($scope.progress >= 100) {
+                    $scope.finished = true;
+                }
+            });
+
             var data = {};
             data.device = $scope.device;
             data.media = $scope.mediaPackage;
-            socketService.emit('device_apply', data);
+            socketService.emit('device-apply', data);
         };
-
-        socketService.on('device_apply_progress', function(progress) {
-            $scope.progress = progress;
-            if ($scope.progress >= 100) {
-                $scope.finished = true;
-            }
-        });
     }
 })();

@@ -43,7 +43,14 @@ function browserSyncInit(baseDir, files, browser) {
     });
 }
 
-gulp.task('serve', ['nodemon', 'watch'], function () {
+gulp.task('dev', function () {
+    $.util.env.PORT = 4000;
+
+    $.util.env.base_url = 'localhost:' + $.util.env.PORT;
+    console.log($.util.env.base_url);
+});
+
+gulp.task('serve', ['dev', 'nodemon', 'watch'], function () {
     browserSyncInit([
         'src',
         '.tmp',
@@ -76,7 +83,8 @@ gulp.task('nodemon', function (cb) {
         // nodemon our expressjs server
         script: "srv/bin/www",
         // watch core server file(s) that require server restart on change
-        watch: ["srv/**/*.*"]
+        watch: ["srv/**/*.*"],
+        env: { 'PORT': $.util.env.PORT }
     })
         .on('start', function onStart() {
             // ensure start only got called once

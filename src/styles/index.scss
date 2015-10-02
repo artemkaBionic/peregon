@@ -4,6 +4,9 @@ $open-sans-path: '../bower_components/open-sans/fonts';
 
 @import "../../bower_components/p0rtal/src/package/scss/p0rtal";
 
+@import "../../bower_components/load-awesome/css/ball-clip-rotate-multiple.css";
+@import "../../bower_components/animate.css/animate.css";
+
 @import 'app/variables';
 @import 'app/mixins';
 @import 'app/globals';
@@ -12,9 +15,6 @@ $open-sans-path: '../bower_components/open-sans/fonts';
 @import 'app/override-libs';
 @import 'app/typography';
 @import 'app/decorations';
-
-// injector
-// endinjector
 
 .content-frame {
   width: calc(100% - 16px);
@@ -26,14 +26,14 @@ $open-sans-path: '../bower_components/open-sans/fonts';
 }
 
 .center {
+  display: block;
   margin-left: auto;
   margin-right: auto;
-  display: block;
 }
 
 .text-input {
   position: relative;
-  padding: 14px;
+  margin: 14px;
 }
 
 .text-input input {
@@ -41,27 +41,27 @@ $open-sans-path: '../bower_components/open-sans/fonts';
   height: 48px;
   line-height: normal;
   font-size: 32px;
-  padding-top: 2px;
+  margin-top: 2px;
   color: #5e5e5e;
   border-radius: 4px;
 }
 
 .text-input .fa {
   position: absolute;
-  top: 24px;
-  left: 24px;
+  top: 12px;
+  left: 12px;
   font-size: 26px;
   text-align: center;
   color: #999999;
 }
 
 .text-input .fa-barcode {
-  top: 26px;
+  top: 13px;
 }
 
 .guide .logo img {
-  height:80px;
   display:block;
+  height:80px;
   margin:64px auto;
 }
 
@@ -86,35 +86,143 @@ $open-sans-path: '../bower_components/open-sans/fonts';
   color:white;
 }
 
+.apc-sheet-content {
+  overflow: hidden !important;
+}
+
 .wizard {
-  -webkit-transition: 1s;
+  clip: rect(auto, auto, auto, auto);
 }
 
-.wizard.ng-enter {
-  opacity: 0;
+.wizard .text-input {
+  margin: 0;
 }
 
-.wizard.ng-leave {
-  opacity: 1;
+.error {
+  color: darkred;
 }
 
-.wizard.ng-enter.ng-enter-active {
-  opacity: 1;
+.wizard-graphics-top {
+  height: 200px;
+  margin-top: 32px;
+  margin-bottom: 32px;
 }
 
-.wizard.ng-leave.ng-leave-active {
-  opacity: 0;
+.wizard-graphics-bottom {
+  height: 200px;
+  margin-top: 32px;
+  margin-bottom: 32px;
 }
 
-/* starting animations */
-.my-special-animation.ng-enter {
-  -webkit-transition:0.5s linear all;
-  transition:0.5s linear all;
-
-  background:red;
+.wizard-contents-top {
+  height: 128px;
+  margin: 32px 15% 32px 15%;
 }
 
-/* destination animations */
-.my-special-animation.ng-enter.ng-enter-active {
-  background:blue;
+.wizard-contents-bottom {
+  height: 128px;
+  margin: 32px 15% 32px 15%;
+}
+
+.wizard-navigation {
+  margin-top: 32px;
+  margin-bottom: 32px;
+}
+
+.wizard-graphics-top img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.wizard-graphics-bottom img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.wizard-graphics-top video {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 90%;
+}
+
+.wizard button {
+  margin-right: 32px;
+}
+
+.anim-wizard-step {
+  display: block;
+  position: absolute;
+  width: calc(100% - 16px);
+  height: 100%;
+}
+
+.anim-wizard-step form {
+  height: 100%;
+}
+
+#first.anim-wizard-step.ng-enter {
+  transform: none !important;
+  opacity: 1 !important;
+}
+
+.anim-wizard-step.ng-enter {
+  animation: fadeInRight 1s;
+}
+
+.anim-wizard-step.ng-leave {
+  animation: fadeOutLeft 1s;
+}
+
+.spinner {
+  color: #775d9f;
+}
+
+.wizard .spinner {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.anim-success-icon {
+  color: green;
+  font-size: 7em;
+  display: block;
+  text-align: center;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+  -webkit-animation-delay: 5s;
+  animation-delay: 5s;
+}
+
+.anim-success-icon.ng-enter {
+  animation: tada 2s;
+}
+
+.anim-warning-icon {
+  color: #FFA500;
+  font-size: 7em;
+  display: block;
+  text-align: center;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+  -webkit-animation-delay: 5s;
+  animation-delay: 5s;
+}
+
+.anim-warning-icon.ng-enter {
+  animation: flash 2s;
 }

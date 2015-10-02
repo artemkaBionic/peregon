@@ -2,8 +2,8 @@
     'use strict';
 
     var module = angular.module('app.user', ['ui.router']);
-
-    module.config(appConfig);
+    var config = module.config(appConfig);
+    config.run(onStateChange);
 
     appConfig.$inject = ['$stateProvider', '$apcSidebarProvider', '$filterProvider'];
     function appConfig($stateProvider, $apcSidebarProvider, $filterProvider) {
@@ -101,6 +101,15 @@
                 var number = Math.floor(Math.log(bytes) / Math.log(1024));
                 return (bytes / Math.pow(1024, Math.floor(number))).toFixed(precision) + ' ' + units[number];
             };
+        });
+    }
+
+    onStateChange.$inject = ['$rootScope', 'eventService'];
+    function onStateChange($rootScope, eventService) {
+        $rootScope.$on('$stateChangeStart', function(e, toState) {
+            if (toState.name === 'root.user') {
+                eventService.EnableDeviceNotification();
+            }
         });
     }
 })();

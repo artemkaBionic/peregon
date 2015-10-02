@@ -1,49 +1,125 @@
 <horizontal-ui-sheet class="sheet-md guide xbox-one">
-  <header horizontal-ui-sheet-header title="Refresh Guide">
-    <span class="apc-sheet-subtitle">{{::vm.guide.SKU}}: {{::vm.guide.Manufacturer}} {{::vm.guide.Model}} (Step {{vm.step}})</span>
+  <header horizontal-ui-sheet-header title="Refresh Microsoft Xbox One">
+    <span class="apc-sheet-subtitle">{{vm.step.title}}</span>
   </header>
   <div horizontal-ui-sheet-content>
-    <div ng-init="on=true">
-      <button ng-click="on=!on">Toggle On/Off</button>
-      <div class="my-special-animation" ng-if="on">
-        This content will enter and leave
+    <div ng-switch="vm.step.name" class="wizard">
+
+      <div class="anim-wizard-step" id="first" ng-switch-when="details">
+        <form name="form" novalidate ng-submit="vm.prepareUsbStart()">
+          <div class="row wizard-contents-top">
+            <h2>What is the item number?</h2>
+            <div class="text-input">
+              <span class="fa fa-barcode"></span>
+              <input autofocus name="itemnumber" class="form-control item-number-input" placeholder="Item Number" type="text" ng-model="vm.itemNumber" required ng-minlength=10 ng-maxlength=10 ng-pattern="/^\d{10}$/" >
+            </div>
+            <div class="error-container" ng-show="form.itemnumber.$invalid">
+              <span class="error" ng-show="form.itemnumber.$error.required || form.itemnumber.$error.minlength">10 digit item number is required.</span>
+              <span class="error" ng-show="form.itemnumber.$error.maxlength">Item number must be 10 digits.</span>
+            </div>
+          </div>
+          <div class="row wizard-graphics-bottom">
+            <img src="/assets/images/XboxItemNumber.png" class="wizard-image">
+          </div>
+          <div class="row wizard-navigation">
+            <button type="submit" class="btn btn-primary btn-rounded pull-right" ng-disabled="form.$invalid">
+              Next &nbsp; <i class="fa fa-caret-right"></i>
+            </button>
+          </div>
+        </form>
       </div>
+
+      <div class="anim-wizard-step" ng-switch-when="prepareUsbInsert">
+        <div class="row wizard-contents-top">
+          <h2>Please insert a USB drive into the Refresh Station.</h2>
+        </div>
+        <div class="row wizard-graphics-bottom">
+          <img src="/assets/images/InsertUsbDrive.png" class="wizard-image">
+        </div>
+      </div>
+
+      <div class="anim-wizard-step" ng-switch-when="prepareUsbInProgress">
+        <div class="row wizard-graphics-top">
+          <div class="la-ball-clip-rotate-multiple la-2x spinner">
+            <div></div>
+            <div></div>
+          </div>
+        </div>
+        <div class="row wizard-contents-bottom">
+          <h2>Preparing USB drive for Xbox refresh. Please wait...</h2>
+        </div>
+      </div>
+
+      <div class="anim-wizard-step" ng-switch-when="prepareUsbComplete">
+        <div class="row wizard-graphics-top">
+          <span class="fa fa-check-circle anim-success-icon"></span>
+        </div>
+        <div class="row wizard-contents-bottom">
+          <h2>The USB drive is ready.</h2>
+          <h3>Remove it from the Refresh Station to continue.</h3>
+        </div>
+      </div>
+
+      <div class="anim-wizard-step" ng-switch-when="refreshXbox">
+        <div class="row wizard-graphics-top">
+          <video controls autoplay>
+            <source src="/assets/videos/XboxOneRefresh.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+        </div>
+        <div class="row wizard-contents-bottom">
+          <ol>
+            <li>Insert the USB drive into the Xbox.</li>
+            <li>Press and hold the <b>BIND</b> and <b>EJECT</b> buttons while turning it on.</li>
+            <li>Listen for two "power-up" tones a couple of seconds apart.</li>
+            <li>Release the <b>BIND</b> and <b>EJECT</b> buttons.</li>
+            <li>When the Xbox button light turns off, unplug the Xbox and remove the USB drive.</li>
+          </ol>
+          <h3>Insert the USB drive into the Refresh Station to continue.</h3>
+        </div>
+      </div>
+
+      <div class="anim-wizard-step" ng-switch-when="verifyRefresh">
+        <div class="row wizard-graphics-top">
+          <div class="la-ball-clip-rotate-multiple la-2x spinner">
+            <div></div>
+            <div></div>
+          </div>
+        </div>
+        <div class="row wizard-contents-bottom">
+          <h2>Verifying the refresh. Please wait...</h2>
+        </div>
+      </div>
+
+      <div class="anim-wizard-step" ng-switch-when="complete">
+        <div class="row wizard-graphics-top">
+          <span class="fa fa-check-circle anim-success-icon"></span>
+        </div>
+        <div class="row wizard-contents-bottom">
+          <h2>You have successfully refreshed the Xbox.</h2>
+        </div>
+        <div class="row wizard-navigation">
+          <button class="btn btn-primary btn-rounded pull-right" ui-sref="^" href="#/user/home">
+            Finish &nbsp; <i class="fa fa-caret-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="anim-wizard-step" ng-switch-when="failed">
+        <div class="row wizard-graphics-top">
+          <span class="fa fa-exclamation-triangle anim-warning-icon"></span>
+        </div>
+        <div class="row wizard-contents-bottom">
+          <h2>The Xbox refresh failed.</h2>
+          <h3>Please try again. If error persists, contact support.</h3>
+        </div>
+        <div class="row wizard-navigation">
+          <button class="btn btn-primary btn-rounded pull-right" ng-click="vm.prepareUsbStart()">
+            <i class="fa fa-repeat"></i> &nbsp; Retry
+          </button>
+        </div>
+      </div>
+
     </div>
-    <div ng-switch="vm.step" class="wizard">
-      <div class="wizard-step" ng-switch-when="1">
-        <div class="row">
-          <div class="col-md-3">
-          </div>
-          <div class="col-md-6">
-            <h2 class="logo"><img src="/assets/images/XboxOneGuideLogo.png"></h2>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-3">
-          </div>
-          <div class="col-md-6">
-            <form ui-keypress="{13:'selectGuide($event)'}">
-              <div class="text-input">
-                <span class="fa fa-barcode"></span>
-                <input class="form-control item-number-input" placeholder="Item Number" type="text" ng-model="searchString">
-              </div>
-            </form>
-          </div>
-        </div>
-        <div class="footer">
-          <button class="btn btn-primary btn-rounded pull-right" ng-click="vm.setStep(2)">
-            Next &nbsp; <i class="fa fa-caret-right"></i>
-          </button>
-        </div>
-      </div>
-      <div class="wizard-step" ng-switch-when="2">
-        <p>STEP 2 of wizard</p>
-        <div class="footer">
-          <button class="btn btn-primary btn-rounded pull-right" ng-click="vm.setStep(1)">
-            <i class="fa fa-caret-left"></i> &nbsp; Back
-          </button>
-        </div>
-      </div>
-    </ng-switch>
   </div>
 </horizontal-ui-sheet>

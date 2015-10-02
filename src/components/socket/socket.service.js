@@ -5,16 +5,25 @@
         .module('app.socket')
         .factory('socketService', socketService);
 
-    socketService.$inject = ['$rootScope'];
+    socketService.$inject = ['$rootScope', 'env'];
 
-    function socketService($rootScope) {
+    function socketService($rootScope, env) {
 
         var service = {};
 
-        service.socket = io.connect();
+        service.socket = io('http://' + env.baseUrl);
 
         service.on = function(eventName, callback) {
             service.socket.on(eventName, function() {
+                var args = arguments;
+                $rootScope.$apply(function() {
+                    callback.apply(service.socket, args);
+                });
+            });
+        };
+
+        service.once = function(eventName, callback) {
+            service.socket.once(eventName, function() {
                 var args = arguments;
                 $rootScope.$apply(function() {
                     callback.apply(service.socket, args);
