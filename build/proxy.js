@@ -60,7 +60,7 @@ function proxyMiddleware(req, res, next) {
         console.log('socket: ' + req.url);
         proxy.ws(req, res);
     } else */
-    if (/\.(json|html|css|map|js|png|jpg|jpeg|gif|ico|mp4|xml|rss|txt|eot|svg|ttf|woff|cur)(\?((r|v|rel|rev)=[\-\.\w]*)?)?$/.test(req.url)) {
+    if (/\.(json|html|css|map|js|png|jpg|jpeg|gif|ico|mp4|vtt|xml|rss|txt|eot|svg|ttf|woff|cur)(\?((r|v|rel|rev)=[\-\.\w]*)?)?$/.test(req.url)) {
         console.log('proxy: ' + req.url);
         next();
     } else {
