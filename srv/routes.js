@@ -66,6 +66,7 @@ module.exports = function(io, data) {
         event.data = req.body;
 
         console.log(event.name + ' event has been reported.');
+        console.log(event.data);
 
         if (event.name === "device-add") {
             removeDevice(event.data.id); //Ensure that there are no duplicate devices

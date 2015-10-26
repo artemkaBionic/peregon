@@ -1,29 +1,86 @@
 <horizontal-ui-sheet class="sheet-md">
-  <header horizontal-ui-sheet-header title="USB Media">
-    <span class="apc-sheet-subtitle" ng-show="selectedDevice !== null">{{selectedDevice.size | bytes:0}}</span>
+  <header horizontal-ui-sheet-header title="Media">
+    <span class="apc-sheet-subtitle">{{vm.step.title}}</span>
   </header>
   <div horizontal-ui-sheet-content>
-    <div class="row" ng-show="devices.length === 0">
-      <div class="col-md-3">
-      </div>
-      <div class="col-md-6">
-        <h3>Insert USB</h3>
-        <p>No device detected. Please insert a USB device to continue.</p>
-      </div>
+    <div class="row">
+      <ul id="progress-tracker" data-steps="3">
+        <li ng-class="{'active': vm.step.number == 1, 'done': vm.step.number > 1}"><span>Select<br>Media</span></li>
+        <li ng-class="{'active': vm.step.number >= 2 && vm.step.number <= 3, 'done': vm.step.number > 3}"><span>Apply<br>Media</span></li>
+        <li ng-class="{'active': vm.step.number == 4}"><span>Finish</span><i></i></li>
+      </ul>
     </div>
-    <div class="row" ng-show="devices.length > 0">
-      <div class="col-md-12" ng-repeat="mediaPackage in mediaPackages | orderBy:'name'">
-        <article class="card">
-          <a ui-sref=".package({device: selectedDevice, package: mediaPackage})">
-            <div class="card-body">
-              <div class="h-80">
-                <div class="card-title text-ellipsis">{{mediaPackage.name}}</div>
-                <div class="text-sm text-ellipsis">{{mediaPackage.size | bytes:0}}</div>
+
+    <div ng-switch="vm.step.name" class="row wizard">
+
+      <div class="anim-wizard-step" id="first" ng-switch-when="selectMedia">
+        <div class="col-md-12" ng-repeat="mediaPackage in vm.mediaPackages | orderBy:'name'">
+          <article class="card">
+            <a href="" ng-click="vm.selectMediaPackage(mediaPackage)">
+              <div class="card-body">
+                <div class="h-80">
+                  <div class="card-title text-ellipsis">{{mediaPackage.name}}</div>
+                  <div class="text-sm text-ellipsis">{{mediaPackage.size | bytes:0}}</div>
+                </div>
               </div>
-            </div>
-          </a>
-        </article>
+            </a>
+          </article>
+        </div>
       </div>
+
+      <div class="anim-wizard-step" ng-switch-when="applyMediaInsert">
+        <div class="row wizard-contents-top">
+          <h2>Please insert a {{vm.selectedMediaPackage.size | bytes:0}} or larger USB drive into the Refresh Station.</h2>
+          <h3><strong>Warning,</strong> this action will erase the disk and cannot be undone.</h3>
+        </div>
+        <div class="row wizard-graphics-bottom">
+          <img src="/assets/images/InsertUsbDrive.png" class="wizard-image">
+        </div>
+      </div>
+
+      <div class="anim-wizard-step" ng-switch-when="applyMediaInProgress">
+        <div class="row wizard-graphics-top">
+          <div class="la-ball-clip-rotate-multiple la-2x spinner">
+            <div></div>
+            <div></div>
+          </div>
+        </div>
+        <div class="row wizard-contents-bottom">
+          <h2>Applying media to USB drive.</h2>
+          <h3>This may take a few minutes, please wait...</h3>
+        </div>
+      </div>
+
+      <div class="anim-wizard-step" ng-switch-when="complete">
+        <div class="row wizard-graphics-top">
+          <span class="fa fa-check-circle anim-success-icon"></span>
+        </div>
+        <div class="row wizard-contents-bottom">
+          <h2>The USB drive is ready.</h2>
+          <h3>It may now be removed from the Refresh Station.</h3>
+        </div>
+        <div class="row wizard-navigation">
+          <button class="btn btn-primary btn-rounded pull-right" ui-sref="^" href="#/user/home">
+            Finish &nbsp; <i class="fa fa-caret-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="anim-wizard-step" ng-switch-when="failed">
+        <div class="row wizard-graphics-top">
+          <span class="fa fa-exclamation-triangle anim-warning-icon"></span>
+        </div>
+        <div class="row wizard-contents-bottom">
+          <h2>Applying media to USB drive has failed.</h2>
+          <h3>Please try again. If error persists, contact support.</h3>
+        </div>
+        <div class="row wizard-navigation">
+          <button class="btn btn-primary btn-rounded pull-right" ng-click="vm.applyMediaStart()">
+            <i class="fa fa-repeat"></i> &nbsp; Retry
+          </button>
+        </div>
+      </div>
+
     </div>
   </div>
 </horizontal-ui-sheet>

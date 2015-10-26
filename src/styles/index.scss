@@ -226,3 +226,75 @@ $open-sans-path: '../bower_components/open-sans/fonts';
 .anim-warning-icon.ng-enter {
   animation: flash 2s;
 }
+
+//Wizard progress tracker
+#progress-tracker {
+  padding: 0;
+  list-style-type: none;
+  font-family: arial;
+  font-size: 12px;
+  clear: both;
+  line-height: 1em;
+  margin: 0 -1px 10px 0;
+  text-align: center;
+  height: 32px;
+}
+
+#progress-tracker li {
+  float: left;
+  display:table;
+  padding: 0;
+  background: #ccc;
+  color: #fff;
+  position: relative;
+  margin: 0 1px;
+}
+
+#progress-tracker li span {
+  height: 32px;
+  display: table-cell;
+  padding-left: 16px;
+  vertical-align: middle;
+}
+
+#progress-tracker[data-steps="3"] li { width: 32%; }
+#progress-tracker[data-steps="4"] li { width: 25%; }
+#progress-tracker[data-steps="5"] li { width: 20%; }
+#progress-tracker[data-steps="6"] li { width: 16%; }
+
+#progress-tracker li:before {
+  content: '';
+  border-left: 16px solid #fff;
+  border-top: 16px solid transparent;
+  border-bottom: 16px solid transparent;
+  position: absolute;
+  top: 0;
+  left: 0;
+
+}
+#progress-tracker li:after {
+  content: '';
+  border-left: 16px solid #ccc;
+  border-top: 16px solid transparent;
+  border-bottom: 16px solid transparent;
+  position: absolute;
+  top: 0;
+  left: 100%;
+  z-index: 20;
+}
+
+#progress-tracker li.active {
+  background: #775d9f;
+}
+
+#progress-tracker li.active:after {
+  border-left-color: #775d9f;
+}
+
+#progress-tracker li.done {
+  background: #b8aace;
+}
+
+#progress-tracker li.done:after {
+  border-left-color: #b8aace;
+}

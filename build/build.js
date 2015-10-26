@@ -151,6 +151,11 @@ gulp.task('images', function () {
         .pipe(gulp.dest('dist/assets/images/'));
 });
 
+gulp.task('videos', function () {
+    return gulp.src('src/assets/videos/**/*')
+        .pipe(gulp.dest('dist/assets/videos/'));
+});
+
 gulp.task('fonts', ['fonts:open-sans', 'fonts:apc-icons'], function () {
     return gulp.src($.mainBowerFiles())
         .pipe($.filter('**/*.{eot,svg,ttf,woff}'))
@@ -188,4 +193,4 @@ gulp.task('env', function () {
         .pipe(gulp.dest('src/app'));
 });
 
-gulp.task('build', ['html', 'images', 'fonts', 'misc']);
+gulp.task('build', ['html', 'images', 'videos', 'fonts', 'misc']);

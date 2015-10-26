@@ -9,6 +9,8 @@ var logger = require('morgan');
 var bodyParser = require('body-parser');
 var childProcess = require('child_process');
 var config = require('./config');
+var mongoClient = require('mongodb').MongoClient;
+var assert = require('assert');
 
 // Express
 var app = express();
@@ -16,6 +18,9 @@ var app = express();
 // Socket.io
 var io           = socket_io();
 app.io           = io;
+
+// MongoDB
+var mongoDbUrl = 'mongodb://localhost/?connectTimeoutMS=30000';
 
 // Common data
 var data = {};
@@ -78,8 +83,9 @@ io.on( 'connection', function( socket )
                 io.emit('device-apply-progress', {progress: 100, device: data.device});
             }, 3000);
         } else {
-            if (data.media === undefined) {
+            if (data.media === null || data.media === undefined) {
                 console.error('A client requested to apply an undefined media package.');
+                io.emit('device-apply-failed', {message: 'Media package is missing.', device: data.device});
             } else {
                 console.log('A client requested to apply "' + data.media.name + '" to the ' + data.device.type + ' device ' + data.device.id);
 
@@ -100,12 +106,12 @@ io.on( 'connection', function( socket )
         }
     });
     socket.on('verify-refresh', function(data) {
-        console.log('A client requested to verify an ' + data.refreshType + ' refresh.');
+        console.log('A client requested to verify an ' + data.refreshType + ' refresh of item number ' + data.itemNumber);
         if (data.refreshType === 'xbox-one') {
             if (process.platform === 'win32') {
                 console.log('Simulating verifying a refresh in a Windows development environment by waiting 3 seconds.');
                 setTimeout(function() {
-                    io.emit('verify-refresh-progress', 100);
+                    io.emit('verify-refresh-progress', {progress: 100, device: data.device});
                 }, 3000);
             } else {
                 console.log('Checking ' + data.device.id + ' for evidence that the refresh completed successfully.');
@@ -122,10 +128,10 @@ io.on( 'connection', function( socket )
                         rimraf(path.join(mountTarget, '*'), function(err) {
                             if (success) {
                                 console.log('It appears that the refresh completed successfully.');
-                                io.emit('verify-refresh-progress', 100);
+                                io.emit('verify-refresh-progress', {progress: 100, device: data.device});
                             } else {
                                 console.log('It appears that the refresh failed.');
-                                io.emit('verify-refresh-failed');
+                                io.emit('verify-refresh-failed', {message: 'The factory reset was not completed.', device: data.device});
                             }
                             childProcess.spawn('umount', [mountTarget]);
                         });
@@ -149,6 +155,17 @@ var filesExist = function(directory, files) {
             return false;
         }
     }
+};
+
+var reportRefreshSession = function(session) {
+    MongoClient.connect(url, function(err, db) {
+        assert.equal(err, null);
+        db.collection('RefreshSessions').insertOne(session, function(err, result) {
+            assert.equal(err, null);
+            console.log("Inserted a refresh session.");
+            db.close();
+        });
+    });
 };
 
 module.exports = app;

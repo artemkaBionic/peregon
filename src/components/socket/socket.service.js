@@ -13,6 +13,17 @@
 
         service.socket = io('http://' + env.baseUrl);
 
+        service.emit = function(eventName, data, callback) {
+            service.socket.emit(eventName, data, function() {
+                var args = arguments;
+                $rootScope.$apply(function() {
+                    if (callback) {
+                        callback.apply(service.socket, args);
+                    }
+                });
+            });
+        };
+
         service.on = function(eventName, callback) {
             service.socket.on(eventName, function() {
                 var args = arguments;
@@ -31,15 +42,8 @@
             });
         };
 
-        service.emit = function(eventName, data, callback) {
-            service.socket.emit(eventName, data, function() {
-                var args = arguments;
-                $rootScope.$apply(function() {
-                    if (callback) {
-                        callback.apply(service.socket, args);
-                    }
-                });
-            });
+        service.removeAllListeners = function(eventName) {
+            service.socket.removeAllListeners(eventName);
         };
 
         return service;
