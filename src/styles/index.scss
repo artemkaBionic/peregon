@@ -102,24 +102,13 @@ $open-sans-path: '../bower_components/open-sans/fonts';
   color: darkred;
 }
 
-.wizard-graphics-top {
-  height: 256px;
+.wizard-graphics {
+  height: 288px;
   margin-top: 32px;
   margin-bottom: 32px;
 }
 
-.wizard-graphics-bottom {
-  height: 256px;
-  margin-top: 32px;
-  margin-bottom: 32px;
-}
-
-.wizard-contents-top {
-  //height: 128px;
-  margin: 32px 15% 32px 15%;
-}
-
-.wizard-contents-bottom {
+.wizard-contents {
   //height: 128px;
   margin: 32px 15% 32px 15%;
 }
@@ -129,7 +118,7 @@ $open-sans-path: '../bower_components/open-sans/fonts';
   margin-bottom: 32px;
 }
 
-.wizard-graphics-top img {
+.wizard-graphics img {
   display: block;
   margin-left: auto;
   margin-right: auto;
@@ -138,13 +127,13 @@ $open-sans-path: '../bower_components/open-sans/fonts';
   transform: translateY(-50%);
 }
 
-.wizard-graphics-bottom img {
+.wizard-graphics img {
   display: block;
   margin-left: auto;
   margin-right: auto;
 }
 
-.wizard-graphics-top video {
+.wizard-graphics video {
   display: block;
   margin-left: auto;
   margin-right: auto;

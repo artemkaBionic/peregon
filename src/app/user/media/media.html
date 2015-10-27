@@ -29,33 +29,33 @@
       </div>
 
       <div class="anim-wizard-step" ng-switch-when="applyMediaInsert">
-        <div class="row wizard-contents-top">
+        <div class="row wizard-contents">
           <h2>Please insert a {{vm.selectedMediaPackage.size | bytes:0}} or larger USB drive into the Refresh Station.</h2>
           <h3><strong>Warning,</strong> this action will erase the disk and cannot be undone.</h3>
         </div>
-        <div class="row wizard-graphics-bottom">
+        <div class="row wizard-graphics">
           <img src="/assets/images/InsertUsbDrive.png" class="wizard-image">
         </div>
       </div>
 
       <div class="anim-wizard-step" ng-switch-when="applyMediaInProgress">
-        <div class="row wizard-graphics-top">
+        <div class="row wizard-graphics">
           <div class="la-ball-clip-rotate-multiple la-2x spinner">
             <div></div>
             <div></div>
           </div>
         </div>
-        <div class="row wizard-contents-bottom">
+        <div class="row wizard-contents">
           <h2>Applying media to USB drive.</h2>
           <h3>This may take a few minutes, please wait...</h3>
         </div>
       </div>
 
       <div class="anim-wizard-step" ng-switch-when="complete">
-        <div class="row wizard-graphics-top">
+        <div class="row wizard-graphics">
           <span class="fa fa-check-circle anim-success-icon"></span>
         </div>
-        <div class="row wizard-contents-bottom">
+        <div class="row wizard-contents">
           <h2>The USB drive is ready.</h2>
           <h3>It may now be removed from the Refresh Station.</h3>
         </div>
@@ -67,10 +67,10 @@
       </div>
 
       <div class="anim-wizard-step" ng-switch-when="failed">
-        <div class="row wizard-graphics-top">
+        <div class="row wizard-graphics">
           <span class="fa fa-exclamation-triangle anim-warning-icon"></span>
         </div>
-        <div class="row wizard-contents-bottom">
+        <div class="row wizard-contents">
           <h2>Applying media to USB drive has failed.</h2>
           <h3>Please try again. If error persists, contact support.</h3>
         </div>

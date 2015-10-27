@@ -18,7 +18,7 @@
 
       <div class="anim-wizard-step" id="first" ng-switch-when="details">
         <form name="form" novalidate ng-submit="vm.prepareRefreshUsbStart()">
-          <div class="row wizard-contents-top">
+          <div class="row wizard-contents">
             <h2>What is the item number?</h2>
             <div class="text-input">
               <span class="fa fa-barcode"></span>
@@ -29,7 +29,7 @@
               <span class="error" ng-show="form.itemnumber.$error.maxlength">Item number must be 10 digits.</span>
             </div>
           </div>
-          <div class="row wizard-graphics-bottom">
+          <div class="row wizard-graphics">
             <img src="/assets/images/XboxItemNumber.png" class="wizard-image">
           </div>
           <div class="row wizard-navigation">
@@ -41,46 +41,47 @@
       </div>
 
       <div class="anim-wizard-step" ng-switch-when="prepareRefreshUsbInsert">
-        <div class="row wizard-contents-top">
+        <div class="row wizard-contents">
           <h2>Please insert a 4GB or larger USB drive into the Refresh Station.</h2>
         </div>
-        <div class="row wizard-graphics-bottom">
+        <div class="row wizard-graphics">
           <img src="/assets/images/InsertUsbDrive.png" class="wizard-image">
         </div>
       </div>
 
       <div class="anim-wizard-step" ng-switch-when="prepareRefreshUsbInProgress">
-        <div class="row wizard-graphics-top">
+        <div class="row wizard-graphics">
           <div class="la-ball-clip-rotate-multiple la-2x spinner">
             <div></div>
             <div></div>
           </div>
         </div>
-        <div class="row wizard-contents-bottom">
+        <div class="row wizard-contents">
           <h2>Preparing USB drive for Xbox refresh.</h2>
           <h3>This should take a few seconds, please wait...</h3>
         </div>
       </div>
 
       <div class="anim-wizard-step" ng-switch-when="prepareRefreshUsbComplete">
-        <div class="row wizard-graphics-top">
+        <div class="row wizard-graphics">
           <span class="fa fa-check-circle anim-success-icon"></span>
         </div>
-        <div class="row wizard-contents-bottom">
+        <div class="row wizard-contents">
           <h2>The USB drive is ready.</h2>
           <h3>Remove it from the Refresh Station to continue.</h3>
         </div>
       </div>
 
       <div class="anim-wizard-step" ng-switch-when="refreshXbox">
-        <div class="row wizard-graphics-top">
+        <div class="row wizard-graphics">
           <video controls autoplay>
+            <source src="/assets/videos/XboxOneRefresh.webm" type='video/webm;codecs="vp9, vorbis"'>
             <source src="/assets/videos/XboxOneRefresh.mp4" type="video/mp4">
             <track label="English" kind="subtitles" srclang="en" src="/assets/videos/XboxOneRefresh-en.vtt" default>
             Your browser does not support the video tag.
           </video>
         </div>
-        <div class="row wizard-contents-bottom">
+        <div class="row wizard-contents">
           <ol>
             <li>Insert the USB drive into the Xbox.</li>
             <li>Press and hold the <b>BIND</b> and <b>EJECT</b> buttons while turning it on.</li>
@@ -93,58 +94,59 @@
       </div>
 
       <div class="anim-wizard-step" ng-switch-when="verifyRefresh">
-        <div class="row wizard-graphics-top">
+        <div class="row wizard-graphics">
           <div class="la-ball-clip-rotate-multiple la-2x spinner">
             <div></div>
             <div></div>
           </div>
         </div>
-        <div class="row wizard-contents-bottom">
+        <div class="row wizard-contents">
           <h2>Verifying the refresh. Please wait...</h2>
         </div>
       </div>
 
       <div class="anim-wizard-step" ng-switch-when="prepareUpdateUsbInsert">
-        <div class="row wizard-contents-top">
+        <div class="row wizard-contents">
           <h2>Please insert a 4GB or larger USB drive into the Refresh Station.</h2>
         </div>
-        <div class="row wizard-graphics-bottom">
+        <div class="row wizard-graphics">
           <img src="/assets/images/InsertUsbDrive.png" class="wizard-image">
         </div>
       </div>
 
       <div class="anim-wizard-step" ng-switch-when="prepareUpdateUsbInProgress">
-        <div class="row wizard-graphics-top">
+        <div class="row wizard-graphics">
           <div class="la-ball-clip-rotate-multiple la-2x spinner">
             <div></div>
             <div></div>
           </div>
         </div>
-        <div class="row wizard-contents-bottom">
+        <div class="row wizard-contents">
           <h2>Preparing USB drive for Xbox update.</h2>
           <h3>This may take a couple minutes, please wait...</h3>
         </div>
       </div>
 
       <div class="anim-wizard-step" ng-switch-when="prepareUpdateUsbComplete">
-        <div class="row wizard-graphics-top">
+        <div class="row wizard-graphics">
           <span class="fa fa-check-circle anim-success-icon"></span>
         </div>
-        <div class="row wizard-contents-bottom">
+        <div class="row wizard-contents">
           <h2>The USB drive is ready.</h2>
           <h3>Remove it from the Refresh Station to continue.</h3>
         </div>
       </div>
 
       <div class="anim-wizard-step" ng-switch-when="updateXbox">
-        <div class="row wizard-graphics-top">
+        <div class="row wizard-graphics">
           <video controls autoplay>
+            <source src="/assets/videos/XboxOneRefresh.webm" type='video/webm;codecs="vp9, vorbis"'>
             <source src="/assets/videos/XboxOneRefresh.mp4" type="video/mp4">
             <track label="English" kind="subtitles" srclang="en" src="/assets/videos/XboxOneRefresh-en.vtt" default>
             Your browser does not support the video tag.
           </video>
         </div>
-        <div class="row wizard-contents-bottom">
+        <div class="row wizard-contents">
           <ol>
             <li>Insert the USB drive into the Xbox.</li>
             <li>Press and hold the <b>BIND</b> and <b>EJECT</b> buttons while turning it on.</li>
@@ -157,10 +159,10 @@
       </div>
 
       <div class="anim-wizard-step" ng-switch-when="complete">
-        <div class="row wizard-graphics-top">
+        <div class="row wizard-graphics">
           <span class="fa fa-check-circle anim-success-icon"></span>
         </div>
-        <div class="row wizard-contents-bottom">
+        <div class="row wizard-contents">
           <h2>You have successfully refreshed the Xbox.</h2>
         </div>
         <div class="row wizard-navigation">
@@ -171,10 +173,10 @@
       </div>
 
       <div class="anim-wizard-step" ng-switch-when="failed">
-        <div class="row wizard-graphics-top">
+        <div class="row wizard-graphics">
           <span class="fa fa-exclamation-triangle anim-warning-icon"></span>
         </div>
-        <div class="row wizard-contents-bottom">
+        <div class="row wizard-contents">
           <h2>The Xbox refresh failed.</h2>
           <h3>{{vm.errorMessage}}</h3>
           <h3>Please try again. If error persists, contact support.</h3>
