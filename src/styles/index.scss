@@ -118,19 +118,15 @@ $open-sans-path: '../bower_components/open-sans/fonts';
   margin-bottom: 32px;
 }
 
-.wizard-graphics img {
-  display: block;
+.wizard-graphics figure {
+  display: table;
+  text-align: center;
   margin-left: auto;
   margin-right: auto;
-  position: relative;
-  top: 50%;
-  transform: translateY(-50%);
+  padding: 5px;
 }
-
-.wizard-graphics img {
+figcaption {
   display: block;
-  margin-left: auto;
-  margin-right: auto;
 }
 
 .wizard-graphics video {

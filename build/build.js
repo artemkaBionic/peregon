@@ -5,6 +5,7 @@ var gulp = require('gulp');
 var util = require('util');
 var config = require('gulp-ng-config');
 var file = require('gulp-file');
+var replace = require('gulp-replace');
 
 var $ = require('gulp-load-plugins')({
     pattern: ['gulp-*', 'main-bower-files', 'uglify-save-license', 'del']
@@ -17,7 +18,7 @@ function processScss(file, container) {
         .on('error', function (err) {
             console.error('Error', err.message);
         })
-        .pipe($.replace('@import url(bower_components/', '@import url(../bower_components/')) //change url to css
+        .pipe(replace('@import url(bower_components/', '@import url(../bower_components/')) //change url to css
         .pipe($.autoprefixer({
             browsers: ['last 2 versions', 'ios 6', 'android 4']
         }))
@@ -77,7 +78,8 @@ gulp.task('injector:js', ['env', 'analyze', 'injector:css'], function () {
                 gulp.src([
                     'src/{app,components}/**/*.js',
                     '!src/{app,components}/**/*.spec.js',
-                    '!src/{app,components}/**/*.mock.js'
+                    '!src/{app,components}/**/*.mock.js',
+                    '!src/app/app.config*.js'
                 ])
                 .pipe($.angularFilesort()), {
                 ignorePath: 'src',
@@ -88,11 +90,11 @@ gulp.task('injector:js', ['env', 'analyze', 'injector:css'], function () {
 
 gulp.task('partials', function () {
     return gulp.src('src/{app,components}/**/*.html')
-        .pipe($.minifyHtml({
-            empty: true,
-            spare: true,
-            quotes: true
-        }))
+        //.pipe($.minifyHtml({
+        //    empty: true,
+        //    spare: true,
+        //    quotes: true
+        //}))
         .pipe($.angularTemplatecache('templateCacheHtml.js', {
             module: 'app'
         }))
@@ -116,26 +118,27 @@ gulp.task('html', ['wiredep', 'injector:css', 'injector:js', 'partials'], functi
         .pipe(jsFilter)
         .pipe($.debug({title: 'js'}))
         .pipe($.ngAnnotate({ add: true, single_quotes: true }))
-        .pipe($.uglify({preserveComments: $.uglifySaveLicense}))
+        //.pipe($.uglify({preserveComments: $.uglifySaveLicense}))
         .pipe(jsFilter.restore())
         .pipe(cssFilter)
         .pipe($.debug({title: 'css'}))
-        .pipe($.replace('@import url(../bower_components/', '@import url(../../bower_components/')) //change url to css
-        .pipe($.replace('bower_components/bootstrap-sass-official/assets/fonts/bootstrap', 'fonts'))
-        .pipe($.replace('../bower_components/open-sans/fonts', '../fonts/open-sans'))
-        .pipe($.replace('../bower_components/p0rtal/src/package/fonts/apc-icons/fonts', '../fonts/apc-icons'))
+        .pipe(replace('@import url(../bower_components/', '@import url(../../bower_components/')) //change url to css
+        .pipe(replace('bower_components/bootstrap-sass-official/assets/fonts/bootstrap', 'fonts'))
+        //.pipe(replace('../bower_components/font-awesome/fonts', '../bower_components/Font-Awesome/Fonts')) Todo: Fix This
+        .pipe(replace('../bower_components/open-sans/fonts', '../fonts/open-sans'))
+        .pipe(replace('../bower_components/p0rtal/src/package/fonts/apc-icons/fonts', '../fonts/apc-icons'))
         .pipe($.importCss()) //inlining css @import
-        .pipe($.csso())
+        //.pipe($.csso())
         .pipe(cssFilter.restore())
         .pipe(assets.restore())
         .pipe($.useref())
         .pipe($.revReplace())
         .pipe(htmlFilter)
-        .pipe($.minifyHtml({
-            empty: true,
-            spare: true,
-            quotes: true
-        }))
+        //.pipe($.minifyHtml({
+        //    empty: true,
+        //    spare: true,
+        //    quotes: true
+        //}))
         .pipe(htmlFilter.restore())
         .pipe(gulp.dest('dist/'))
         .pipe($.size({title: 'dist/', showFiles: true}));
@@ -156,11 +159,16 @@ gulp.task('videos', function () {
         .pipe(gulp.dest('dist/assets/videos/'));
 });
 
-gulp.task('fonts', ['fonts:open-sans', 'fonts:apc-icons'], function () {
+gulp.task('fonts', ['fonts:font-awesome', 'fonts:open-sans', 'fonts:apc-icons'], function () {
     return gulp.src($.mainBowerFiles())
-        .pipe($.filter('**/*.{eot,svg,ttf,woff}'))
+        .pipe($.filter('**/*.{eot,svg,ttf,woff,woff2}'))
         .pipe($.flatten())
         .pipe(gulp.dest('dist/fonts/'));
+});
+
+gulp.task('fonts:font-awesome', function () {
+    return gulp.src('bower_components/font-awesome/fonts/**/*.{eot,svg,ttf,woff,woff2}')
+        .pipe(gulp.dest('dist/fonts/font-awesome'));
 });
 
 gulp.task('fonts:open-sans', function () {
@@ -175,7 +183,10 @@ gulp.task('fonts:apc-icons', function () {
 });
 
 gulp.task('misc', function () {
-    return gulp.src('src/**/*.ico')
+    return gulp.src([
+            'src/**/*.ico',
+            'src/app/app.config.js'
+        ])
         .pipe(gulp.dest('dist/'));
 });
 

@@ -20,7 +20,7 @@ var io           = socket_io();
 app.io           = io;
 
 // MongoDB
-var mongoDbUrl = 'mongodb://localhost/?connectTimeoutMS=30000';
+var mongoDbUrl = 'mongodb://localhost/AppChord?connectTimeoutMS=30000';
 
 // Common data
 var data = {};
@@ -91,16 +91,17 @@ io.on( 'connection', function( socket )
 
                 var mediaPackagePath = path.join(config.mediaPackagePath, data.media.id);
                 var mediaPackageFile = path.join(mediaPackagePath, '.package.json');
-                var mediaPackage = JSON.parse(fs.readFileSync(mediaPackageFile, 'utf8'));
+                fs.readFile(mediaPackageFile, 'utf8', function(err, packageFileData) {
+                    var mediaPackage = JSON.parse(packageFileData);
+                    var fileSystem = 'fat32';
+                    if (mediaPackage.subtype === "xbox-one") {
+                        fileSystem = 'ntfs';
+                    }
 
-                var fileSystem = 'fat32';
-                if (mediaPackage.subtype === "xbox-one") {
-                    fileSystem = 'ntfs';
-                }
-
-                var python = childProcess.spawn('python', ['/opt/kiosk/apply_media.py', '--package', data.media.id, '--device', data.device.id, '--file-system', fileSystem]);
-                python.on('close', function (code) {
-                    io.emit('device-apply-progress', {progress: 100, device: data.device});
+                    var python = childProcess.spawn('python', ['/opt/kiosk/apply_media.py', '--package', data.media.id, '--device', data.device.id, '--file-system', fileSystem]);
+                    python.on('close', function (code) {
+                        io.emit('device-apply-progress', {progress: 100, device: data.device});
+                    });
                 });
             }
         }
@@ -108,32 +109,48 @@ io.on( 'connection', function( socket )
     socket.on('verify-refresh', function(data) {
         console.log('A client requested to verify an ' + data.refreshType + ' refresh of item number ' + data.itemNumber);
         if (data.refreshType === 'xbox-one') {
+            var session = initSession('Microsoft', 'Xbox One', data.itemNumber, data.sku);
+
             if (process.platform === 'win32') {
                 console.log('Simulating verifying a refresh in a Windows development environment by waiting 3 seconds.');
                 setTimeout(function() {
                     io.emit('verify-refresh-progress', {progress: 100, device: data.device});
                 }, 3000);
             } else {
-                console.log('Checking ' + data.device.id + ' for evidence that the refresh completed successfully.');
+                logSession(session, 'Checking ' + data.device.id + ' for evidence that the refresh completed successfully.');
                 var mountSource = '/dev/' + data.device.id + '1';
                 var mountTarget = '/mnt/' + data.device.id + '1';
-                if (!fs.existsSync(mountTarget)){
-                    fs.mkdirSync(mountTarget);
-                }
-                var mount = childProcess.spawn('mount', [mountSource, mountTarget]);
-                mount.on('close', function (code) {
-                    var systemUpdateDir = path.join(mountTarget, '$SystemUpdate');
-                    if (code === 0) {
-                        var success = filesExist(systemUpdateDir, ['smcerr.log', 'update.cfg', 'update.log', 'update2.cfg']);
-                        rimraf(path.join(mountTarget, '*'), function(err) {
-                            if (success) {
-                                console.log('It appears that the refresh completed successfully.');
-                                io.emit('verify-refresh-progress', {progress: 100, device: data.device});
+                fs.mkdir(mountTarget, function(err) {
+                    if (err && err.code !== 'EEXIST') {
+                        logSession(session, 'Error creating directory ' + mountTarget);
+                        logSession(err);
+                    } else {
+                        logSession(session, 'Attempting to mount ' + mountSource + ' to ' + mountTarget);
+                        var mount = childProcess.spawn('mount', [mountSource, mountTarget]);
+                        mount.on('close', function (code) {
+                            var systemUpdateDir = path.join(mountTarget, '$SystemUpdate');
+                            if (code !== 0) {
+                                logSession(session, 'Error, failed to mount ' + mountSource + ' to ' + mountTarget);
+                                logSession('mount command failed with error code ' + code);
                             } else {
-                                console.log('It appears that the refresh failed.');
-                                io.emit('verify-refresh-failed', {message: 'The factory reset was not completed.', device: data.device});
+                                logSession(session, 'Successfully mounted ' + mountSource + ' to ' + mountTarget);
+                                var success = filesExist(systemUpdateDir, ['smcerr.log', 'update.cfg', 'update.log', 'update2.cfg']);
+                                rimraf(path.join(mountTarget, '*'), function(err) {
+                                    if (success) {
+                                        logSession(session, 'It appears that the refresh completed successfully.');
+                                        session.SessionState = session.CurrentState = 'Completed';
+                                        closeSession(session);
+                                        io.emit('verify-refresh-progress', {progress: 100, device: data.device});
+                                    } else {
+                                        logSession(session, 'It appears that the refresh failed.');
+                                        session.CurrentState = 'VerifyRefreshFailed';
+                                        session.SessionState = 'Aborted';
+                                        closeSession(session);
+                                        io.emit('verify-refresh-failed', {message: 'The factory reset was not completed.', device: data.device});
+                                    }
+                                    childProcess.spawn('umount', [mountTarget]);
+                                });
                             }
-                            childProcess.spawn('umount', [mountTarget]);
                         });
                     }
                 });
@@ -141,6 +158,9 @@ io.on( 'connection', function( socket )
         }
     });
 });
+
+//Initialize station connection status
+childProcess.spawn('python', ['/opt/connection-status/connection-status.py']);
 
 var filesExist = function(directory, files) {
     if (files.length === 0) {
@@ -157,15 +177,79 @@ var filesExist = function(directory, files) {
     }
 };
 
-var reportRefreshSession = function(session) {
-    MongoClient.connect(url, function(err, db) {
+var initSession = function(manufacturer, model, itemNumber, sku) {
+    var session = {
+        'SessionDate': new Date(),
+        'LastUpdated': new Date(),
+        'DiagnoseOnly': false,
+        'Computer': {
+            'SKU': sku,
+            'ServiceTag': null,
+            'ComputerName': null,
+            'AppChordId': null,
+            'SerialNumber': null,
+            'ComputerManufacturer': manufacturer,
+            'Address': null,
+            'NetworkAdapters': [],
+            'Model': model,
+            'ItemNumber': itemNumber
+        },
+        'RefreshStation': {
+            'SKU': null,
+            'ServiceTag': null,
+            'ComputerName': null,
+            'UUID': null,
+            'AppChordId': null,
+            'MsdmProductKey': null,
+            'SerialNumber': null,
+            'ComputerManufacturer': null,
+            'Address': '192.168.108.5',
+            'AssetTag': null,
+            'NetworkAdapters': [  {
+                'MacAddress': '',
+                'IpAddress': '192.168.108.5' } ],
+            'Model': null,
+            'MsdmOemId': null },
+        'Closed': null,
+        'SessionState': 'Started',
+        'AuditLogEntries': [],
+        'CurrentState': 'DiskErasingStarted' };
+
+    updateSessionDb(session);
+    return session;
+};
+
+var updateSessionDb = function(session) {
+    mongoClient.connect(mongoDbUrl, function(err, db) {
         assert.equal(err, null);
-        db.collection('RefreshSessions').insertOne(session, function(err, result) {
-            assert.equal(err, null);
-            console.log("Inserted a refresh session.");
-            db.close();
-        });
+        if (session._id === undefined) {
+            db.collection('RefreshSessions').insertOne(session, function (err, result) {
+                assert.equal(err, null);
+                console.log('Inserted refresh session:');
+                console.log(session);
+                db.close();
+            });
+        } else {
+            db.collection('RefreshSessions').replaceOne({ "_id" : session._id }, session, function (err, result) {
+                assert.equal(err, null);
+                console.log('Updated refresh session:');
+                console.log(session);
+                db.close();
+            });
+        }
     });
+};
+
+var logSession = function(session, message) {
+    session.LastUpdated = new Date();
+    session.AuditLogEntries.push(message);
+    console.log(message);
+    updateSessionDb(session);
+};
+
+var closeSession = function(session) {
+    session.Closed = new Date();
+    updateSessionDb(session);
 };
 
 module.exports = app;

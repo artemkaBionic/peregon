@@ -2,6 +2,8 @@ var express = require('express');
 var fs = require('fs');
 var path = require('path');
 var config = require('./config');
+var inventory = require('./inventory');
+var station = require('./station');
 
 module.exports = function(io, data) {
 // Express Router
@@ -22,7 +24,13 @@ module.exports = function(io, data) {
     }
 
     router.get('/data/devices', function (req, res) {
-        res.send(data.devices);
+        res.json(data.devices);
+    });
+
+    router.get('/data/inventory/:id', function (req, res) {
+        inventory.getItem(req.params.id, function (item) {
+            res.json(item);
+        });
     });
 
     router.get('/data/packages/:contentType/:contentSubtype?', function (req, res) {
@@ -48,16 +56,26 @@ module.exports = function(io, data) {
                             console.log(e);
                         }
                     }
-                    res.send(packages);
+                    res.json(packages);
                     break;
                 default:
-                    res.send(null);
+                    res.json(null);
                     break;
             }
         } catch (e) {
             console.log('Unable to get ' + req.params.contentType + ' packages.');
             console.log(e);
         }
+    });
+
+    router.get('/data/isServiceCenter', function (req, res) {
+        station.getIsServiceCenter((function(data) {
+            res.json(data);
+        }));
+    });
+
+    router.get('/data/getConnectionState', function (req, res) {
+        res.json(station.getConnectionState());
     });
 
     router.post('/event/:name', function (req, res) {
@@ -73,10 +91,12 @@ module.exports = function(io, data) {
             data.devices.push(event.data);
         } else if (event.name === "device-remove") {
             removeDevice(event.data.id);
+        } else if (event.name === "connection-status") {
+            station.setConnectionState(event.data);
         }
 
         io.emit('event', event);
-        res.send();
+        res.json();
     });
 
     return router;

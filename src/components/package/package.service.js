@@ -11,8 +11,6 @@
 
         var service = {};
 
-        service.mediaPackages = null;
-
         service.getMediaPackages = function(subtype) {
             var url = '/data/packages/media';
             var deferred = $q.defer();
@@ -22,8 +20,7 @@
             }
 
             $http.get(url).then(function(result) {
-                service.mediaPackages = result.data;
-                deferred.resolve(service.mediaPackages);
+                deferred.resolve(result.data);
             });
 
             return deferred.promise;

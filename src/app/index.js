@@ -10,8 +10,10 @@
         'app.core',
         'app.guide',
         'app.socket',
+        'app.station',
         'app.device',
         'app.event',
+        'app.inventory',
         'app.user',
         'app.package',
         /*

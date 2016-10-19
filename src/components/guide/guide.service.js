@@ -11,9 +11,7 @@
 
         var service = {};
 
-        var dynamicGuides = [
-            {SKU: '7339XC2', GuideName: '7339XC2', Model: 'Xbox One', IsRefereshSupported: true, Manufacturer: 'Microsoft', DynamicGuideName: 'XboxOne'}
-        ];
+        var dynamicGuides = config.guides;
 
         service.searchString = '';
         service.guides = null;

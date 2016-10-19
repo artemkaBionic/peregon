@@ -12,6 +12,9 @@
         var service = {};
 
         service.isDeviceNotificationEnabled = true;
+        service.isOfflineNotificationEnabled = true;
+
+        var offlineNotification = null;
 
         socketService.on('event', function(event) {
             if (event.name === 'device-add') {
@@ -22,15 +25,40 @@
                                 'timeOut': 0,
                                 'onHidden': function(clicked) {
                                     if (clicked) {
-                                        var $stateParams = {};
-                                        $stateParams.id = event.data.id;
-                                        $state.go('root.user.media', $stateParams);
+                                        $state.go('root.user.media', {
+                                            'id': event.data.id
+                                        });
                                     }
                                 }
                             }
                         );
                     }
                 });
+            }
+            else if (event.name === 'connection-status') {
+                if (event.data.isOnline) {
+                    if (service.isOfflineNotificationEnabled) {
+                        toastr.clear(offlineNotification);
+                        offlineNotification = null;
+                        toastr.success('Connection restored!');
+                    }
+                }
+                else {
+                    if (service.isOfflineNotificationEnabled) {
+                        offlineNotification = toastr.error('Tap for help.',
+                            'Not connected.', {
+                                'timeOut': 0,
+                                'onHidden': function(clicked) {
+                                    if (clicked) {
+                                        $state.go('root.connection', {
+                                            'connectionState': event.data
+                                        });
+                                    }
+                                }
+                            }
+                        );
+                    }
+                }
             }
         });
 
@@ -57,6 +85,14 @@
 
         service.DisableDeviceNotification = function() {
             service.isDeviceNotificationEnabled = false;
+        };
+
+        service.EnableOfflineNotification = function() {
+            service.isOfflineNotificationEnabled = true;
+        };
+
+        service.DisableOfflineNotification = function() {
+            service.isOfflineNotificationEnabled = false;
         };
 
         return service;

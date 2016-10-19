@@ -15,13 +15,22 @@
                 controller: 'UserController',
                 controllerAs: 'vm'
             })
+            .state('root.connection', {
+                url: '/connection/',
+                params: {
+                    connectionState: null
+                },
+                templateUrl: 'app/user/connection/connection.html',
+                controller: 'ConnectionController',
+                controllerAs: 'vm'
+            })
             .state('root.user.guide', {
                 url: '/guides/:guide',
                 templateProvider: guideTemplate,
                 controllerProvider: guideController,
                 controllerAs: 'vm'
             })
-            .state('root.user.media', {
+            .state('root.media', {
                 url: '/media/',
                 params: {
                     deviceId: null
@@ -30,7 +39,7 @@
                 controller: 'MediaController',
                 controllerAs: 'vm'
             })
-            .state('root.user.media.package', {
+            .state('root.media.package', {
                 url: '/media/package/',
                 params: {
                     device: null,
@@ -78,7 +87,7 @@
         $apcSidebarProvider.config('media', {
             title: 'Media',
             nav: 20,
-            content: '<span ui-sref="root.user.media" data-apc-sidebar-group-heading="Media" data-icon-class="fa fa-download"></span>'
+            content: '<span ui-sref="root.media" data-apc-sidebar-group-heading="Media" data-icon-class="fa fa-download"></span>'
         });
 
         getPost.$inject = ['$stateParams', 'dataService'];

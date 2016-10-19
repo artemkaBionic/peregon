@@ -1,0 +1,70 @@
+<horizontal-ui-sheet class="gray-light-bg apc-sheet-full">
+  <header horizontal-ui-sheet-header title="Connection">
+    <span class="apc-sheet-subtitle">{{vm.step.title}}</span>
+  </header>
+  <div horizontal-ui-sheet-content>
+    <div class="row">
+      <ul id="progress-tracker" data-steps="3">
+        <li ng-class="{'active': vm.step.number == 1, 'done': vm.step.number > 1}"><span>Select Network Device</span></li>
+        <li ng-class="{'active': vm.step.number >= 2 && vm.step.number <= 3, 'done': vm.step.number > 3}"><span>Connect to Network</span></li>
+        <li ng-class="{'active': vm.step.number == 4}"><span>Finish</span><i></i></li>
+      </ul>
+    </div>
+
+    <div ng-switch="vm.step.name" class="row wizard">
+
+      <div class="anim-wizard-step" id="first" ng-switch-when="selectNetworkDevice">
+        <div class="row wizard-contents">
+          <p>Which device is most convenient to the Refresh Station?</p>
+          <p>You may need to follow the Ethernet connection from the Refresh Station to see where it leads.</p>
+          <p>If you need help, please call the National Support Center at (678) 402-0015.</p>
+        </div>
+        <div class="row wizard-graphics">
+          <div class="col-md-3" ng-repeat="networkDevice in vm.networkDevices">
+            <article class="card">
+              <a href="" ng-click="vm.selectNetworkDevice(networkDevice)">
+                <div class="card-body">
+                  <div class="h-80">
+                    <div class="card-title text-ellipsis">{{::networkDevice.description}}</div>
+                    <div><img ng-src="/assets/images/{{::networkDevice.deviceImageFile}}"></div>
+                  </div>
+                </div>
+              </a>
+            </article>
+          </div>
+        </div>
+      </div>
+
+      <div class="anim-wizard-step" ng-switch-when="connectToNetwork">
+        <div class="row wizard-contents">
+          <h2>Connect the Refresh Station</h2>
+          <p ng-show="vm.connectionState != null">The Refresh Station is currently connected to <span ng-show="vm.isPortDetectable">port {{vm.connectionState.port}} of </span>the {{vm.connectionState.description}}.</p>
+          <p>Please connect the Refresh Station to port {{vm.selectedNetworkDevice.correctPort}} of the {{vm.selectedNetworkDevice.description}} (see wiring diagram).</p>
+          <p>If you require assistance, please call the National Support Center at (678) 402-0015.</p>
+        </div>
+        <div class="row wizard-graphics">
+          <figure>
+            <img src="/assets/images/{{vm.selectedNetworkDevice.wiringImageFile}}" class="wizard-image">
+            <figcaption>{{vm.selectedNetworkDevice.description}} wiring diagram</figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <div class="anim-wizard-step" ng-switch-when="complete">
+        <div class="row wizard-graphics">
+          <span class="fa fa-check-circle anim-success-icon"></span>
+        </div>
+        <div class="row wizard-contents">
+          <h2>Station Online</h2>
+          <h3>The Refresh Station is correctly connected to the Internet.</h3>
+        </div>
+        <div class="row wizard-navigation">
+          <button class="btn btn-primary btn-rounded pull-right" ui-sref="^" href="#/user/home">
+            Finish &nbsp; <i class="fa fa-caret-right"></i>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</horizontal-ui-sheet>
