@@ -35,26 +35,28 @@
                     }
                 });
             }
+
             else if (event.name === 'connection-status') {
                 if (event.data.isOnline) {
                     if (service.isOfflineNotificationEnabled) {
                         toastr.clear(offlineNotification);
                         offlineNotification = null;
-                        toastr.success('Connection restored!');
+                        toastr.success('Connection restored!',
+                            {'onShown': function() {
+                            $state.go('root');
+                        }});
                     }
                 }
+
                 else {
                     if (service.isOfflineNotificationEnabled) {
-                        offlineNotification = toastr.error('Tap for help.',
-                            'Not connected.', {
+                        offlineNotification = toastr.error('Not connected', {
                                 'timeOut': 0,
-                                'onHidden': function(clicked) {
-                                    if (clicked) {
+                                'onShown': function() {
                                         $state.go('root.connection', {
                                             'connectionState': event.data
                                         });
                                     }
-                                }
                             }
                         );
                     }

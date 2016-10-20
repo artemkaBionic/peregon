@@ -11,7 +11,7 @@
 
         var service = {};
 
-        service.socket = io('http://' + env.baseUrl);
+        service.socket = io.connect('http://' + env.baseUrl);
 
         service.emit = function(eventName, data, callback) {
             service.socket.emit(eventName, data, function() {

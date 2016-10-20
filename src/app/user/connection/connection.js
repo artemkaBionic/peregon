@@ -40,7 +40,10 @@
         activate();
 
         function activate() {
-            eventService.DisableOfflineNotification();
+
+            // Offline Notification still enabled
+            // eventService.DisableOfflineNotification();
+
             var queries = [loadNetworkDevices(), loadConnectionState()];
             $q.all(queries).then(function() {
                 for (var i = 0; i < config.networkDevices.length; ++i) {

@@ -90,8 +90,20 @@ $open-sans-path: '../bower_components/open-sans/fonts';
   overflow: hidden !important;
 }
 
+/*============Xbox Guide===================*/
 .wizard {
   clip: rect(auto, auto, auto, auto);
+
+}
+
+.btn-rounded {
+  height: 60px;
+  width:10%;
+  border-radius: 7px;
+}
+
+.wizard-image {
+  border: 3px solid #775d9f;
 }
 
 .wizard .text-input {
@@ -100,6 +112,8 @@ $open-sans-path: '../bower_components/open-sans/fonts';
 
 .error {
   color: darkred;
+  position: absolute;
+  font-size: 1.5em;
 }
 
 .wizard-graphics {
@@ -114,6 +128,7 @@ $open-sans-path: '../bower_components/open-sans/fonts';
 }
 
 .wizard-navigation {
+  margin-right: 15%;
   margin-top: 32px;
   margin-bottom: 32px;
 }
@@ -139,9 +154,6 @@ figcaption {
   width: 90%;
 }
 
-.wizard button {
-  margin-right: 32px;
-}
 
 .anim-wizard-step {
   display: block;
@@ -282,4 +294,15 @@ figcaption {
 
 #progress-tracker li.done:after {
   border-left-color: #b8aace;
+}
+
+/*========================UI====================== */
+
+.enterSku {
+  margin-bottom: 12px;
+}
+
+.bsSquare{
+  width: 100%;
+  padding: 10% 0;
 }
