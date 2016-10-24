@@ -5,9 +5,9 @@
         .module('app.event')
         .factory('eventService', eventService);
 
-    eventService.$inject = ['$rootScope', 'socketService', '$location', 'toastr', '$state', 'deviceService'];
+    eventService.$inject = ['$rootScope', 'socketService', '$location', 'toastr', '$state', '$uibModal', 'deviceService'];
 
-    function eventService($rootScope, socketService, $location, toastr, $state, deviceService) {
+    function eventService($rootScope, socketService, $location, toastr, $state, $uibModal, deviceService) {
 
         var service = {};
 
@@ -35,28 +35,30 @@
                     }
                 });
             }
-
             else if (event.name === 'connection-status') {
                 if (event.data.isOnline) {
                     if (service.isOfflineNotificationEnabled) {
                         toastr.clear(offlineNotification);
                         offlineNotification = null;
-                        toastr.success('Connection restored!',
-                            {'onShown': function() {
-                            $state.go('root');
-                        }});
+                        toastr.success('Connection restored!');
                     }
                 }
-
                 else {
                     if (service.isOfflineNotificationEnabled) {
                         offlineNotification = toastr.error('Not connected', {
                                 'timeOut': 0,
                                 'onShown': function() {
-                                        $state.go('root.connection', {
-                                            'connectionState': event.data
+                                        $uibModal.open({templateUrl: 'app/user/connection/connection.html',
+                                            controller: 'ConnectionController',
+                                            bindToController: true,
+                                            controllerAs: 'vm',
+                                            size: 'lg'
                                         });
+                                        //$state.go('root.connection', {
+                                        //    'connectionState': event.data
+                                        //});
                                     }
+                                }
                             }
                         );
                     }

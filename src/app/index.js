@@ -23,7 +23,8 @@
         'ui.select',
         'ngSanitize',
         'angular-ladda',
-        'ngAnimate'
+        'ngAnimate',
+        'ui.bootstrap'
     ]);
 
     app.config(appConfig);
