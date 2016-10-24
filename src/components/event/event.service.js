@@ -46,21 +46,19 @@
                 else {
                     if (service.isOfflineNotificationEnabled) {
                         offlineNotification = toastr.error('Not connected', {
-                                'timeOut': 0,
-                                'onShown': function() {
-                                        $uibModal.open({templateUrl: 'app/user/connection/connection.html',
-                                            controller: 'ConnectionController',
-                                            bindToController: true,
-                                            controllerAs: 'vm',
-                                            size: 'lg'
-                                        });
-                                        //$state.go('root.connection', {
-                                        //    'connectionState': event.data
-                                        //});
-                                    }
-                                }
+                            'timeOut': 0,
+                            'onShown': function() {
+                                $uibModal.open({templateUrl: 'app/user/connection/connection.html',
+                                    controller: 'ConnectionController',
+                                    bindToController: true,
+                                    controllerAs: 'vm',
+                                    size: 'lg'
+                                });
+                                //$state.go('root.connection', {
+                                //    'connectionState': event.data
+                                //});
                             }
-                        );
+                        });
                     }
                 }
             }
