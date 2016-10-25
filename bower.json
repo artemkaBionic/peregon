@@ -29,6 +29,7 @@
   "resolutions": {
     "angular-toastr": "~1.5.0",
     "angular": "~1.5.0",
-    "moment": "^2.10.6"
+    "moment": "^2.10.6",
+    "angular-bootstrap": "^2.2.0"
   }
 }

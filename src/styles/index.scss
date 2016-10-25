@@ -140,6 +140,7 @@ $open-sans-path: '../bower_components/open-sans/fonts';
   margin-right: auto;
   padding: 5px;
 }
+
 figcaption {
   display: block;
 }
@@ -306,3 +307,71 @@ figcaption {
   width: 100%;
   padding: 10% 0;
 }
+/*========================End UI====================== */
+
+/*========================Modal====================== */
+.modal-dialog {
+  background-color: #0e0e0e;
+}
+
+.modal-backdrop.in {
+  opacity: .95;
+}
+
+.anim-modal-step {
+  font-size: 1.7em
+}
+
+.modal-contents {
+  width: 898px;
+  padding: 3%;
+
+}
+
+.card {
+  border-radius: 4px;
+  cursor:pointer;
+
+}
+
+.modal-graphics {
+  width: 898px;
+  /* margin-top: 32px; */
+  padding: 3%;
+}
+
+.modal-header {
+  background-color: #d5484a;
+  padding: 0;
+  color: white;
+}
+
+.modal-content .gray-light-bg {
+  border-right: solid #d5484a;
+  border-left: solid #d5484a;
+  border-bottom: solid #d5484a;
+}
+
+.apc-sheet-header {
+  margin: auto;
+}
+
+.modal-progress{
+  margin:1% auto;
+}
+
+.modal-contents h2,.modal-header h2, .anim-modal-step figure{
+  text-align: center;
+}
+
+#toast-container {
+  z-index: 1039;
+}
+
+.modal-close{
+  position: absolute;
+  top:0;
+  right: -3px;
+}
+//.modal-contents {margin: inherit;}
+///*========================End Modal====================== */

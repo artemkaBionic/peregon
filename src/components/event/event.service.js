@@ -13,8 +13,8 @@
 
         service.isDeviceNotificationEnabled = true;
         service.isOfflineNotificationEnabled = true;
-
         var offlineNotification = null;
+        toastr.clear(offlineNotification);
 
         socketService.on('event', function(event) {
             if (event.name === 'device-add') {
@@ -35,31 +35,49 @@
                     }
                 });
             }
+
             else if (event.name === 'connection-status') {
                 if (event.data.isOnline) {
-                    if (service.isOfflineNotificationEnabled) {
-                        toastr.clear(offlineNotification);
-                        offlineNotification = null;
-                        toastr.success('Connection restored!');
+                    if (service.modalWindow) {
+                        service.modalWindow.dismiss();
                     }
+                    var offlineNotification = null;
+                    toastr.clear();
+                    if (service.isOfflineNotificationEnabled) {
+                        offlineNotification = toastr.success('Station Status: Online', {
+                                'timeOut': 0,
+                                'extendedTimeOut': 0,
+                                'tapToDismiss': false,
+                                'closeButton': false
+                                // 'onShown':
+                            }
+                        );
+
+                    }
+
                 }
+
                 else {
                     if (service.isOfflineNotificationEnabled) {
+                        offlineNotification = null;
+                        toastr.clear();
                         offlineNotification = toastr.error('Not connected', {
                             'timeOut': 0,
+                            'extendedTimeOut': 0,
+                            'tapToDismiss': false,
+                            'closeButton': false,
                             'onShown': function() {
-                                $uibModal.open({templateUrl: 'app/user/connection/connection.html',
-                                    controller: 'ConnectionController',
-                                    bindToController: true,
-                                    controllerAs: 'vm',
-                                    size: 'lg'
-                                });
-                                //$state.go('root.connection', {
-                                //    'connectionState': event.data
-                                //});
+                                openModal(event);
+                            },
+                            'onTap': function() {
+                                openModal(event);
                             }
+                            // $state.go('root.connection', {
+                            //    'connectionState': event.data
+                            // });
                         });
                     }
+
                 }
             }
         });
@@ -96,6 +114,19 @@
         service.DisableOfflineNotification = function() {
             service.isOfflineNotificationEnabled = false;
         };
+
+       function openModal(event) {
+           if (service.modalWindow) {
+               service.modalWindow.dismiss();
+           }
+           service.modalWindow = $uibModal.open({templateUrl: 'app/user/connection/connection.html',
+               controller: 'ConnectionController',
+               bindToController: true,
+               resolve: {connectionState: event.data},
+               controllerAs: 'vm',
+               size: 'lg'
+           });
+       }
 
         return service;
     }

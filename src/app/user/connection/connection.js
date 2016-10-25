@@ -5,13 +5,17 @@
         .module('app.user')
         .controller('ConnectionController', ConnectionController);
 
-    ConnectionController.$inject = ['$stateParams', '$scope', '$q', 'config', 'stationService', 'eventService'];
+    ConnectionController.$inject = ['$scope', '$q', 'config', 'stationService', 'eventService', 'connectionState', '$uibModalInstance'];
 
-    function ConnectionController($stateParams, $scope, $q, config, stationService, eventService) {
+    var moduleDismiss = angular.module('app', []).run(function($rootScope, $uibModalStack) {
+        $uibModalStack.dismissAll();
+    });
+
+    function ConnectionController($scope, $q, config, stationService, eventService, connectionState, $uibModalInstance) {
         /*jshint validthis: true */
         var vm = this;
         vm.selectedNetworkDevice = null;
-        vm.connectionState = null;
+        vm.connectionState = connectionState;
         vm.networkDevices = [];
         vm.isPortDetectable = false;
         vm.steps = {
@@ -32,6 +36,7 @@
             }
         };
         vm.step = vm.steps.selectNetworkDevice;
+        vm.close = close;
 
         $scope.$on('$destroy', function(){
             eventService.EnableOfflineNotification();
@@ -47,7 +52,8 @@
             var queries = [loadNetworkDevices(), loadConnectionState()];
             $q.all(queries).then(function() {
                 for (var i = 0; i < config.networkDevices.length; ++i) {
-                    if (config.networkDevices[i].description === vm.connectionState.description) {
+
+                    if (config.networkDevices[i].description == vm.connectionState.description) {
                         vm.isPortDetectable = config.networkDevices[i].isPortDetectable;
                         break;
                     }
@@ -61,6 +67,10 @@
             });
         }
 
+        function close() {
+            $uibModalInstance.dismiss('close');
+        };
+
         function loadNetworkDevices() {
             stationService.isServiceCenter().then(function(isServiceCenter) {
                 for (var i = 0; i < config.networkDevices.length; ++i) {
@@ -72,9 +82,7 @@
         }
 
         function loadConnectionState() {
-            if ($stateParams.connectionState) {
-                vm.connectionState = $stateParams.connectionState;
-            } else {
+            if (!vm.connectionState) {
                 stationService.getConnectionState().then(function(connectionState) {
                     vm.connectionState = connectionState;
                 });
