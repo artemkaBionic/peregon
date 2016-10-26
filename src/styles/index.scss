@@ -78,9 +78,7 @@ $open-sans-path: '../bower_components/open-sans/fonts';
   right: 10px;
 }
 
-.card .card-body{
-  min-height: 175px;
-}
+
 
 .card.XboxOne {
   background-color:#107c10;
@@ -415,6 +413,10 @@ figcaption {
 .navigtion-buttons p {
   padding-top: 10px;
   text-align: center;
+}
+
+.modal-contents .card-body{
+  min-height: 175px;
 }
 //.modal-contents {margin: inherit;}
 ///*========================End Modal====================== */
