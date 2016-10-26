@@ -44,7 +44,7 @@
                     var offlineNotification = null;
                     toastr.clear();
                     if (service.isOfflineNotificationEnabled) {
-                        offlineNotification = toastr.success('Station Status: Online', {
+                        offlineNotification = toastr.success('Currently Connected to Internet','Station Status: Online', {
                                 'timeOut': 0,
                                 'extendedTimeOut': 0,
                                 'tapToDismiss': false,
@@ -61,7 +61,7 @@
                     if (service.isOfflineNotificationEnabled) {
                         offlineNotification = null;
                         toastr.clear();
-                        offlineNotification = toastr.error('Not connected', {
+                        offlineNotification = toastr.error('Click here for more information','Station Status: Offline.', {
                             'timeOut': 0,
                             'extendedTimeOut': 0,
                             'tapToDismiss': false,

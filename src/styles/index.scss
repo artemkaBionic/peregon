@@ -97,13 +97,14 @@ $open-sans-path: '../bower_components/open-sans/fonts';
 }
 
 .btn-rounded {
-  height: 60px;
-  width:10%;
+  height: 50px;
+  width:120px;
   border-radius: 7px;
 }
 
 .wizard-image {
-  border: 3px solid #775d9f;
+  border: 2px solid #775d9f;
+  height: 270px;
 }
 
 .wizard .text-input {
@@ -310,22 +311,37 @@ figcaption {
 /*========================End UI====================== */
 
 /*========================Modal====================== */
+.modal-content{
+  border: 0;
+  border-radius: 16px;
+}
 .modal-dialog {
-  background-color: #0e0e0e;
+  position: absolute;
+  height: 720px;
+  width: 1000px;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  margin: auto;
 }
 
 .modal-backdrop.in {
-  opacity: .95;
+  opacity: .5;
 }
 
 .anim-modal-step {
-  font-size: 1.7em
+  font-size: 1.5em;
+}
+
+
+
+.modal-second{
+  animation-duration: 1.5s;
 }
 
 .modal-contents {
-  width: 898px;
-  padding: 3%;
-
+  padding: 0 3%;
 }
 
 .card {
@@ -335,21 +351,19 @@ figcaption {
 }
 
 .modal-graphics {
-  width: 898px;
   /* margin-top: 32px; */
-  padding: 3%;
 }
 
 .modal-header {
   background-color: #d5484a;
   padding: 0;
   color: white;
+  padding-bottom: 15px;
 }
 
 .modal-content .gray-light-bg {
-  border-right: solid #d5484a;
-  border-left: solid #d5484a;
-  border-bottom: solid #d5484a;
+  border: 7px solid #d5484a;
+  border-radius: 7px;
 }
 
 .apc-sheet-header {
@@ -363,15 +377,110 @@ figcaption {
 .modal-contents h2,.modal-header h2, .anim-modal-step figure{
   text-align: center;
 }
+.modal-contents h2,.modal-header h2{
+  font-weight: bold;
+  margin: 5px;
+}
 
 #toast-container {
   z-index: 1039;
 }
 
 .modal-close{
-  position: absolute;
-  top:0;
-  right: -3px;
+  //position: absolute;
+  //top:5px;
+  //right: 5px;
+  width: 150px;
+  height: 30px;
+  /* right: 5px; */
+  border-radius: 7px;
+}
+
+.wizard-modal{
+  height: 450px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.apc-sheet-subtitle{
+  text-align: center;
+}
+.navigtion-buttons{
+  border-top: solid #ccc 1px;
+  padding: 10px;
+}
+.navigtion-buttons p {
+  padding-top: 10px;
+  text-align: center;
 }
 //.modal-contents {margin: inherit;}
 ///*========================End Modal====================== */
+
+
+#toast-container div.toast {
+  border-radius: 7px;
+
+}
+
+
+
+/*=============================CSS Animation===========================*/
+
+@-webkit-keyframes fadeOutLeft {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+    -webkit-transform: translate3d(-100%, 0, 0);
+    transform: translate3d(-100%, 0, 0);
+  }
+}
+
+@keyframes fadeOutLeft {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+    -webkit-transform: translate3d(-100%, 0, 0);
+    transform: translate3d(-100%, 0, 0);
+  }
+}
+
+.fadeOutLeft {
+  -webkit-animation-name: fadeOutLeft;
+  animation-name: fadeOutLeft;
+}
+
+@-webkit-keyframes slideInRight {
+  from {
+    -webkit-transform: translate3d(100%, 0, 0);
+    transform: translate3d(100%, 0, 0);
+    visibility: visible;
+  }
+
+  to {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    -webkit-transform: translate3d(100%, 0, 0);
+    transform: translate3d(100%, 0, 0);
+    visibility: visible;
+  }
+
+  to {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.slideInRight {
+  -webkit-animation-name: slideInRight;
+  animation-name: slideInRight;
+}

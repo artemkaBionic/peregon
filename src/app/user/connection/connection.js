@@ -69,7 +69,7 @@
 
         function close() {
             $uibModalInstance.dismiss('close');
-        };
+        }
 
         function loadNetworkDevices() {
             stationService.isServiceCenter().then(function(isServiceCenter) {
