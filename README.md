@@ -17,15 +17,13 @@ Install `npm` dependencies:
 npm install
 ```
 
-Install `npm` dependencies for NodeJS Server:
+Install `npm` dependencies for NodeJS Server in srv folder:
 ```
 cd srv
-```
 npm install
-```
 cd ..
-
 ```
+
 
 Install `bower` dependencies: *This may be no need* 
 (* Bower install now running automatically with npm install command)
