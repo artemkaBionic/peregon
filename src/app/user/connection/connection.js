@@ -34,22 +34,14 @@
         vm.step = vm.steps.selectNetworkDevice;
         vm.close = close;
 
-        $scope.$on('$destroy', function(){
-            eventService.EnableOfflineNotification();
-        });
-
         activate();
 
         function activate() {
-
-            // Offline Notification still enabled
-            // eventService.DisableOfflineNotification();
-
             var queries = [loadNetworkDevices(), loadConnectionState()];
             $q.all(queries).then(function() {
                 for (var i = 0; i < config.networkDevices.length; ++i) {
 
-                    if (config.networkDevices[i].description == vm.connectionState.description) {
+                    if (config.networkDevices[i].description === vm.connectionState.description) {
                         vm.isPortDetectable = config.networkDevices[i].isPortDetectable;
                         break;
                     }

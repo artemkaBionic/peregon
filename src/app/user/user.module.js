@@ -15,15 +15,6 @@
                 controller: 'UserController',
                 controllerAs: 'vm'
             })
-            .state('root.connection', {
-                url: '/connection/',
-                params: {
-                    connectionState: null
-                },
-                templateUrl: 'app/user/connection/connection.html',
-                controller: 'ConnectionController',
-                controllerAs: 'vm'
-            })
             .state('root.user.guide', {
                 url: '/guides/:guide',
                 templateProvider: guideTemplate,

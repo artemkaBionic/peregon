@@ -20,7 +20,7 @@
     </div>
 
     <div class="row">
-      <div class="col-md-3" ng-repeat="guide in guides">
+      <div class="col-md-3" ng-repeat="guide in guides | filter: guideFilter">
         <article class="card" ng-class="guide.DynamicGuideName" ui-sref=".guide({guide: guide.SKU})">
           <a ui-sref=".guide({guide: guide.SKU})">
             <div class="card-body">

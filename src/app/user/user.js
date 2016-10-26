@@ -11,7 +11,7 @@
         /*jshint validthis: true */
         var vm = this;
         vm.ready = false;
-        $scope.guides = {};
+        $scope.guides = [];
         $scope.guideService = guideService;
         $scope.searchString = guideService.searchString;
         $scope.guideFilter = function(guide) {

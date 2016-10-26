@@ -51,24 +51,6 @@
                 url: '/403',
                 templateUrl: 'app/403.html'
             })
-            // =========New States for modal window========
-            .state('app', {
-                url: '/',
-                views: {
-                    'store': {
-                        template: ''
-                    }
-                }
-            })
-            .state('modal', {
-                abstract: true,
-                views: {
-                    'modal': {
-                        templateUrl: '/modal.html'
-                    }
-                }
-            })
-            // =========End New States for modal window========
         ;
 
         $apcSidebarProvider.setTitle('');

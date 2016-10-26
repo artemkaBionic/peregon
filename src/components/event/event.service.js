@@ -12,9 +12,7 @@
         var service = {};
 
         service.isDeviceNotificationEnabled = true;
-        service.isOfflineNotificationEnabled = true;
-        var offlineNotification = null;
-        toastr.clear(offlineNotification);
+        var connectionNotification = null;
 
         socketService.on('event', function(event) {
             if (event.name === 'device-add') {
@@ -41,43 +39,30 @@
                     if (service.modalWindow) {
                         service.modalWindow.dismiss();
                     }
-                    var offlineNotification = null;
-                    toastr.clear();
-                    if (service.isOfflineNotificationEnabled) {
-                        offlineNotification = toastr.success('Currently Connected to Internet','Station Status: Online', {
-                                'timeOut': 0,
-                                'extendedTimeOut': 0,
-                                'tapToDismiss': false,
-                                'closeButton': false
-                                // 'onShown':
-                            }
-                        );
-
-                    }
-
+                    toastr.clear(connectionNotification);
+                    connectionNotification = toastr.success('Currently Connected to Internet','Station Status: Online', {
+                        'timeOut': 0,
+                        'extendedTimeOut': 0,
+                        'tapToDismiss': false,
+                        'closeButton': false
+                        // 'onShown':
+                    });
                 }
 
                 else {
-                    if (service.isOfflineNotificationEnabled) {
-                        offlineNotification = null;
-                        toastr.clear();
-                        offlineNotification = toastr.error('Click here for more information','Station Status: Offline.', {
-                            'timeOut': 0,
-                            'extendedTimeOut': 0,
-                            'tapToDismiss': false,
-                            'closeButton': false,
-                            'onShown': function() {
-                                openModal(event);
-                            },
-                            'onTap': function() {
-                                openModal(event);
-                            }
-                            // $state.go('root.connection', {
-                            //    'connectionState': event.data
-                            // });
-                        });
-                    }
-
+                    toastr.clear(connectionNotification);
+                    connectionNotification = toastr.error('Click here for more information','Station Status: Offline.', {
+                        'timeOut': 0,
+                        'extendedTimeOut': 0,
+                        'tapToDismiss': false,
+                        'closeButton': false,
+                        'onShown': function() {
+                            openModal(event);
+                        },
+                        'onTap': function() {
+                            openModal(event);
+                        }
+                    });
                 }
             }
         });
@@ -105,14 +90,6 @@
 
         service.DisableDeviceNotification = function() {
             service.isDeviceNotificationEnabled = false;
-        };
-
-        service.EnableOfflineNotification = function() {
-            service.isOfflineNotificationEnabled = true;
-        };
-
-        service.DisableOfflineNotification = function() {
-            service.isOfflineNotificationEnabled = false;
         };
 
        function openModal(event) {

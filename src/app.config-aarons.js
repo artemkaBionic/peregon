@@ -28,10 +28,10 @@
         itemNumberRegEx: /^\d{10}$/,
         skuRegEx: /^73\w{5}$/,
         networkDevices: [
-            {Description: 'Meraki MX64 Cloud Managed Router', DeviceImageFile: 'FirewallMx64.png', WiringImageFile: 'WiringDiagramMerakiMx64.png', CorrectPort: '4', IsServiceCenterConfig: false, IsPortDetectable: false},
-            {Description: 'Meraki MS220-24P Cloud Managed PoE Switch', DeviceImageFile: 'SwitchMs220-24.png', WiringImageFile: 'WiringDiagramMerakiMs220ServiceCenter.png', CorrectPort: '21', IsServiceCenterConfig: true, IsPortDetectable: true},
-            {Description: 'Meraki MS220-24P Cloud Managed PoE Switch', DeviceImageFile: 'SwitchMs220-24.png', WiringImageFile: 'WiringDiagramMerakiMs220.png', CorrectPort: '22', IsServiceCenterConfig: false, IsPortDetectable: true},
-            {Description: 'SonicWALL TZ-210', DeviceImageFile: 'FirewallSonicWall.png', WiringImageFile: 'WiringDiagramSonicWallTz-210.png', CorrectPort: 'X5', IsServiceCenterConfig: false, IsPortDetectable: false}
+            {description: 'Meraki MX64 Cloud Managed Router', deviceImageFile: 'FirewallMerakiMx64.png', wiringImageFile: 'WiringDiagramMerakiMx64.png', correctPort: '4', isServiceCenterConfig: false, isPortDetectable: false},
+            {description: 'Meraki MS220-24P Cloud Managed PoE Switch', deviceImageFile: 'SwitchMerakiMs220-24.png', wiringImageFile: 'WiringDiagramMerakiMs220ServiceCenter.png', correctPort: '21', isServiceCenterConfig: true, isPortDetectable: true},
+            {description: 'Meraki MS220-24P Cloud Managed PoE Switch', deviceImageFile: 'SwitchMerakiMs220-24.png', wiringImageFile: 'WiringDiagramMerakiMs220.png', correctPort: '22', isServiceCenterConfig: false, isPortDetectable: true},
+            {description: 'SonicWALL TZ-210', deviceImageFile: 'FirewallSonicWall.png', wiringImageFile: 'WiringDiagramSonicWallTz-210.png', correctPort: 'X5', isServiceCenterConfig: false, isPortDetectable: false}
         ],
         demo: false
     };
