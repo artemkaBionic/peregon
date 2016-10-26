@@ -78,6 +78,10 @@ $open-sans-path: '../bower_components/open-sans/fonts';
   right: 10px;
 }
 
+.card .card-body{
+  min-height: 175px;
+}
+
 .card.XboxOne {
   background-color:#107c10;
 }
@@ -358,7 +362,7 @@ figcaption {
   background-color: #d5484a;
   padding: 0;
   color: white;
-  padding-bottom: 15px;
+  padding-bottom: 10px;
 }
 
 .modal-content .gray-light-bg {
@@ -416,17 +420,33 @@ figcaption {
 ///*========================End Modal====================== */
 
 
+///*========================Toast Pop-Up====================== */
 #toast-container div.toast {
   border-radius: 7px;
 
 }
 
+.toast-top-right {
+  top: 12px;
+  right: 50px;
+}
 
+///*========================End Toast Pop-Up====================== */
 
 /*=============================CSS Animation===========================*/
 
+//.modal-first.ng-leave{
+//  animation: fadeOutLeft 0.2s linear;
+//}
+
+.modal-second.ng-enter{
+  animation: slideInRight 0.3s linear;
+}
+
 @-webkit-keyframes fadeOutLeft {
+
   from {
+
     opacity: 1;
   }
 
