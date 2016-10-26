@@ -7,10 +7,6 @@
 
     ConnectionController.$inject = ['$scope', '$q', 'config', 'stationService', 'eventService', 'connectionState', '$uibModalInstance'];
 
-    var moduleDismiss = angular.module('app', []).run(function($rootScope, $uibModalStack) {
-        $uibModalStack.dismissAll();
-    });
-
     function ConnectionController($scope, $q, config, stationService, eventService, connectionState, $uibModalInstance) {
         /*jshint validthis: true */
         var vm = this;
