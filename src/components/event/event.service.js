@@ -42,7 +42,7 @@
                         service.eventDispatcher.dispatch();
                         $timeout(service.modalWindow.dismiss, 4000);
                     }
-                    
+
                     toastr.clear(connectionNotification);
                     connectionNotification = toastr.success('Currently Connected to Internet','Station Status: Online', {
                         'timeOut': 0,
@@ -96,17 +96,16 @@
             service.isDeviceNotificationEnabled = false;
         };
 
-
        function openModal(event) {
            if (service.modalWindow) {
                service.modalWindow.dismiss();
            }
 
            service.eventDispatcher = {
-              listen: function (callback) {
+              listen: function(callback) {
                this._callback = callback;
            },
-            dispatch: function () {
+            dispatch: function() {
                this._callback();
            }
            };

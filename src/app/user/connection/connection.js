@@ -42,14 +42,6 @@
         vm.close = close;
 
         activate();
-
-        //Checking of the connecter network device
-        //
-        // if(vm.connectionState.description == vm.networkDevices.networkDevice.description) {
-        //     vm.selectedNetworkDevice = networkDevice;
-        // }
-
-
         function activate() {
 
             var queries = [loadNetworkDevices(), loadConnectionState()];
@@ -61,7 +53,7 @@
                     }
                 }
                 eventDispatcher.listen(
-                    function () {
+                    function() {
                         vm.step = vm.steps.complete;
                         styleChange();
                     }
@@ -107,19 +99,18 @@
             vm.step = vm.steps.connectToNetwork;
         };
 
-        vm.moveFirst = function () {
+        vm.moveFirst = function() {
             vm.step = vm.steps.complete;
         };
 
-        vm.moveSecond = function () {
+        vm.moveSecond = function() {
             vm.step = vm.steps.selectNetworkDevice;
         };
 
-        // Style for online status of Modal Window
+        // Style for online change status of Modal Window
         function styleChange() {
             console.log('check');
-                $(".modal-offline").addClass("modal-online").removeClass("modal-offline");
+                $('.modal-offline').addClass('modal-online').removeClass('modal-offline');
         }
-
     }
 })();
