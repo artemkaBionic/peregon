@@ -1,21 +1,35 @@
-<horizontal-ui-sheet horizontal-scroll1="" class="shuffle-animation gray-light-bg apc-sheet-full">
+<horizontal-ui-sheet horizontal-scroll1="" class="shuffle-animation modal-offline apc-sheet-full">
   <div class="modal-header" title="Station is offline.">
     <h2>Station is offline. Please, check the connection:</h2>
     <div class="center apc-sheet-subtitle">Step {{vm.step.number}}. {{vm.step.title}}</div>
   </div>
     <div class="row center modal-progress">
-      <ul id="progress-tracker" data-steps="3">
-        <li ng-class="{'active': vm.step.number == 1, 'done': vm.step.number > 1}"><span>Select Network Device</span>
+      <ul id="progress-tracker" data-steps="4">
+        <li ng-class="{'active': vm.step.number == 1, 'done': vm.step.number > 1}"><span><a ng-click="vm.first()">Check Network</a></span>
         </li>
-        <li ng-class="{'active': vm.step.number >= 2 && vm.step.number <= 3, 'done': vm.step.number > 3}"><span>Connect to Network</span>
+        <li ng-class="{'active': vm.step.number >= 2, 'done': vm.step.number > 2}"><span><a ng-click="vm.second()">Select Network Device</a></span>
+        </li>
+        <li ng-class="{'active': vm.step.number >= 3, 'done': vm.step.number > 3}"><span>Connect to Network</span>
         </li>
         <li ng-class="{'active': vm.step.number == 4}"><span>Finish</span><i></i></li>
       </ul>
     </div>
 
-    <div ng-switch="vm.step.name " class="row center wizard-modal">
+    <div ng-switch="vm.step.name" class="row center wizard-modal">
 
-      <div class="anim-modal-step modal-first" id="first" ng-switch-when="selectNetworkDevice">
+      <div class="anim-modal-step modal-enter" ng-switch-when="checkNetwork">
+        <div class="row modal-contents">
+          <p>Which device is most convenient to the Refresh Station?</p>
+          <p>You may need to follow the Ethernet connection from the Refresh Station to see where it leads.</p>
+        </div>
+        <div class="row modal-contents">
+              <a href="" ng-click="vm.second()">
+                Go Next
+              </a>
+        </div>
+      </div>
+
+      <div class="anim-modal-step modal-enter" id="first offline" ng-switch-when="selectNetworkDevice">
         <div class="row modal-contents">
           <p>Which device is most convenient to the Refresh Station?</p>
           <p>You may need to follow the Ethernet connection from the Refresh Station to see where it leads.</p>
@@ -27,7 +41,7 @@
               <a href="" ng-click="vm.selectNetworkDevice(networkDevice)">
                 <div class="card-body">
                   <div class="h-80">
-                    <div class="card-title">{{::networkDevice.description}}</div>
+                    <div class="card-title text-ellipsis">{{::networkDevice.description}}</div>
                     <div><img class="center" ng-src="/assets/images/{{::networkDevice.deviceImageFile}}"></div>
                   </div>
                 </div>
@@ -37,7 +51,7 @@
         </div>
       </div>
 
-      <div class="anim-modal-step modal-second" ng-switch-when="connectToNetwork">
+      <div class="anim-modal-step modal-enter" ng-switch-when="connectToNetwork">
         <div class="row modal-contents">
           <p ng-show="vm.connectionState != null">1. Refresh Station is currently connected to:<br/>
             <span ng-show="vm.isPortDetectable">port <strong>{{vm.connectionState.port}}</strong> of the </span><strong>
@@ -54,18 +68,12 @@
         </div>
       </div>
 
-      <div class="anim-modal-step" ng-switch-when="complete">
-        <div class="row modal-graphics">
-          <span class="fa fa-check-circle anim-success-icon"></span>
-        </div>
+
+
+      <div class="anim-modal-step online-enter" id="online" ng-switch-when="complete">
         <div class="row modal-contents">
-          <h2>Station Online</h2>
-          <h3>The Refresh Station is correctly connected to the Internet.</h3>
-        </div>
-        <div class="row modal-navigation">
-          <button class="btn btn-primary btn-rounded pull-right" ui-sref="^" href="#/user/home">
-            Finish &nbsp; <i class="fa fa-caret-right"></i>
-          </button>
+          <div class="fa fa-check-circle anim-success-icon"></div>
+          <h2>The Refresh Station is correctly connected to the Internet.</h2>
         </div>
       </div>
     </div>

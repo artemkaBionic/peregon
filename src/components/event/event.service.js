@@ -5,9 +5,9 @@
         .module('app.event')
         .factory('eventService', eventService);
 
-    eventService.$inject = ['$rootScope', 'socketService', '$location', 'toastr', '$state', '$uibModal', 'deviceService'];
+    eventService.$inject = ['$rootScope', 'socketService', '$location', 'toastr', '$state', '$uibModal', 'deviceService', '$timeout'];
 
-    function eventService($rootScope, socketService, $location, toastr, $state, $uibModal, deviceService) {
+    function eventService($rootScope, socketService, $location, toastr, $state, $uibModal, deviceService, $timeout) {
 
         var service = {};
 
@@ -35,10 +35,14 @@
             }
 
             else if (event.name === 'connection-status') {
+
                 if (event.data.isOnline) {
+
                     if (service.modalWindow) {
-                        service.modalWindow.dismiss();
+                        service.eventDispatcher.dispatch();
+                        $timeout(service.modalWindow.dismiss, 4000);
                     }
+                    
                     toastr.clear(connectionNotification);
                     connectionNotification = toastr.success('Currently Connected to Internet','Station Status: Online', {
                         'timeOut': 0,
@@ -92,14 +96,25 @@
             service.isDeviceNotificationEnabled = false;
         };
 
+
        function openModal(event) {
            if (service.modalWindow) {
                service.modalWindow.dismiss();
            }
+
+           service.eventDispatcher = {
+              listen: function (callback) {
+               this._callback = callback;
+           },
+            dispatch: function () {
+               this._callback();
+           }
+           };
+
            service.modalWindow = $uibModal.open({templateUrl: 'app/user/connection/connection.html',
                controller: 'ConnectionController',
                bindToController: true,
-               resolve: {connectionState: event.data},
+               resolve: {connectionState: event.data, eventDispatcher:service.eventDispatcher},
                controllerAs: 'vm',
                size: 'lg'
            });
