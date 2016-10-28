@@ -26,5 +26,13 @@ var station = module.exports = {
                 }
             });
         }
+    },
+    reboot: function() {
+        console.log('Reboot requested.');
+        childProcess.spawn('python', ['/opt/powercontrol.py', '--reboot']);
+    },
+    shutdown: function() {
+        console.log('Shutdown requested.');
+        childProcess.spawn('python', ['/opt/powercontrol.py', '--poweroff']);
     }
 };

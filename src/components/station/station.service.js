@@ -22,6 +22,16 @@
             return deferred.promise;
         };
 
+        service.reboot = function() {
+            var url = '/system/reboot';
+            return $http.post(url, null);
+        };
+
+        service.shutdown = function() {
+            var url = '/system/reboot';
+            return $http.post(url, null);
+        };
+
         service.getConnectionState = function() {
             var url = '/data/getConnectionState';
             var deferred = $q.defer();

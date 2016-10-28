@@ -99,5 +99,13 @@ module.exports = function(io, data) {
         res.json();
     });
 
+    router.post('/system/reboot', function (req, res) {
+        station.reboot();
+    });
+
+    router.post('/system/shutdown', function (req, res) {
+        station.shutdown();
+    });
+
     return router;
 };

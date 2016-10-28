@@ -86,7 +86,7 @@
         };
 
         function processConnectionState(connectionState) {
-            if(connectionState === null){
+            if (connectionState === null) {
                 return;
             }
 
