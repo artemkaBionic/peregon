@@ -53,6 +53,11 @@
             else if (event.name === 'connection-status') {
                 processConnectionState(event.data);
             }
+
+            else if (event.name === 'power-button') {
+                openPowerModal();
+            }
+
         });
 
         socketService.on('device-apply-progress', function(data) {
@@ -81,6 +86,10 @@
         };
 
         function processConnectionState(connectionState) {
+            if(connectionState === null){
+                return;
+            }
+
             if (connectionState.isOnline) {
 
                 if (service.modalWindow) {
@@ -93,7 +102,7 @@
                     'extendedTimeOut': 0,
                     'tapToDismiss': false,
                     'closeButton': false
-                    // 'onShown':
+
                 });
             }
 
@@ -123,9 +132,9 @@
               listen: function(callback) {
                this._callback = callback;
            },
-            dispatch: function() {
-               this._callback();
-           }
+                dispatch: function() {
+                   this._callback();
+               }
            };
 
            service.modalWindow = $uibModal.open({templateUrl: 'app/user/connection/connection.html',
@@ -137,6 +146,17 @@
            });
        }
 
+        function openPowerModal(connectionState) {
+            if (service.modalWindow) {
+                service.modalWindow.dismiss();
+            }
+
+            service.modalWindow = $uibModal.open({templateUrl: 'app/user/shutdown/shutdown.html',
+                size: 'sm'
+            });
+        }
+
         return service;
+
     }
 })();

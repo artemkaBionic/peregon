@@ -5,12 +5,12 @@
         .module('app.user')
         .controller('ConnectionController', ConnectionController);
 
-    ConnectionController.$inject = ['$scope', '$q', 'config', 'stationService', 'eventService', 'connectionState', '$uibModalInstance','eventDispatcher'];
+    ConnectionController.$inject = ['$scope', '$q', 'config', 'stationService', 'eventService', 'connectionState', '$uibModalInstance','eventDispatcher','$uibModal'];
 
-    function ConnectionController($scope, $q, config, stationService, eventService, connectionState, $uibModalInstance, eventDispatcher) {
+    function ConnectionController($scope, $q, config, stationService, eventService, connectionState, $uibModalInstance, eventDispatcher, $uibModal) {
         /*jshint validthis: true */
         var vm = this;
-
+        vm.zoomed = false;
         vm.isFinished = false;
         vm.selectedNetworkDevice = null;
         vm.connectionState = connectionState;
@@ -30,6 +30,11 @@
                 name: 'complete',
                 number: 3,
                 title: 'Refresh Station is Connected to the Internet'
+            },
+            imageShow: {
+                name: 'imageShow',
+                number: 2,
+                title: 'Connect to Network'
             }
         };
         vm.step = vm.steps.connectToNetwork;
@@ -93,5 +98,10 @@
         vm.Finish = function() {
             vm.isFinished = true;
         };
+
+        vm.ChangeClass = function(){
+                if (vm.zoomed){vm.zoomed = false;}
+                else {vm.zoomed = true;}
+            };
     }
 })();

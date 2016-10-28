@@ -109,6 +109,29 @@ $open-sans-path: '../bower_components/open-sans/fonts';
   height: 270px;
 }
 
+.wizard-image-big {
+  animation: fadeIn .5s;
+  position: fixed;
+  display: flex;
+  z-index: 999999;
+  width: 1800px;
+  height: auto;
+  border-radius: 7px;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto -400px;
+}
+
+.wizard-image:hover{
+cursor: zoom-in;
+}
+
+.wizard-image-big:hover{
+  cursor: zoom-out;
+}
+
 .wizard .text-input {
   margin: 0;
 }
@@ -232,7 +255,7 @@ figcaption {
 #progress-tracker {
   padding: 0;
   list-style-type: none;
-  font-family: arial;
+  font-family: Arial;
   font-size: 12px;
   clear: both;
   line-height: 1em;
@@ -317,10 +340,13 @@ figcaption {
   border: 0;
   border-radius: 16px;
 }
-.modal-dialog {
-  position: absolute;
+.modal-lg{
   height: 720px;
   width: 1000px;
+}
+.modal-dialog {
+  position: absolute;
+
   top: 0;
   right: 0;
   bottom: 0;
@@ -352,15 +378,10 @@ figcaption {
 
 }
 
-.modal-graphics {
-  /* margin-top: 32px; */
-}
-
 .modal-header {
   background-color: #d5484a;
-  padding: 0;
   color: white;
-  padding-bottom: 10px;
+  padding-bottom:10px;
 }
 
 .modal-offline {
@@ -377,7 +398,6 @@ figcaption {
     background-color:#6cab1c;
   }
 }
-
 
 .apc-sheet-header {
   margin: auto;
@@ -475,9 +495,6 @@ figcaption {
 
 /*=============================CSS Animation===========================*/
 
-//.modal-first.ng-leave{
-//  animation: fadeOutLeft 0.2s linear;
-//}
 
 .modal-enter.ng-enter{
   animation: slideInRight 0.3s linear;
@@ -573,3 +590,40 @@ figcaption {
   -webkit-animation-name: fadeIn;
   animation-name: fadeIn;
 }
+/*=====================END Css Animation==================*/
+
+/*============================Start Shut Down CSS==================*/
+
+.modal-sm{
+  height: 320px;
+  width: 650px;
+}
+.modal-sm .modal-content {
+  border:none;
+  background-color: transparent;
+  box-shadow: none;
+}
+.power-window{
+  display: inline-block;
+  background-color: rgba(0, 0, 0, .5);
+  border: 7px rgba(0, 0, 0, .3);
+  border-radius: 7px;
+}
+
+.power-button, .reset-button{
+  width: 300px;
+  height: 300px;
+  margin: 10px;
+}
+
+.power-button{
+  display: inline-block;
+  background-color: white;
+
+}
+.reset-button{
+
+  display: inline-block;
+  background-color: black;
+}
+/*============================End Shut Down CSS==================*/

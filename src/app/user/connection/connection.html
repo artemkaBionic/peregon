@@ -46,6 +46,7 @@
     </div>
 
     <div class="anim-modal-step modal-enter" ng-switch-when="connectToNetwork">
+
       <div class="row modal-contents">
         <div ng-if="vm.connectionState.description == null">
           <p>Please connect the Refresh Station to:<br/>port <strong>{{vm.selectedNetworkDevice.correctPort}}</strong>
@@ -55,7 +56,7 @@
           <div ng-if="vm.connectionState.description == vm.selectedNetworkDevice.description && vm.connectionState.port == vm.selectedNetworkDevice.correctPort">
             <p>Refresh Station is <strong>correctly connected</strong> to:<br/>
               port {{vm.selectedNetworkDevice.correctPort}} of the {{vm.selectedNetworkDevice.description}}.</p>
-            <p>Please contact support to troubleshoot your Internet connection.</p>
+            <p>Please contact support to <b>troubleshoot your Internet connection</b>.</p>
           </div>
           <div
             ng-if="vm.connectionState.description != vm.selectedNetworkDevice.description || vm.connectionState.port != vm.selectedNetworkDevice.correctPort">
@@ -69,7 +70,7 @@
       </div>
       <div class="row modal-contents modal-graphics">
         <figure>
-          <img ng-src="/assets/images/{{vm.selectedNetworkDevice.wiringImageFile}}" class="wizard-image">
+          <img ng-click="vm.ChangeClass()" class="wizard-image" ng-class="{'wizard-image-big':vm.zoomed,}" ng-src="/assets/images/{{vm.selectedNetworkDevice.wiringImageFile}}">
           <figcaption>{{vm.selectedNetworkDevice.description}} wiring diagram</figcaption>
         </figure>
       </div>
