@@ -1,85 +1,94 @@
-<horizontal-ui-sheet horizontal-scroll1="" class="shuffle-animation modal-offline apc-sheet-full">
+<horizontal-ui-sheet horizontal-scroll1="" class="shuffle-animation apc-sheet-full" ng-class="vm.isFinished ? 'modal-online' : 'modal-offline'">
   <div class="modal-header" title="Station is offline.">
-    <h2>Station is offline. Please, check the connection:</h2>
+    <h2 ng-if="vm.isFinished">Station is online.</h2>
+    <h2 ng-if="!vm.isFinished">Station is offline. Please, check the connection:</h2>
+
     <div class="center apc-sheet-subtitle">Step {{vm.step.number}}. {{vm.step.title}}</div>
   </div>
-    <div class="row center modal-progress">
-      <ul id="progress-tracker" data-steps="4">
-        <li ng-class="{'active': vm.step.number == 1, 'done': vm.step.number > 1}"><span><a ng-click="vm.first()">Check Network</a></span>
-        </li>
-        <li ng-class="{'active': vm.step.number >= 2, 'done': vm.step.number > 2}"><span><a ng-click="vm.second()">Select Network Device</a></span>
-        </li>
-        <li ng-class="{'active': vm.step.number >= 3, 'done': vm.step.number > 3}"><span>Connect to Network</span>
-        </li>
-        <li ng-class="{'active': vm.step.number == 4}"><span>Finish</span><i></i></li>
-      </ul>
-    </div>
+  <div class="row center modal-progress">
+    <ul id="progress-tracker" data-steps="3">
+      <li ng-class="{'active': vm.step.number >= 1, 'done': vm.step.number > 1}">
+        <span ng-if="vm.isFinished">Select Network Device</span>
+        <span ng-if="!vm.isFinished"><a ng-click="vm.selectNetworkDeviceStart()">Select Network Device</a></span>
+      </li>
+      <li ng-class="{'active': vm.step.number >= 2, 'done': vm.step.number > 2}"><span>Connect to Network</span>
+      </li>
+      <li ng-class="{'active': vm.step.number == 3}"><span>Finish</span><i></i></li>
+    </ul>
+  </div>
 
-    <div ng-switch="vm.step.name" class="row center wizard-modal">
+  <div ng-switch="vm.step.name" class="row center wizard-modal">
 
-      <div class="anim-modal-step modal-enter" ng-switch-when="checkNetwork">
-        <div class="row modal-contents">
-          <p>Which device is most convenient to the Refresh Station?</p>
-          <p>You may need to follow the Ethernet connection from the Refresh Station to see where it leads.</p>
-        </div>
-        <div class="row modal-contents">
-              <a href="" ng-click="vm.second()">
-                Go Next
-              </a>
-        </div>
+    <div class="anim-modal-step modal-enter" id="first offline" ng-switch-when="selectNetworkDevice">
+      <div class="row modal-contents">
+        <p>What should your Refresh Station be plugged into?</p>
+        <p>Can't decide?</p>
+        <ul>
+          <li>You may need to follow the network line to see where it goes.</li>
+          <li>If your firewall and switch are together, choose either one.</li>
+        </ul>
       </div>
 
-      <div class="anim-modal-step modal-enter" id="first offline" ng-switch-when="selectNetworkDevice">
-        <div class="row modal-contents">
-          <p>Which device is most convenient to the Refresh Station?</p>
-          <p>You may need to follow the Ethernet connection from the Refresh Station to see where it leads.</p>
-        </div>
-
-        <div class="row modal-contents">
-          <div class="col-md-4" ng-repeat="networkDevice in vm.networkDevices">
-            <article class="card">
-              <a href="" ng-click="vm.selectNetworkDevice(networkDevice)">
-                <div class="card-body">
-                  <div class="h-80">
-                    <div class="card-title text-ellipsis">{{::networkDevice.description}}</div>
-                    <div><img class="center" ng-src="/assets/images/{{::networkDevice.deviceImageFile}}"></div>
-                  </div>
+      <div class="row modal-contents">
+        <div class="col-md-4" ng-repeat="networkDevice in vm.networkDevices">
+          <article class="card">
+            <a href="" ng-click="vm.connectToNetworkStart(networkDevice)">
+              <div class="card-body">
+                <div class="h-80">
+                  <div class="card-title text-ellipsis">{{::networkDevice.description}}</div>
+                  <div><img class="center" ng-src="/assets/images/{{::networkDevice.deviceImageFile}}"></div>
                 </div>
-              </a>
-            </article>
+              </div>
+            </a>
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="anim-modal-step modal-enter" ng-switch-when="connectToNetwork">
+      <div class="row modal-contents">
+        <div ng-if="vm.connectionState.description == null">
+          <p>Please connect the Refresh Station to:<br/>port <strong>{{vm.selectedNetworkDevice.correctPort}}</strong>
+            of the <strong>{{vm.selectedNetworkDevice.description}}</strong> (see wiring diagram).</p>
+        </div>
+        <div ng-if="vm.connectionState.description != null">
+          <div ng-if="vm.connectionState.description == vm.selectedNetworkDevice.description && vm.connectionState.port == vm.selectedNetworkDevice.correctPort">
+            <p>Refresh Station is <strong>correctly connected</strong> to:<br/>
+              port {{vm.selectedNetworkDevice.correctPort}} of the {{vm.selectedNetworkDevice.description}}.</p>
+            <p>Please contact support to troubleshoot your Internet connection.</p>
+          </div>
+          <div
+            ng-if="vm.connectionState.description != vm.selectedNetworkDevice.description || vm.connectionState.port != vm.selectedNetworkDevice.correctPort">
+            <p>Refresh Station is connected to:<br/>
+              <span ng-show="vm.connectionState.isPortDetectable">port <strong>{{vm.connectionState.port}}</strong> of </span>the <strong>{{vm.connectionState.description}}</strong>.
+            </p>
+            <p>Please connect it to:<br/>port <strong>{{vm.selectedNetworkDevice.correctPort}}</strong> of the
+              <strong>{{vm.selectedNetworkDevice.description}}</strong> (see wiring diagram).</p>
           </div>
         </div>
       </div>
-
-      <div class="anim-modal-step modal-enter" ng-switch-when="connectToNetwork">
-        <div class="row modal-contents">
-          <p ng-show="vm.connectionState != null">1. Refresh Station is currently connected to:<br/>
-            <span ng-show="vm.isPortDetectable">port <strong>{{vm.connectionState.port}}</strong> of the </span><strong>
-            {{vm.connectionState.description}}</strong>.</p>
-          <p>2. Please connect the Refresh Station to:<br/>
-            port <strong>{{vm.selectedNetworkDevice.correctPort}}</strong> of the
-            <strong>{{vm.selectedNetworkDevice.description}}</strong> (see wiring diagram).</p>
-        </div>
-        <div class="row modal-contents modal-graphics">
-          <figure>
-            <img ng-src="/assets/images/{{vm.selectedNetworkDevice.wiringImageFile}}" class="wizard-image">
-            <figcaption>{{vm.selectedNetworkDevice.description}} wiring diagram</figcaption>
-          </figure>
-        </div>
-      </div>
-
-
-
-      <div class="anim-modal-step online-enter" id="online" ng-switch-when="complete">
-        <div class="row modal-contents">
-          <div class="fa fa-check-circle anim-success-icon"></div>
-          <h2>The Refresh Station is correctly connected to the Internet.</h2>
-        </div>
+      <div class="row modal-contents modal-graphics">
+        <figure>
+          <img ng-src="/assets/images/{{vm.selectedNetworkDevice.wiringImageFile}}" class="wizard-image">
+          <figcaption>{{vm.selectedNetworkDevice.description}} wiring diagram</figcaption>
+        </figure>
       </div>
     </div>
+
+    <div class="anim-modal-step online-enter" id="online" ng-switch-when="complete">
+      <div class="row modal-contents">
+        <div class="fa fa-check-circle anim-success-icon"></div>
+        <h1>Thank you!</h1>
+
+        <h2>The Refresh Station is connected to the Internet.</h2>
+      </div>
+    </div>
+  </div>
   <div class="navigtion-buttons">
-    <button class="btn center btn-primary btn-rounded" ng-click="vm.close()">Dismiss</button>
+    <button class="btn center btn-primary btn-rounded" ng-click="vm.close()">
+      <span ng-if="vm.isFinished">OK</span>
+      <span ng-if="!vm.isFinished">Dismiss</span>
+    </button>
     <p>If you need help, please call the National Support Center at (678) 402-0015.</p>
   </div>
 </horizontal-ui-sheet>
-

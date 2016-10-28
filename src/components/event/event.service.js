@@ -5,28 +5,38 @@
         .module('app.event')
         .factory('eventService', eventService);
 
-    eventService.$inject = ['$rootScope', 'socketService', '$location', 'toastr', '$state', '$uibModal', 'deviceService', '$timeout'];
+    eventService.$inject = ['$rootScope', 'socketService', '$location', 'toastr', '$state', '$uibModal', 'deviceService', 'stationService'];
 
-    function eventService($rootScope, socketService, $location, toastr, $state, $uibModal, deviceService, $timeout) {
+    function eventService($rootScope, socketService, $location, toastr, $state, $uibModal, deviceService, stationService) {
 
         var service = {};
 
         service.isDeviceNotificationEnabled = true;
         var connectionNotification = null;
+        var deviceNotiviations = {};
+
+        activate();
+
+        function activate() {
+            stationService.getConnectionState().then(function(connectionState) {
+                processConnectionState(connectionState);
+            });
+        }
 
         socketService.on('event', function(event) {
             if (event.name === 'device-add') {
                 deviceService.addDevice(event.data).then(function() {
                     if (service.isDeviceNotificationEnabled) {
-                        toastr.info('Tap to choose what to do with the ' + event.data.type + ' disk.',
+                        deviceNotiviations[event.data.id] = toastr.info('Click here to choose what to do with the ' + event.data.type + ' disk.',
                             'Removable ' + event.data.type + ' disk', {
                                 'timeOut': 0,
-                                'onHidden': function(clicked) {
-                                    if (clicked) {
-                                        $state.go('root.user.media', {
-                                            'id': event.data.id
-                                        });
-                                    }
+                                'extendedTimeOut': 0,
+                                'tapToDismiss': false,
+                                'closeButton': false,
+                                'onTap': function() {
+                                    $state.go('root.media', {
+                                        'id': event.data.id
+                                    });
                                 }
                             }
                         );
@@ -34,40 +44,14 @@
                 });
             }
 
+            else if (event.name === 'device-remove') {
+                deviceService.removeDevice(event.data.id);
+                toastr.clear(deviceNotiviations[event.data.id]);
+                delete deviceNotiviations[event.data.id];
+            }
+
             else if (event.name === 'connection-status') {
-
-                if (event.data.isOnline) {
-
-                    if (service.modalWindow) {
-                        service.eventDispatcher.dispatch();
-                        $timeout(service.modalWindow.dismiss, 4000);
-                    }
-
-                    toastr.clear(connectionNotification);
-                    connectionNotification = toastr.success('Currently Connected to Internet','Station Status: Online', {
-                        'timeOut': 0,
-                        'extendedTimeOut': 0,
-                        'tapToDismiss': false,
-                        'closeButton': false
-                        // 'onShown':
-                    });
-                }
-
-                else {
-                    toastr.clear(connectionNotification);
-                    connectionNotification = toastr.error('Click here for more information','Station Status: Offline.', {
-                        'timeOut': 0,
-                        'extendedTimeOut': 0,
-                        'tapToDismiss': false,
-                        'closeButton': false,
-                        'onShown': function() {
-                            openModal(event);
-                        },
-                        'onTap': function() {
-                            openModal(event);
-                        }
-                    });
-                }
+                processConnectionState(event.data);
             }
         });
 
@@ -96,7 +80,41 @@
             service.isDeviceNotificationEnabled = false;
         };
 
-       function openModal(event) {
+        function processConnectionState(connectionState) {
+            if (connectionState.isOnline) {
+
+                if (service.modalWindow) {
+                    service.eventDispatcher.dispatch();
+                }
+
+                toastr.clear(connectionNotification);
+                connectionNotification = toastr.success('Currently Connected to Internet','Station Status: Online', {
+                    'timeOut': 0,
+                    'extendedTimeOut': 0,
+                    'tapToDismiss': false,
+                    'closeButton': false
+                    // 'onShown':
+                });
+            }
+
+            else {
+                toastr.clear(connectionNotification);
+                connectionNotification = toastr.error('Click here for more information','Station Status: Offline.', {
+                    'timeOut': 0,
+                    'extendedTimeOut': 0,
+                    'tapToDismiss': false,
+                    'closeButton': false,
+                    'onShown': function() {
+                        openModal(connectionState);
+                    },
+                    'onTap': function() {
+                        openModal(connectionState);
+                    }
+                });
+            }
+        }
+
+       function openModal(connectionState) {
            if (service.modalWindow) {
                service.modalWindow.dismiss();
            }
@@ -113,7 +131,7 @@
            service.modalWindow = $uibModal.open({templateUrl: 'app/user/connection/connection.html',
                controller: 'ConnectionController',
                bindToController: true,
-               resolve: {connectionState: event.data, eventDispatcher:service.eventDispatcher},
+               resolve: {connectionState: connectionState, eventDispatcher:service.eventDispatcher},
                controllerAs: 'vm',
                size: 'lg'
            });

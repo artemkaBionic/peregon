@@ -10,7 +10,7 @@ var station = module.exports = {
     },
     getIsServiceCenter: function(callback) {
         if (process.platform === 'win32') {
-            console.log('Simulating service center check in a Windows development environment by waiting returning false.');
+            console.log('Simulating service center check in a Windows development environment.');
             callback(false);
         } else {
             fs.stat('/srv/packages/ServiceCenter.mode', function (err, stat) {

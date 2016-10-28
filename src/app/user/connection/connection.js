@@ -11,34 +11,28 @@
         /*jshint validthis: true */
         var vm = this;
 
+        vm.isFinished = false;
         vm.selectedNetworkDevice = null;
         vm.connectionState = connectionState;
         vm.networkDevices = [];
-        vm.isPortDetectable = false;
         vm.steps = {
-            checkNetwork: {
-                name: 'checkNetwork',
-                number: 1,
-                title: 'Check Network'
-            },
-
             selectNetworkDevice: {
                 name: 'selectNetworkDevice',
-                number: 2,
+                number: 1,
                 title: 'Select Network Device'
             },
             connectToNetwork: {
                 name: 'connectToNetwork',
-                number: 3,
+                number: 2,
                 title: 'Connect to Network'
             },
             complete: {
                 name: 'complete',
-                number: 4,
+                number: 3,
                 title: 'Refresh Station is Connected to the Internet'
             }
         };
-        vm.step = vm.steps.checkNetwork;
+        vm.step = vm.steps.connectToNetwork;
         vm.close = close;
 
         activate();
@@ -46,16 +40,20 @@
 
             var queries = [loadNetworkDevices(), loadConnectionState()];
             $q.all(queries).then(function() {
-                for (var i = 0; i < config.networkDevices.length; ++i) {
-                    if (config.networkDevices[i].description === vm.connectionState.description) {
-                        vm.isPortDetectable = config.networkDevices[i].isPortDetectable;
+                for (var i = 0; i < vm.networkDevices.length; ++i) {
+                    if (vm.networkDevices[i].description === vm.connectionState.description) {
+                        vm.connectionState.isPortDetectable = vm.networkDevices[i].isPortDetectable;
+                        vm.connectToNetworkStart(vm.networkDevices[i]);
                         break;
                     }
+                }
+                if (vm.networkDevices.length === 1) {
+                    vm.connectToNetworkStart(vm.networkDevices[0]);
                 }
                 eventDispatcher.listen(
                     function() {
                         vm.step = vm.steps.complete;
-                        styleChange();
+                        vm.Finish();
                     }
                 );
             });
@@ -67,7 +65,7 @@
 
         function loadNetworkDevices() {
 
-            stationService.isServiceCenter().then(function(isServiceCenter) {
+            return stationService.isServiceCenter().then(function(isServiceCenter) {
                 for (var i = 0; i < config.networkDevices.length; ++i) {
                     if (config.networkDevices[i].isServiceCenterConfig === isServiceCenter) {
                         vm.networkDevices.push(config.networkDevices[i]);
@@ -77,40 +75,23 @@
         }
         function loadConnectionState() {
             if (!vm.connectionState) {
-                stationService.getConnectionState().then(function(connectionState) {
+                return stationService.getConnectionState().then(function(connectionState) {
                     vm.connectionState = connectionState;
                 });
             }
         }
-        vm.first = function(networkChecking) {
-            vm.step = vm.steps.checkNetwork;
-        };
 
-        vm.second = function(networkChecking) {
+        vm.selectNetworkDeviceStart = function() {
             vm.step = vm.steps.selectNetworkDevice;
         };
 
-        vm.selectNetworkDevice = function(networkDevice) {
+        vm.connectToNetworkStart = function(networkDevice) {
             vm.selectedNetworkDevice = networkDevice;
-            vm.connectToNetworkStart();
-        };
-
-        vm.connectToNetworkStart = function() {
             vm.step = vm.steps.connectToNetwork;
         };
 
-        vm.moveFirst = function() {
-            vm.step = vm.steps.complete;
+        vm.Finish = function() {
+            vm.isFinished = true;
         };
-
-        vm.moveSecond = function() {
-            vm.step = vm.steps.selectNetworkDevice;
-        };
-
-        // Style for online change status of Modal Window
-        function styleChange() {
-            console.log('check');
-                $('.modal-offline').addClass('modal-online').removeClass('modal-offline');
-        }
     }
 })();

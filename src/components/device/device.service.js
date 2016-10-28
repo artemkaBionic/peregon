@@ -61,11 +61,21 @@
         };
 
         service.removeDevice = function(id) {
-            for (var i = service.devices.length - 1; i >= 0; i--) {
-                if (service.devices[i].id === id) {
-                    service.devices.splice(i, 1);
-                }
+            var promise = $q.when(null); //initial start promise that's already resolved
+
+            if (service.devices === null) {
+                promise = service.getDevices();
             }
+
+            promise = promise.then(function() {
+                for (var i = service.devices.length - 1; i >= 0; i--) {
+                    if (service.devices[i].id === id) {
+                        service.devices.splice(i, 1);
+                    }
+                }
+            });
+
+            return promise;
         };
 
         return service;

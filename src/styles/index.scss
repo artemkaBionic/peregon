@@ -383,14 +383,21 @@ figcaption {
   margin: auto;
 }
 
-.modal-progress{
+.modal-progress {
   margin:1% auto;
 }
 
-.modal-contents h2,.modal-header h2, .anim-modal-step figure{
+.anim-modal-step figure {
   text-align: center;
 }
-.modal-contents h2,.modal-header h2{
+
+.modal-contents h1, .modal-header h1,
+.modal-contents h2, .modal-header h2,
+.modal-contents h3, .modal-header h3,
+.modal-contents h4, .modal-header h4,
+.modal-contents h5, .modal-header h5,
+.modal-contents h6, .modal-header h6 {
+  text-align: center;
   font-weight: bold;
   margin: 5px;
 }
