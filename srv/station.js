@@ -1,4 +1,5 @@
 var fs = require('fs');
+var isDevelopment = process.env.NODE_ENV === 'development';
 
 var station = module.exports = {
     connectionState: null,
@@ -9,7 +10,7 @@ var station = module.exports = {
         return this.connectionState;
     },
     getIsServiceCenter: function(callback) {
-        if (process.platform === 'win32') {
+        if (isDevelopment) {
             console.log('Simulating service center check in a Windows development environment.');
             callback(false);
         } else {
@@ -29,10 +30,14 @@ var station = module.exports = {
     },
     reboot: function() {
         console.log('Reboot requested.');
-        childProcess.spawn('python', ['/opt/powercontrol.py', '--reboot']);
+        if (!isDevelopment) {
+            childProcess.spawn('python', ['/opt/powercontrol.py', '--reboot']);
+        }
     },
     shutdown: function() {
         console.log('Shutdown requested.');
-        childProcess.spawn('python', ['/opt/powercontrol.py', '--poweroff']);
+        if (!isDevelopment) {
+            childProcess.spawn('python', ['/opt/powercontrol.py', '--poweroff']);
+        }
     }
 };

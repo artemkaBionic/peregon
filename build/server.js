@@ -44,8 +44,8 @@ function browserSyncInit(baseDir, files, browser) {
 }
 
 gulp.task('dev', function () {
+    process.env.NODE_ENV = 'development';
     $.util.env.PORT = 4000;
-
     $.util.env.base_url = 'localhost:' + $.util.env.PORT;
     console.log($.util.env.base_url);
 });

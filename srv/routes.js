@@ -9,6 +9,8 @@ module.exports = function(io, data) {
 // Express Router
     var router = express.Router();
 
+    var isDevelopment = process.env.NODE_ENV === 'development';
+
     function removeDevice(id) {
         for (var i = data.devices.length - 1; i >= 0; i--) {
             if(data.devices[i].id === id) {
@@ -38,25 +40,32 @@ module.exports = function(io, data) {
             console.log('Client requests ' + req.params.contentSubtype + ' ' + req.params.contentType + ' packages');
             switch (req.params.contentType) {
                 case 'media':
-                    var packages = [];
-                    console.log('Searching for media packages in ' + config.mediaPackagePath);
-                    var dirs = getDirectories(config.mediaPackagePath);
-                    var len = dirs.length;
-                    for (var i = 0; i < len; ++i) {
-                        var fullDir = path.join(config.mediaPackagePath, dirs[i]);
-                        var packageFile = path.join(fullDir, '.package.json');
-                        console.log('Attempting to parse ' + packageFile);
-                        try {
-                            var package = JSON.parse(fs.readFileSync(packageFile, 'utf8'));
-                            if (package.type === "media" && ((req.params.contentSubtype === undefined && package.subtype === 'advertisement') || (req.params.contentSubtype !== undefined && package.subtype === req.params.contentSubtype))) {
-                                packages.push(package);
+                    if (isDevelopment) {
+                        res.json([
+                            {"type":"media","subtype":"xbox-one","id":"bc76b9f7-02f9-42e3-a9b7-3383b5287f07","name":"Xbox One Refresh","size":24204},
+                            {"type":"media","subtype":"xbox-one","id":"6984e794-7934-4ecb-851a-da141da5a774","name":"Xbox One Update","size":2000268}
+                        ]);
+                    } else {
+                        var packages = [];
+                        console.log('Searching for media packages in ' + config.mediaPackagePath);
+                        var dirs = getDirectories(config.mediaPackagePath);
+                        var len = dirs.length;
+                        for (var i = 0; i < len; ++i) {
+                            var fullDir = path.join(config.mediaPackagePath, dirs[i]);
+                            var packageFile = path.join(fullDir, '.package.json');
+                            console.log('Attempting to parse ' + packageFile);
+                            try {
+                                var package = JSON.parse(fs.readFileSync(packageFile, 'utf8'));
+                                if (package.type === "media" && ((req.params.contentSubtype === undefined && package.subtype === 'advertisement') || (req.params.contentSubtype !== undefined && package.subtype === req.params.contentSubtype))) {
+                                    packages.push(package);
+                                }
+                            } catch (e) {
+                                console.log('Error trying to read ' + packageFile);
+                                console.log(e);
                             }
-                        } catch (e) {
-                            console.log('Error trying to read ' + packageFile);
-                            console.log(e);
                         }
+                        res.json(packages);
                     }
-                    res.json(packages);
                     break;
                 default:
                     res.json(null);

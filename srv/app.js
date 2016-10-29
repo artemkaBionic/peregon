@@ -23,6 +23,7 @@ app.io           = io;
 var mongoDbUrl = 'mongodb://localhost/AppChord?connectTimeoutMS=30000';
 
 // Common data
+var isDevelopment = process.env.NODE_ENV === 'development';
 var data = {};
 data.devices = [];
 
@@ -52,7 +53,7 @@ app.use(function(req, res, next) {
 // error handlers
 // development error handler
 // will print stacktrace
-if (app.get('env') === 'development') {
+if (isDevelopment) {
   app.use(function(err, req, res, next) {
     res.status(err.status || 500);
     res.render('error', {
@@ -77,8 +78,8 @@ io.on( 'connection', function( socket )
 {
     console.log( 'A client connected' );
     socket.on('device-apply', function (data) {
-        if (process.platform === 'win32') {
-            console.log('Simulating applying a device in a Windows development environment by waiting 3 seconds.');
+        if (isDevelopment) {
+            console.log('Simulating applying a device in a development environment by waiting 3 seconds.');
             setTimeout(function() {
                 io.emit('device-apply-progress', {progress: 100, device: data.device});
             }, 3000);
@@ -111,8 +112,8 @@ io.on( 'connection', function( socket )
         if (data.refreshType === 'xbox-one') {
             var session = initSession('Microsoft', 'Xbox One', data.itemNumber, data.sku);
 
-            if (process.platform === 'win32') {
-                console.log('Simulating verifying a refresh in a Windows development environment by waiting 3 seconds.');
+            if (isDevelopment) {
+                console.log('Simulating verifying a refresh in a development environment by waiting 3 seconds.');
                 setTimeout(function() {
                     io.emit('verify-refresh-progress', {progress: 100, device: data.device});
                 }, 3000);
@@ -220,24 +221,26 @@ var initSession = function(manufacturer, model, itemNumber, sku) {
 };
 
 var updateSessionDb = function(session) {
-    mongoClient.connect(mongoDbUrl, function(err, db) {
-        assert.equal(err, null);
-        if (session._id === undefined) {
-            db.collection('RefreshSessions').insertOne(session, function (err, result) {
-                assert.equal(err, null);
-                console.log('Inserted refresh session:');
-                console.log(session);
-                db.close();
-            });
-        } else {
-            db.collection('RefreshSessions').replaceOne({ "_id" : session._id }, session, function (err, result) {
-                assert.equal(err, null);
-                console.log('Updated refresh session:');
-                console.log(session);
-                db.close();
-            });
-        }
-    });
+    if (!isDevelopment) {
+        mongoClient.connect(mongoDbUrl, function (err, db) {
+            assert.equal(err, null);
+            if (session._id === undefined) {
+                db.collection('RefreshSessions').insertOne(session, function (err, result) {
+                    assert.equal(err, null);
+                    console.log('Inserted refresh session:');
+                    console.log(session);
+                    db.close();
+                });
+            } else {
+                db.collection('RefreshSessions').replaceOne({"_id": session._id}, session, function (err, result) {
+                    assert.equal(err, null);
+                    console.log('Updated refresh session:');
+                    console.log(session);
+                    db.close();
+                });
+            }
+        });
+    }
 };
 
 var logSession = function(session, message) {
