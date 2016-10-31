@@ -603,27 +603,100 @@ figcaption {
   background-color: transparent;
   box-shadow: none;
 }
-.power-window{
-  display: inline-block;
-  background-color: rgba(0, 0, 0, .5);
-  border: 7px rgba(0, 0, 0, .3);
+
+.power-window {
+  width: 660px;
+  height: 340px;
+  background-color: rgba(0, 0, 0, 0.5);
   border-radius: 7px;
+  padding: 5px;
+  border: 2px solid black;
 }
 
 .power-button, .reset-button{
   width: 300px;
   height: 300px;
-  margin: 10px;
+  margin: 13px auto;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 16px;
+}
+
+.power-button:hover{
+  background-color: rgba(197, 42, 42, 0.85);
+  cursor: pointer;
+  .shut-text{
+    color:white;
+  }
+
+}
+
+.reset-button:hover{
+  background-color: rgba(49, 166, 49, 0.85);
+  cursor: pointer;
+  .shut-text{
+    color:white;
+  }
 }
 
 .power-button{
-  display: inline-block;
-  background-color: white;
-
+  position: absolute;
+  right: 0;
+  margin-right: 10px;
 }
+
 .reset-button{
-
-  display: inline-block;
-  background-color: black;
+  position: absolute;
+  left:0;
+  margin-left: 20px;
 }
+
+.power-button img, .reset-button img {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  margin: auto;
+}
+
+.power-button img {
+  height: 145px;
+}
+
+.reset-button img {
+  height: 180px;
+}
+
+.power-button .shut-text, .reset-button .shut-text {
+  text-align: center;
+  margin-top: 250px;
+  font-size: 1.5em;
+  color: black;
+}
+
+.close-button-pos{
+  position: absolute;
+  top: -10px;
+  right: -20px;
+}
+
+.close-button-pos .close-button, .close-button-pos .btn {
+  color: white;
+  border: 3px solid white;
+  border-radius: 100%;
+  width: 30px;
+  height: 30px;
+  background-color: rgba(0,0,0,.5);
+  font-weight: bold;
+  padding: 3px 8px;
+}
+.close-button:hover{
+  color: black;
+  background-color: white;
+}
+.close-button:checked{
+  color: white;
+  background-color: rgba(0,0,0,.5);
+}
+
 /*============================End Shut Down CSS==================*/

@@ -1,4 +1,12 @@
 <div class="power-window">
-  <div class="power-button"></div>
-  <div class="reset-button"></div>
+  <div class="reset-button">
+    <img ng-click="sd.reboot()" ng-src="app/user/shutdown/img/restart.png">
+    <div class="shut-text">Restart</div>
+  </div>
+  <div class="power-button"><img ng-click="sd.shutdown()" ng-src="app/user/shutdown/img/poweroff.png">
+    <div class="shut-text">Shut Down</div>
+  </div>
+  <div class="close-button-pos">
+    <button class="btn close-button" ng-click="sd.close()">x</button>
+  </div>
 </div>

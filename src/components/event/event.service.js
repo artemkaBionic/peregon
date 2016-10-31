@@ -152,7 +152,10 @@
             }
 
             service.modalWindow = $uibModal.open({templateUrl: 'app/user/shutdown/shutdown.html',
-                size: 'sm'
+                size: 'sm',
+                controller: 'ShutDownController',
+                resolve: {connectionState: connectionState, eventDispatcher:service.eventDispatcher},
+                controllerAs: 'sd'
             });
         }
 

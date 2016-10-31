@@ -109,10 +109,12 @@ module.exports = function(io, data) {
     });
 
     router.post('/system/reboot', function (req, res) {
+        console.log('Rebooting...');
         station.reboot();
     });
 
     router.post('/system/shutdown', function (req, res) {
+        console.log('Shutting down...');
         station.shutdown();
     });
 
