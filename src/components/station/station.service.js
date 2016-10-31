@@ -28,7 +28,7 @@
         };
 
         service.shutdown = function() {
-            var url = '/system/reboot';
+            var url = '/system/shutdown';
             return $http.post(url, null);
         };
 

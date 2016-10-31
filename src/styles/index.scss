@@ -124,14 +124,6 @@ $open-sans-path: '../bower_components/open-sans/fonts';
   margin: auto -400px;
 }
 
-.wizard-image:hover{
-cursor: zoom-in;
-}
-
-.wizard-image-big:hover{
-  cursor: zoom-out;
-}
-
 .wizard .text-input {
   margin: 0;
 }
@@ -489,6 +481,14 @@ figcaption {
 .toast-top-right {
   top: 12px;
   right: 50px;
+}
+
+.modal-contents .wizard-image:hover{
+  cursor: zoom-in;
+}
+
+.modal-contents .wizard-image-big:hover{
+  cursor: zoom-out;
 }
 
 ///*========================End Toast Pop-Up====================== */
