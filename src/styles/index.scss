@@ -695,4 +695,39 @@ figcaption {
   background-color: rgba(0,0,0,.5);
 }
 
+//.power-message, .reboot-message{
+//  display: none;
+//}
+
+.power-window-message .power-message,.power-window-message .reboot-message{
+  height: 200px;
+  width: 500px;
+  position:absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  margin: auto;
+  color:white;
+  font-size:1.5em;
+  text-align: center;
+  cursor:wait;
+}
+
+.power-window-message .reboot-message{height: 90px;}
+
+.power-window-message {
+  width: 660px;
+  height: 340px;
+  background-color: rgba(0, 0, 0, 0.75);
+  border-radius: 7px;
+  padding: 5px;
+  border: 2px solid black;
+  cursor:wait;
+}
+
+.power-window-message .reset-button,.power-window-message .power-button,.power-window-message .close-button, .message-none{
+  display: none;
+}
+
 /*============================End Shut Down CSS==================*/

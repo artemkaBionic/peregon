@@ -5,25 +5,29 @@
         .module('app.user')
         .controller('ShutDownController', ShutDownController);
 
-    ShutDownController.$inject = ['$scope', '$q', 'config', 'stationService', 'eventService', 'connectionState', '$uibModalInstance','eventDispatcher','$uibModal'];
+    ShutDownController.$inject = ['$scope', '$q', 'config', 'stationService', 'eventService', 'connectionState', '$uibModalInstance','eventDispatcher','$uibModal','$timeout'];
 
-    function ShutDownController($scope, $q, config, stationService, eventService, connectionState, $uibModalInstance, eventDispatcher, $uibModal) {
+    function ShutDownController($scope, $q, config, stationService, eventService, connectionState, $uibModalInstance, eventDispatcher, $uibModal, $timeout) {
         /*jshint validthis: true */
         var sd = this;
         sd.close = close;
+        sd.reboot = reboot;
+        sd.shutdown = shutdown;
+        sd.turningOff = false;
+        sd.rebooting = false;
+
         function close() {
             $uibModalInstance.dismiss('close');
         }
 
-        sd.reboot = reboot;
-        sd.shutdown = shutdown;
-
         function reboot(){
-            stationService.reboot();
+            sd.rebooting = true;
+            $timeout(stationService.reboot, 5000);
         }
 
         function shutdown(){
-            stationService.shutdown();
+            sd.turningOff = true;
+           $timeout(stationService.shutdown, 5000);
         }
     }
 })();
