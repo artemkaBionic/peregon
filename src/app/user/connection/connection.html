@@ -25,7 +25,7 @@
         <p>Can't decide?</p>
         <ul>
           <li>You may need to follow the network line to see where it goes.</li>
-          <li>If your firewall and switch are together, choose either one.</li>
+          <li>If your firewall and switch are together, choose the switch.</li>
         </ul>
       </div>
 
@@ -35,7 +35,7 @@
             <a href="" ng-click="vm.connectToNetworkStart(networkDevice)">
               <div class="card-body">
                 <div class="h-80">
-                  <div class="card-title text-ellipsis">{{::networkDevice.description}}</div>
+                  <div class="card-title text-ellipsis">{{::networkDevice.displayDescription}}</div>
                   <div><img class="center" ng-src="/assets/images/{{::networkDevice.deviceImageFile}}"></div>
                 </div>
               </div>
@@ -48,30 +48,30 @@
     <div class="anim-modal-step modal-enter" ng-switch-when="connectToNetwork">
 
       <div class="row modal-contents">
-        <div ng-if="vm.connectionState.description == null">
+        <div ng-if="vm.connectionState.displayDescription == null">
           <p>Please connect the Refresh Station to:<br/>port <strong>{{vm.selectedNetworkDevice.correctPort}}</strong>
-            of the <strong>{{vm.selectedNetworkDevice.description}}</strong> (see wiring diagram).</p>
+            of the <strong>{{vm.selectedNetworkDevice.displayDescription}}</strong> (see wiring diagram).</p>
         </div>
-        <div ng-if="vm.connectionState.description != null">
-          <div ng-if="vm.connectionState.description == vm.selectedNetworkDevice.description && vm.connectionState.port == vm.selectedNetworkDevice.correctPort">
+        <div ng-if="vm.connectionState.displayDescription != null">
+          <div ng-if="vm.connectionState.displayDescription == vm.selectedNetworkDevice.displayDescription && vm.connectionState.port == vm.selectedNetworkDevice.correctPort">
             <p>Refresh Station is <strong>correctly connected</strong> to:<br/>
-              port {{vm.selectedNetworkDevice.correctPort}} of the {{vm.selectedNetworkDevice.description}}.</p>
+              port {{vm.selectedNetworkDevice.correctPort}} of the {{vm.selectedNetworkDevice.displayDescription}}.</p>
             <p>Please contact support to <b>troubleshoot your Internet connection</b>.</p>
           </div>
           <div
-            ng-if="vm.connectionState.description != vm.selectedNetworkDevice.description || vm.connectionState.port != vm.selectedNetworkDevice.correctPort">
+            ng-if="vm.connectionState.displayDscription != vm.selectedNetworkDevice.displayDescription || vm.connectionState.port != vm.selectedNetworkDevice.correctPort">
             <p>Refresh Station is connected to:<br/>
-              <span ng-show="vm.connectionState.isPortDetectable">port <strong>{{vm.connectionState.port}}</strong> of </span>the <strong>{{vm.connectionState.description}}</strong>.
+              <span ng-show="vm.connectionState.isPortDetectable">port <strong>{{vm.connectionState.port}}</strong> of </span>the <strong>{{vm.connectionState.displayDescription}}</strong>.
             </p>
             <p>Please connect it to:<br/>port <strong>{{vm.selectedNetworkDevice.correctPort}}</strong> of the
-              <strong>{{vm.selectedNetworkDevice.description}}</strong> (see wiring diagram).</p>
+              <strong>{{vm.selectedNetworkDevice.displayDescription}}</strong> (see wiring diagram).</p>
           </div>
         </div>
       </div>
       <div class="row modal-contents modal-graphics">
         <figure>
           <img ng-click="vm.ChangeClass()" class="wizard-image" ng-class="{'wizard-image-big':vm.zoomed,}" ng-src="/assets/images/{{vm.selectedNetworkDevice.wiringImageFile}}">
-          <figcaption>{{vm.selectedNetworkDevice.description}} wiring diagram</figcaption>
+          <figcaption>{{vm.selectedNetworkDevice.displayDescription}} wiring diagram</figcaption>
         </figure>
       </div>
     </div>

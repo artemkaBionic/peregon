@@ -7,6 +7,7 @@ var config = require('gulp-ng-config');
 var file = require('gulp-file');
 var replace = require('gulp-replace');
 
+
 var $ = require('gulp-load-plugins')({
     pattern: ['gulp-*', 'main-bower-files', 'uglify-save-license', 'del']
 });
@@ -90,11 +91,11 @@ gulp.task('injector:js', ['env', 'analyze', 'injector:css'], function () {
 
 gulp.task('partials', function () {
     return gulp.src('src/{app,components}/**/*.html')
-        //.pipe($.minifyHtml({
-        //    empty: true,
-        //    spare: true,
-        //    quotes: true
-        //}))
+        .pipe($.minifyHtml({
+            empty: true,
+            spare: true,
+            quotes: true
+        }))
         .pipe($.angularTemplatecache('templateCacheHtml.js', {
             module: 'app'
         }))
@@ -118,7 +119,7 @@ gulp.task('html', ['wiredep', 'injector:css', 'injector:js', 'partials'], functi
         .pipe(jsFilter)
         .pipe($.debug({title: 'js'}))
         .pipe($.ngAnnotate({ add: true, single_quotes: true }))
-        //.pipe($.uglify({preserveComments: $.uglifySaveLicense}))
+        .pipe($.uglify({preserveComments: $.uglifySaveLicense}))
         .pipe(jsFilter.restore())
         .pipe(cssFilter)
         .pipe($.debug({title: 'css'}))
@@ -128,17 +129,17 @@ gulp.task('html', ['wiredep', 'injector:css', 'injector:js', 'partials'], functi
         .pipe(replace('../bower_components/open-sans/fonts', '../fonts/open-sans'))
         .pipe(replace('../bower_components/p0rtal/src/package/fonts/apc-icons/fonts', '../fonts/apc-icons'))
         .pipe($.importCss()) //inlining css @import
-        //.pipe($.csso())
+        .pipe($.csso())
         .pipe(cssFilter.restore())
         .pipe(assets.restore())
         .pipe($.useref())
         .pipe($.revReplace())
         .pipe(htmlFilter)
-        //.pipe($.minifyHtml({
-        //    empty: true,
-        //    spare: true,
-        //    quotes: true
-        //}))
+        .pipe($.minifyHtml({
+            empty: true,
+            spare: true,
+            quotes: true
+        }))
         .pipe(htmlFilter.restore())
         .pipe(gulp.dest('dist/'))
         .pipe($.size({title: 'dist/', showFiles: true}));

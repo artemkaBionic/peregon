@@ -37,7 +37,7 @@
                 title: 'Connect to Network'
             }
         };
-        vm.step = vm.steps.connectToNetwork;
+        vm.step = vm.steps.selectNetworkDevice;
         vm.close = close;
 
         activate();
@@ -47,6 +47,7 @@
             $q.all(queries).then(function() {
                 for (var i = 0; i < vm.networkDevices.length; ++i) {
                     if (vm.networkDevices[i].description === vm.connectionState.description) {
+                        vm.connectionState.displayDescription = vm.networkDevices[i].displayDescription;
                         vm.connectionState.isPortDetectable = vm.networkDevices[i].isPortDetectable;
                         vm.connectToNetworkStart(vm.networkDevices[i]);
                         break;
