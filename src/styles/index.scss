@@ -623,14 +623,13 @@ figcaption {
   .shut-text{
     color:white;
   }
-
 }
 
 .reset-button:hover{
   background-color: rgba(49, 166, 49, 0.85);
   cursor: pointer;
   .shut-text{
-    color:white;
+    color: #e6e6e6;
   }
 }
 
@@ -646,21 +645,17 @@ figcaption {
   margin-left: 20px;
 }
 
-.power-button img, .reset-button img {
+.power-button i, .reset-button i {
+  font-size: 10em;
+  color: black;
   position: absolute;
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
   margin: auto;
-}
-
-.power-button img {
-  height: 145px;
-}
-
-.reset-button img {
-  height: 180px;
+  width: 120px;
+  height: 140px;
 }
 
 .power-button .shut-text, .reset-button .shut-text {

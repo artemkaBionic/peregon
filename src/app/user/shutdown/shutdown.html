@@ -8,11 +8,13 @@
   </div>
   <div ng-class="sd.rebooting? 'reboot-message':'message-none'"><h2>Station Rebooting...</h2></div>
   <div class="reset-button">
-    <img ng-click="sd.reboot()" ng-src="app/user/shutdown/img/restart.png">
+    <i ng-click="sd.reboot()" class="fa fa-refresh"></i>
     <div class="shut-text">Restart</div>
   </div>
-  <div class="power-button"><img ng-click="sd.shutdown()" ng-src="app/user/shutdown/img/poweroff.png">
-    <div class="shut-text">Shut Down</div>
+  <div class="power-button">
+    <i ng-click="sd.shutdown()" class="fa fa-power-off"></i>
+    <div class="shut-text">Shut Down
+    </div>
   </div>
   <div class="close-button-pos">
     <button class="btn close-button" ng-click="sd.close()">x</button>

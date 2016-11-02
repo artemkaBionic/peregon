@@ -59,7 +59,7 @@
             <p>Please contact support to <b>troubleshoot your Internet connection</b>.</p>
           </div>
           <div
-            ng-if="vm.connectionState.displayDscription != vm.selectedNetworkDevice.displayDescription || vm.connectionState.port != vm.selectedNetworkDevice.correctPort">
+            ng-if="vm.connectionState.displayDescription != vm.selectedNetworkDevice.displayDescription || vm.connectionState.port != vm.selectedNetworkDevice.correctPort">
             <p>Refresh Station is connected to:<br/>
               <span ng-show="vm.connectionState.isPortDetectable">port <strong>{{vm.connectionState.port}}</strong> of </span>the <strong>{{vm.connectionState.displayDescription}}</strong>.
             </p>
