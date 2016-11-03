@@ -80,6 +80,7 @@
                 title: 'Xbox Refresh Failed'
             }
         };
+
         vm.step = vm.steps.details;
         vm.itemNumber = null;
         vm.errorMessage = '';

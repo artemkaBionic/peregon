@@ -125,13 +125,17 @@ $open-sans-path: '../bower_components/open-sans/fonts';
 }
 
 .wizard .text-input {
-  margin: 0;
+  margin:40px 0 0;
 }
 
 .error {
   color: darkred;
   position: absolute;
   font-size: 1.5em;
+}
+
+.error-container{
+  text-align: left;
 }
 
 .wizard-graphics {
@@ -143,6 +147,7 @@ $open-sans-path: '../bower_components/open-sans/fonts';
 .wizard-contents {
   //height: 128px;
   margin: 32px 15% 32px 15%;
+  text-align: center;
 }
 
 .wizard-navigation {
@@ -726,3 +731,31 @@ figcaption {
 }
 
 /*============================End Shut Down CSS==================*/
+
+
+/*====================Xbox One Refreshing=======================*/
+video{
+  width: 100%    !important;
+  height: auto   !important;
+}
+
+.ref-list{
+  font-size: 1.5em;
+
+}
+.ref-list ol li {
+  margin: 3% auto;
+}
+
+.h3-todo h3{
+font-weight: bold;}
+
+.border-step {
+  border-top: solid 3px #b8aace;
+  border-bottom: solid 3px #b8aace;
+}
+
+form .wizard-graphics{
+  margin:7% auto;
+}
+/*==================== End Xbox One Refreshing=======================*/

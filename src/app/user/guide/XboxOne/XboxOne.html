@@ -29,13 +29,13 @@
               <span class="error" ng-show="form.itemnumber.$error.maxlength">Item number must be 10 digits.</span>
             </div>
           </div>
+          <div class="row">
+            <button type="submit" class="btn btn-primary btn-rounded center" ng-disabled="form.$invalid">
+              Next &nbsp; <i class="fa fa-caret-right"></i>
+            </button>
+          </div>
           <div class="row wizard-graphics wizard-contents">
             <img src="/assets/images/XboxItemNumber.png" class="wizard-image center">
-          </div>
-          <div class="row wizard-navigation">
-                <button type="submit" class="btn btn-primary btn-rounded pull-right" ng-disabled="form.$invalid">
-                  Next &nbsp; <i class="fa fa-caret-right"></i>
-                </button>
           </div>
         </form>
       </div>
@@ -73,24 +73,28 @@
       </div>
 
       <div class="anim-wizard-step" ng-switch-when="refreshXbox">
-        <div class="row wizard-graphics">
-          <video controls autoplay>
-            <source src="/assets/videos/XboxOneRefresh.webm" type='video/webm;codecs="vp9, vorbis"'>
-            <source src="/assets/videos/XboxOneRefresh.mp4" type="video/mp4">
-            <track label="English" kind="subtitles" srclang="en" src="/assets/videos/XboxOneRefresh-en.vtt" default>
-            Your browser does not support the video tag.
-          </video>
+        <div class="row border-step">
+          <div class="col-sm-8">
+            <video controls autoplay>
+              <source src="/assets/videos/XboxOneRefresh.webm" type='video/webm;codecs="vp9, vorbis"'>
+              <source src="/assets/videos/XboxOneRefresh.mp4" type="video/mp4">
+              <track label="English" kind="subtitles" srclang="en" src="/assets/videos/XboxOneRefresh-en.vtt" default>
+              Your browser does not support the video tag.
+            </video>
+          </div>
+          <div class="col-sm-4 ref-list">
+            <ol>
+              <li>If the Xbox is plugged in, unplug it and wait a few seconds.</li>
+              <li>Plug in the USB drive and power cord.</li>
+              <li>Press and hold the <b>BIND</b> and <b>EJECT</b> buttons while turning it on.</li>
+              <li>Listen for two "power-up" tones a couple of seconds apart.</li>
+              <li>Release the <b>BIND</b> and <b>EJECT</b> buttons.</li>
+              <li>Wait a few seconds for the Xbox button light to turn off, then unplug the Xbox and remove the USB drive.</li>
+            </ol>
+          </div>
         </div>
-        <div class="row wizard-contents">
-          <ol>
-            <li>If the Xbox is plugged in, unplug it and wait a few seconds.</li>
-            <li>Plug in the USB drive and power cord.</li>
-            <li>Press and hold the <b>BIND</b> and <b>EJECT</b> buttons while turning it on.</li>
-            <li>Listen for two "power-up" tones a couple of seconds apart.</li>
-            <li>Release the <b>BIND</b> and <b>EJECT</b> buttons.</li>
-            <li>Wait a few seconds for the Xbox button light to turn off, then unplug the Xbox and remove the USB drive.</li>
-          </ol>
-          <h3>Insert the USB drive into the Refresh Station to continue.</h3>
+        <div class="row wizard-contents h3-todo">
+          <h3>Insert the USB drive into the Refresh Station to continue...</h3>
         </div>
       </div>
 
@@ -139,24 +143,28 @@
       </div>
 
       <div class="anim-wizard-step" ng-switch-when="updateXbox">
-        <div class="row wizard-graphics">
-          <video controls autoplay>
-            <source src="/assets/videos/XboxOneRefresh.webm" type='video/webm;codecs="vp9, vorbis"'>
-            <source src="/assets/videos/XboxOneRefresh.mp4" type="video/mp4">
-            <track label="English" kind="subtitles" srclang="en" src="/assets/videos/XboxOneRefresh-en.vtt" default>
-            Your browser does not support the video tag.
-          </video>
+        <div class="row border-step">
+          <div class="col-sm-8">
+            <video controls autoplay>
+              <source src="/assets/videos/XboxOneRefresh.webm" type='video/webm;codecs="vp9, vorbis"'>
+              <source src="/assets/videos/XboxOneRefresh.mp4" type="video/mp4">
+              <track label="English" kind="subtitles" srclang="en" src="/assets/videos/XboxOneRefresh-en.vtt" default>
+              Your browser does not support the video tag.
+            </video>
+          </div>
+          <div class="col-sm-4 ref-list">
+            <ol>
+              <li>If the Xbox is plugged in, unplug it and wait a few seconds.</li>
+              <li>Plug in the USB drive and power cord.</li>
+              <li>Press and hold the <b>BIND</b> and <b>EJECT</b> buttons while turning it on.</li>
+              <li>Listen for two "power-up" tones a couple of seconds apart.</li>
+              <li>Release the <b>BIND</b> and <b>EJECT</b> buttons.</li>
+              <li>Wait a couple minutes for the Xbox button light to turn off, then unplug the Xbox and remove the USB drive.</li>
+            </ol>
+            </div>
         </div>
-        <div class="row wizard-contents">
-          <ol>
-            <li>If the Xbox is plugged in, unplug it and wait a few seconds.</li>
-            <li>Plug in the USB drive and power cord.</li>
-            <li>Press and hold the <b>BIND</b> and <b>EJECT</b> buttons while turning it on.</li>
-            <li>Listen for two "power-up" tones a couple of seconds apart.</li>
-            <li>Release the <b>BIND</b> and <b>EJECT</b> buttons.</li>
-            <li>Wait a couple minutes for the Xbox button light to turn off, then unplug the Xbox and remove the USB drive.</li>
-          </ol>
-          <h3>Insert the USB drive into the Refresh Station to continue.</h3>
+        <div class="row wizard-contents h3-todo">
+          <h3>Insert the USB drive into the Refresh Station to continue...</h3>
         </div>
       </div>
 
@@ -167,8 +175,8 @@
         <div class="row wizard-contents">
           <h2>You have successfully refreshed the Xbox.</h2>
         </div>
-        <div class="row wizard-navigation">
-          <button class="btn btn-primary btn-rounded pull-right" ui-sref="^" href="#/user/home">
+        <div class="row">
+          <button class="btn btn-primary btn-rounded center" ui-sref="^" href="#/user/home">
             Finish &nbsp; <i class="fa fa-caret-right"></i>
           </button>
         </div>
@@ -183,8 +191,8 @@
           <h3>{{vm.errorMessage}}</h3>
           <h3>Please try again. If error persists, contact support.</h3>
         </div>
-        <div class="row wizard-navigation">
-          <button class="btn btn-primary btn-rounded pull-right" ng-click="vm.retry()">
+        <div class="row">
+          <button class="btn btn-primary btn-rounded center" ng-click="vm.retry()">
             <i class="fa fa-repeat"></i> &nbsp; Retry
           </button>
         </div>
