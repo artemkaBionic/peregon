@@ -5,9 +5,9 @@
         .module('app.user')
         .controller('GuideControllerXboxOne', GuideControllerXboxOne);
 
-    GuideControllerXboxOne.$inject = ['$q', '$stateParams', 'config', 'guideService', 'deviceService', 'packageService', 'socketService', 'eventService'];
+    GuideControllerXboxOne.$inject = ['$q', 'deviceService', 'packageService', 'socketService', 'eventService'];
 
-    function GuideControllerXboxOne($q, $stateParams, config, guideService, deviceService, packageService, socketService, eventService) {
+    function GuideControllerXboxOne($q, deviceService, packageService, socketService, eventService) {
         var refreshMediaPackageName = 'Xbox One Refresh';
         var updateMediaPackageName = 'Xbox One Update';
         var usbDeviceMinSize = 4000000000;
@@ -15,7 +15,6 @@
         /*jshint validthis: true */
         var vm = this;
         vm.selectedDevice = null;
-        vm.devices = [];
         vm.refreshMediaPackage = null;
         vm.updateMediaPackage = null;
         vm.steps = {
@@ -88,17 +87,21 @@
         activate();
 
         function activate() {
-            var queries = [loadDevices(), loadMediaPackages()];
+            var queries = [eventService.DisableDeviceNotification(), loadDevices(), loadMediaPackages()];
             $q.all(queries);
         }
 
+        vm.$onDestroy = function() {
+            eventService.EnableDeviceNotification();
+        };
+
         function loadDevices() {
             deviceService.getDevices().then(function(devices) {
-                vm.devices = devices;
-                if (vm.selectedDevice === null && vm.devices.length > 0) {
-                    for (var i = vm.devices.length - 1; i >= 0; --i) {
-                        if (vm.devices[i].size >= usbDeviceMinSize) {
-                            vm.selectedDevice = vm.devices[0];
+                if (vm.selectedDevice === null && devices.length > 0) {
+                    for (var i = devices.length - 1; i >= 0; --i) {
+                        if (devices[i].size >= usbDeviceMinSize) {
+                            vm.selectedDevice = devices[i];
+                            break;
                         }
                     }
                 }
@@ -119,12 +122,10 @@
 
         function waitForUsbAdd(minSize, callback) {
             if (vm.selectedDevice === null) {
-                eventService.DisableDeviceNotification();
                 socketService.once('event', function(event) {
                     if (event.name === 'device-add') {
                         if (event.data.size >= minSize) {
                             vm.selectedDevice = event.data;
-                            eventService.EnableDeviceNotification();
                             callback();
                         } else {
                             waitForUsbAdd(minSize, callback);
@@ -137,42 +138,37 @@
         }
 
         function waitForUsbRemove(callback) {
-            if (vm.devices.length === 0) {
-                vm.selectedDevice = null;
-                callback();
-            } else {
-                socketService.once('event', function(event) {
-                    if (event.name === 'device-remove' && event.data.id === vm.selectedDevice.id) {
-                        vm.selectedDevice = null;
-                        callback();
-                    } else {
-                        waitForUsbRemove(callback);
-                    }
-                });
-            }
+            socketService.once('event', function(event) {
+                if (event.name === 'device-remove' && event.data.id === vm.selectedDevice.id) {
+                    vm.selectedDevice = null;
+                    callback();
+                } else {
+                    waitForUsbRemove(callback);
+                }
+            });
         }
-
-        vm.prepareRefreshUsbStart = function() {
-            if (vm.refreshMediaPackage === null) {
-                vm.errorMessage = refreshMediaPackageName + ' files are missing.';
-                vm.step = vm.steps.failed;
-            } else {
-                vm.step = vm.steps.prepareRefreshUsbInsert;
-                waitForUsbAdd(usbDeviceMinSize, prepareRefreshUsbApply);
-            }
-        };
 
         vm.retry = function() {
             activate();
             vm.prepareRefreshUsbStart();
         };
 
-        function prepareRefreshUsbApply() {
-            vm.step = vm.steps.prepareRefreshUsbInProgress;
+        function prepareUsbStart(mediaPackage, mediaPackageName, step, callback) {
+            if (mediaPackage === null) {
+                vm.errorMessage = mediaPackageName + ' files are missing.';
+                vm.step = vm.steps.failed;
+            } else {
+                vm.step = step;
+                waitForUsbAdd(usbDeviceMinSize, callback);
+            }
+        }
+
+        function prepareUsbApply(step, callback) {
+            vm.step = step;
 
             socketService.once('device-apply-progress', function(data) {
                 if (data.progress >= 100) {
-                    prepareRefreshUsbComplete();
+                   callback();
                 }
             });
 
@@ -184,8 +180,16 @@
 
             var data = {};
             data.device = vm.selectedDevice;
-            data.media = vm.refreshMediaPackage;
+            data.media = vm.updateMediaPackage;
             socketService.emit('device-apply', data);
+        }
+
+        vm.prepareRefreshUsbStart = function() {
+            prepareUsbStart(vm.refreshMediaPackage, refreshMediaPackageName, vm.steps.prepareRefreshUsbInsert, prepareRefreshUsbApply);
+        };
+
+        function prepareRefreshUsbApply() {
+            prepareUsbApply(vm.steps.prepareRefreshUsbInProgress, prepareRefreshUsbComplete);
         }
 
         function prepareRefreshUsbComplete() {
@@ -221,34 +225,11 @@
         }
 
         function prepareUpdateUsbStart() {
-            if (vm.updateMediaPackage === null) {
-                vm.errorMessage = updateMediaPackageName + ' files are missing.';
-                vm.step = vm.steps.failed;
-            } else {
-                vm.step = vm.steps.prepareUpdateUsbInsert;
-                waitForUsbAdd(usbDeviceMinSize, prepareUpdateUsbApply);
-            }
+            prepareUsbStart(vm.updateMediaPackage, updateMediaPackageName, vm.steps.prepareUpdateUsbInsert, prepareUpdateUsbApply);
         }
 
         function prepareUpdateUsbApply() {
-            vm.step = vm.steps.prepareUpdateUsbInProgress;
-
-            socketService.once('device-apply-progress', function(data) {
-                if (data.progress >= 100) {
-                    prepareUpdateUsbComplete();
-                }
-            });
-
-            socketService.once('device-apply-failed', function(data) {
-                socketService.removeAllListeners('device-apply-progress');
-                vm.errorMessage = data.message;
-                vm.step = vm.steps.failed;
-            });
-
-            var data = {};
-            data.device = vm.selectedDevice;
-            data.media = vm.updateMediaPackage;
-            socketService.emit('device-apply', data);
+            prepareUsbApply(vm.steps.prepareUpdateUsbInProgress, prepareUpdateUsbComplete);
         }
 
         function prepareUpdateUsbComplete() {

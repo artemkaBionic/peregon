@@ -11,7 +11,6 @@
         /*jshint validthis: true */
         var vm = this;
         vm.selectedDevice = null;
-        vm.devices = [];
         vm.selectedMediaPackage = null;
         vm.mediaPackages = [];
         vm.steps = {
@@ -52,13 +51,12 @@
 
         function loadDevices() {
             deviceService.getDevices().then(function(devices) {
-                vm.devices = devices;
-                if ($stateParams.deviceId === null && vm.devices.length === 1) {
-                    vm.selectedDevice = vm.devices[0];
+                if ($stateParams.deviceId !== null) {
+                    vm.selectedDevice = devices[$stateParams.deviceId];
                 } else {
-                    deviceService.getDevice($stateParams.deviceId).then(function(selectedDevice) {
-                        vm.selectedDevice = selectedDevice;
-                    });
+                    if (Object.keys(devices).length === 1) {
+                        vm.selectedDevice = devices[Object.keys(devices)[0]];
+                    }
                 }
             });
         }
@@ -89,19 +87,14 @@
         }
 
         function waitForUsbRemove(callback) {
-            if (vm.devices.length === 0) {
-                vm.selectedDevice = null;
-                callback();
-            } else {
-                socketService.once('event', function(event) {
-                    if (event.name === 'device-remove' && event.data.id === vm.selectedDevice.id) {
-                        vm.selectedDevice = null;
-                        callback();
-                    } else {
-                        waitForUsbRemove(callback);
-                    }
-                });
-            }
+            socketService.once('event', function(event) {
+                if (event.name === 'device-remove' && event.data.id === vm.selectedDevice.id) {
+                    vm.selectedDevice = null;
+                    callback();
+                } else {
+                    waitForUsbRemove(callback);
+                }
+            });
         }
 
         vm.selectMediaPackage = function(mediaPackage) {

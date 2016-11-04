@@ -25,7 +25,7 @@ var mongoDbUrl = 'mongodb://localhost/AppChord?connectTimeoutMS=30000';
 // Common data
 var isDevelopment = process.env.NODE_ENV === 'development';
 var data = {};
-data.devices = [];
+data.devices = {};
 
 var routes = require('./routes')(io, data);
 

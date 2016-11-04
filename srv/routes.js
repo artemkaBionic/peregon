@@ -11,14 +11,6 @@ module.exports = function(io, data) {
 
     var isDevelopment = process.env.NODE_ENV === 'development';
 
-    function removeDevice(id) {
-        for (var i = data.devices.length - 1; i >= 0; i--) {
-            if(data.devices[i].id === id) {
-                data.devices.splice(i, 1);
-            }
-        }
-    }
-
     function getDirectories(srcpath) {
         return fs.readdirSync(srcpath).filter(function(file) {
             return fs.statSync(path.join(srcpath, file)).isDirectory();
@@ -27,6 +19,10 @@ module.exports = function(io, data) {
 
     router.get('/data/devices', function (req, res) {
         res.json(data.devices);
+    });
+
+    router.get('/data/devices/:id', function (req, res) {
+        res.json(data.devices[req.params.id]);
     });
 
     router.get('/data/inventory/:id', function (req, res) {
@@ -96,10 +92,9 @@ module.exports = function(io, data) {
         console.log(event.data);
 
         if (event.name === "device-add") {
-            removeDevice(event.data.id); //Ensure that there are no duplicate devices
-            data.devices.push(event.data);
+            data.devices[event.data.id] = event.data;
         } else if (event.name === "device-remove") {
-            removeDevice(event.data.id);
+            delete data.devices[event.data.id];
         } else if (event.name === "connection-status") {
             station.setConnectionState(event.data);
         }

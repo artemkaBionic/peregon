@@ -5,9 +5,9 @@
         .module('app.event')
         .factory('eventService', eventService);
 
-    eventService.$inject = ['$rootScope', 'socketService', '$location', 'toastr', '$state', '$uibModal', 'deviceService', 'stationService'];
+    eventService.$inject = ['$rootScope', 'socketService', '$location', 'toastr', '$state', '$uibModal', 'stationService'];
 
-    function eventService($rootScope, socketService, $location, toastr, $state, $uibModal, deviceService, stationService) {
+    function eventService($rootScope, socketService, $location, toastr, $state, $uibModal, stationService) {
 
         var service = {};
 
@@ -23,31 +23,34 @@
             });
         }
 
+        function deleteDeviceNotification(deviceId) {
+            toastr.clear(deviceNotiviations[deviceId]);
+            delete deviceNotiviations[deviceId];
+        }
+
         socketService.on('event', function(event) {
             if (event.name === 'device-add') {
-                deviceService.addDevice(event.data).then(function() {
-                    if (service.isDeviceNotificationEnabled) {
-                        deviceNotiviations[event.data.id] = toastr.info('Click here to choose what to do with the ' + event.data.type + ' disk.',
-                            'Removable ' + event.data.type + ' disk', {
-                                'timeOut': 0,
-                                'extendedTimeOut': 0,
-                                'tapToDismiss': false,
-                                'closeButton': false,
-                                'onTap': function() {
-                                    $state.go('root.media', {
-                                        'id': event.data.id
-                                    });
-                                }
+                deleteDeviceNotification(event.data.id); //Prevent duplicate notifications for the same device
+                if (service.isDeviceNotificationEnabled) {
+                    deviceNotiviations[event.data.id] = toastr.info('Click here to choose what to do with the ' + event.data.type + ' disk.',
+                        'Removable ' + event.data.type + ' disk', {
+                            'timeOut': 0,
+                            'extendedTimeOut': 0,
+                            'tapToDismiss': false,
+                            'closeButton': false,
+                            'onTap': function() {
+                                toastr.clear(deviceNotiviations[event.data.id]);
+                                $state.go('root.media', {
+                                    'id': event.data.id
+                                });
                             }
-                        );
-                    }
-                });
+                        }
+                    );
+                }
             }
 
             else if (event.name === 'device-remove') {
-                deviceService.removeDevice(event.data.id);
-                toastr.clear(deviceNotiviations[event.data.id]);
-                delete deviceNotiviations[event.data.id];
+                deleteDeviceNotification(event.data.id);
             }
 
             else if (event.name === 'connection-status') {
