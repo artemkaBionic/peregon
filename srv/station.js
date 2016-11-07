@@ -1,4 +1,5 @@
 var fs = require('fs');
+var childProcess = require('child_process');
 var isDevelopment = process.env.NODE_ENV === 'development';
 
 var station = module.exports = {
