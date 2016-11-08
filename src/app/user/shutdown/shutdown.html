@@ -1,12 +1,10 @@
 <div ng-class="(sd.rebooting||sd.turningOff)? 'power-window-message':'power-window'">
-  <div ng-class="sd.turningOff? 'power-message':'message-none'"><h2>Station Shutting Down...</h2><br/>
+  <div ng-class="sd.turningOff? 'power-message':'message-none'"><h2>Shutting Down...</h2><br/>
     <p class="center">
-      Please, note that Refurbishing Station
-      <strong>MUST</strong> be turned on and connected to the Internet<br/>
-      to get the latest Refurbishment Software Updates
+      Please note that the Refresh Station <strong>must</strong> be on and connected to the Internet to get updates.
     </p>
   </div>
-  <div ng-class="sd.rebooting? 'reboot-message':'message-none'"><h2>Station Rebooting...</h2></div>
+  <div ng-class="sd.rebooting? 'reboot-message':'message-none'"><h2>Rebooting...</h2></div>
   <div class="reset-button">
     <i ng-click="sd.reboot()" class="fa fa-refresh"></i>
     <div class="shut-text">Restart</div>
