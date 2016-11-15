@@ -9,14 +9,12 @@
 
     function GuideControllerXboxOne($q, deviceService, packageService, socketService, eventService) {
         var refreshMediaPackageName = 'Xbox One Refresh';
-        var updateMediaPackageName = 'Xbox One Update';
         var usbDeviceMinSize = 4000000000;
 
         /*jshint validthis: true */
         var vm = this;
         vm.selectedDevice = null;
         vm.refreshMediaPackage = null;
-        vm.updateMediaPackage = null;
         vm.steps = {
             details: {
                 name: 'details',
@@ -48,29 +46,9 @@
                 number: 6,
                 title: 'Verify Refresh'
             },
-            prepareUpdateUsbInsert: {
-                name: 'prepareUpdateUsbInsert',
-                number: 7,
-                title: 'Prepare USB Drive for Update (Insert Drive)'
-            },
-            prepareUpdateUsbInProgress: {
-                name: 'prepareUpdateUsbInProgress',
-                number: 8,
-                title: 'Prepare USB Drive for Update (Preparing Drive)'
-            },
-            prepareUpdateUsbComplete: {
-                name: 'prepareUpdateUsbComplete',
-                number: 9,
-                title: 'Prepare USB Drive for Update (Drive is Ready)'
-            },
-            updateXbox: {
-                name: 'updateXbox',
-                number: 10,
-                title: 'Update the Xbox'
-            },
             complete: {
                 name: 'complete',
-                number: 11,
+                number: 7,
                 title: 'Xbox Refresh is Complete'
             },
             failed: {
@@ -113,8 +91,6 @@
                 for (var i = mediaPackages.length - 1; i >= 0; --i) {
                     if (vm.refreshMediaPackage === null && mediaPackages[i].name === refreshMediaPackageName) {
                         vm.refreshMediaPackage = mediaPackages[i];
-                    } else if (vm.updateMediaPackage === null && mediaPackages[i].name === updateMediaPackageName) {
-                        vm.updateMediaPackage = mediaPackages[i];
                     }
                 }
             });
@@ -153,22 +129,22 @@
             vm.prepareRefreshUsbStart();
         };
 
-        function prepareUsbStart(mediaPackage, mediaPackageName, step, callback) {
-            if (mediaPackage === null) {
-                vm.errorMessage = mediaPackageName + ' files are missing.';
+        vm.prepareRefreshUsbStart = function() {
+            if (vm.refreshMediaPackage === null) {
+                vm.errorMessage = refreshMediaPackageName + ' files are missing.';
                 vm.step = vm.steps.failed;
             } else {
-                vm.step = step;
-                waitForUsbAdd(usbDeviceMinSize, callback);
+                vm.step = vm.steps.prepareRefreshUsbInsert;
+                waitForUsbAdd(usbDeviceMinSize, prepareRefreshUsbApply);
             }
-        }
+        };
 
-        function prepareUsbApply(step, mediaPackage, callback) {
-            vm.step = step;
+        function prepareRefreshUsbApply() {
+            vm.step = vm.steps.prepareRefreshUsbInProgress;
 
             socketService.once('device-apply-progress', function(data) {
                 if (data.progress >= 100) {
-                   callback();
+                    prepareRefreshUsbComplete();
                 }
             });
 
@@ -180,16 +156,8 @@
 
             var data = {};
             data.device = vm.selectedDevice;
-            data.media = mediaPackage;
+            data.media = vm.refreshMediaPackage;
             socketService.emit('device-apply', data);
-        }
-
-        vm.prepareRefreshUsbStart = function() {
-            prepareUsbStart(vm.refreshMediaPackage, refreshMediaPackageName, vm.steps.prepareRefreshUsbInsert, prepareRefreshUsbApply);
-        };
-
-        function prepareRefreshUsbApply() {
-            prepareUsbApply(vm.steps.prepareRefreshUsbInProgress, vm.refreshMediaPackage, prepareRefreshUsbComplete);
         }
 
         function prepareRefreshUsbComplete() {
@@ -207,7 +175,7 @@
 
             socketService.once('verify-refresh-progress', function(data) {
                 if (data.progress >= 100) {
-                    prepareUpdateUsbStart();
+                    vm.step = vm.steps.complete;
                 }
             });
 
@@ -222,26 +190,6 @@
             data.refreshType = 'xbox-one';
             data.itemNumber = vm.itemNumber;
             socketService.emit('verify-refresh', data);
-        }
-
-        function prepareUpdateUsbStart() {
-            prepareUsbStart(vm.updateMediaPackage, updateMediaPackageName, vm.steps.prepareUpdateUsbInsert, prepareUpdateUsbApply);
-        }
-
-        function prepareUpdateUsbApply() {
-            prepareUsbApply(vm.steps.prepareUpdateUsbInProgress, vm.updateMediaPackage, prepareUpdateUsbComplete);
-        }
-
-        function prepareUpdateUsbComplete() {
-            vm.step = vm.steps.prepareUpdateUsbComplete;
-            waitForUsbRemove(updateXboxStart);
-        }
-
-        function updateXboxStart() {
-            vm.step = vm.steps.updateXbox;
-            waitForUsbAdd(usbDeviceMinSize, function() {
-                vm.step = vm.steps.complete;
-            });
         }
     }
 })();
