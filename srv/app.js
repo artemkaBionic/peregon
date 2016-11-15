@@ -79,6 +79,8 @@ io.on( 'connection', function( socket )
     console.log( 'A client connected' );
     socket.on('device-apply', function (data) {
         if (isDevelopment) {
+            console.log('A client requested to apply media to device.');
+            console.log(data);
             console.log('Simulating applying a device in a development environment by waiting 3 seconds.');
             setTimeout(function() {
                 io.emit('device-apply-progress', {progress: 100, device: data.device});

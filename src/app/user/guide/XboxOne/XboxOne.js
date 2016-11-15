@@ -163,7 +163,7 @@
             }
         }
 
-        function prepareUsbApply(step, callback) {
+        function prepareUsbApply(step, mediaPackage, callback) {
             vm.step = step;
 
             socketService.once('device-apply-progress', function(data) {
@@ -180,7 +180,7 @@
 
             var data = {};
             data.device = vm.selectedDevice;
-            data.media = vm.updateMediaPackage;
+            data.media = mediaPackage;
             socketService.emit('device-apply', data);
         }
 
@@ -189,7 +189,7 @@
         };
 
         function prepareRefreshUsbApply() {
-            prepareUsbApply(vm.steps.prepareRefreshUsbInProgress, prepareRefreshUsbComplete);
+            prepareUsbApply(vm.steps.prepareRefreshUsbInProgress, vm.refreshMediaPackage, prepareRefreshUsbComplete);
         }
 
         function prepareRefreshUsbComplete() {
@@ -229,7 +229,7 @@
         }
 
         function prepareUpdateUsbApply() {
-            prepareUsbApply(vm.steps.prepareUpdateUsbInProgress, prepareUpdateUsbComplete);
+            prepareUsbApply(vm.steps.prepareUpdateUsbInProgress, vm.updateMediaPackage, prepareUpdateUsbComplete);
         }
 
         function prepareUpdateUsbComplete() {
