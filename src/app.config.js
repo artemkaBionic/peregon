@@ -7,7 +7,7 @@
         name: 'Aarons',
         appTitle: 'Aarons Portal',
         version: '1.0.1',
-        logoImage: '/assets/images/AaronsLogo.png',
+        logoImage: '/assets/images/Logo.png',
         packageIndex: '/assets/package-index.json',
         guidesPath: '/assets/guides',
         guidesIndexFile: 'index.html',
