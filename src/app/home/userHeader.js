@@ -5,25 +5,12 @@
         .module('app')
         .controller('UserHeaderController', UserHeaderController);
 
-    UserHeaderController.$inject = ['$rootScope', '$scope', '$q', '$log', 'config', 'guideService', '$state'];
+    UserHeaderController.$inject = ['$q', '$log', 'config'];
 
-    function UserHeaderController($rootScope, $scope, $q, $log, config, guideService, $state) {
+    function UserHeaderController($q, $log, config) {
         /*jshint validthis: true */
         var vm = this;
         vm.currentUser = undefined;
-        vm.logoImage = config.logoImage;
-        vm.guide = guideService;
-        $scope.searchString = guideService.searchString;
-
-        $scope.selectGuide = function(event) {
-            guideService.getGuide($scope.searchString).then(function(guide) {
-                if (guide !== null) {
-                    var $stateParams = {};
-                    $stateParams.guide = guide.SKU;
-                    $state.go('root.user.guide', $stateParams);
-                }
-            });
-        };
 
         activate();
 

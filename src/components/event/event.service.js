@@ -1,6 +1,5 @@
 (function() {
     'use strict';
-
     angular
         .module('app.event')
         .factory('eventService', eventService);
@@ -29,6 +28,10 @@
         }
 
         socketService.on('event', function(event) {
+            /*var name = event.name.replace('-', '') + 'EventService';
+            var service = $injector.get(name);
+            service.run(event);*/
+
             if (event.name === 'device-add') {
                 deleteDeviceNotification(event.data.id); //Prevent duplicate notifications for the same device
                 if (service.isDeviceNotificationEnabled) {
@@ -37,13 +40,7 @@
                             'timeOut': 0,
                             'extendedTimeOut': 0,
                             'tapToDismiss': false,
-                            'closeButton': false,
-                            'onTap': function() {
-                                toastr.clear(deviceNotiviations[event.data.id]);
-                                $state.go('root.media', {
-                                    'id': event.data.id
-                                });
-                            }
+                            'closeButton': true
                         }
                     );
                 }
@@ -102,6 +99,7 @@
                 toastr.clear(connectionNotification);
                 connectionNotification = toastr.success('Currently Connected to Internet','Station Status: Online', {
                     'timeOut': 0,
+                    'newest-on-top':false,
                     'extendedTimeOut': 0,
                     'tapToDismiss': false,
                     'closeButton': false
@@ -115,6 +113,7 @@
                     'timeOut': 0,
                     'extendedTimeOut': 0,
                     'tapToDismiss': false,
+                    'newest-on-top':false,
                     'closeButton': false,
                     'onShown': function() {
                         openModal(connectionState);
@@ -148,7 +147,6 @@
                size: 'lg'
            });
        }
-
         function openPowerModal(connectionState) {
             if (service.modalWindow) {
                 service.modalWindow.dismiss();
@@ -158,7 +156,7 @@
                 size: 'sm',
                 controller: 'ShutDownController',
                 resolve: {connectionState: connectionState, eventDispatcher:service.eventDispatcher},
-                controllerAs: 'sd'
+                controllerAs: 'vm'
             });
         }
 

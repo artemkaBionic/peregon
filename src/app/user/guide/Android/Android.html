@@ -1,0 +1,354 @@
+<horizontal-ui-sheet class="apc-sheet-full guide android">
+  <header horizontal-ui-sheet-header title="Refresh Android Device">
+    <span class="apc-sheet-subtitle">{{vm.step.title}}</span>
+  </header>
+  <div horizontal-ui-sheet-content>
+    <div class="row" ng-hide="vm.step.number > 8">
+      <ul id="progress-tracker" data-steps="4">
+        <li ng-class="{'active': vm.step.number >= 1 && vm.step.number <= 2, 'done': vm.step.number > 2}">
+          <span>Inspection</span>
+        </li>
+        <li ng-class="{'active': vm.step.number >= 3 && vm.step.number <= 6, 'done': vm.step.number > 6}">
+          <span>Preparation</span>
+        </li>
+        <li ng-class="{'active': vm.step.number == 7 , 'done': vm.step.number > 7}">
+          <span>Automatic Diagnostics</span>
+        </li>
+        <li ng-class="{'active': vm.step.number == 8}">
+          <span>Manual Diagnostics</span>
+        </li>
+      </ul>
+    </div>
+
+    <div ng-switch="vm.step.name" class="row wizard">
+
+      <div ng-hide="vm.step.number >= 7 && vm.step.number <= 9">
+        <h2 class="text-align-center">{{vm.step.title}}</h2>
+      </div>
+
+      <div class="anim-wizard-step" id="first" ng-switch-when="startOne">
+        <form name="inspection-form" novalidate ng-submit="vm.startResult()">
+          <div class="inspect-mode">
+
+            <div class="row">
+              <div class="col-md-2">
+              </div>
+              <div class="col-md-8 inspection-tap" ng-class="vm.ExternalGood ? 'inspection-tap-checked' : ''"
+                   ng-click="vm.ExternalGood = !vm.ExternalGood">
+                <div class="inspection-question">
+                  <span>Screen and casing are in good condition</span>
+                  <input type="checkbox" id="checkmark2" ng-model="vm.ExternalGood">
+                  <label for="checkmark2" class="check-box"></label>
+                </div>
+              </div>
+              <div class="col-md-2">
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-2">
+              </div>
+              <div class="col-md-8 inspection-tap" ng-class="vm.PowerGood ? 'inspection-tap-checked' : ''"
+                   ng-click="vm.PowerGood = !vm.PowerGood">
+                <div class="inspection-question">
+                  <span>Device turns on</span>
+                  <input type="checkbox" id="checkmark1" ng-model="vm.PowerGood">
+                  <label for="checkmark1" class="check-box"></label>
+                </div>
+              </div>
+              <div class="col-md-2">
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-2">
+              </div>
+              <div class="col-md-8 inspection-tap" ng-class="vm.ButtonsGood ? 'inspection-tap-checked' : ''"
+                   ng-click="vm.ButtonsGood = !vm.ButtonsGood; vm.startResultLast()">
+                <div class="inspection-question">
+                  <span>Touch screen and buttons work</span>
+                  <input type="checkbox" id="checkmark3" ng-model="vm.ButtonsGood">
+                  <label for="checkmark3" class="check-box" ng-click="vm.ButtonsGood = !vm.ButtonsGood; $event.stopPropagation()"></label>
+                </div>
+              </div>
+              <div class="col-md-2">
+              </div>
+            </div>
+
+          </div>
+          <div class="row nav-btn">
+            <button class="btn btn-primary btn-rounded center" type="submit">
+              <strong>Next</strong> <i class="fa fa-caret-right"></i>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="anim-wizard-step" ng-switch-when="startTwo">
+        <div class="row">
+          <div class="col-md-2"></div>
+          <div class="col-md-8">
+            <ol class="power-list">
+              <li>Connect Android Device to the Refresh Station and allow it to charge for 10 minutes</li>
+              <li>After charging, can it turn on?</li>
+            </ol>
+          </div>
+
+          <div class="col-md-2"></div>
+        </div>
+        <div class="row nav-btn">
+          <div class="col-md-6">
+            <button ng-click="vm.deviceTurnsOn()" class="btn btn-choose-med btn-info pull-right">Device turns on
+            </button>
+          </div>
+          <div class="col-md-6">
+            <button ng-click="vm.notTurnOn()" class="btn btn-choose-med btn-danger pull-left">Device is broken
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="anim-wizard-step" ng-switch-when="waitForUnlock">
+        <div class="row wizard-graphics">
+          <div class="la-ball-clip-rotate-multiple la-2x spinner">
+            <div></div>
+            <div></div>
+          </div>
+        </div>
+        <div class="row wizard-contents">
+          <h2 class="text-align-center">Initializing, please wait...</h2>
+        </div>
+      </div>
+
+      <div class="anim-wizard-step" ng-switch-when="preparationOne">
+        <form name="inspection-form" novalidate ng-submit="vm.startPreparation()">
+          <div class="inspect-mode">
+
+            <div class="row">
+              <div class="col-md-2">
+              </div>
+              <div class="col-md-8 inspection-tap" ng-class="vm.Wifi ? 'inspection-tap-checked' : ''"
+                   ng-click="vm.Wifi = !vm.Wifi">
+                <div class="inspection-question">
+                  <span ng-if="vm.deviceLockService === 'siperlock'">Restart the device and connect to WiFi</span><span ng-if="vm.deviceLockService !== 'siperlock'">Connect to WiFi</span>
+                  <input type="checkbox" id="checkmark4" ng-model="vm.Wifi">
+                  <label for="checkmark4" class="check-box"></label>
+                </div>
+              </div>
+              <div class="col-md-2 inspection-ask">
+                <i ng-click="vm.modalConnect()" class="fa fa-question-circle" aria-hidden="true"></i>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-2">
+              </div>
+              <div class="col-md-8 inspection-tap" ng-class="vm.NotLocked ? 'inspection-tap-checked' : ''"
+                   ng-click="vm.NotLocked = !vm.NotLocked">
+                <div class="inspection-question">
+                  <span>Disable screen lock</span>
+                  <input type="checkbox" id="checkmark5" ng-model="vm.NotLocked">
+                  <label for="checkmark5" class="check-box"></label>
+                </div>
+              </div>
+              <div class="col-md-2 inspection-ask">
+                <i ng-click="vm.modalUnlock()" class="fa fa-question-circle" aria-hidden="true"></i>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-2">
+              </div>
+              <div class="col-md-8 inspection-tap" ng-class="vm.NotConnected ? 'inspection-tap-checked' : ''"
+                   ng-click="vm.NotConnected = !vm.NotConnected">
+                <div class="inspection-question">
+                  <span>Remove Google account</span>
+                  <input type="checkbox" id="checkmark6" ng-model="vm.NotConnected">
+                  <label for="checkmark6" class="check-box"></label>
+                </div>
+              </div>
+              <div class="col-md-2 inspection-ask">
+                <i ng-click="vm.modalGoogleAccount()" class="fa fa-question-circle" aria-hidden="true"></i>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-2">
+              </div>
+              <div class="col-md-8 inspection-tap" ng-class="vm.UsbDebug ? 'inspection-tap-checked' : ''"
+                   ng-click="vm.UsbDebug = !vm.UsbDebug; vm.startPreparation()">
+                <div class="inspection-question">
+                  <span>Enable USB Debugging</span>
+                  <input type="checkbox" id="checkmark7" ng-model="vm.UsbDebug">
+                  <label for="checkmark7" class="check-box" ng-click="vm.UsbDebug = !vm.UsbDebug; $event.stopPropagation()"></label>
+                </div>
+              </div>
+              <div class="col-md-2 inspection-ask">
+                <i ng-click="vm.modalUsbDebug()" class="fa fa-question-circle" aria-hidden="true"></i>
+              </div>
+            </div>
+
+          </div>
+          <div class="row nav-btn">
+            <button ng-disabled="!(vm.NotConnected && vm.NotLocked && vm.Wifi && vm.UsbDebug)"
+                    class="btn btn-primary btn-rounded center" type="submit">
+              <strong>Next</strong> <i class="fa fa-caret-right"></i>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="anim-wizard-step" ng-switch-when="waitForAppStart">
+        <div class="row wizard-graphics">
+          <div class="la-ball-clip-rotate-multiple la-2x spinner">
+            <div></div>
+            <div></div>
+          </div>
+        </div>
+        <div class="row wizard-contents">
+          <h2 class="text-align-center">Loading Android Refresh App, please wait...</h2>
+        </div>
+      </div>
+
+      <div class="anim-wizard-step" ng-switch-when="preparationFour">
+        <div class="row">
+          <div class="col-md-12 text-center">
+            <img class="connect-gif" src="../assets/images/android-connect.gif" alt="">
+          </div>
+        </div>
+        <div class="row text-center">
+          <h2>You may need give the access on the Android device for the Station</h2>
+          <h3>Choose <strong>Yes</strong> or <strong>OK</strong> on the device</h3>
+        </div>
+        <!--<div class="row">-->
+        <!--<button class="btn step-header-damaged center" ng-click="vm.diagnosticOne()">-->
+        <!--TEST Next <i class="fa fa-caret-right"></i>-->
+        <!--</button>-->
+        <!--</div>-->
+        <div class="row nav-btn">
+          <button ng-show="vm.buttonBackShow" ng-click="vm.preparationOne()"
+                  class="btn btn-primary btn-rounded center" type="submit">
+            <i class="fa fa-caret-left"></i> <strong>Back</strong>
+          </button>
+        </div>
+      </div>
+
+      <div class="anim-wizard-step" ng-switch-when="diagnosticOne">
+        <div class="step-header-diagnostic">
+          <h2 class="text-align-center">
+            <span class="fa fa-check check-green fa-2x"></span>
+            Android device connected successfully</h2>
+          <div class="row">
+          </div>
+        </div>
+        <div class="row"><h3 class="text-align-center automated-anim">Performing automatic diagnostics...</h3>
+        </div>
+        <div class="row">
+          <div class="center circle-bar">
+            <orbicular progression="vm.autoPassed" total="vm.manualSize" counterclockwise>
+              <div ng-click="vm.circleCheck()">
+                <i class="fa fa-cog fa-spin fa-4x"></i>
+              </div>
+            </orbicular>
+          </div>
+        </div>
+        <div class="row">
+          <h3 ng-show="vm.AppNotStarted" class="text-align-center automated-anim">Something went wrong. Unplug and
+            reconnect the device.</h3>
+        </div>
+        <!--<div class="row">-->
+        <!--<button class="btn step-header-damaged center" ng-click="vm.diagnosticTwo()">-->
+        <!--TEST Next <i class="fa fa-caret-right"></i>-->
+        <!--</button>-->
+        <!--</div>-->
+      </div>
+
+      <div class="anim-wizard-step" ng-switch-when="diagnosticTwo">
+        <div class="step-header-diagnostic">
+          <h2 class="text-align-center"><span class="fa fa-check check-green fa-2x"></span>
+            Automatic diagnostics complete</h2>
+        </div>
+        <div ng-show="vm.manualShowLastAction" class="row">
+          <h2 class="text-align-center">
+            <span class="fa fa-check check-green fa-2x"></span>
+            Manual diagnostics complete
+          </h2>
+        </div>
+        <div ng-hide="vm.manualShowLastAction">
+          <div class="row">
+            <h3 class="text-align-center automated-anim">Follow instructions on the Android Device for manual
+              diagnostics...</h3>
+          </div>
+          <div class="row">
+            <div class="center circle-bar">
+              <orbicular progression="vm.manualPassed" total="vm.manualSize" counterclockwise>
+                <div ng-click="vm.manualInspection()">
+                  <i class="fa fa-cog fa-spin fa-4x"></i>
+                </div>
+              </orbicular>
+            </div>
+          </div>
+        </div>
+          <div ng-hide="vm.manualShowLastAction" class="row">
+            <h3 class="text-align-center automated-anim">Manual Test <strong>{{vm.manualPassed}}</strong> of <strong>{{vm.manualSize}}</strong>
+            </h3>
+          </div>
+        <div ng-show="vm.manualShowLastAction" class="row">
+          <h3 class="text-align-center">Press <strong>Activate</strong> on the device to continue...</h3>
+        </div>
+      </div>
+
+      <div class="anim-wizard-step" ng-switch-when="finishSuccess">
+        <div class="step-header text-align-center">
+          <h2><span class="fa fa-check-circle diagnostic-ok"></span>
+            You have successfully refreshed the Android device</h2>
+        </div>
+        <div class="wizard-contents">
+        </div>
+        <div class="row">
+          <button class="btn btn-primary btn-rounded center" ng-click="vm.refreshEnd()">
+            Finish <i class="fa fa-caret-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="anim-wizard-step" ng-switch-when="finishFail">
+        <div class="step-header">
+          <h2 ng-show="vm.Broken" class="text-align-center"><span class="fa fa-5x fa-ban"></span><br/>
+            Device needs to be repaired</h2>
+          <h2 ng-show="vm.TestsFault" class="text-align-center"><span class="fa fa-5x fa-ban"></span><br/>
+            The following tests failed:</h2>
+          <h4 ng-show="vm.TestsFault" ng-repeat="testName in vm.failedTests" class="text-align-center">{{testName}}</h4>
+          <h2 ng-show="vm.AndroidDisconnected" class="text-align-center"><span class="fa fa-5x fa-ban"></span><br/>
+            Android Device has been Disconnected</h2>
+          <h3 class="text-align-center">
+            Refresh Failed
+          </h3>
+        </div>
+        <div class="row nav-btn">
+          <button class="btn btn-primary btn-rounded center" ng-click="vm.refreshEnd()">
+            Finish <i class="fa fa-caret-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="anim-wizard-step" ng-switch-when="sessionExpired">
+        <div class="step-header">
+          <h2 class="text-align-center"><span class="fa fa-5x fa-clock-o"></span></h2>
+          <h3 class="text-align-center">For security reasons your session expired<span ng-if="vm.deviceLockService === 'siperlock'">&nbsp;and siperLOCK has been locked</span><span ng-if="vm.deviceLockService === 'wsa'">&nbsp;and WSA has been locked</span></h3>
+        </div>
+        <div class="row nav-btn">
+          <div class="col-md-6">
+            <button ng-click="vm.activate()" class="btn btn-choose-med btn-info pull-right">Restart
+            </button>
+          </div>
+          <div class="col-md-6">
+            <button ng-click="vm.refreshEnd()" class="btn btn-choose-med btn-danger pull-left">Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</horizontal-ui-sheet>

@@ -5,9 +5,9 @@
         .module('app.guide')
         .factory('guideService', guideService);
 
-    guideService.$inject = ['$http', '$log', 'config', '$q'];
+    guideService.$inject = ['$q', '$http', 'config'];
 
-    function guideService($http, $log, config, $q) {
+    function guideService($q, $http, config) {
 
         var service = {};
 
@@ -24,32 +24,16 @@
             };
 
             $http.get(config.packageIndex).then(function(result) {
-                service.guides = dynamicGuides.concat(result.data);
-                for (var guideIndex = 0, len = service.guides.length; guideIndex < len; ++guideIndex) {
-                    var charIndex = service.guides[guideIndex].SKU.length - 1;
-                    var pattern = getRegExChar(service.guides[guideIndex].SKU[charIndex]);
-                    for (; charIndex-- > 0;) {
-                        pattern = getRegExChar(service.guides[guideIndex].SKU[charIndex]) + '(' + pattern + ')?';
+                service.guides = dynamicGuides;
+                for (var i = 0, len = result.data.length; i < len; ++i) {
+                    if (!service.guides[result.data[i].SKU]) {
+                        service.guides[result.data[i].SKU] = result.data[i];
                     }
-                    service.guides[guideIndex].SkuRegEx = new RegExp(pattern, 'i');
                 }
                 deferred.resolve(service.guides);
             });
 
             return deferred.promise;
-        };
-
-        service.getGuideSync = function(sku) {
-            var len = service.guides.length;
-            for (var i = 0; i < len; ++i) {
-                if (sku.length === service.guides[i].SKU.length) {
-                    var match = sku.match(service.guides[i].SkuRegEx);
-                    if (match !== null && match[0] === sku) {
-                        return service.guides[i];
-                    }
-                }
-            }
-            return null;
         };
 
         service.getGuide = function(sku) {
@@ -60,7 +44,11 @@
             }
 
             promise = promise.then(function() {
-                return service.getGuideSync(sku);
+                if (service.guides[sku]) {
+                    return service.guides[sku];
+                } else {
+                    return null;
+                }
             });
 
             return promise;

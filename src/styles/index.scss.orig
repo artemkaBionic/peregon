@@ -1,0 +1,1219 @@
+$apc-icons-path: '../bower_components/p0rtal/src/package/fonts/apc-icons/fonts';
+$icon-font-path: '../bower_components/bootstrap-sass-official/assets/fonts/bootstrap/';
+$open-sans-path: '../bower_components/open-sans/fonts';
+
+@import "../../bower_components/p0rtal/src/package/scss/p0rtal";
+
+@import "../../bower_components/load-awesome/css/ball-clip-rotate-multiple.css";
+@import "../../bower_components/animate.css/animate.css";
+@import "../../bower_components/orbicular/orbicular.scss";
+@import 'app/variables';
+@import 'app/mixins';
+@import 'app/globals';
+@import 'app/layout';
+@import 'app/components';
+@import 'app/override-libs';
+@import 'app/typography';
+@import 'app/decorations';
+
+.content-frame {
+  width: calc(100% - 16px);
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: none;
+  position: absolute;
+}
+
+.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.text-input {
+  position: relative;
+  margin: 14px 8vh;
+}
+
+.text-input input {
+  text-indent: 43px;
+  height: 76px;
+  line-height: normal;
+  font-size: 24px;
+  margin-top: 2px;
+  color: #414141;
+  border-radius: 4px;
+}
+
+.text-input .fa {
+  position: absolute;
+  top: 27px;
+  left: 16px;
+  font-size: 28px;
+  text-align: center;
+  color: #999999;
+}
+
+.card {
+  border-radius: 4px;
+}
+
+.card .logo img {
+  height:25px;
+}
+
+.apc-logo{
+  margin:10px 0 10px !important;
+}
+.apc-logo img {
+  // Small logo at right top corner
+  width: 40px;
+}
+
+.card .icon img {
+  position: absolute;
+  right: 10px;
+}
+
+.card.XboxOne {
+  background-color:#107c10;
+}
+
+.card.XboxOne .card-title,.card.XboxOne a {
+  color:white;
+}
+
+.apc-sheet-content {
+  overflow: hidden !important;
+}
+
+/*============Xbox Guide===================*/
+.wizard {
+  clip: rect(auto, auto, auto, auto);
+}
+
+.btn-rounded {
+  height: 48px;
+  min-width: 156px;
+  border-radius: 7px;
+  text-transform: uppercase;
+  font-weight: 400;
+  padding: 6px 24px;
+}
+/* Clearing default bootstrap btn style*/
+.btn:focus, .btn.focus, .btn:active:focus, .btn:active.focus, .btn.active:focus, .btn.active.focus {
+  outline: none !important;
+  outline-offset:0 !important;
+}
+
+.btn:active, .btn.active {
+  outline: 0;
+  background-image: none;
+  box-shadow: none; }
+
+/* End Clearing default bootstrap btn style*/
+
+.wizard-image {
+  border: 2px solid #775d9f;
+  height: 270px;
+}
+
+.wizard-image-big {
+  animation: fadeIn .5s;
+  position: fixed;
+  display: flex;
+  z-index: 999999;
+  width: 1800px;
+  height: auto;
+  border-radius: 7px;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto -400px;
+
+}
+
+.wizard .text-input {
+  margin:40px 0 0;
+}
+
+
+.error {
+  color: darkred;
+  position: absolute;
+  font-size: 1.5em;
+}
+
+.error-container{
+  text-align: left;
+}
+
+.wizard-graphics {
+  height: 288px;
+  margin-top: 32px;
+  margin-bottom: 32px;
+}
+
+.wizard-contents {
+  //height: 128px;
+  margin: 32px 15% 32px 15%;
+  text-align: center;
+}
+
+.wizard-navigation {
+  margin-right: 15%;
+  margin-top: 32px;
+  margin-bottom: 32px;
+}
+
+.wizard-graphics figure {
+  display: table;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 5px;
+}
+
+figcaption {
+  display: block;
+}
+
+.wizard-graphics video {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 90%;
+}
+
+
+.anim-wizard-step {
+  display: block;
+  position: absolute;
+  width: calc(100% - 16px);
+  height: 100%;
+}
+
+.anim-wizard-step form {
+  height: 100%;
+}
+
+#first.anim-wizard-step.ng-enter {
+  transform: none !important;
+  opacity: 1 !important;
+}
+
+.anim-wizard-step.ng-enter {
+  animation: fadeInRight 1s;
+}
+
+.anim-wizard-step.ng-leave {
+  animation: fadeOutLeft 1s;
+}
+
+.spinner {
+  color: #775d9f;
+}
+
+.wizard .spinner {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.anim-success-icon {
+  color: green;
+  font-size: 7em;
+  display: block;
+  text-align: center;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+  -webkit-animation-delay: 5s;
+  animation-delay: 5s;
+}
+
+.anim-success-icon.ng-enter {
+  animation: tada 2s;
+}
+
+.anim-warning-icon {
+  color: #FFA500;
+  font-size: 7em;
+  display: block;
+  text-align: center;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+  -webkit-animation-delay: 5s;
+  animation-delay: 5s;
+}
+
+.anim-warning-icon.ng-enter {
+  animation: flash 2s;
+}
+
+//Wizard progress tracker
+#progress-tracker {
+  padding: 0;
+  list-style-type: none;
+  font-family: Arial;
+  font-size: 12px;
+  clear: both;
+  line-height: 1em;
+  margin: 0 -1px 10px 0;
+  text-align: center;
+  height: 32px;
+}
+
+#progress-tracker li {
+  float: left;
+  display:table;
+  padding: 0;
+  background: #ccc;
+  color: #fff;
+  position: relative;
+  margin: 0 1px;
+}
+
+#progress-tracker li span {
+  height: 32px;
+  display: table-cell;
+  padding-left: 16px;
+  vertical-align: middle;
+}
+
+#progress-tracker[data-steps="3"] li { width: 32%; }
+#progress-tracker[data-steps="4"] li { width: 24.4%; }
+#progress-tracker[data-steps="5"] li { width: 19%; }
+#progress-tracker[data-steps="6"] li { width: 16%; }
+
+#progress-tracker li:before {
+  content: '';
+  border-left: 16px solid #fff;
+  border-top: 16px solid transparent;
+  border-bottom: 16px solid transparent;
+  position: absolute;
+  top: 0;
+  left: 0;
+
+}
+#progress-tracker li:after {
+  content: '';
+  border-left: 16px solid #ccc;
+  border-top: 16px solid transparent;
+  border-bottom: 16px solid transparent;
+  position: absolute;
+  top: 0;
+  left: 100%;
+  z-index: 20;
+}
+
+#progress-tracker li.active {
+  background: #775d9f;
+}
+
+#progress-tracker li.active:after {
+  border-left-color: #775d9f;
+}
+
+#progress-tracker li.done {
+  background: #b8aace;
+}
+
+#progress-tracker li.done:after {
+  border-left-color: #b8aace;
+}
+
+/*========================UI====================== */
+
+.enterItemNumber {
+  margin-top: 40px;
+}
+
+.bsSquare{
+  width: 100%;
+  padding: 10% 0;
+}
+/*========================End UI====================== */
+
+/*========================Modal====================== */
+.modal-content{
+  border: 0;
+  border-radius: 16px;
+}
+.modal-lg{
+  height: 720px;
+  width: 1000px;
+}
+.modal-dialog {
+  position: absolute;
+
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  margin: auto;
+}
+
+.modal-backdrop.in {
+  opacity: .5;
+}
+
+.anim-modal-step {
+  font-size: 1.5em;
+}
+
+.modal-second{
+  animation-duration: 1.5s;
+}
+
+.modal-contents {
+  padding: 0 3%;
+}
+
+.card {
+  border-radius: 4px;
+  cursor:pointer;
+}
+
+.modal-header {
+  background-color: #d5484a;
+  color: white;
+  padding-bottom:10px;
+}
+
+.modal-offline {
+  border: 7px solid #d5484a;
+  border-radius: 7px;
+  background-color: #f5f5f5;
+}
+
+.modal-online {
+  border: 7px solid #6cab1c;
+  border-radius: 7px;
+  background-color: #f5f5f5;
+  .modal-header {
+    background-color:#6cab1c;
+  }
+}
+
+.apc-sheet-header {
+  margin: auto;
+}
+
+.modal-progress {
+  margin:1% auto;
+}
+
+.anim-modal-step figure {
+  text-align: center;
+}
+
+.modal-contents h1, .modal-header h1,
+.modal-contents h2, .modal-header h2,
+.modal-contents h3, .modal-header h3,
+.modal-contents h4, .modal-header h4,
+.modal-contents h5, .modal-header h5,
+.modal-contents h6, .modal-header h6 {
+  text-align: center;
+  font-weight: bold;
+  margin: 5px;
+}
+
+#toast-container {
+  z-index: 1039;
+}
+
+.modal-close{
+  width: 150px;
+  height: 30px;
+  border-radius: 7px;
+}
+
+.wizard-modal{
+  height: 450px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.apc-sheet-subtitle{
+  text-align: center;
+}
+.navigtion-buttons{
+  border-top: solid #ccc 1px;
+  padding: 10px;
+}
+.navigtion-buttons p {
+  padding-top: 10px;
+  text-align: center;
+}
+
+.modal-progress #progress-tracker[data-steps="4"] li { width: 24%; }
+
+.anim-modal-step .card-title {
+  max-height: 50px;
+}
+
+.anim-modal-step .text-ellipsis{
+  white-space:normal;
+}
+
+.modal-progress #progress-tracker a{
+  color:white;
+}
+.modal-progress #progress-tracker a:hover{
+  color:white;
+  cursor: pointer;
+}
+
+.modal-content .anim-success-icon {
+  margin-top: 10%;
+  color:#6cab1c;
+}
+///*========================End Modal====================== */
+
+///*========================Toast Pop-Up====================== */
+#toast-container div.toast {
+  border-radius: 7px;
+}
+
+.toast-top-right {
+  top: 12px;
+  right: 50px;
+}
+
+.modal-contents .wizard-image:hover{
+  cursor: zoom-in;
+}
+
+.modal-contents .wizard-image-big:hover{
+  cursor: zoom-out;
+}
+
+///*========================End Toast Pop-Up====================== */
+
+/*=============================CSS Animation===========================*/
+
+
+.modal-enter.ng-enter{
+  animation: slideInRight 0.3s linear;
+}
+.online-enter.ng-enter{
+  animation: fadeIn 1s linear;
+}
+
+@-webkit-keyframes fadeOutLeft {
+
+  from {
+
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+    -webkit-transform: translate3d(-100%, 0, 0);
+    transform: translate3d(-100%, 0, 0);
+  }
+}
+
+@keyframes fadeOutLeft {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+    -webkit-transform: translate3d(-100%, 0, 0);
+    transform: translate3d(-100%, 0, 0);
+  }
+}
+
+.fadeOutLeft {
+  -webkit-animation-name: fadeOutLeft;
+  animation-name: fadeOutLeft;
+}
+
+@-webkit-keyframes slideInRight {
+  from {
+    -webkit-transform: translate3d(100%, 0, 0);
+    transform: translate3d(100%, 0, 0);
+    visibility: visible;
+  }
+
+  to {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    -webkit-transform: translate3d(100%, 0, 0);
+    transform: translate3d(100%, 0, 0);
+    visibility: visible;
+  }
+
+  to {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.slideInRight {
+  -webkit-animation-name: slideInRight;
+  animation-name: slideInRight;
+}
+
+
+@-webkit-keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.fadeIn {
+  -webkit-animation-name: fadeIn;
+  animation-name: fadeIn;
+}
+/*=====================END Css Animation==================*/
+
+/*============================Start Shut Down CSS==================*/
+
+.modal-sm{
+  height: 320px;
+  width: 650px;
+}
+.modal-sm .modal-content {
+  border:none;
+  background-color: transparent;
+  box-shadow: none;
+}
+
+.power-window {
+  width: 660px;
+  height: 340px;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 7px;
+  padding: 5px;
+  border: 2px solid black;
+}
+
+.power-button, .reset-button{
+  width: 300px;
+  height: 300px;
+  margin: 13px auto;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 16px;
+}
+
+.power-button:hover{
+  background-color: rgba(197, 42, 42, 0.85);
+  cursor: pointer;
+  .shut-text{
+    color:white;
+  }
+}
+
+.reset-button:hover{
+  background-color: rgba(49, 166, 49, 0.85);
+  cursor: pointer;
+  .shut-text{
+    color: #e6e6e6;
+  }
+}
+
+.power-button{
+  position: absolute;
+  right: 0;
+  margin-right: 10px;
+}
+
+.reset-button{
+  position: absolute;
+  left:0;
+  margin-left: 20px;
+}
+
+.power-button i, .reset-button i {
+  font-size: 10em;
+  color: black;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  margin: auto;
+  width: 120px;
+  height: 140px;
+}
+
+.power-button .shut-text, .reset-button .shut-text {
+  text-align: center;
+  margin-top: 250px;
+  font-size: 1.5em;
+  color: black;
+}
+
+.close-button-pos{
+  position: absolute;
+  top: -10px;
+  right: -20px;
+}
+
+*{
+  outline-offset: 0 !important;
+}
+.close-button-pos .close-button, .close-button-pos .btn {
+  color: white;
+  border: 3px solid white;
+  border-radius: 100%;
+  width: 30px;
+  height: 30px;
+  background-color: rgba(0,0,0,.5);
+  font-weight: bold;
+  padding: 3px 8px;
+}
+.close-button:hover{
+  color: black;
+  background-color: white;
+}
+.close-button:checked{
+  color: white;
+  background-color: rgba(0,0,0,.5);
+}
+
+
+.power-window-message .power-message,.power-window-message .reboot-message{
+  height: 200px;
+  width: 500px;
+  position:absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  margin: auto;
+  color:white;
+  font-size:1.5em;
+  text-align: center;
+  cursor:wait;
+}
+
+.power-window-message .reboot-message{height: 90px;}
+
+.power-window-message {
+  width: 660px;
+  height: 340px;
+  background-color: rgba(0, 0, 0, 0.75);
+  border-radius: 7px;
+  padding: 5px;
+  border: 2px solid black;
+  cursor:wait;
+}
+
+.power-window-message .reset-button,.power-window-message .power-button,.power-window-message .close-button, .message-none{
+  display: none;
+}
+
+/*============================End Shut Down CSS==================*/
+
+<<<<<<< HEAD
+
+/*====================Xbox One Refreshing=======================*/
+video{
+  width: 100%    !important;
+  height: auto   !important;
+}
+
+.ref-list{
+  font-size: 1.5em;
+
+}
+.ref-list ol li {
+  margin: 3% auto;
+}
+
+.h3-todo h3{
+font-weight: bold;}
+
+.border-step {
+  border-top: solid 3px #b8aace;
+  border-bottom: solid 3px #b8aace;
+}
+
+form .wizard-graphics{
+  margin:7% auto;
+}
+/*==================== End Xbox One Refreshing=======================*/
+=======
+/*============================ Start Homepage====================*/
+.logo-center {
+  margin-top: 10vh;
+  text-align: center;
+}
+.logo-center .logo img {
+  width: 30vw;
+}
+.home-buttons {
+  margin-top: 34px;
+}
+
+.home-buttons button {
+  margin:3px;
+}
+
+button[disabled] {
+    height: 48px;
+    min-width: 156px;
+    border-radius: 7px;
+    text-transform: uppercase;
+    font-weight: 400;
+    padding: 6px 24px;
+    cursor: not-allowed;
+    background-color: #999999;
+}
+button[disabled]:hover {
+  background-color: #999999 !important;
+  cursor: not-allowed;
+}
+/*============================ End Homepage====================*/
+
+
+/*============================ Start Item Info====================*/
+
+.item-info {
+  margin-top: 10vh;
+  border-top: 2px solid rgba(168, 150, 194, 0.7);
+  height: 300px;
+  position: relative;
+}
+.item-details{
+  font-size: 2em;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  text-align: center;
+  margin: auto;
+  width: auto;
+  height: 250px;
+}
+
+.item-button{
+  border: none;
+  background: inherit;
+}
+
+.item-button:hover{
+  text-decoration: underline;
+}
+
+.item-button strong{
+  font-size: 1.5em;
+}
+/*============================ End Item Info====================*/
+
+/*============================ Start Android Refresh====================*/
+.step-header {
+  padding-bottom: 20px;
+  border-bottom: 2px solid rgba(168, 150, 194, 0.7);
+}
+
+.step-header-diagnostic{
+  padding-bottom: 20px;
+  border-bottom: 2px solid rgba(168, 150, 194, 0.7);
+  margin-top: 100px;
+}
+
+#first .wizard-contents h3 {
+  line-height: 1.3;
+}
+
+.btn-choose-big {
+  text-transform: uppercase;
+  padding: 70px;
+  border-radius: 7px;
+  margin: 15px;
+  min-width: 400px;
+}
+
+.btn-choose-med {
+  text-transform: uppercase;
+  padding: 20px 20px;
+  border-radius: 7px;
+  min-width: 200px;
+  margin: 15px;
+}
+
+.btn-choose-guide {
+  text-transform: uppercase;
+  padding: 10px;
+  border-radius: 7px;
+  background-color: #444444;
+  color:#DDDDDD;
+  min-width: 150px;
+}
+
+.btn-choose-guide:hover
+{  background-color: #775D9F;
+}
+
+.nav-btn {
+  padding-bottom: 50px;
+  margin-top: 20px;
+}
+
+.unlock-list{
+  margin-top: 20px;
+}
+
+.unlock-list li {
+  line-height: 1.7em;
+}
+.not-turn-on{
+  animation: fadeIn 1s;
+}
+.diagnostic-description {
+  margin: 70px 10px;
+}
+
+.inlb {
+  display: inline-block;
+  vertical-align: middle;
+  font-size: 1.5em;
+}
+
+.inlb:before{
+  content: "";
+  display: inline-block;
+  vertical-align: middle;
+  height: 100%;
+}
+
+#progress-tracker a{
+  color:white;
+}
+
+#progress-tracker a:hover{
+  cursor: pointer;
+  text-decoration:underline;
+}
+
+.diagnostic-spinner {
+  margin-top: 60px;
+}
+
+.diagnostic-ok{
+    color: #6CAB1C;
+    font-size: 5em;
+    display: block;
+    text-align: center;
+    position: relative;
+    -webkit-animation-delay: 5s;
+    animation-delay: 5s;
+}
+.power-list{
+  font-size: 30px;
+}
+.power-list li{
+  margin-top: 20px;
+}
+
+.check-green{
+  color: green;
+}
+
+.automated-anim{
+  animation: fadeIn 1s linear;
+}
+
+.not-turn-on{
+  margin-top: 15vh;
+}
+.android-video video {
+  width: 44vw;
+}
+
+/*================First 2 steps=================*/
+
+.inspection-tap{
+  padding: 20px 30px;
+  border:3px solid transparent;
+  border-radius: 7px;
+
+}
+
+.inspection-ask{
+  padding: 20px 30px;
+  border:3px solid transparent;
+  border-radius: 7px;
+}
+.inspection-ask i {
+  font-size: 50px;
+  color:#B8AACE;
+}
+
+.inspection-ask i:hover {
+  transition: color 1s;
+  color: #1D8EC5;
+  cursor: pointer;
+}
+
+.inspection-tap:hover{
+  transition: border-color .5s;
+  border-color: #444;
+  cursor: pointer;
+}
+
+.inspection-tap-checked{
+  border-color: #775d9f;
+  color: #6cab1c;
+}
+
+.inspection-question{
+  margin: 50px auto;
+}
+.inspection-question span {
+  position:absolute;
+  font-size: 30px;
+  top:50%;
+  transform: translateY(-50%);
+  -webkit-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+}
+
+.inspection-question label {
+  position:absolute;
+  font-size: 30px;
+  top:50%;
+  transform: translateY(-50%);
+  -webkit-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  right: 30px;
+}
+
+.inspect-mode {
+  margin: 30px auto;
+}
+
+.inspect-mode>.row {
+  margin: 10px auto;
+}
+/*================End First 2 steps=================*/
+
+.connect-gif{
+  margin: 50px auto;
+  height: 200px;
+}
+
+/*=========Checkbox========*/
+$checkbox-checked-color: #6CAB1C;
+$checkbox-unchecked-color: #444;
+$checkbox-height: 60px;
+$checkbox-background-color:#fff;
+$checkbox-duration: .25s;
+
+
+@-moz-keyframes dothabottomcheck{
+  0% { height: 0; }
+  100% { height: $checkbox-height/2; }
+}
+
+@-webkit-keyframes dothabottomcheck{
+  0% { height: 0; }
+  100% { height: $checkbox-height/2; }
+}
+
+@keyframes dothabottomcheck{
+  0% { height: 0; }
+  100% { height: $checkbox-height/2;  }
+}
+
+@keyframes dothatopcheck{
+  0% { height: 0; }
+  50% { height: 0; }
+  100% { height: $checkbox-height * 1.2; }
+}
+@-webkit-keyframes dothatopcheck{
+  0% { height: 0; }
+  50% { height: 0; }
+  100% { height: $checkbox-height * 1.2; }
+}
+@-moz-keyframes dothatopcheck{
+  0% { height: 0; }
+  50% { height: 0; }
+  100% { height: $checkbox-height * 1.2; }
+}
+
+input[type=checkbox]{
+  display:none;
+}
+
+.check-box {
+  height: $checkbox-height;
+  width: $checkbox-height;
+  background-color: transparent;
+  border: $checkbox-height * .1 solid $checkbox-unchecked-color;
+  border-radius: 7px;
+  position: relative;
+  display: inline-block;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  -moz-transition: border-color ease $checkbox-duration/2;
+  -o-transition: border-color ease $checkbox-duration/2;
+  -webkit-transition: border-color ease $checkbox-duration/2;
+  transition: border-color ease $checkbox-duration/2;
+  cursor:pointer;
+
+  &::before, &::after {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    position: absolute;
+    height: 0;
+    width: $checkbox-height * .1;
+    background-color: $checkbox-checked-color;
+    display: inline-block;
+    -moz-transform-origin: left top;
+    -ms-transform-origin: left top;
+    -o-transform-origin: left top;
+    -webkit-transform-origin: left top;
+    transform-origin: left top;
+    border-radius: 7px;
+    content: ' ';
+    -webkit-transition: opacity ease .5;
+    -moz-transition: opacity ease .5;
+    transition: opacity ease .5;
+  }
+
+  &::before {
+    top:$checkbox-height * .72;
+    left: $checkbox-height * .41;
+    box-shadow: 0 0 0 $checkbox-height * .03 $checkbox-background-color;
+    -moz-transform: rotate(-135deg);
+    -ms-transform: rotate(-135deg);
+    -o-transform: rotate(-135deg);
+    -webkit-transform: rotate(-135deg);
+    transform: rotate(-135deg);
+  }
+
+  &::after {
+    top: $checkbox-height * .37;
+    left: $checkbox-height * .05;
+    -moz-transform: rotate(-45deg);
+    -ms-transform: rotate(-45deg);
+    -o-transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+  }
+}
+
+input[type=checkbox]:checked + .check-box,
+.check-box.checked{
+  border-color:$checkbox-checked-color;
+
+  &::after{
+    height: $checkbox-height * .5;
+    -moz-animation: dothabottomcheck $checkbox-duration/2 ease 0s forwards;
+    -o-animation: dothabottomcheck $checkbox-duration/2 ease 0s forwards;
+    -webkit-animation: dothabottomcheck $checkbox-duration/2 ease 0s forwards;
+    animation: dothabottomcheck $checkbox-duration/2 ease 0s forwards;
+  }
+
+  &::before{
+    height: $checkbox-height * 1.2;
+    -moz-animation: dothatopcheck $checkbox-duration ease 0s forwards;
+    -o-animation: dothatopcheck $checkbox-duration ease 0s forwards;
+    -webkit-animation: dothatopcheck $checkbox-duration ease 0s forwards;
+    animation: dothatopcheck $checkbox-duration ease 0s forwards;
+  }
+}
+/*=========End Checkbox========*/
+
+/*============================ End Android Refresh====================*/
+
+/*============================Orbicular Progress Bar====================*/
+@include orbicular(
+  $barColor:  #775D9F,    // The completed progress color
+  $barBg:     #EEE,       // The remaining progress color
+  $barWidth:  8,          // The bar width is defined as a percentage of the width of the circle
+  $contentBg: #ffffff,    // The circle center
+  $fontSize:  8,          // Content font-size as a percentage of the circle size
+  $fontColor: #FFF,       // Content text color
+  $transTime: 0.3s,       // Time to animate the movement
+  $transFunc: linear,     // transition timing
+  $shadow: 6px 6px 10px rgba(0,0,0,0.2)  // optional shadow (not default)
+);
+
+.circle-row{
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 0 auto;
+}
+.circle-bar{
+  position: relative;
+  padding: 10px;
+  width: 250px;
+  height: 250px;
+}
+
+orbicular i {
+  color:#775D9F;
+}
+.android-video h3{
+  margin:60px;
+}
+/*============================End Orbicular Progress Bar====================*/
+
+/*============================Android modal Window====================*/
+
+.android-modal-row {
+  margin:20px;
+  height: 450px;
+}
+.modal-android {
+  border: 7px solid #775d9f;
+  border-radius: 7px;
+  background-color: #f5f5f5;
+}
+
+.android-modal-row video{
+  width:465px;
+}
+
+.android-modal-row .col-md-6{
+  position:relative;
+  top:50%;
+  transform: translateY(-50%);
+  -webkit-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+}
+
+/*============================EndAndroid modal Window====================*/
+>>>>>>> aarons-smartphone-2.0

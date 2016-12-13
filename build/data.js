@@ -13,5 +13,5 @@ gulp.task('data', function () {
         .pipe(jsonFilter)
         .pipe($.jsonminify())
         .pipe(jsonFilter.restore())
-        .pipe(gulp.dest('dist/data'));
+        .pipe(gulp.dest('dist/public/data'));
 });

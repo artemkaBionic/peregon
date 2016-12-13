@@ -5,22 +5,18 @@
         .module('app.user')
         .controller('GuideControllerXboxOne', GuideControllerXboxOne);
 
-    GuideControllerXboxOne.$inject = ['$q', 'deviceService', 'packageService', 'socketService', 'eventService'];
+    GuideControllerXboxOne.$inject = ['$q', 'item', 'deviceService', 'packageService', 'socketService', 'eventService', 'inventoryService'];
 
-    function GuideControllerXboxOne($q, deviceService, packageService, socketService, eventService) {
+    function GuideControllerXboxOne($q, item, deviceService, packageService, socketService, eventService, inventoryService) {
         var refreshMediaPackageName = 'Xbox One Refresh';
         var usbDeviceMinSize = 4000000000;
 
         /*jshint validthis: true */
         var vm = this;
+        vm.item = item;
         vm.selectedDevice = null;
         vm.refreshMediaPackage = null;
         vm.steps = {
-            details: {
-                name: 'details',
-                number: 1,
-                title: 'Enter Details'
-            },
             prepareRefreshUsbInsert: {
                 name: 'prepareRefreshUsbInsert',
                 number: 2,
@@ -58,14 +54,13 @@
             }
         };
 
-        vm.step = vm.steps.details;
-        vm.itemNumber = null;
+        vm.step = vm.steps.prepareRefreshUsbInsert;
         vm.errorMessage = '';
 
         activate();
 
         function activate() {
-            var queries = [eventService.DisableDeviceNotification(), loadDevices(), loadMediaPackages()];
+            var queries = [inventoryService.startSession('xbox-one', item), eventService.DisableDeviceNotification(), loadDevices(), loadMediaPackages()];
             $q.all(queries);
         }
 
@@ -173,23 +168,16 @@
         function verifyRefreshStart() {
             vm.step = vm.steps.verifyRefresh;
 
-            socketService.once('verify-refresh-progress', function(data) {
-                if (data.progress >= 100) {
-                    vm.step = vm.steps.complete;
-                }
-            });
-
-            socketService.once('verify-refresh-failed', function(data) {
-                socketService.removeAllListeners('verify-refresh-progress');
-                vm.errorMessage = data.message;
-                vm.step = vm.steps.failed;
-            });
-
             var data = {};
             data.device = vm.selectedDevice;
-            data.refreshType = 'xbox-one';
-            data.itemNumber = vm.itemNumber;
-            socketService.emit('verify-refresh', data);
+            inventoryService.finishSession(data).then(function(response) {
+                if (response.success) {
+                    vm.step = vm.steps.complete;
+                } else {
+                    vm.errorMessage = 'Factory reset did not complete correctly.';
+                    vm.step = vm.steps.failed;
+                }
+            });
         }
     }
 })();

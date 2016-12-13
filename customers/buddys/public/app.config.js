@@ -6,8 +6,7 @@
     var config = {
         name: 'Buddys',
         appTitle: 'Buddys Portal',
-        version: '1.0.1',
-        logoImage: '/assets/images/BuddysLogo.png',
+        version: '0.0.1',
         packageIndex: '/assets/package-index.json',
         guidesPath: '/assets/guides',
         guidesIndexFile: 'index.html',

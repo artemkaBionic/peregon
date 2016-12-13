@@ -6,6 +6,7 @@ var util = require('util');
 var config = require('gulp-ng-config');
 var file = require('gulp-file');
 var replace = require('gulp-replace');
+var importCss = require('../build/import-css'); //Workaround bug https://github.com/yuguo/gulp-import-css/issues/7
 
 
 var $ = require('gulp-load-plugins')({
@@ -76,12 +77,12 @@ gulp.task('analyze', ['jshint', 'jscs']);
 gulp.task('injector:js', ['env', 'analyze', 'injector:css'], function () {
     return gulp.src('src/index.html')
         .pipe($.inject(
-                gulp.src([
-                    'src/{app,components}/**/*.js',
-                    '!src/{app,components}/**/*.spec.js',
-                    '!src/{app,components}/**/*.mock.js',
-                    '!src/app/app.config*.js'
-                ])
+            gulp.src([
+                'src/{app,components}/**/*.js',
+                '!src/{app,components}/**/*.spec.js',
+                '!src/{app,components}/**/*.mock.js',
+                '!src/app/app.config*.js'
+            ])
                 .pipe($.angularFilesort()), {
                 ignorePath: 'src',
                 addRootSlash: false
@@ -125,10 +126,9 @@ gulp.task('html', ['wiredep', 'injector:css', 'injector:js', 'partials'], functi
         .pipe($.debug({title: 'css'}))
         .pipe(replace('@import url(../bower_components/', '@import url(../../bower_components/')) //change url to css
         .pipe(replace('bower_components/bootstrap-sass-official/assets/fonts/bootstrap', 'fonts'))
-        //.pipe(replace('../bower_components/font-awesome/fonts', '../bower_components/Font-Awesome/Fonts')) Todo: Fix This
         .pipe(replace('../bower_components/open-sans/fonts', '../fonts/open-sans'))
         .pipe(replace('../bower_components/p0rtal/src/package/fonts/apc-icons/fonts', '../fonts/apc-icons'))
-        .pipe($.importCss()) //inlining css @import
+        .pipe(importCss()) //inlining css @import
         .pipe($.csso())
         .pipe(cssFilter.restore())
         .pipe(assets.restore())
@@ -141,8 +141,8 @@ gulp.task('html', ['wiredep', 'injector:css', 'injector:js', 'partials'], functi
             quotes: true
         }))
         .pipe(htmlFilter.restore())
-        .pipe(gulp.dest('dist/'))
-        .pipe($.size({title: 'dist/', showFiles: true}));
+        .pipe(gulp.dest('dist/public/'))
+        .pipe($.size({title: 'dist/public/', showFiles: true}));
 });
 
 gulp.task('images', function () {
@@ -152,47 +152,60 @@ gulp.task('images', function () {
             progressive: true,
             interlaced: true
         }))
-        .pipe(gulp.dest('dist/assets/images/'));
+        .pipe(gulp.dest('dist/public/assets/images/'));
 });
 
 gulp.task('videos', function () {
     return gulp.src('src/assets/videos/**/*')
-        .pipe(gulp.dest('dist/assets/videos/'));
+        .pipe(gulp.dest('dist/public/assets/videos/'));
 });
 
 gulp.task('fonts', ['fonts:font-awesome', 'fonts:open-sans', 'fonts:apc-icons'], function () {
     return gulp.src($.mainBowerFiles())
         .pipe($.filter('**/*.{eot,svg,ttf,woff,woff2}'))
         .pipe($.flatten())
-        .pipe(gulp.dest('dist/fonts/'));
+        .pipe(gulp.dest('dist/public/fonts/'));
 });
 
 gulp.task('fonts:font-awesome', function () {
     return gulp.src('bower_components/font-awesome/fonts/**/*.{eot,svg,ttf,woff,woff2}')
-        .pipe(gulp.dest('dist/fonts/font-awesome'));
+        .pipe(gulp.dest('dist/public/fonts/font-awesome'));
 });
 
 gulp.task('fonts:open-sans', function () {
     return gulp.src('bower_components/open-sans/fonts/**/*.{eot,svg,ttf,woff}')
-        .pipe(gulp.dest('dist/fonts/open-sans'));
+        .pipe(gulp.dest('dist/public/fonts/open-sans'));
 });
 
 gulp.task('fonts:apc-icons', function () {
     return gulp.src('bower_components/p0rtal/src/package/fonts/**/*.{eot,svg,ttf,woff}')
         .pipe($.flatten())
-        .pipe(gulp.dest('dist/fonts/apc-icons'));
+        .pipe(gulp.dest('dist/public/fonts/apc-icons'));
 });
 
-gulp.task('misc', function () {
+gulp.task('mics', function () {
     return gulp.src([
-            'src/**/*.ico',
-            'src/app/app.config.js'
-        ])
-        .pipe(gulp.dest('dist/'));
+        'src/*.ico',
+        'src/app.config.js'
+    ])
+        .pipe(gulp.dest('dist/public/'));
 });
+
+gulp.task('copySrv', function () {
+    gulp.src([
+        './srv/bin/**/*',
+        './srv/views/**/*',
+        './srv/*.js',
+        './srv/*.json'
+    ],{
+        "base" : "./srv"
+    })
+        .pipe(gulp.dest('dist'));
+});
+
 
 gulp.task('clean', function (done) {
-    $.del(['dist/', '.tmp/'], done);
+    $.del(['dist/public/', '.tmp/'], done);
 });
 
 gulp.task('env', function () {
@@ -205,4 +218,4 @@ gulp.task('env', function () {
         .pipe(gulp.dest('src/app'));
 });
 
-gulp.task('build', ['html', 'images', 'videos', 'fonts', 'misc']);
+gulp.task('build', ['html', 'images', 'videos', 'fonts', 'mics', 'copySrv']);

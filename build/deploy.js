@@ -13,13 +13,13 @@ gulp.task('deploy', ['build'], function () {
         message: 'Update [timestamp] --skip-ci'
     };
 
-    return gulp.src('./dist/**/*')
+    return gulp.src('./dist/public/**/*')
         .pipe(gh(options));
 });
 
 gulp.task('deploy:aws', ['deploy:env', 'build'], function() {
     var options = { headers: {'Cache-Control': 'public'} };
-    return gulp.src('./dist/**')
+    return gulp.src('./dist/public/**')
         .pipe(s3(aws.config, options));
 });
 

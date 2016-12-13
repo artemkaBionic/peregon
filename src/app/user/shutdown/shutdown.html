@@ -1,20 +1,20 @@
-<div ng-class="(sd.rebooting||sd.turningOff)? 'power-window-message':'power-window'">
-  <div ng-class="sd.turningOff? 'power-message':'message-none'"><h2>Shutting Down...</h2><br/>
+<div ng-class="(vm.rebooting||vm.turningOff)? 'power-window-message':'power-window'">
+  <div ng-class="vm.turningOff? 'power-message':'message-none'"><h2>Shutting Down...</h2><br/>
     <p class="center">
       Please note that the Refresh Station <strong>must</strong> be on and connected to the Internet to get updates.
     </p>
   </div>
-  <div ng-class="sd.rebooting? 'reboot-message':'message-none'"><h2>Rebooting...</h2></div>
+  <div ng-class="vm.rebooting? 'reboot-message':'message-none'"><h2>Rebooting...</h2></div>
   <div class="reset-button">
-    <i ng-click="sd.reboot()" class="fa fa-refresh"></i>
+    <i ng-click="vm.reboot()" class="fa fa-refresh"></i>
     <div class="shut-text">Restart</div>
   </div>
   <div class="power-button">
-    <i ng-click="sd.shutdown()" class="fa fa-power-off"></i>
+    <i ng-click="vm.shutdown()" class="fa fa-power-off"></i>
     <div class="shut-text">Shut Down
     </div>
   </div>
   <div class="close-button-pos">
-    <button class="btn close-button" ng-click="sd.close()">x</button>
+    <button class="btn close-button" ng-click="vm.close()">x</button>
   </div>
 </div>

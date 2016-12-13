@@ -5,21 +5,39 @@
         .module('app.user')
         .controller('UserController', UserController);
 
-    UserController.$inject = ['$rootScope', '$scope', '$q', 'config', '$http', 'guideService'];
+    UserController.$inject = ['$q', '$state', 'config', '$http', 'inventoryService', '$uibModal', 'guideService', 'eventService', 'stationService'];
 
-    function UserController($rootScope, $scope, $q, config, $http, guideService) {
+    function UserController($q, $state, config, $http, inventoryService, $uibModal, guideService, eventService, stationService) {
         /*jshint validthis: true */
         var vm = this;
         vm.ready = false;
-        $scope.guides = [];
-        $scope.guideService = guideService;
-        $scope.searchString = guideService.searchString;
-        $scope.guideFilter = function(guide) {
-            if (!$scope.searchString) {
-                return true;
+        vm.searchString = '';
+        vm.item = null;
+        vm.guide = null;
+
+        vm.searchStringChange = function() {
+            if (config.itemNumberRegEx.test(vm.searchString)) {
+                vm.item = null;
+                inventoryService.getItem(vm.searchString).then(function(item) {
+                    vm.item = item;
+                    if (item.Sku) {
+                        guideService.getGuide(item.Sku).then(function(guide) {
+                            vm.guide = guide;
+                        });
+                    }
+                });
             } else {
-                var match = $scope.searchString.match(guide.SkuRegEx);
-                return (match !== null && match[0] === $scope.searchString);
+                vm.item = null;
+            }
+        };
+
+        vm.showGuide = function() {
+            if (vm.item !== null) {
+                var $stateParams = {};
+                $stateParams.itemNumber = vm.item.InventoryNumber;
+                $state.go('root.user.guide', $stateParams);
+                vm.searchString = null;
+                vm.item = null;
             }
         };
 
@@ -33,9 +51,29 @@
         }
 
         function loadData() {
-            guideService.getGuides().then(function(guides) {
-                $scope.guides = guides;
-            });
         }
+// Help Modal Window with Item Number
+
+        if (vm.modalWindow) {
+            vm.eventDispatcher.dispatch();
+        }
+
+        vm.eventDispatcher = {
+            listen: function(callback) {
+                this._callback = callback;
+            },
+            dispatch: function() {
+                this._callback();
+            }
+        };
+        vm.showItemNumber = function() {
+
+            if (vm.modalWindow) {
+                vm.modalWindow.dismiss();
+            }
+            vm.modalWindow = $uibModal.open({templateUrl: 'app/user/item_number/item_number.html',
+                size: 'sm'
+            });
+        };
     }
 })();

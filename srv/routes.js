@@ -2,8 +2,8 @@ var express = require('express');
 var fs = require('fs');
 var path = require('path');
 var config = require('./config');
-var inventory = require('./inventory');
-var station = require('./station');
+var inventory = require('./inventory.js');
+var station = require('./station.js');
 
 module.exports = function(io, data) {
 // Express Router
@@ -28,6 +28,39 @@ module.exports = function(io, data) {
     router.get('/data/inventory/:id', function (req, res) {
         inventory.getItem(req.params.id, function (item) {
             res.json(item);
+        });
+    });
+
+    router.get('/data/inventory/lock/:imei', function (req, res) {
+        inventory.lockAndroid(req.params.imei, function (result) {
+            res.json(result);
+        });
+    });
+
+    router.get('/data/inventory/unlock/:imei', function (req, res) {
+        inventory.unlockAndroid(req.params.imei, function (result) {
+            res.json(result);
+        });
+    });
+
+    router.post('/data/inventory/session/start', function (req, res) {
+        console.log('session start requested');
+        console.log(req.body.type);
+        console.log(req.body.item);
+        inventory.sessionStart(req.body.type, req.body.item, function (result) {
+            res.json(result);
+        });
+    });
+
+    router.post('/data/inventory/session/update', function (req, res) {
+        inventory.sessionUpdate(req.body.message, function (result) {
+            res.json(result);
+        });
+    });
+
+    router.post('/data/inventory/session/finish', function (req, res) {
+        inventory.sessionFinish(req.body.details, function (result) {
+            res.json(result);
         });
     });
 
@@ -112,6 +145,8 @@ module.exports = function(io, data) {
         console.log('Shutting down...');
         station.shutdown();
     });
+
+
 
     return router;
 };

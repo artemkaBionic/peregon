@@ -19,7 +19,7 @@
 
   <div ng-switch="vm.step.name" class="row center wizard-modal">
 
-    <div class="anim-modal-step modal-enter" id="first offline" ng-switch-when="selectNetworkDevice">
+    <div ng-switch-when="connect">
       <div class="row modal-contents">
         <p>What should your Refresh Station be plugged into?</p>
         <p>Can't decide?</p>
@@ -69,10 +69,8 @@
         </div>
       </div>
       <div class="row modal-contents modal-graphics">
-        <figure>
           <img ng-click="vm.ChangeClass()" class="wizard-image" ng-class="{'wizard-image-big':vm.zoomed,}" ng-src="/assets/images/{{vm.selectedNetworkDevice.wiringImageFile}}">
-          <figcaption>{{vm.selectedNetworkDevice.displayDescription}} wiring diagram</figcaption>
-        </figure>
+          <div>{{vm.selectedNetworkDevice.displayDescription}} wiring diagram</div>
       </div>
     </div>
 

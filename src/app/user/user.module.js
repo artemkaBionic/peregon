@@ -16,7 +16,11 @@
                 controllerAs: 'vm'
             })
             .state('root.user.guide', {
-                url: '/guides/:guide',
+                url: '/guide/:itemNumber',
+                resolve: {
+                    item: getItem,
+                    guide: getGuide
+                },
                 templateProvider: guideTemplate,
                 controllerProvider: guideController,
                 controllerAs: 'vm'
@@ -41,30 +45,49 @@
                 controllerAs: 'vm'
             });
 
-        guideTemplate.$inject = ['$stateParams', '$templateCache', '$http', 'guideService'];
-        function guideTemplate($stateParams, $templateCache, $http, guideService) {
-            return guideService.getGuide($stateParams.guide).then(function(guide){
-                var templateUrl = 'app/user/guide/guide.html';
-                if (guide.DynamicGuideName !== undefined) {
-                    templateUrl = 'app/user/guide/' + guide.DynamicGuideName + '/' + guide.DynamicGuideName + '.html';
-                }
-                var templateContent = $templateCache.get(templateUrl);
-                if (templateContent === undefined) {
-                    return $http.get(templateUrl).then(function(tpl) {
-                        $templateCache.put(templateUrl, tpl.data);
-                        return tpl.data;
-                    });
+        getItem.$inject = ['$stateParams', 'inventoryService'];
+        function getItem($stateParams, inventoryService) {
+            return inventoryService.getItem($stateParams.itemNumber).then(function(item) {
+                if (item) {
+                    return item;
                 } else {
-                    return templateContent;
+                    throw(new Error('Item ' + $stateParams.itemNumber + ' not found.'));
                 }
             });
         }
 
-        guideController.$inject = ['$stateParams', 'guideService'];
-        function guideController($stateParams, guideService) {
-            var guide = guideService.getGuideSync($stateParams.guide);
+        getGuide.$inject = ['guideService', 'item'];
+        function getGuide(guideService, item) {
+            return guideService.getGuide(item.Sku).then(function(guide) {
+                if (guide) {
+                    return guide;
+                } else {
+                    throw(new Error('SKU ' + item.Sku + ' not found.'));
+                }
+            });
+        }
+
+        guideTemplate.$inject = ['$templateCache', '$http', 'guide'];
+        function guideTemplate($templateCache, $http, guide) {
+            var templateUrl = 'app/user/guide/guide.html';
+            if (guide.DynamicGuideName) {
+                templateUrl = 'app/user/guide/' + guide.DynamicGuideName + '/' + guide.DynamicGuideName + '.html';
+            }
+            var templateContent = $templateCache.get(templateUrl);
+            if (!templateContent) {
+                return $http.get(templateUrl).then(function(tpl) {
+                    $templateCache.put(templateUrl, tpl.data);
+                    return tpl.data;
+                });
+            } else {
+                return templateContent;
+            }
+        }
+
+        guideController.$inject = ['guide'];
+        function guideController(guide) {
             var controllerName = 'GuideController';
-            if (guide.DynamicGuideName !== undefined) {
+            if (guide.DynamicGuideName) {
                 controllerName = 'GuideController' + guide.DynamicGuideName;
             }
             return controllerName;
@@ -111,5 +134,6 @@
                 eventService.EnableDeviceNotification();
             }
         });
+
     }
 })();

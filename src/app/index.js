@@ -24,18 +24,24 @@
         'ngSanitize',
         'angular-ladda',
         'ngAnimate',
-        'ui.bootstrap'
+        'ui.bootstrap',
+        'Orbicular'
     ]);
 
     app.config(appConfig);
     app.run(appRun);
 
-    appConfig.$inject = ['$stateProvider', '$urlRouterProvider', '$apcSidebarProvider', 'cfpLoadingBarProvider', '$logProvider', '$animateProvider'];
-    function appConfig($stateProvider, $urlRouterProvider, $apcSidebarProvider, cfpLoadingBarProvider, $logProvider, $animateProvider) {
+    appConfig.$inject = ['$stateProvider', '$urlRouterProvider', '$apcSidebarProvider', 'cfpLoadingBarProvider', '$logProvider', '$animateProvider', 'toastrConfig'];
+    function appConfig($stateProvider, $urlRouterProvider, $apcSidebarProvider, cfpLoadingBarProvider, $logProvider, $animateProvider, toastrConfig) {
         cfpLoadingBarProvider.includeSpinner = false;
         $logProvider.debugEnabled(true);
         //isolate ngAnimate to avoid conflicts with other libraries
         $animateProvider.classNameFilter(/anim-/);
+
+        angular.extend(toastrConfig, {
+            newestOnTop: false,
+            preventDuplicates: true
+        });
 
         $stateProvider
             .state('root', {

@@ -1,46 +1,35 @@
 <section horizontal-ui-sheet class="gray-light-bg apc-sheet-full">
   <header user-header></header>
   <section horizontal-ui-sheet-content>
-
-    <div class="row">
-      <div class="row enterSku">
-        <div class="col-md-3">
-        </div>
-        <div class="col-md-6">
-          <form ui-keypress="{13:'selectGuide($event)'}">
-            <div class="text-input">
-              <span class="fa fa-search"></span>
-              <input class="form-control sku-input" placeholder="Enter SKU" type="text" ng-model="searchString">
-            </div>
-          </form>
-        </div>
-        <div class="col-md-3">
-        </div>
-      </div>
+    <div class="row logo-center"><h2 class="logo"><img src="/assets/images/Logo.png"></h2>
     </div>
-
-    <div class="row">
-      <div class="col-md-3" ng-repeat="guide in guides | filter: guideFilter">
-        <article class="card" ng-class="guide.DynamicGuideName" ui-sref=".guide({guide: guide.SKU})">
-          <a ui-sref=".guide({guide: guide.SKU})">
-            <div class="card-body">
-              <div class="h-80">
-                <div class="row">
-                  <div class="col-md-7">
-                    <div class="card-title text-ellipsis">{{::guide.SKU}}</div>
-                    <div class="text-sm text-ellipsis"  ng-if="guide.DynamicGuideName===undefined">{{::guide.Model}}</div>
-                    <div class="logo" ng-if="guide.DynamicGuideName!==undefined"><img ng-src="/assets/images/{{::guide.DynamicGuideName}}CardLogo.png"></div>
-                  </div>
-                  <div class="col-md-5">
-                    <div class="icon" ng-if="guide.DynamicGuideName!==undefined"><img ng-src="/assets/images/{{::guide.DynamicGuideName}}CardIcon.png"></div>
-                  </div>
+    <form ng-submit="vm.showGuide()">
+      <div class="row">
+          <div class="row enterItemNumber">
+            <div class="col-md-4">
+            </div>
+            <div class="col-md-4">
+                <div class="text-input">
+                  <span class="fa fa-barcode"></span>
+                  <input autofocus ng-focus="vm.item === null;" class="form-control item-number-input" placeholder="Enter Item Number" type="text" ng-model="vm.searchString" ng-change="vm.searchStringChange()">
                 </div>
-              </div>
             </div>
-          </a>
-        </article>
+            <div class="col-md-4">
+            </div>
+          </div>
+        </div>
+        <div class="row" ng-controller="UserController">
+          <div class="home-buttons col-sm-12 col-xs-12 text-center">
+            <button ng-disabled="vm.item === null" type="submit" class="btn-primary btn-rounded">Start</button>
+            </div>
+        </div>
+      <!--===========Test Content===============-->
+      <!--{{vm.item}}<br/>-->
+      <!--{{vm.guide}}-->
+      <!--===========End Test Content===============-->
+      <div class="row item-info">
+        <div class="item-details" ng-hide="vm.item === null"><button class="item-button" type="submit"><strong>{{'SKU: '+vm.item.Sku}}</strong><br/>{{vm.guide.Manufacturer}} {{vm.guide.Model}}</button></div>
       </div>
-    </div>
-
+    </form>
   </section>
 </section>
