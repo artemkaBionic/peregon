@@ -12,9 +12,9 @@ general:
 dependencies:
   override:
     - if [ ! -v ENV ] ; then npm install -g gulp bower ; fi
-    - if [ ! -v ENV ] ; gem install sass ; fi
-    - if [ ! -v ENV ] ; npm install ; fi
-    - if [ ! -v ENV ] ; bower install ; fi 
+    - if [ ! -v ENV ] ; then gem install sass ; fi
+    - if [ ! -v ENV ] ; then npm install ; fi
+    - if [ ! -v ENV ] ; then bower install ; fi 
    
 test:
   pre:
