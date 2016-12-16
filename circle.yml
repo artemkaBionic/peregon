@@ -1,0 +1,26 @@
+machine:
+  node:
+     version: 7.2.1
+  services:
+     - docker
+
+general:
+  branches:
+    only:
+      - circleci
+
+dependencies:
+  post:
+    - npm install -g gulp bower
+    - gem install sass  
+   
+test:
+  pre:
+     - bower install
+
+deployment:
+  prod:
+    branch: circleci
+    commands:
+      - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+
