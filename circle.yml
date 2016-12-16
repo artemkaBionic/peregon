@@ -11,17 +11,19 @@ general:
 
 dependencies:
   override:
-    - npm install -g gulp bower
-    - gem install sass
-    - npm install  
+    - if [ ! -v ENV ] ; then npm install -g gulp bower ; fi
+    - if [ ! -v ENV ] ; gem install sass ; fi
+    - if [ ! -v ENV ] ; npm install ; fi
+    - if [ ! -v ENV ] ; bower install ; fi 
    
 test:
   pre:
-     - bower install
+     - echo "tests"
 
 deployment:
   prod:
     branch: circleci
     commands:
       - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+      - chmod +x customer.sh && ./customer.sh
 
