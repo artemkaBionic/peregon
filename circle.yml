@@ -10,7 +10,7 @@ general:
       - circleci
 
 dependencies:
-  post:
+  override:
     - npm install -g gulp bower
     - gem install sass  
    
