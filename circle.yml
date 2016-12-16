@@ -12,7 +12,8 @@ general:
 dependencies:
   override:
     - npm install -g gulp bower
-    - gem install sass  
+    - gem install sass
+    - npm install  
    
 test:
   pre:
