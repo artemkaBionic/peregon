@@ -130,6 +130,7 @@ gulp.task('html', ['wiredep', 'injector:css', 'injector:js', 'partials'], functi
         .pipe(replace('../bower_components/p0rtal/src/package/fonts/apc-icons/fonts', '../fonts/apc-icons'))
         .pipe(importCss()) //inlining css @import
         .pipe($.csso())
+        .pipe(replace('/fonts/fontawesome-', '/fonts/font-awesome/fontawesome-'))
         .pipe(cssFilter.restore())
         .pipe(assets.restore())
         .pipe($.useref())
