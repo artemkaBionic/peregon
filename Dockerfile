@@ -1,8 +1,7 @@
-FROM node:7
+FROM alpine
 
-#RUN apk add --update nodejs \
-#                     python
-RUN node --version
+RUN apk add --update nodejs \
+                     python
 RUN	mkdir -p /kiosk
 COPY dist/ /kiosk/
 RUN ls -la /kiosk
