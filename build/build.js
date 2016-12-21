@@ -146,6 +146,16 @@ gulp.task('html', ['wiredep', 'injector:css', 'injector:js', 'partials'], functi
         .pipe($.size({title: 'dist/public/', showFiles: true}));
 });
 
+gulp.task('assets', function () {
+    return gulp.src('src/assets/package-index.json')
+        .pipe(gulp.dest('dist/public/assets/'));
+});
+
+gulp.task('guides', function () {
+    return gulp.src('src/assets/guides/**/*')
+        .pipe(gulp.dest('dist/public/assets/guides/'));
+});
+
 gulp.task('images', function () {
     return gulp.src('src/assets/images/**/*')
         .pipe($.imagemin({
@@ -219,4 +229,4 @@ gulp.task('env', function () {
         .pipe(gulp.dest('src/app'));
 });
 
-gulp.task('build', ['html', 'images', 'videos', 'fonts', 'mics', 'copySrv']);
+gulp.task('build', ['html', 'assets', 'guides', 'images', 'videos', 'fonts', 'mics', 'copySrv']);
