@@ -5,8 +5,8 @@
     var config = module.config(appConfig);
     config.run(onStateChange);
 
-    appConfig.$inject = ['$stateProvider', '$apcSidebarProvider', '$filterProvider'];
-    function appConfig($stateProvider, $apcSidebarProvider, $filterProvider) {
+    appConfig.$inject = ['$stateProvider', '$filterProvider'];
+    function appConfig($stateProvider, $filterProvider) {
 
         $stateProvider
             .state('root.user', {
@@ -92,17 +92,6 @@
             }
             return controllerName;
         }
-
-        $apcSidebarProvider.config('home', {
-            title: 'Home',
-            nav: 10,
-            content: '<span ui-sref="root.user" data-apc-sidebar-group-heading="Home" data-icon-class="fa fa-home"></span>'
-        });
-        $apcSidebarProvider.config('media', {
-            title: 'Media',
-            nav: 20,
-            content: '<span ui-sref="root.media" data-apc-sidebar-group-heading="Media" data-icon-class="fa fa-download"></span>'
-        });
 
         getPost.$inject = ['$stateParams', 'dataService'];
         function getPost($stateParams, dataService) {

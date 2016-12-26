@@ -31,8 +31,8 @@
     app.config(appConfig);
     app.run(appRun);
 
-    appConfig.$inject = ['$stateProvider', '$urlRouterProvider', '$apcSidebarProvider', 'cfpLoadingBarProvider', '$logProvider', '$animateProvider', 'toastrConfig'];
-    function appConfig($stateProvider, $urlRouterProvider, $apcSidebarProvider, cfpLoadingBarProvider, $logProvider, $animateProvider, toastrConfig) {
+    appConfig.$inject = ['$stateProvider', '$urlRouterProvider', 'cfpLoadingBarProvider', '$logProvider', '$animateProvider', 'toastrConfig'];
+    function appConfig($stateProvider, $urlRouterProvider, cfpLoadingBarProvider, $logProvider, $animateProvider, toastrConfig) {
         cfpLoadingBarProvider.includeSpinner = false;
         $logProvider.debugEnabled(true);
         //isolate ngAnimate to avoid conflicts with other libraries
@@ -58,8 +58,6 @@
                 templateUrl: 'app/403.html'
             })
         ;
-
-        $apcSidebarProvider.setTitle('');
 
         initApp.$inject = ['securityService', '$log'];
         function initApp(securityService, $log) {

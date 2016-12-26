@@ -762,6 +762,13 @@ button[disabled]:hover {
   background-color: #999999 !important;
   cursor: not-allowed;
 }
+//Removing horizontal scroll
+.no-scroll {
+  overflow-x: hidden;
+}
+.apc-sheet-full {
+  width: 100%;
+}
 /*============================ End Homepage====================*/
 
 
