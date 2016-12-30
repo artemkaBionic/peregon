@@ -1,6 +1,5 @@
 <horizontal-ui-sheet horizontal-scroll1="" class="shuffle-animation apc-sheet-full modal-android">
   <div ng-switch="vm.ModalStep.name">
-
     <div ng-switch-when="unlock">
       <h2 class="step-header text-align-center">Disable Screen Lock</h2>
       <div class="row android-modal-row">
@@ -151,5 +150,10 @@
         </div>
       </div>
     </div>
+  </div>
+  <div class="navigtion-buttons">
+    <button  ng-click="vm.closeModal()" class="btn center btn-primary btn-rounded android-modal-dismiss">
+      <span>Dismiss</span>
+    </button>
   </div>
 </horizontal-ui-sheet>

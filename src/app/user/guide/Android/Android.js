@@ -5,15 +5,16 @@
         .module('app.user')
         .controller('GuideControllerAndroid', GuideControllerAndroid);
 
-    GuideControllerAndroid.$inject = ['$q', '$scope', 'socketService', '$state', 'popupLauncher', 'toastr', '$timeout', 'inventoryService', 'item'];
+    GuideControllerAndroid.$inject = ['$q', '$scope', 'socketService', '$state', 'popupLauncher', 'toastr', '$timeout', 'inventoryService', 'item', 'eventService'];
 
-    function GuideControllerAndroid($q, $scope, socketService, $state, popupLauncher, toastr, $timeout, inventoryService, item) {
+    function GuideControllerAndroid($q, $scope, socketService, $state, popupLauncher, toastr, $timeout, inventoryService, item, eventService) {
 
         /*jshint validthis: true */
         var vm = this;
         var timeouts = [];
         vm.item = item;
         vm.step = null;
+        eventService.AndroidGuideInProcess = true;
         /*=================Checking for Android Refresh process finished to lock the device===============*/
         $scope.$on('$destroy', function() {
             if (!vm.androidFinished) {
@@ -50,6 +51,9 @@
             vm.failedTests = [];
             vm.step = vm.steps.startOne; //!!! Definition for first Guide Step
 
+            if(eventService.InternetConnection){
+                toastr.clear(eventService.connectionNotification);
+            }
             timeouts.push($timeout(vm.sessionExpired,3600000)); //Session expires after an hour after the start
             var queries = [inventoryService.startSession('android', item), unlockDevice()];
             $q.all(queries);
@@ -251,6 +255,7 @@
         };
 
         vm.finish = function() {
+            eventService.AndroidGuideInProcess = false;
             vm.androidFinished = true;
             if (vm.TestsFault || vm.Broken || vm.AndroidDisconnected){
                 vm.finishFail();

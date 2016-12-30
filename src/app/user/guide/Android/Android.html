@@ -1,6 +1,19 @@
 <horizontal-ui-sheet class="apc-sheet-full guide android">
-  <header horizontal-ui-sheet-header title="Refresh Android Device">
-    <span class="apc-sheet-subtitle">{{vm.step.title}}</span>
+  <header class="guide-header">
+    <div class="row">
+      <div class="col-sm-4">
+        <img class="guide-logo" src="/assets/images/Logo.png">
+      </div>
+      <div class="col-sm-4">
+        <div class="guide-header-text text-center">Refresh Android Device</div>
+        <div class="text-center apc-sheet-subtitle">{{vm.step.title}}</div>
+      </div>
+      <div class="col-sm-4">
+        <div class="text-right guide-home">
+          <i ng-click="vm.refreshEnd()" class="fa fa-home" aria-hidden="true"></i>
+        </div>
+      </div>
+    </div>
   </header>
   <div horizontal-ui-sheet-content>
     <div class="row" ng-hide="vm.step.number > 8">

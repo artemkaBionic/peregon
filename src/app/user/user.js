@@ -5,16 +5,16 @@
         .module('app.user')
         .controller('UserController', UserController);
 
-    UserController.$inject = ['$q', '$state', 'config', '$http', 'inventoryService', '$uibModal', 'guideService', 'eventService', 'stationService'];
+    UserController.$inject = ['$q', '$state', 'config', '$http', 'inventoryService', '$uibModal', 'guideService', 'socketService', 'stationService', 'eventService'];
 
-    function UserController($q, $state, config, $http, inventoryService, $uibModal, guideService, eventService, stationService) {
+    function UserController($q, $state, config, $http, inventoryService, $uibModal, guideService, socketService, stationService, eventService) {
         /*jshint validthis: true */
         var vm = this;
         vm.ready = false;
         vm.searchString = '';
         vm.item = null;
         vm.guide = null;
-
+        vm.AndroidEmei = null;
         vm.searchStringChange = function() {
             if (config.itemNumberRegEx.test(vm.searchString)) {
                 vm.item = null;
@@ -43,6 +43,27 @@
 
         activate();
 
+        socketService.on('event', function(event) {
+            if (event.name === 'app-start') {
+                if (!eventService.AndroidGuideInProcess) {
+                    //=======Code for getting SKU when the Android EMEI is known========
+                    // vm.AndroidEmei = event.data.emei;
+                    // console.log(event.data.emei);
+                    // inventoryService.getItem(vm.AndroidEmei).then(function(item) {
+                    //     vm.item = item;
+                    //     vm.searchString
+                    //     if (item.Sku) {
+                    //         guideService.getGuide(item.Sku).then(function(guide) {
+                    //             vm.guide = guide;
+                    //         });
+                    //     }
+                    // });
+                    // vm.showGuide();
+                    console.log('User.js Event app-start');
+                }
+            }
+        });
+
         function activate() {
             var queries = [loadData()];
             return $q.all(queries).then(function() {
@@ -52,28 +73,5 @@
 
         function loadData() {
         }
-// Help Modal Window with Item Number
-
-        if (vm.modalWindow) {
-            vm.eventDispatcher.dispatch();
-        }
-
-        vm.eventDispatcher = {
-            listen: function(callback) {
-                this._callback = callback;
-            },
-            dispatch: function() {
-                this._callback();
-            }
-        };
-        vm.showItemNumber = function() {
-
-            if (vm.modalWindow) {
-                vm.modalWindow.dismiss();
-            }
-            vm.modalWindow = $uibModal.open({templateUrl: 'app/user/item_number/item_number.html',
-                size: 'sm'
-            });
-        };
     }
 })();

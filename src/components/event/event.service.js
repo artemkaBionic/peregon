@@ -11,7 +11,9 @@
         var service = {};
 
         service.isDeviceNotificationEnabled = true;
-        var connectionNotification = null;
+        service.connectionNotification = null;
+        service.AndroidGuideInProcess = false;
+        service.InternetConnection = null;
         var deviceNotiviations = {};
 
         activate();
@@ -28,9 +30,6 @@
         }
 
         socketService.on('event', function(event) {
-            /*var name = event.name.replace('-', '') + 'EventService';
-            var service = $injector.get(name);
-            service.run(event);*/
 
             if (event.name === 'device-add') {
                 deleteDeviceNotification(event.data.id); //Prevent duplicate notifications for the same device
@@ -95,9 +94,9 @@
                 if (service.modalWindow) {
                     service.eventDispatcher.dispatch();
                 }
-
-                toastr.clear(connectionNotification);
-                connectionNotification = toastr.success('Currently Connected to Internet','Station Status: Online', {
+                service.InternetConnection = true;
+                toastr.clear(service.connectionNotification);
+                service.connectionNotification = toastr.success('Currently Connected to Internet','Station Status: Online', {
                     'timeOut': 0,
                     'newest-on-top':false,
                     'extendedTimeOut': 0,
@@ -108,8 +107,9 @@
             }
 
             else {
-                toastr.clear(connectionNotification);
-                connectionNotification = toastr.error('Click here for more information','Station Status: Offline.', {
+                toastr.clear(service.connectionNotification);
+                service.InternetConnection = false;
+                service.connectionNotification = toastr.error('Click here for more information','Station Status: Offline.', {
                     'timeOut': 0,
                     'extendedTimeOut': 0,
                     'tapToDismiss': false,

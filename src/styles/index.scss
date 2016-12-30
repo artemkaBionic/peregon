@@ -344,10 +344,12 @@ figcaption {
   border: 0;
   border-radius: 16px;
 }
+
 .modal-lg{
-  height: 720px;
-  width: 1000px;
+  height: 88vh;
+  width: 75vw;
 }
+
 .modal-dialog {
   position: absolute;
 
@@ -480,8 +482,8 @@ figcaption {
 }
 
 .toast-top-right {
-  top: 12px;
-  right: 50px;
+  top: 2vh;
+  right: 7vw;
 }
 
 .modal-contents .wizard-image:hover{
@@ -773,6 +775,39 @@ button[disabled]:hover {
 
 
 /*============================ Start Item Info====================*/
+
+//===============To be continue ... ===================
+//.apc-sheet + .apc-sheet .apc-sheet-content {
+//  border-left: none;
+//}
+//
+//.apc-sheet-content{
+//  margin-top: 13vh;
+//  height: 7vh;
+//}
+
+.guide-header {
+  color: #eee;
+  position: absolute;
+  background-color: #555;
+  width: 100%;
+  height: 13vh;
+}
+
+.guide-header-text {
+  font-size: 28px;
+  margin: 2%;
+}
+
+.guide-logo {
+  width: 15vw;
+  margin: 6%;
+}
+
+.guide-home {
+  font-size: 8vh;
+  margin: 1.5% 4% 0 0;
+}
 
 .item-info {
   margin-top: 10vh;
@@ -1170,6 +1205,11 @@ orbicular i {
   margin:20px;
   height: 450px;
 }
+
+.android-modal-dismiss {
+  margin: 2% auto;
+}
+
 .modal-android {
   border: 7px solid #775d9f;
   border-radius: 7px;
