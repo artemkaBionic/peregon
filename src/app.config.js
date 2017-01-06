@@ -22,6 +22,7 @@
             '7339XC1': {SKU: '7339XC1', GuideName: '7339XC1', Model: 'Xbox One 500GB Includes Game', IsRefereshSupported: true, Manufacturer: 'Microsoft', DynamicGuideName: 'XboxOne'},
             '7339XC2': {SKU: '7339XC2', GuideName: '7339XC2', Model: 'Xbox One 500GB without Kinect', IsRefereshSupported: true, Manufacturer: 'Microsoft', DynamicGuideName: 'XboxOne'},
             '7339XC3': {SKU: '7339XC3', GuideName: '7339XC3', Model: 'Xbox One 500GB with Bonus Game and 1 Controller', IsRefereshSupported: true, Manufacturer: 'Microsoft', DynamicGuideName: 'XboxOne'},
+            '7339XC4': {SKU: '7339XC4', GuideName: '7339XC4', Model: 'Xbox One 500GB with Bonus Game and 1 Controller', IsRefereshSupported: true, Manufacturer: 'Microsoft', DynamicGuideName: 'XboxOne'},
             '7339XMH': {SKU: '7339XMH', GuideName: '7339XMH', Model: 'Xbox One Bundle', IsRefereshSupported: true, Manufacturer: 'Microsoft', DynamicGuideName: 'XboxOne'},
             '7393937': {SKU: '7393937', GuideName: '7393937', Model: 'GS5GLDRW1', IsRefereshSupported: true, Manufacturer: 'SALO MERCHANDISE', DynamicGuideName: 'Android'},
             '7393938': {SKU: '7393938', GuideName: '7393938', Model: '858921005099', IsRefereshSupported: true, Manufacturer: 'SALO MERCHANDISE', DynamicGuideName: 'Android'},
