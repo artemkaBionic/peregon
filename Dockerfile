@@ -1,4 +1,4 @@
-FROM hypriot/rpi-alpine-scratch
+FROM alpine
 
 RUN apk add --update nodejs \
                      python
