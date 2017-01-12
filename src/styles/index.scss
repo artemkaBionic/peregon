@@ -868,15 +868,19 @@ button[disabled]:hover {
   width: 15vw;
 }
 
-.header-middle-col:hover {
+.logo-hover:hover {
   cursor: pointer;
 }
 
-.header-middle-col:hover i {
+.logo-hover:hover i {
   transition: color 1s;
   color: rgba(255, 255, 255, 1);
 }
 
+.logo-hover>i:hover {
+  transition: color 1s;
+  color: rgba(255, 255, 255, 0);
+}
 .home-header{
   font-size: 6vh;
   vertical-align: middle;
