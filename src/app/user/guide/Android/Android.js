@@ -51,43 +51,44 @@
             vm.failedTests = [];
             vm.step = vm.steps.startOne; //!!! Definition for first Guide Step
 
-            if(eventService.InternetConnection){
+            if (eventService.InternetConnection){
                 toastr.clear(eventService.connectionNotification);
             }
+
             timeouts.push($timeout(vm.sessionExpired,3600000)); //Session expires after an hour after the start
             var queries = [inventoryService.startSession('android', item), unlockDevice()];
             $q.all(queries);
         };
 
         function unlockDevice() {
-            if (vm.item) {
-                inventoryService.unlock(vm.item.Serial).then(function(data) {
-                    if (data.error) {
-                        inventoryService.updateSession('Unable to request device unlock.\n' + JSON.stringify(data.error, null, 2));
-                    }
-                    else {
-                        vm.deviceLockService = data.result.service;
-                        vm.deviceLockServiceUnlocked = true;
-                        if (vm.step === vm.steps.waitForUnlock) {
-                            vm.step = vm.steps.preparationOne;
-                        }
-                        inventoryService.updateSession('Device is unlocked by ' + vm.deviceLockService);
-                    }
-                });
-            }
+            // if (vm.item) {
+            //     inventoryService.unlock(vm.item.Serial).then(function(data) {
+            //         if (data.error) {
+            //             inventoryService.updateSession('Unable to request device unlock.\n' + JSON.stringify(data.error, null, 2));
+            //         }
+            //         else {
+            //             vm.deviceLockService = data.result.service;
+            //             vm.deviceLockServiceUnlocked = true;
+            //             if (vm.step === vm.steps.waitForUnlock) {
+            //                 vm.step = vm.steps.preparationOne;
+            //             }
+            //             inventoryService.updateSession('Device is unlocked by ' + vm.deviceLockService);
+            //         }
+            //     });
+            // }
         }
 
         function lockDevice() {
-            if (vm.item) {
-                inventoryService.lock(vm.item.Serial).then(function(data) {
-                    if (data.error) {
-                        inventoryService.updateSession('Unable to request device lock.\n' + JSON.stringify(data.error, null, 2));
-                    }
-                    else {
-                        inventoryService.updateSession('Device is locked by ' + vm.deviceLockService);
-                    }
-                });
-            }
+            // if (vm.item) {
+            //     inventoryService.lock(vm.item.Serial).then(function(data) {
+            //         if (data.error) {
+            //             inventoryService.updateSession('Unable to request device lock.\n' + JSON.stringify(data.error, null, 2));
+            //         }
+            //         else {
+            //             inventoryService.updateSession('Device is locked by ' + vm.deviceLockService);
+            //         }
+            //     });
+            // }
         }
         /*=================End Device lock and unlock functions ==============*/
         /*=================Guide Steps definition===============*/

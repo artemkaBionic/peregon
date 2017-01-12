@@ -96,13 +96,12 @@
                 }
                 service.InternetConnection = true;
                 toastr.clear(service.connectionNotification);
-                service.connectionNotification = toastr.success('Currently Connected to Internet','Station Status: Online', {
+                service.connectionNotification = toastr.success('', {
                     'timeOut': 0,
                     'newest-on-top':false,
                     'extendedTimeOut': 0,
                     'tapToDismiss': false,
                     'closeButton': false
-
                 });
             }
 

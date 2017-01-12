@@ -1,16 +1,17 @@
 <horizontal-ui-sheet class="apc-sheet-full guide android">
   <header class="guide-header">
-    <div class="row">
-      <div class="col-sm-4">
-        <img class="guide-logo" src="/assets/images/Logo.png">
+    <div class="row header-row">
+      <div class="col-sm-6 header-col">
+        <div class="header-middle-col">
+          <i class="fa fa-home fa-home-header"></i>
+          <img ng-click="vm.refreshEnd()" class="guide-logo" src="/assets/images/Logo.png">
+          <span class="home-header">Refresh Guide</span>
+        </div>
       </div>
-      <div class="col-sm-4">
-        <div class="guide-header-text text-center">Refresh Android Device</div>
-        <div class="text-center apc-sheet-subtitle">{{vm.step.title}}</div>
-      </div>
-      <div class="col-sm-4">
-        <div class="text-right guide-home">
-          <i ng-click="vm.refreshEnd()" class="fa fa-home" aria-hidden="true"></i>
+      <div class="col-sm-6 header-col">
+        <div class="header-middle-col-right">
+          <img class="header-android-icon" src="/assets/images/android-icon.png">
+          <span class="home-header-right">{{vm.item.Manufacturer}} {{vm.item.Model}}</span>
         </div>
       </div>
     </div>
@@ -258,7 +259,7 @@
         </div>
         <div class="row">
           <div class="center circle-bar">
-            <orbicular progression="vm.autoPassed" total="vm.manualSize" counterclockwise>
+            <orbicular progression="vm.autoPassed" total="vm.autoSize" counterclockwise>
               <div ng-click="vm.circleCheck()">
                 <i class="fa fa-cog fa-spin fa-4x"></i>
               </div>

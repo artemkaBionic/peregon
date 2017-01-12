@@ -346,8 +346,8 @@ figcaption {
 }
 
 .modal-lg{
-  height: 88vh;
-  width: 75vw;
+  height: 720px;
+  width: 1000px;
 }
 
 .modal-dialog {
@@ -482,8 +482,7 @@ figcaption {
 }
 
 .toast-top-right {
-  top: 2vh;
-  right: 7vw;
+  top: 3vh;
 }
 
 .modal-contents .wizard-image:hover{
@@ -776,15 +775,24 @@ button[disabled]:hover {
 
 /*============================ Start Item Info====================*/
 
-//===============To be continue ... ===================
-//.apc-sheet + .apc-sheet .apc-sheet-content {
-//  border-left: none;
-//}
-//
-//.apc-sheet-content{
-//  margin-top: 13vh;
-//  height: 7vh;
-//}
+.apc-sheet + .apc-sheet .apc-sheet-content {
+  border-left: none;
+}
+
+#toast-container > .toast-success {
+  border-radius: 100% !important;
+  height: 50px;
+  width: 50px;
+  margin: 0;
+  padding: 0;
+  background-position: 14px;
+}
+
+.apc-sheet-content{
+  position: static;
+  margin-top: 13vh;
+  height: calc(100% - 13vh);
+}
 
 .guide-header {
   color: #eee;
@@ -799,14 +807,93 @@ button[disabled]:hover {
   margin: 2%;
 }
 
-.guide-logo {
-  width: 15vw;
-  margin: 6%;
-}
 
 .guide-home {
   font-size: 8vh;
   margin: 1.5% 4% 0 0;
+}
+
+.vcenter {
+  display: inline-block;
+  vertical-align: middle;
+  float: none;
+}
+
+.header-row {
+  position: relative;
+  height: 13vh;
+}
+
+.header-middle {
+  position: absolute;
+  top:0;
+  bottom:0;
+  margin: auto 1vw;
+}
+
+.header-col{
+  height: 13vh;
+}
+
+.header-middle-col {
+  position: absolute;
+  top:0;
+  bottom:0;
+  margin: auto 1vw;
+  height: 9vh;
+  display: table-cell;
+}
+
+.header-android-icon {
+  width: 3vw;
+}
+
+.header-middle-col-right {
+  position: absolute;
+  top:0;
+  bottom:0;
+  right: 0;
+  margin: auto 1vw;
+  height: 5.5vh;
+  display: table-cell;
+}
+
+.fa-home-header {
+  font-size: 4vh;
+  vertical-align: middle;
+  color: rgba(255, 255, 255, 0);
+}
+
+.guide-logo {
+  width: 15vw;
+}
+
+.header-middle-col:hover {
+  cursor: pointer;
+}
+
+.header-middle-col:hover i {
+  transition: color 1s;
+  color: rgba(255, 255, 255, 1);
+}
+
+.home-header{
+  font-size: 6vh;
+  vertical-align: middle;
+}
+
+.home-header:hover{
+  cursor: default;
+}
+
+.fa-home-header:hover{
+  cursor: default;
+}
+
+.home-header-right{
+  font-size: 4vh;
+  vertical-align: middle;
+  text-align: right;
 }
 
 .item-info {
