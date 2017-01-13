@@ -387,6 +387,11 @@ figcaption {
   padding-bottom:10px;
 }
 
+.main-header {
+  height: 13vh;
+  padding: 0 !important;
+}
+
 .modal-offline {
   border: 7px solid #d5484a;
   border-radius: 7px;
@@ -699,7 +704,6 @@ figcaption {
   background-color: rgba(0,0,0,.5);
 }
 
-
 .power-window-message .power-message,.power-window-message .reboot-message{
   height: 200px;
   width: 500px;
@@ -779,13 +783,27 @@ button[disabled]:hover {
   border-left: none;
 }
 
-#toast-container > .toast-success {
-  border-radius: 100% !important;
-  height: 50px;
-  width: 50px;
+.station-online {
+  position: relative;
+  border-radius: 100%;
+  height: 5vh;
+  width: 5vh;
   margin: 0;
   padding: 0;
-  background-position: 14px;
+  background-color: #6cab1c;
+}
+
+.station-online-check {
+  color: #F5F5F5;
+  font-size: 3vh;
+  position: absolute;
+  top:0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  margin: auto;
+  height: 2.8vh;
+  width: 3vh;
 }
 
 .apc-sheet-content{
@@ -844,6 +862,17 @@ button[disabled]:hover {
   display: table-cell;
 }
 
+.home-header-middle-col {
+  position: absolute;
+  top:0;
+  right: 0;
+  left: 0;
+  bottom:0;
+  margin: auto;
+  height: 6vh;
+  display: table-cell;
+}
+
 .header-android-icon {
   width: 3vw;
 }
@@ -881,8 +910,16 @@ button[disabled]:hover {
   transition: color 1s;
   color: rgba(255, 255, 255, 0);
 }
-.home-header{
+
+.home-header {
   font-size: 6vh;
+  margin-left: 1.5vw;
+  vertical-align: middle;
+}
+
+.home-header-title {
+  text-align: center;
+  font-size: 4vh;
   vertical-align: middle;
 }
 
@@ -893,6 +930,8 @@ button[disabled]:hover {
 .fa-home-header:hover{
   cursor: default;
 }
+
+
 
 .home-header-right{
   font-size: 4vh;
@@ -1320,3 +1359,11 @@ orbicular i {
 }
 
 /*============================EndAndroid modal Window====================*/
+
+/*============================Start Responsive====================*/
+@media (max-width: 768px) {
+  .hidden-md-down {
+    display: none;
+  }
+}
+/*============================End Responsive====================*/

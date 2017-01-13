@@ -43,26 +43,27 @@
 
         activate();
 
-        socketService.on('event', function(event) {
-            if (event.name === 'app-start') {
-                if (!eventService.AndroidGuideInProcess) {
-                    //=======Code for getting SKU when the Android EMEI is known========
-                    // vm.AndroidEmei = event.data.emei;
-                    // console.log(event.data.emei);
-                    // inventoryService.getItem(vm.AndroidEmei).then(function(item) {
-                    //     vm.item = item;
-                    //     vm.searchString
-                    //     if (item.Sku) {
-                    //         guideService.getGuide(item.Sku).then(function(guide) {
-                    //             vm.guide = guide;
-                    //         });
-                    //     }
-                    // });
-                    // vm.showGuide();
-                    console.log('User.js Event app-start');
-                }
-            }
+        //=========== Start Working on catching the Android Connect before ItemNumber entered==========
+        socketService.on('app-start', function(data) {
+                // if (!eventService.AndroidGuideInProcess) {
+                //    // =======Code for getting SKU when the Android EMEI is known========
+                //     vm.AndroidEmei = event.data.emei;
+                //     console.log(data.emei);
+                //     inventoryService.getItem(vm.AndroidEmei).then(function(item) {
+                //         vm.item = item;
+                //        // vm.searchString
+                //         if (item.Sku) {
+                //             guideService.getGuide(item.Sku).then(function(guide) {
+                //                 vm.guide = guide;
+                //             });
+                //         }
+                //     });
+                //     vm.showGuide();
+                //     console.log('User.js Event app-start');
+                //
+           // }
         });
+        //=========== End Working on catching the Android Connect before ItemNumber entered==========
 
         function activate() {
             var queries = [loadData()];

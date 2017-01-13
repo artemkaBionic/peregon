@@ -401,8 +401,8 @@
         /*=================USB Connect end Events===============*/
         waitForAndroidAdd();//Event listener
         function waitForAndroidAdd() {
-            socketService.on('event', function(event) {
-                if (event.name === 'android-add') {
+            socketService.on('android-add', function() {
+
                     inventoryService.updateSession('Android device connected.');
                     vm.AndroidDisconnected = false;
                    toastr.clear(vm.AndroidNotification);
@@ -417,9 +417,8 @@
                     else {
                         waitForAppStart();
                     }
-                }
-
-                if (event.name === 'android-remove') {
+            });
+            socketService.on('android-remove', function() {
                     toastr.clear(vm.AndroidNotification);
                     if (vm.androidFinished){
                         vm.AndroidNotification = toastr.info('Refresh completed', 'Android Device has been Disconnected', {
@@ -433,45 +432,45 @@
                         vm.AndroidConnectionCheck();
                         timeouts.push($timeout(vm.preparationFour,500));
                     }
-                }
+            });
 
-                if (event.name === 'app-start') {
+                socketService.on('app-start', function(data) {
                     inventoryService.updateSession('Android refresh app has started.');
-                    vm.autoSize = event.data.data.auto;//Get number of Auto tests
-                    vm.manualSize = event.data.data.manual;//Get number of Manual tests
+                    vm.autoSize = data.data.auto;//Get number of Auto tests
+                    vm.manualSize = data.data.manual;//Get number of Manual tests
                     vm.refreshAppStarted = true;
                     if (vm.step === vm.steps.waitForAppStart) {
                         vm.diagnosticOne();
                     }
-                }
+                });
 
-                if (event.name === 'android-test') {
-                    var message = event.data.commandName + ' ' + (event.data.passed ? 'passed' : 'failed') + '\n' + JSON.stringify(event.data.data, null, 2);
+            socketService.on('android-test', function(data) {
+                    var message = data.commandName + ' ' + (data.passed ? 'passed' : 'failed') + '\n' + JSON.stringify(data.data, null, 2);
                     inventoryService.updateSession(message);
 
-                    if (event.data.passed === false) {
+                    if (data.passed === false) {
                         vm.TestsFault = true;//If one of the Auto tests Fails
-                        vm.failedTests.push(event.data.commandName);
+                        vm.failedTests.push(data.commandName);
                     }
 
-                    if (event.data.type === 1) {
+                    if (data.type === 1) {
                         if (vm.step !== vm.steps.diagnosticOne){
                             vm.diagnosticOne();//Starting Auto diagnostic from the beginning
                         } // Phone can be connected even on the first Step, if lazy associate
                         progressAuto();
                     }
 
-                    if (event.data.type === 0) {
+                    if (data.type === 0) {
                         if (vm.step !== vm.steps.diagnosticTwo){
                             vm.diagnosticTwo();//Starting Manual diagnostic from the beginning
                         }
                         progressManual();
                     }
-                }
-                if (event.name === 'android-reset') {
+                });
+
+            socketService.on('android-reset', function(data) {
                     inventoryService.updateSession('Android refresh app has initiated a factory reset.');
                     vm.finish();
-                }
             });
         }
         /*=================End USB Connect end Events===============*/

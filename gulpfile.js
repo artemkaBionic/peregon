@@ -7,7 +7,7 @@ var nodemon = require('gulp-nodemon');
 
 require('require-dir')('./build');
 
-gulp.task('default', ['clean'], function () {
+gulp.task('default', ['clean'], function() {
     gulp.start('build');
 });
 

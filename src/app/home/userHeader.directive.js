@@ -14,7 +14,6 @@
             restrict: 'A',
             templateUrl: 'app/home/userHeader.template.html'
         };
-
         return directive;
 
         function link() { //scope, element, attributes

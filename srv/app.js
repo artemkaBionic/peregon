@@ -73,7 +73,7 @@ app.use(function(err, req, res, next) {
 io.on( 'connection', function( socket )
 {
     console.log( 'A client connected' );
-    socket.on('device-apply', function (data) {
+    socket.on('device-apply', function(data) {
         if (isDevelopment) {
             console.log('A client requested to apply media to device.');
             console.log(data);
@@ -98,7 +98,7 @@ io.on( 'connection', function( socket )
                     }
 
                     var python = childProcess.spawn('python', ['/opt/kiosk/apply_media.py', '--package', data.media.id, '--device', data.device.id, '--file-system', fileSystem]);
-                    python.on('close', function (code) {
+                    python.on('close', function(code) {
                         io.emit('device-apply-progress', {progress: 100, device: data.device});
                     });
                 });
