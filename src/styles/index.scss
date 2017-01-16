@@ -774,24 +774,66 @@ button[disabled]:hover {
 .apc-sheet-full {
   width: 100%;
 }
-/*============================ End Homepage====================*/
-
-
-/*============================ Start Item Info====================*/
 
 .apc-sheet + .apc-sheet .apc-sheet-content {
   border-left: none;
 }
 
+.apc-sheet-content{
+  position: static;
+  margin-top: 13vh;
+  height: calc(100% - 13vh);
+}
+/*============================ End Homepage====================*/
+
+/*============================ Start Item Info====================*/
+
+.item-info {
+  margin-top: 10vh;
+  border-top: 2px solid rgba(168, 150, 194, 0.7);
+  height: 300px;
+  position: relative;
+}
+.item-details{
+  font-size: 2em;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  text-align: center;
+  margin: auto;
+  width: auto;
+  height: 250px;
+}
+
+.item-button{
+  border: none;
+  background: inherit;
+}
+
+.item-button:hover{
+  text-decoration: underline;
+}
+
+.item-button strong{
+  font-size: 1.5em;
+}
+/*============================ End Item Info====================*/
+
+/*============================ Start Guide and Home Header====================*/
+
 .station-online {
   position: relative;
-  border-radius: 100%;
+  border-radius: 1000px;
   height: 5vh;
   width: 5vh;
   margin: 0;
   padding: 0;
   background-color: #6cab1c;
+  transition: width 0.5s ease-in-out;
 }
+
 
 .station-online-check {
   color: #F5F5F5;
@@ -804,13 +846,45 @@ button[disabled]:hover {
   margin: auto;
   height: 2.8vh;
   width: 3vh;
+  transition: all 0.5s ease-in-out;
 }
 
-.apc-sheet-content{
-  position: static;
-  margin-top: 13vh;
-  height: calc(100% - 13vh);
+.station-online-full {
+  color: #F5F5F5;
+  font-size: 1.5vh;
+  overflow: hidden;
+  width: 13vw;
+  height: 0;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  right: 0.85vw;
+  transition: height 0.2s ease-in;
 }
+
+//Connection Check hover
+
+.station-online:hover {
+  position: relative;
+  width: 29vh;
+  border-radius: 100px;
+  height: 5vh;
+  margin: 0;
+  padding: 0;
+  background-color: #6cab1c;
+
+}
+
+.station-online:hover .station-online-check {
+  right: 13.5vw;
+
+}
+
+.station-online:hover .station-online-full {
+  height: 2vh;
+}
+// End Connection Check hover
 
 .guide-header {
   color: #eee;
@@ -824,7 +898,6 @@ button[disabled]:hover {
   font-size: 28px;
   margin: 2%;
 }
-
 
 .guide-home {
   font-size: 8vh;
@@ -873,7 +946,7 @@ button[disabled]:hover {
   display: table-cell;
 }
 
-.header-android-icon {
+.header-item-icon {
   width: 3vw;
 }
 
@@ -931,46 +1004,13 @@ button[disabled]:hover {
   cursor: default;
 }
 
-
-
 .home-header-right{
   font-size: 4vh;
   vertical-align: middle;
   text-align: right;
 }
 
-.item-info {
-  margin-top: 10vh;
-  border-top: 2px solid rgba(168, 150, 194, 0.7);
-  height: 300px;
-  position: relative;
-}
-.item-details{
-  font-size: 2em;
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  left: 0;
-  text-align: center;
-  margin: auto;
-  width: auto;
-  height: 250px;
-}
-
-.item-button{
-  border: none;
-  background: inherit;
-}
-
-.item-button:hover{
-  text-decoration: underline;
-}
-
-.item-button strong{
-  font-size: 1.5em;
-}
-/*============================ End Item Info====================*/
+/*============================ End Guide and Home Header====================*/
 
 /*============================ Start Android Refresh====================*/
 .step-header {
@@ -1364,6 +1404,14 @@ orbicular i {
 @media (max-width: 768px) {
   .hidden-md-down {
     display: none;
+  }
+}
+@media (min-width: 1400px) {
+  .station-online:hover .station-online-check {
+    right: 12.5vw;
+  }
+  .station-online-full{
+    right: 0;
   }
 }
 /*============================End Responsive====================*/

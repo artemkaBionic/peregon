@@ -1,6 +1,20 @@
 <horizontal-ui-sheet class="apc-sheet-full">
-  <header horizontal-ui-sheet-header title="Refresh Guide">
-    <span class="apc-sheet-subtitle">{{::vm.guide.SKU}}: {{::vm.guide.Manufacturer}} {{::vm.guide.Model}}</span>
+  <header class="guide-header">
+    <div class="row header-row">
+      <div class="col-sm-6 header-col">
+        <div class="header-middle-col">
+          <span class="logo-hover"><i class="fa fa-home fa-home-header"></i>
+          <img ng-click="vm.refreshEnd()" class="guide-logo" src="/assets/images/Logo.png"></span>
+          <span class="home-header">Refresh Guide</span>
+        </div>
+      </div>
+      <div class="col-sm-6 header-col">
+        <div class="header-middle-col-right">
+          <img class="header-item-icon" src="/assets/images/windows_logo.png">
+          <span class="home-header-right">{{vm.item.Manufacturer}} {{vm.item.Model}}</span>
+        </div>
+      </div>
+    </div>
   </header>
   <div horizontal-ui-sheet-content>
     <iframe class="content-frame" ng-src="{{::vm.guideUrl}}"></iframe>

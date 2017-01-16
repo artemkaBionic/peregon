@@ -1,10 +1,24 @@
 <horizontal-ui-sheet class="apc-sheet-full guide xbox-one">
-  <header horizontal-ui-sheet-header title="Refresh Microsoft Xbox One">
-    <span class="apc-sheet-subtitle">{{vm.step.title}}</span>
+  <header class="guide-header">
+    <div class="row header-row">
+      <div class="col-sm-6 header-col">
+        <div class="header-middle-col">
+          <span class="logo-hover"><i class="fa fa-home fa-home-header"></i>
+          <img ng-click="vm.refreshEnd()" class="guide-logo" src="/assets/images/Logo.png"></span>
+          <span class="home-header">Refresh Guide</span>
+        </div>
+      </div>
+      <div class="col-sm-6 header-col">
+        <div class="header-middle-col-right">
+          <img class="header-item-icon" src="/assets/images/xbox.png">
+          <span class="home-header-right">{{vm.guide.Model}}</span>
+        </div>
+      </div>
+    </div>
   </header>
   <div horizontal-ui-sheet-content>
     <div class="row">
-      <ul id="progress-tracker" data-steps="6">
+      <ul id="progress-tracker" data-steps="4">
         <li ng-class="{'active': vm.step.number == 1, 'done': vm.step.number > 1}"><span>Start</span></li>
         <li ng-class="{'active': vm.step.number >= 2 && vm.step.number <= 4, 'done': vm.step.number > 4}"><span>Prepare<br>Refresh</span></li>
         <li ng-class="{'active': vm.step.number >= 5 && vm.step.number <= 6, 'done': vm.step.number > 6}"><span>Refresh<br>Xbox</span></li>
