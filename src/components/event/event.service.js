@@ -31,6 +31,7 @@
 
         socketService.on('device-add', function(data) {
             deleteDeviceNotification(data.id); //Prevent duplicate notifications for the same device
+            console.log('device added');
             if (service.isDeviceNotificationEnabled) {
                 deviceNotiviations[data.id] = toastr.info('Click here to choose what to do with the ' + data.type + ' disk.',
                     'Removable ' + data.type + ' disk', {
@@ -97,13 +98,14 @@
             }
 
             else {
+                console.log('show error');
                 toastr.clear(service.connectionNotification);
                 service.InternetConnection = false;
                 service.connectionNotification = toastr.error('Click here for more information','Station Status: Offline.', {
                     'timeOut': 0,
                     'extendedTimeOut': 0,
                     'tapToDismiss': false,
-                    'newest-on-top':false,
+                    'newest-on-top': false,
                     'closeButton': false,
                     'onShown': function() {
                         openModal(connectionState);

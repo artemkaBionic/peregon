@@ -5,13 +5,13 @@
         .module('app')
         .controller('UserHeaderController', UserHeaderController);
 
-    UserHeaderController.$inject = ['$q', '$log', 'config', 'socketService'];
+    UserHeaderController.$inject = ['$q', '$log', 'config', 'socketService', 'eventService'];
 
-    function UserHeaderController($q, $log, config, socketService) {
+    function UserHeaderController($q, $log, config, socketService, eventService) {
         /*jshint validthis: true */
         var vm = this;
         vm.currentUser = undefined;
-        vm.InternetConnection = true;
+        vm.InternetConnection = eventService.InternetConnection;
         socketService.on('connection-status', function(data) {
             vm.processConnectionState(data);
         });
@@ -23,7 +23,7 @@
 
             if (!connectionState.isOnline) {
                 vm.InternetConnection = false;
-            }
+            } else {vm.InternetConnection = true;}
         };
 
         activate();
