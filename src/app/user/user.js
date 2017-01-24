@@ -41,7 +41,7 @@
             }
         };
 
-        vm.searchStringCheck = function () {
+        vm.searchStringCheck = function() {
             if (vm.searchString != null)
                 return vm.searchString
         };
