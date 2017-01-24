@@ -783,9 +783,10 @@ button[disabled]:hover {
 
 .apc-sheet-content{
   position: static;
-  margin-top: 13vh;
-  height: calc(100% - $header-height);
+  margin-top: $header-height;
+  height: calc(100% - #{$header-height});
 }
+
 /*============================ End Homepage====================*/
 
 /*============================ Start Item Info====================*/
@@ -1428,8 +1429,9 @@ orbicular i {
 }
 
 .item-info-small {
-  height: 25vh;
   position: relative;
+  height: 25vh;
+  top: 7vh;
 }
 
 .item-details-small {
@@ -1447,6 +1449,7 @@ orbicular i {
 .text-input-small {
   position: relative;
   margin: 9px;
+  top: 7vh;
 }
 
 .text-input-small input {
@@ -1501,7 +1504,7 @@ orbicular i {
   position: absolute;
   width: 100%;
   bottom: 0;
-  margin-bottom: 10vh;
+  margin-bottom: 3vh;
 }
 
 .bc-keypad__key-button--submit {
@@ -1527,10 +1530,9 @@ orbicular i {
   }
 
   .main-header {
-    border-top: 2px solid rgba(168, 150, 194, 0.7);
-    bottom: 0;
+    border-bottom: 2px solid rgba(168, 150, 194, 0.7);
+    top: 0;
     margin: 0;
-    border-bottom: none;
   }
 
   .header-middle-col-right{
@@ -1557,7 +1559,7 @@ orbicular i {
   }
 
   .toast-top-right {
-    top: 16vh !important;
+    top: 23vh !important;
     right: 0;
     margin: calc(50vw - 10em);
     width: 20em !important;

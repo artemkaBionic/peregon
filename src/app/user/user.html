@@ -1,5 +1,6 @@
-<section horizontal-ui-sheet class="gray-light-bg apc-sheet-full">
+<section horizontal-ui-sheet class="gray-light-bg apc-sheet-full" ng-controller="UserController">
   <div class="front-keypad">
+    <header user-header></header>
     <form ng-submit="vm.showGuide()">
       <div class="row">
         <div class="col-xs-12">
@@ -25,12 +26,11 @@
           bc-right-button-type="submit"
           bc-right-button-method="vm.showGuide"
         ></bc-keypad>
-
       </div>
     </form>
-    <header user-header></header>
   </div>
   <header class="front-general" user-header></header>
+
   <section class="front-general" horizontal-ui-sheet-content>
     <div class="row logo-center"><h2 class="logo"><img src="/assets/images/Logo.png"></h2>
     </div>
@@ -49,7 +49,7 @@
             </div>
           </div>
         </div>
-        <div class="row" ng-controller="UserController">
+        <div class="row">
           <div class="home-buttons col-sm-12 col-xs-12 text-center">
             <button ng-disabled="vm.item === null" type="submit" class="btn-primary btn-rounded">Start</button>
             </div>
