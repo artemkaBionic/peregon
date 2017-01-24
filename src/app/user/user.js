@@ -5,9 +5,9 @@
         .module('app.user')
         .controller('UserController', UserController);
 
-    UserController.$inject = ['$q', '$state', 'config', '$http', 'inventoryService', '$uibModal', 'guideService', 'socketService', 'stationService', 'eventService'];
+    UserController.$inject = ['$q', '$state', 'config', '$http', 'inventoryService', '$uibModal', 'guideService', 'socketService', 'stationService', 'eventService', '$scope'];
 
-    function UserController($q, $state, config, $http, inventoryService, $uibModal, guideService, socketService, stationService, eventService) {
+    function UserController($q, $state, config, $http, inventoryService, $uibModal, guideService, socketService, stationService, eventService, $scope) {
         /*jshint validthis: true */
         var vm = this;
         vm.ready = false;
@@ -36,10 +36,17 @@
                 var $stateParams = {};
                 $stateParams.itemNumber = vm.item.InventoryNumber;
                 $state.go('root.user.guide', $stateParams);
-                vm.searchString = null;
+                vm.searchString = '';
                 vm.item = null;
             }
         };
+
+        vm.searchStringCheck = function () {
+            if (vm.searchString != null)
+                return vm.searchString
+        };
+
+        $scope.$watch(vm.searchStringCheck, vm.searchStringChange);
 
         activate();
 
@@ -71,7 +78,6 @@
                 vm.ready = true;
             });
         }
-
         function loadData() {
         }
     }

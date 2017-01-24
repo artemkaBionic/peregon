@@ -33,8 +33,8 @@
     app.config(appConfig);
     app.run(appRun);
 
-    appConfig.$inject = ['$stateProvider', '$urlRouterProvider', 'cfpLoadingBarProvider', '$logProvider', '$animateProvider', 'toastrConfig', 'bcKeypadConfigProvider'];
-    function appConfig($stateProvider, $urlRouterProvider, cfpLoadingBarProvider, $logProvider, $animateProvider, toastrConfig, bcKeypadConfigProvider) {
+    appConfig.$inject = ['$stateProvider', '$urlRouterProvider', 'cfpLoadingBarProvider', '$logProvider', '$animateProvider', 'toastrConfig'];
+    function appConfig($stateProvider, $urlRouterProvider, cfpLoadingBarProvider, $logProvider, $animateProvider, toastrConfig) {
         cfpLoadingBarProvider.includeSpinner = false;
         $logProvider.debugEnabled(true);
         //isolate ngAnimate to avoid conflicts with other libraries
@@ -44,8 +44,6 @@
             newestOnTop: false,
             preventDuplicates: false
         });
-
-        bcKeypadConfigProvider.setMaxLength(10);
 
         $stateProvider
             .state('root', {

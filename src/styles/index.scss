@@ -133,7 +133,6 @@ $header-height: 13vh;
   left: 0;
   right: 0;
   margin: auto -400px;
-
 }
 
 .wizard .text-input {
@@ -226,7 +225,7 @@ figcaption {
 
 .anim-success-icon {
   color: green;
-  font-size: 7em;
+  font-size: 15vh;
   display: block;
   text-align: center;
   position: relative;
@@ -261,7 +260,7 @@ figcaption {
   padding: 0;
   list-style-type: none;
   font-family: Arial;
-  font-size: 12px;
+  font-size: 1.5vh;
   clear: both;
   line-height: 1em;
   margin: 0 -1px 10px 0;
@@ -344,6 +343,7 @@ figcaption {
 .modal-content{
   border: 0;
   border-radius: 16px;
+  height: 720px;
 }
 
 .modal-lg{
@@ -385,7 +385,7 @@ figcaption {
 .modal-header {
   background-color: #d5484a;
   color: white;
-  padding-bottom:10px;
+  padding:0;
 }
 
 .main-header {
@@ -477,9 +477,10 @@ figcaption {
 }
 
 .modal-content .anim-success-icon {
-  margin-top: 10%;
+  margin-top: 15%;
   color:#6cab1c;
 }
+
 ///*========================End Modal====================== */
 
 ///*========================Toast Pop-Up====================== */
@@ -1432,7 +1433,7 @@ orbicular i {
 }
 
 .item-details-small {
-  font-size: 3vh;
+  font-size: 4vh;
   position: absolute;
   top: 0;
   bottom: 3vh;
@@ -1440,7 +1441,7 @@ orbicular i {
   left: 0;
   text-align: center;
   margin: auto;
-  height: 9vh;
+  height: 15vh;
 }
 
 .text-input-small {
@@ -1502,6 +1503,12 @@ orbicular i {
   bottom: 0;
   margin-bottom: 10vh;
 }
+
+.bc-keypad__key-button--submit {
+  background-color: #927CB3 !important;
+  color: white !important;
+}
+
 /*============================End Raspberry Home Screen====================*/
 
 /*============================Start Responsive====================*/
@@ -1542,6 +1549,8 @@ orbicular i {
     display: none;
   }
 
+  /*==========Station Toastr Notification================*/
+
   #toast-container.toast-top-center > div, #toast-container.toast-bottom-center > div {
     width: 300px;
     margin: auto;
@@ -1557,6 +1566,163 @@ orbicular i {
   #toast-container > div {
     width: 20em !important;
   }
+
+  /*==========End Station Toastr Notification================*/
+
+  /*==========Station Connection Status================*/
+  .modal-lg {
+    height: 150vw;
+    width: 100vw;
+  }
+
+  .modal-content{
+    height: 150vw;
+  }
+
+  #progress-tracker[data-steps="3"] li {
+    width: 31%;
+  }
+
+  .connection-select-device {
+    display: none;
+  }
+
+  .h-80 {
+    height: 8vh;
+    min-height: 8vh;
+  }
+
+  .h-80 img {
+    vertical-align: inherit;
+    height: 11vh;
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+
+  .wizard-image {
+    border: 2px solid #775d9f;
+    width: 90vw;
+    height: auto;
+  }
+
+  .wizard-image-big {
+    -webkit-animation: fadeIn .5s;
+    animation: fadeIn .5s;
+    float: left;
+    z-index: 999999;
+    -webkit-transform: rotate(90deg);
+    transform: rotate(90deg);
+    height: auto;
+    width: 100vh;
+    border: none;
+    margin: auto -20%;
+    padding: 50% 0;
+    background-color: white;
+  }
+
+  .modal-content h2 {
+    font-size: 4vh;
+  }
+
+  .apc-sheet-subtitle {
+    font-size: 3vh;
+  }
+
+  .anim-modal-step {
+    text-align: center;
+    font-size: 3vh;
+  }
+
+  .navigtion-buttons {
+    border-top: solid #ccc 1px;
+    padding: 4vw;
+    font-size: 3vh;
+  }
+
+  .wizard-modal {
+    height: auto;
+  }
+/*==========End Station Connection Status================*/
+
+/*==========Start Shutdown Buttons================*/
+  .power-button .shut-text, .reset-button .shut-text {
+    text-align: center;
+    margin-top: 30vh;
+    font-size: 3vh;
+    color: black;
+  }
+
+  .power-button i, .reset-button i {
+    font-size: 17vh;
+    color: black;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: auto;
+    width: 14.9vh;
+    height: 17vh;
+  }
+
+  .modal-sm {
+    width: 80vw;
+    height: 150vw;
+  }
+
+  .power-window {
+    height: 150vw;
+    width: 80vw;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 15px;
+    padding: 5px;
+    border: 2px solid black;
+  }
+
+  .close-button-pos {
+    top: 0;
+    right: 0;
+  }
+
+  .power-button, .reset-button {
+    width: 60vw;
+    height: 60vw;
+    margin: 0 auto;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 16px;
+  }
+
+  .power-button {
+    position: absolute;
+    right: 0;
+    left: 0;
+    top: 6vh;
+    margin: auto;
+  }
+
+  .reset-button {
+    position: absolute;
+    right: 0;
+    left: 0;
+    bottom: 6vh;
+    margin: auto;
+  }
+
+  .power-window-message {
+    height: 150vw;
+    width: 80vw;
+    background-color: rgba(0, 0, 0, 0.75);
+    border-radius: 15px;
+    border: 2px solid black;
+    cursor: wait;
+  }
+
+  .power-window-message .power-message, .power-window-message .reboot-message {
+    width: auto;
+  }
+
+/*==========End Shutdown Buttons================*/
 
 }
 

@@ -1,30 +1,33 @@
 <section horizontal-ui-sheet class="gray-light-bg apc-sheet-full">
   <div class="front-keypad">
-    <div class="row">
-      <div class="col-xs-12">
-        <div class="text-input-small">
-          <input maxlength="10" autofocus ng-focus="vm.item === null;" class="form-control item-number-input" placeholder="Enter Item Number" type="text" ng-model="vm.searchString" ng-change="vm.searchStringChange()">
+    <form ng-submit="vm.showGuide()">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="text-input-small">
+            <input maxlength="10" autofocus ng-focus="vm.item === null;" class="form-control item-number-input" placeholder="Enter Item Number" type="text" ng-model="vm.searchString" ng-change="vm.searchStringChange()">
+          </div>
         </div>
       </div>
-    </div>
-    <div class="row item-info-small">
-        <div class="item-details-small" ng-hide="vm.item === null"><button class="item-button" type="submit"><strong>{{'SKU: '+vm.item.Sku}}</strong><br/>{{vm.guide.Manufacturer}} {{vm.guide.Model}}</button></div>
-    </div>
-    <div class="keyboard-small">
-        <form ng-submit="vm.showGuide()">
-          <!--<div class="row" ng-controller="UserController">-->
-            <!--<div class="home-buttons col-sm-12 col-xs-12 text-center">-->
-              <!--<button ng-disabled="vm.item === null" type="submit" class="btn-primary btn-rounded">Start</button>-->
+      <div class="row item-info-small">
+          <div class="item-details-small" ng-hide="vm.item === null"><button class="item-button" type="submit"><strong>{{'SKU: '+vm.item.Sku}}</strong><br/>{{vm.guide.Manufacturer}} {{vm.guide.Model}}</button></div>
+      </div>
+      <div class="keyboard-small">
+            <!--<div class="row" ng-controller="UserController">-->
+              <!--<div class="home-buttons col-sm-12 col-xs-12 text-center">-->
+                <!--<button ng-disabled="vm.item === null" type="submit" class="btn-primary btn-rounded">Start</button>-->
+              <!--</div>-->
             <!--</div>-->
-          <!--</div>-->
-      <bc-keypad
-        bc-number-model="vm.searchString"
-        bc-left-button="backspace"
-        bc-right-button="submit"
-        bc-right-button-type="submit"
-      ></bc-keypad>
-        </form>
-    </div>
+        <bc-keypad
+          bc-max-length="10"
+          bc-number-model="vm.searchString"
+          bc-left-button="backspace"
+          bc-right-button="submit"
+          bc-right-button-type="submit"
+          bc-right-button-method="vm.showGuide"
+        ></bc-keypad>
+
+      </div>
+    </form>
     <header user-header></header>
   </div>
   <header class="front-general" user-header></header>
