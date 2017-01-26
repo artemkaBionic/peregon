@@ -147,13 +147,12 @@ $header-height: 13vh;
 }
 
 .wizard-graphics {
-  height: 288px;
+  height: 30vh;
   margin-top: 32px;
   margin-bottom: 32px;
 }
 
 .wizard-contents {
-  //height: 128px;
   margin: 32px 15% 32px 15%;
 }
 
@@ -189,7 +188,7 @@ figcaption {
 .anim-wizard-step {
   display: block;
   position: absolute;
-  width: calc(100% - 16px);
+  width: calc(100% - 10px);
   height: 100%;
 }
 
@@ -260,7 +259,7 @@ figcaption {
   padding: 0;
   list-style-type: none;
   font-family: Arial;
-  font-size: 1.5vh;
+  font-size: 1.7vh;
   clear: both;
   line-height: 1em;
   margin: 0 -1px 10px 0;
@@ -1132,7 +1131,7 @@ button[disabled]:hover {
     animation-delay: 5s;
 }
 .power-list{
-  font-size: 30px;
+  font-size: 3.5vh;
 }
 .power-list li{
   margin-top: 20px;
@@ -1163,12 +1162,13 @@ button[disabled]:hover {
 }
 
 .inspection-ask{
-  padding: 20px 30px;
+  padding: 2vh 3vh;
   border:3px solid transparent;
   border-radius: 7px;
 }
+
 .inspection-ask i {
-  font-size: 50px;
+  font-size: 5vh;
   color:#B8AACE;
 }
 
@@ -1190,11 +1190,13 @@ button[disabled]:hover {
 }
 
 .inspection-question{
-  margin: 50px auto;
+  margin: 5vh auto;
 }
+
 .inspection-question span {
   position:absolute;
-  font-size: 30px;
+  max-width: 60vw;
+  font-size: 3.5vh;
   top:50%;
   transform: translateY(-50%);
   -webkit-transform: translateY(-50%);
@@ -1226,73 +1228,95 @@ button[disabled]:hover {
 }
 
 /*=========Checkbox========*/
-$checkbox-checked-color: #6CAB1C;
-$checkbox-unchecked-color: #444;
-$checkbox-height: 60px;
-$checkbox-background-color:#fff;
-$checkbox-duration: .25s;
+//you can find original uncompiled Checkbox SCSS here http://codepen.io/chiefman/pen/NbgJNQ
+@media (min-width: 640px) {
+  /* Checkmark style starts */
+  @-moz-keyframes dothabottomcheck {
+    0% {
+      height: 0;
+    }
+    100% {
+      height: 30px;
+    }
+  }
+  @-webkit-keyframes dothabottomcheck {
+    0% {
+      height: 0;
+    }
+    100% {
+      height: 30px;
+    }
+  }
+  @keyframes dothabottomcheck {
+    0% {
+      height: 0;
+    }
+    100% {
+      height: 30px;
+    }
+  }
+  @keyframes dothatopcheck {
+    0% {
+      height: 0;
+    }
+    50% {
+      height: 0;
+    }
+    100% {
+      height: 72px;
+    }
+  }
+  @-webkit-keyframes dothatopcheck {
+    0% {
+      height: 0;
+    }
+    50% {
+      height: 0;
+    }
+    100% {
+      height: 72px;
+    }
+  }
+  @-moz-keyframes dothatopcheck {
+    0% {
+      height: 0;
+    }
+    50% {
+      height: 0;
+    }
+    100% {
+      height: 72px;
+    }
+  }
+  input[type=checkbox] {
+    display: none;
+  }
 
-
-@-moz-keyframes dothabottomcheck{
-  0% { height: 0; }
-  100% { height: $checkbox-height/2; }
-}
-
-@-webkit-keyframes dothabottomcheck{
-  0% { height: 0; }
-  100% { height: $checkbox-height/2; }
-}
-
-@keyframes dothabottomcheck{
-  0% { height: 0; }
-  100% { height: $checkbox-height/2;  }
-}
-
-@keyframes dothatopcheck{
-  0% { height: 0; }
-  50% { height: 0; }
-  100% { height: $checkbox-height * 1.2; }
-}
-@-webkit-keyframes dothatopcheck{
-  0% { height: 0; }
-  50% { height: 0; }
-  100% { height: $checkbox-height * 1.2; }
-}
-@-moz-keyframes dothatopcheck{
-  0% { height: 0; }
-  50% { height: 0; }
-  100% { height: $checkbox-height * 1.2; }
-}
-
-input[type=checkbox]{
-  display:none;
-}
-
-.check-box {
-  height: $checkbox-height;
-  width: $checkbox-height;
-  background-color: transparent;
-  border: $checkbox-height * .1 solid $checkbox-unchecked-color;
-  border-radius: 7px;
-  position: relative;
-  display: inline-block;
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
-  -moz-transition: border-color ease $checkbox-duration/2;
-  -o-transition: border-color ease $checkbox-duration/2;
-  -webkit-transition: border-color ease $checkbox-duration/2;
-  transition: border-color ease $checkbox-duration/2;
-  cursor:pointer;
-
-  &::before, &::after {
+  .check-box {
+    height: 60px;
+    width: 60px;
+    background-color: transparent;
+    border: 6px solid #444;
+    border-radius: 7px;
+    position: relative;
+    display: inline-block;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    -moz-transition: border-color ease 0.125s;
+    -o-transition: border-color ease 0.125s;
+    -webkit-transition: border-color ease 0.125s;
+    transition: border-color ease 0.125s;
+    cursor: pointer;
+  }
+  .check-box::before, .check-box::after {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
     position: absolute;
     height: 0;
-    width: $checkbox-height * .1;
-    background-color: $checkbox-checked-color;
+    width: 6px;
+    background-color: #6CAB1C;
     display: inline-block;
     -moz-transform-origin: left top;
     -ms-transform-origin: left top;
@@ -1305,50 +1329,206 @@ input[type=checkbox]{
     -moz-transition: opacity ease .5;
     transition: opacity ease .5;
   }
-
-  &::before {
-    top:$checkbox-height * .72;
-    left: $checkbox-height * .41;
-    box-shadow: 0 0 0 $checkbox-height * .03 $checkbox-background-color;
+  .check-box::before {
+    top: 43.2px;
+    left: 24.6px;
+    box-shadow: 0 0 0 1.8px #fff;
     -moz-transform: rotate(-135deg);
     -ms-transform: rotate(-135deg);
     -o-transform: rotate(-135deg);
     -webkit-transform: rotate(-135deg);
     transform: rotate(-135deg);
   }
-
-  &::after {
-    top: $checkbox-height * .37;
-    left: $checkbox-height * .05;
+  .check-box::after {
+    top: 22.2px;
+    left: 3px;
     -moz-transform: rotate(-45deg);
     -ms-transform: rotate(-45deg);
     -o-transform: rotate(-45deg);
     -webkit-transform: rotate(-45deg);
     transform: rotate(-45deg);
   }
-}
 
-input[type=checkbox]:checked + .check-box,
-.check-box.checked{
-  border-color:$checkbox-checked-color;
-
-  &::after{
-    height: $checkbox-height * .5;
-    -moz-animation: dothabottomcheck $checkbox-duration/2 ease 0s forwards;
-    -o-animation: dothabottomcheck $checkbox-duration/2 ease 0s forwards;
-    -webkit-animation: dothabottomcheck $checkbox-duration/2 ease 0s forwards;
-    animation: dothabottomcheck $checkbox-duration/2 ease 0s forwards;
+  input[type=checkbox]:checked + .check-box,
+  .check-box.checked {
+    border-color: #6CAB1C;
+  }
+  input[type=checkbox]:checked + .check-box::after,
+  .check-box.checked::after {
+    height: 30px;
+    -moz-animation: dothabottomcheck 0.125s ease 0s forwards;
+    -o-animation: dothabottomcheck 0.125s ease 0s forwards;
+    -webkit-animation: dothabottomcheck 0.125s ease 0s forwards;
+    animation: dothabottomcheck 0.125s ease 0s forwards;
+  }
+  input[type=checkbox]:checked + .check-box::before,
+  .check-box.checked::before {
+    height: 72px;
+    -moz-animation: dothatopcheck 0.25s ease 0s forwards;
+    -o-animation: dothatopcheck 0.25s ease 0s forwards;
+    -webkit-animation: dothatopcheck 0.25s ease 0s forwards;
+    animation: dothatopcheck 0.25s ease 0s forwards;
   }
 
-  &::before{
-    height: $checkbox-height * 1.2;
-    -moz-animation: dothatopcheck $checkbox-duration ease 0s forwards;
-    -o-animation: dothatopcheck $checkbox-duration ease 0s forwards;
-    -webkit-animation: dothatopcheck $checkbox-duration ease 0s forwards;
-    animation: dothatopcheck $checkbox-duration ease 0s forwards;
-  }
 }
+
+@media (max-width: 639px) {
+  /* Checkmark style starts */
+  @-moz-keyframes dothabottomcheck {
+    0% {
+      height: 0;
+    }
+    100% {
+      height: 20px;
+    }
+  }
+  @-webkit-keyframes dothabottomcheck {
+    0% {
+      height: 0;
+    }
+    100% {
+      height: 20px;
+    }
+  }
+  @keyframes dothabottomcheck {
+    0% {
+      height: 0;
+    }
+    100% {
+      height: 20px;
+    }
+  }
+  @keyframes dothatopcheck {
+    0% {
+      height: 0;
+    }
+    50% {
+      height: 0;
+    }
+    100% {
+      height: 48px;
+    }
+  }
+  @-webkit-keyframes dothatopcheck {
+    0% {
+      height: 0;
+    }
+    50% {
+      height: 0;
+    }
+    100% {
+      height: 48px;
+    }
+  }
+  @-moz-keyframes dothatopcheck {
+    0% {
+      height: 0;
+    }
+    50% {
+      height: 0;
+    }
+    100% {
+      height: 48px;
+    }
+  }
+  input[type=checkbox] {
+    display: none;
+  }
+
+  .check-box {
+    height: 40px;
+    width: 40px;
+    background-color: transparent;
+    border: 4px solid #444;
+    border-radius: 7px;
+    position: relative;
+    display: inline-block;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    -moz-transition: border-color ease 0.125s;
+    -o-transition: border-color ease 0.125s;
+    -webkit-transition: border-color ease 0.125s;
+    transition: border-color ease 0.125s;
+    cursor: pointer;
+  }
+  .check-box::before, .check-box::after {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    position: absolute;
+    height: 0;
+    width: 4px;
+    background-color: #6CAB1C;
+    display: inline-block;
+    -moz-transform-origin: left top;
+    -ms-transform-origin: left top;
+    -o-transform-origin: left top;
+    -webkit-transform-origin: left top;
+    transform-origin: left top;
+    border-radius: 7px;
+    content: ' ';
+    -webkit-transition: opacity ease .5;
+    -moz-transition: opacity ease .5;
+    transition: opacity ease .5;
+  }
+  .check-box::before {
+    top: 29px;
+    left: 17px;
+    box-shadow: 0 0 0 1.2px #fff;
+    -moz-transform: rotate(-135deg);
+    -ms-transform: rotate(-135deg);
+    -o-transform: rotate(-135deg);
+    -webkit-transform: rotate(-135deg);
+    transform: rotate(-135deg);
+  }
+  .check-box::after {
+    top: 14.8px;
+    left: 2px;
+    -moz-transform: rotate(-45deg);
+    -ms-transform: rotate(-45deg);
+    -o-transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+  }
+
+  input[type=checkbox]:checked + .check-box,
+  .check-box.checked {
+    border-color: #6CAB1C;
+  }
+  input[type=checkbox]:checked + .check-box::after,
+  .check-box.checked::after {
+    height: 20px;
+    -moz-animation: dothabottomcheck 0.125s ease 0s forwards;
+    -o-animation: dothabottomcheck 0.125s ease 0s forwards;
+    -webkit-animation: dothabottomcheck 0.125s ease 0s forwards;
+    animation: dothabottomcheck 0.125s ease 0s forwards;
+  }
+  input[type=checkbox]:checked + .check-box::before,
+  .check-box.checked::before {
+    height: 48px;
+    -moz-animation: dothatopcheck 0.25s ease 0s forwards;
+    -o-animation: dothatopcheck 0.25s ease 0s forwards;
+    -webkit-animation: dothatopcheck 0.25s ease 0s forwards;
+    animation: dothatopcheck 0.25s ease 0s forwards;
+  }
+
+}
+
 /*=========End Checkbox========*/
+
+.android-manual-complete {
+  margin: 3vh 1vh;
+}
+
+.android-finish-failed .step-header {
+  overflow-x: scroll;
+  max-height: 56vh;
+}
+
+.android-finish-failed .fa-5x {
+  font-size: 15vh;
+}
 
 /*============================ End Android Refresh====================*/
 
@@ -1444,6 +1624,8 @@ orbicular i {
   text-align: center;
   margin: auto;
   height: 15vh;
+  width: 90%;
+  overflow: hidden;
 }
 
 .text-input-small {
@@ -1725,8 +1907,170 @@ orbicular i {
   }
 
 /*==========End Shutdown Buttons================*/
+  /*==========Start Guide Header================*/
+  .guide-header .guide-logo {
+    width: 35vw;
+    margin-left: 1vh;
+  }
+
+  .guide-header .logo-hover i {
+    display: none;
+  }
+
+  .guide-header .header-col {
+    height: 6.5vh;
+  }
+  .guide-header .home-header {
+    font-size: 5vh;
+  }
+
+  .guide-header .header-middle-col {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin: auto 3vw;
+    height: 6vh;
+    display: table-cell;
+    overflow: hidden;
+  }
+
+  .guide-header .header-middle-col-right {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    margin: auto 1vw;
+    width: 100%;
+    height: 5vh;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  .guide-header .home-header-right {
+    font-size: 3vh;
+  }
+
+  .guide-header .header-item-icon {
+    width: 5vw;
+  }
+
+  /*==========End Guide Header================*/
+  /*==========Start Android Guide ================*/
+
+  #progress-tracker[data-steps="4"] li {
+    width: 23%;
+  }
+
+  .guide-android h2 {
+    font-size: 5vh;
+  }
+
+  .guide-android h3 {
+    font-size: 3vh;
+  }
+
+  .inspect-mode > .row {
+    margin: 0;
+  }
+
+  .preparation-one .inspection-tap {
+    padding: 20px 5px;
+  }
+
+  .android-video {
+  text-align: center;
+  }
+
+  .android-video img {
+  width: 80vw;
+  }
+
+  .android-modal-row {
+    margin: 2vw;
+    height: auto;
+  }
+
+  .android-modal-row .col-md-6 {
+    position: static;
+    transform: none;
+  }
+
+  .connect-gif {
+    margin: 5vh auto;
+    height: 30vh;
+  }
+
+  .fa-2x {
+    font-size: 6vh;
+  }
+
+  .step-header-diagnostic {
+    margin-top: 0;
+  }
+
+  .android-modal-list {
+    max-height: 35vh;
+    overflow-x: scroll;
+  }
+
+  .modal-android .navigtion-buttons {
+    bottom: 0;
+    padding: 2vw;
+    position: absolute;
+    width: 100%;
+  }
+  /*==========End Android Guide ================*/
+}
+
+/*============Start Some settings for Raspberry 4" screen ============ */
+@media (max-width: 321px)  {
+
+  .hide-small-raspberry{
+    display: none;
+  }
+
+  #progress-tracker {
+    font-size: 2.2vh;
+  }
+
+  .inspect-mode {
+    margin: 10px auto;
+  }
+
+  .guide-android h2 {
+    margin: 0;
+  }
+
+  .btn-choose-med {
+    text-transform: uppercase;
+    padding: 20px 20px;
+    border-radius: 7px;
+    min-width: 200px;
+    margin: 10px 11vh;
+  }
+
+  .preparation-one .inspection-question label {
+    right: 2px;
+  }
+
+  .preparation-one .inspection-tap {
+    padding: 10px 5px;
+  }
+}
+/*============End Some settings for Raspberry 4" screen ============ */
+
+/*============Start Some settings for Raspberry 7" screen ============ */
+@media (max-width: 639px) and (min-width: 321px)  {
+  #progress-tracker {
+    font-size: 1.5vh;
+  }
+
+  .inspection-question span {
+    font-size: 3vh;
+  }
 
 }
+/*============End Some settings for Raspberry 7" screen ============ */
 
 @media (min-width: 1400px) {
   .station-online:hover .station-online-check {

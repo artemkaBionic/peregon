@@ -30,6 +30,7 @@
         vm.activate = function() {
             vm.androidFinished = false;//Gonna be 'true' when finish
             vm.deviceLockService = 'none';
+            vm.AndroidDisconnected = false;
             vm.deviceLockServiceUnlocked = false;
             vm.refreshAppStarted = false;
             vm.PowerGood = false;
@@ -61,34 +62,34 @@
         };
 
         function unlockDevice() {
-            // if (vm.item) {
-            //     inventoryService.unlock(vm.item.Serial).then(function(data) {
-            //         if (data.error) {
-            //             inventoryService.updateSession('Unable to request device unlock.\n' + JSON.stringify(data.error, null, 2));
-            //         }
-            //         else {
-            //             vm.deviceLockService = data.result.service;
-            //             vm.deviceLockServiceUnlocked = true;
-            //             if (vm.step === vm.steps.waitForUnlock) {
-            //                 vm.step = vm.steps.preparationOne;
-            //             }
-            //             inventoryService.updateSession('Device is unlocked by ' + vm.deviceLockService);
-            //         }
-            //     });
-            // }
+            if (vm.item) {
+                inventoryService.unlock(vm.item.Serial).then(function(data) {
+                    if (data.error) {
+                        inventoryService.updateSession('Unable to request device unlock.\n' + JSON.stringify(data.error, null, 2));
+                    }
+                    else {
+                        vm.deviceLockService = data.result.service;
+                        vm.deviceLockServiceUnlocked = true;
+                        if (vm.step === vm.steps.waitForUnlock) {
+                            vm.step = vm.steps.preparationOne;
+                        }
+                        inventoryService.updateSession('Device is unlocked by ' + vm.deviceLockService);
+                    }
+                });
+            }
         }
 
         function lockDevice() {
-            // if (vm.item) {
-            //     inventoryService.lock(vm.item.Serial).then(function(data) {
-            //         if (data.error) {
-            //             inventoryService.updateSession('Unable to request device lock.\n' + JSON.stringify(data.error, null, 2));
-            //         }
-            //         else {
-            //             inventoryService.updateSession('Device is locked by ' + vm.deviceLockService);
-            //         }
-            //     });
-            // }
+            if (vm.item) {
+                inventoryService.lock(vm.item.Serial).then(function(data) {
+                    if (data.error) {
+                        inventoryService.updateSession('Unable to request device lock.\n' + JSON.stringify(data.error, null, 2));
+                    }
+                    else {
+                        inventoryService.updateSession('Device is locked by ' + vm.deviceLockService);
+                    }
+                });
+            }
         }
         /*=================End Device lock and unlock functions ==============*/
         /*=================Guide Steps definition===============*/
