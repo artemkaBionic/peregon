@@ -102,6 +102,19 @@ $header-height: 13vh;
   font-weight: 400;
   padding: 6px 24px;
 }
+.xbox-one .wizard-contents {
+  text-align: center;
+}
+
+.xbox-one video {
+  width: 60vw;
+}
+
+.xbox-one .ref-list ol {
+  font-size: 2.5vh;
+  margin-right: 2vw;
+}
+
 /* Clearing default bootstrap btn style*/
 .btn:focus, .btn.focus, .btn:active:focus, .btn:active.focus, .btn.active:focus, .btn.active.focus {
   outline: none !important;
@@ -1771,12 +1784,12 @@ orbicular i {
     display: none;
   }
 
-  .h-80 {
+  .modal-offline .h-80 {
     height: 8vh;
     min-height: 8vh;
   }
 
-  .h-80 img {
+  .modal-offline .h-80 img {
     vertical-align: inherit;
     height: 11vh;
     position: absolute;
@@ -1784,13 +1797,13 @@ orbicular i {
     top: 0;
   }
 
-  .wizard-image {
+  .modal-offline .wizard-image {
     border: 2px solid #775d9f;
     width: 90vw;
     height: auto;
   }
 
-  .wizard-image-big {
+  .modal-offline .wizard-image-big {
     -webkit-animation: fadeIn .5s;
     animation: fadeIn .5s;
     float: left;
@@ -1961,11 +1974,11 @@ orbicular i {
     width: 23%;
   }
 
-  .guide-android h2 {
+  .guide-android h2, .xbox-one h2 {
     font-size: 5vh;
   }
 
-  .guide-android h3 {
+  .guide-android h3, .xbox-one h3{
     font-size: 3vh;
   }
 
@@ -2020,6 +2033,55 @@ orbicular i {
     width: 100%;
   }
   /*==========End Android Guide ================*/
+
+  /*==========Start Xbox-One Guide ================*/
+
+  .xbox-one .wizard-contents {
+    margin: 1vh;
+    font-size: 4vh;
+  }
+
+  .xbox-one .wizard-graphics {
+  margin: 0;
+  }
+
+  .xbox-one .wizard-graphics img {
+    height: auto;
+  }
+
+  .xbox-one video {
+    width: 95vw;
+  }
+
+  .xbox-one .ref-list {
+    overflow: scroll;
+    max-height: 39vh;
+  }
+
+  .xbox-one .ref-list ol {
+    margin: 1vh 0;
+  }
+
+  .xbox-one h3 {
+    margin: 0;
+  }
+
+  .xbox-one .h3-todo {
+    border-top: 2px solid rgba(168, 150, 194, 0.7);
+    position: absolute;
+    bottom: 0;
+  }
+
+  .xbox-one .h3-todo h3 {
+    font-weight: bold;
+    padding-top: 1vh;
+  }
+
+  .xbox-one .anim-wizard-step {
+    height: calc(100% - 20vh);
+  }
+  /*==========End Xbox-One Guide ================*/
+
 }
 
 /*============Start Some settings for Raspberry 4" screen ============ */
@@ -2056,6 +2118,16 @@ orbicular i {
   .preparation-one .inspection-tap {
     padding: 10px 5px;
   }
+
+  .xbox-one .anim-wizard-step {
+    height: calc(100% - 24vh);
+  }
+
+  .xbox-one .ref-list {
+    overflow: scroll;
+    max-height: 30vh;
+  }
+
 }
 /*============End Some settings for Raspberry 4" screen ============ */
 

@@ -1,0 +1,24 @@
+<horizontal-ui-sheet class="apc-sheet-full guide-pc">
+  <header class="guide-header">
+    <div class="row header-row">
+      <div class="col-sm-6 header-col">
+        <div class="header-middle-col">
+          <span class="logo-hover"><i class="fa fa-home fa-home-header"></i>
+          <img ng-click="vm.refreshEnd()" class="guide-logo" src="/assets/images/Logo.png"></span>
+          <span class="home-header">Refresh Guide</span>
+        </div>
+      </div>
+      <div class="col-sm-6 header-col">
+        <div class="header-middle-col-right">
+          <img class="header-item-icon" src="/assets/images/windows_logo.png">
+          <span class="home-header-right">{{vm.item.Manufacturer}} {{vm.item.Model}}</span>
+        </div>
+      </div>
+    </div>
+  </header>
+  <div horizontal-ui-sheet-content>
+    <div ng-switch="vm.step.name" class="row wizard">
+
+    </div>
+  </div>
+</horizontal-ui-sheet>

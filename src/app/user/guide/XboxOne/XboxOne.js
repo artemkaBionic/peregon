@@ -61,8 +61,6 @@
         vm.step = vm.steps.prepareRefreshUsbInsert;
         vm.errorMessage = '';
 
-        activate();
-
         function activate() {
             var queries = [inventoryService.startSession('xbox-one', item), eventService.DisableDeviceNotification(), loadDevices(), loadMediaPackages()];
             $q.all(queries);
@@ -186,5 +184,6 @@
                 }
             });
         }
+        activate();
     }
 })();
