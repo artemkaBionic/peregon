@@ -18,18 +18,15 @@
   </header>
   <div horizontal-ui-sheet-content>
     <div class="row" ng-hide="vm.step.number > 8">
-      <ul id="progress-tracker" data-steps="4">
+      <ul id="progress-tracker" data-steps="3">
         <li ng-class="{'active': vm.step.number >= 1 && vm.step.number <= 2, 'done': vm.step.number > 2}">
           <span>Inspection</span>
         </li>
         <li ng-class="{'active': vm.step.number >= 3 && vm.step.number <= 6, 'done': vm.step.number > 6}">
           <span>Preparation</span>
         </li>
-        <li ng-class="{'active': vm.step.number == 7 , 'done': vm.step.number > 7}">
-          <span>Automatic Diagnostics</span>
-        </li>
-        <li ng-class="{'active': vm.step.number == 8}">
-          <span>Manual Diagnostics</span>
+        <li ng-class="{'active': vm.step.number >= 7}">
+          <span>Diagnostics</span>
         </li>
       </ul>
     </div>
@@ -111,11 +108,11 @@
           <div class="col-md-2"></div>
         </div>
         <div class="row nav-btn">
-          <div class="col-md-6">
+          <div class="col-lg-6 col-md-6 col-sm-6">
             <button ng-click="vm.deviceTurnsOn()" class="btn btn-choose-med btn-info pull-right">Device turns on
             </button>
           </div>
-          <div class="col-md-6">
+          <div class="col-lg-6 col-md-6 col-sm-6">
             <button ng-click="vm.notTurnOn()" class="btn btn-choose-med btn-danger pull-left">Device is broken
             </button>
           </div>
@@ -222,8 +219,9 @@
           <h2>You may need give the access on the Android device for the Station</h2>
           <h3>Choose <strong>Yes</strong> or <strong>OK</strong> on the device</h3>
         </div>
-        <div class="row nav-btn">
-          <button ng-show="vm.buttonBackShow" ng-click="vm.preparationOne()"
+        <div ng-show="vm.buttonBackShow" class="row nav-btn">
+          <h3 class="text-align-center automated-anim"><strong>Something went wrong.<br/>Go back and check everything out</strong></h3>
+          <button ng-click="vm.preparationOne()"
                   class="btn btn-primary btn-rounded center" type="submit">
             <i class="fa fa-caret-left"></i> <strong>Back</strong>
           </button>
@@ -243,14 +241,14 @@
       </div>
 
       <div class="anim-wizard-step" ng-switch-when="diagnosticOne">
-        <div class="step-header-diagnostic">
+        <div ng-hide="vm.AppNotStarted" class="step-header-diagnostic">
           <h2 class="text-align-center">
             <span class="fa fa-check check-green fa-2x"></span>
             Android device connected successfully</h2>
           <div class="row">
           </div>
         </div>
-        <div class="row"><h3 class="text-align-center automated-anim">Performing automatic diagnostics...</h3>
+        <div ng-hide="vm.AppNotStarted" class="row"><h3 class="text-align-center automated-anim">Performing automatic diagnostics...</h3>
         </div>
         <div ng-hide="vm.AppNotStarted" class="row">
           <div class="center circle-bar">
@@ -261,22 +259,22 @@
             </orbicular>
           </div>
         </div>
-        <div class="row">
-          <h3 ng-show="vm.AppNotStarted" class="text-align-center automated-anim"><strong>Something went wrong. Unplug and
-            reconnect the device.</strong></h3>
+        <div ng-show="vm.AppNotStarted" class="row app-not-started">
+          <h3 class="text-align-center automated-anim"><strong>Something went wrong.<br/> Unplug and
+            reconnect the device</strong></h3>
         </div>
 
       </div>
 
       <div class="anim-wizard-step" ng-switch-when="diagnosticTwo">
-        <div class="step-header-diagnostic">
+        <div ng-hide="vm.manualShowLastAction" class="step-header-diagnostic">
           <h2 class="text-align-center"><span class="fa fa-check check-green fa-2x"></span>
             Automatic diagnostics complete</h2>
         </div>
         <div ng-show="vm.manualShowLastAction" class="row android-manual-complete">
           <h2 class="text-align-center">
             <span class="fa fa-check check-green fa-2x"></span>
-            Manual diagnostics complete
+            Diagnostics complete
           </h2>
         </div>
         <div ng-hide="vm.manualShowLastAction">
@@ -318,17 +316,25 @@
       </div>
 
       <div class="anim-wizard-step android-finish-failed" ng-switch-when="finishFail">
+        <h3 class="step-header text-align-center"><strong>Ship device to Aaron's Service Center for repair</strong></h3>
         <div class="step-header text-align-center"><span class="fa fa-5x fa-ban"></span><br/>
           <h2 ng-show="vm.Broken">
             Device needs to be repaired</h2>
           <h2 ng-show="vm.TestsFault">
             The following tests failed:</h2>
-          <h4 ng-show="vm.TestsFault" ng-repeat="testName in vm.failedTests">{{testName}}</h4>
+          <h4 class="failed-tests">testName<br/>
+            testName<br/>
+            testName<br/>
+            testName<br/>
+            testName<br/>
+            testName<br/>
+            testName<br/>
+            testName<br/></h4>
+          <h4 class="failed-tests" ng-show="vm.TestsFault" ng-repeat="testName in vm.failedTests">
+            {{testName}}
+          </h4>
           <h2 ng-show="vm.AndroidDisconnected">
             Android Device has been Disconnected</h2>
-          <h3 class="text-align-center">
-            Refresh Failed
-          </h3>
         </div>
         <div class="row nav-btn">
           <button class="btn btn-primary btn-rounded center" ng-click="vm.refreshEnd()">

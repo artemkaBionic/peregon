@@ -142,7 +142,7 @@
             finishFail: {
                 name: 'finishFail',
                 number: 10,
-                title: 'Ship device to Aaron\u0027s Service Center for repair'
+                title: 'Refresh failed.'
             },
             sessionExpired: {
                 name: 'sessionExpired',
@@ -210,10 +210,18 @@
             }
         }
 
+        vm.preparationOne = function() {
+            vm.NotLocked = false;
+            vm.NotConnected = false;
+            vm.Wifi = false;
+            vm.UsbDebug = false;
+            vm.step = vm.steps.preparationOne;
+        };
+
         vm.preparationFour = function() {
             vm.buttonBackShow = false;
             vm.step = vm.steps.preparationFour;
-            timeouts.push($timeout(vm.buttonBack,15000));
+            timeouts.push($timeout(vm.buttonBack,20000));
         };
 
         function waitForAppStart() {
@@ -492,6 +500,7 @@
             //Toast Pop-Up notification parameters
             timeouts.push($timeout(vm.AndroidConnectionDoubleCheck,60000));
         };
+        vm.TestsFault = true;
         vm.activate();
         /*=================Android Disconnected Actions===============*/
     }

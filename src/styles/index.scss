@@ -166,7 +166,7 @@ $header-height: 13vh;
 }
 
 .wizard-contents {
-  margin: 32px 15% 32px 15%;
+  margin: 3vh 5vw;
 }
 
 .wizard-navigation {
@@ -253,7 +253,7 @@ figcaption {
 
 .anim-warning-icon {
   color: #FFA500;
-  font-size: 7em;
+  font-size: 20vh;
   display: block;
   text-align: center;
   position: relative;
@@ -1534,13 +1534,22 @@ button[disabled]:hover {
   margin: 3vh 1vh;
 }
 
-.android-finish-failed .step-header {
-  overflow-x: scroll;
-  max-height: 56vh;
+.android-finish-failed .failed-tests {
+  overflow-y: scroll;
+  overflow-x: hidden;
+  max-height: 12vh;
 }
 
 .android-finish-failed .fa-5x {
   font-size: 15vh;
+}
+
+.android-video img {
+  width: 35vw;
+}
+
+.guide-android .app-not-started {
+  margin-top: 23vh;
 }
 
 /*============================ End Android Refresh====================*/
@@ -2022,16 +2031,33 @@ orbicular i {
   }
 
   .android-modal-list {
-    max-height: 35vh;
-    overflow-x: scroll;
+    max-height: 36vh;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    margin-top: 2vh;
   }
 
-  .modal-android .navigtion-buttons {
+  .guide-android .unlock-list {
+    margin: 0;
+
+  }
+
+    .modal-android .navigtion-buttons {
+
     bottom: 0;
     padding: 2vw;
     position: absolute;
     width: 100%;
   }
+
+  .guide-android .wizard-contents {
+    margin: 3vh 2vw;
+  }
+
+  .android-finish-failed h3 {
+    font-size: 2.5vh;
+  }
+
   /*==========End Android Guide ================*/
 
   /*==========Start Xbox-One Guide ================*/
@@ -2055,7 +2081,7 @@ orbicular i {
 
   .xbox-one .ref-list {
     overflow: scroll;
-    max-height: 39vh;
+    max-height: 38vh;
   }
 
   .xbox-one .ref-list ol {
@@ -2080,11 +2106,15 @@ orbicular i {
   .xbox-one .anim-wizard-step {
     height: calc(100% - 20vh);
   }
+
+  .xbox-one .todo-button {
+    margin: 7vh auto;
+  }
   /*==========End Xbox-One Guide ================*/
 
 }
 
-/*============Start Some settings for Raspberry 4" screen ============ */
+/*============Start Some settings for Raspberry 4" (320x480) screen ============ */
 @media (max-width: 321px)  {
 
   .hide-small-raspberry{
@@ -2128,22 +2158,36 @@ orbicular i {
     max-height: 30vh;
   }
 
+  .android-modal-list {
+    max-height: 33vh;
+  }
+
 }
 /*============End Some settings for Raspberry 4" screen ============ */
 
-/*============Start Some settings for Raspberry 7" screen ============ */
+/*============Start Some settings for Raspberry 7"(480x800) screen ============ */
+
 @media (max-width: 639px) and (min-width: 321px)  {
   #progress-tracker {
     font-size: 1.5vh;
   }
 
+  .xbox-one .ref-list ol {
+    font-size: 2.3vh;
+  }
+
   .inspection-question span {
     font-size: 3vh;
   }
+  .android-manual-complete h2 {
+    font-size: 4vh;
+  }
 
 }
+
 /*============End Some settings for Raspberry 7" screen ============ */
 
+/*============Some settings for FullHd Screen ============ */
 @media (min-width: 1400px) {
   .station-online:hover .station-online-check {
     right: 12.5vw;
@@ -2151,5 +2195,57 @@ orbicular i {
   .station-online-full{
     right: 0;
   }
+}
+/*============End Some settings for for FullHd Screen ============ */
+
+/*============Some settings for Raspbetty 7" landscape Screen (800x480)============ */
+@media (min-width: 799px) and (max-width: 1300px) {
+
+  .xbox-one .wizard-graphics {
+    margin: 0;
+  }
+
+  .guide-android .inspect-mode {
+    margin: 0 auto;
+  }
+
+  .guide-android h2 {
+    margin: 0;
+  }
+
+  #progress-tracker {
+    font-size: 2.5vh;
+  }
+
+  .guide-android .android-modal-list {
+    max-width: 60vw;
+  }
+
+  .guide-android .connect-gif {
+    margin: 0 auto;
+  }
+
+  .guide-android .step-header-diagnostic {
+    padding-bottom: 0;
+    border-bottom: 2px solid rgba(168, 150, 194, 0.7);
+    margin-top: 0;
+  }
+
+  .logo-center {
+    margin-top: 0;
+  }
+
+  .enterItemNumber {
+    margin-top: 10px;
+  }
+
+  .home-buttons {
+    margin-top: 10px;
+  }
+
+  .item-details {
+    font-size: 4vh;
+  }
+
 }
 /*============================End Responsive====================*/

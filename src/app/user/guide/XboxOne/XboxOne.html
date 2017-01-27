@@ -18,9 +18,8 @@
   </header>
   <div horizontal-ui-sheet-content>
     <div class="row">
-      <ul id="progress-tracker" data-steps="4">
-        <li ng-class="{'active': vm.step.number == 1, 'done': vm.step.number > 1}"><span>Start</span></li>
-        <li ng-class="{'active': vm.step.number >= 2 && vm.step.number <= 4, 'done': vm.step.number > 4}"><span>Prepare<br>Refresh</span></li>
+      <ul id="progress-tracker" data-steps="3">
+        <li ng-class="{'active': vm.step.number >= 1 && vm.step.number <= 4, 'done': vm.step.number > 4}"><span>Prepare<br>Refresh</span></li>
         <li ng-class="{'active': vm.step.number >= 5 && vm.step.number <= 6, 'done': vm.step.number > 6}"><span>Refresh<br>Xbox</span></li>
         <li ng-class="{'active': vm.step.number == 7}"><span>Finish</span><i></i></li>
       </ul>
@@ -119,9 +118,9 @@
         <div class="row wizard-contents">
           <h2>The Xbox refresh failed.</h2>
           <h3>{{vm.errorMessage}}</h3>
-          <h3>Please try again. If error persists, contact support.</h3>
+          <h3>Please try again.<br/> If error persists, contact support.</h3>
         </div>
-        <div class="row">
+        <div class="row todo-button">
           <button class="btn btn-primary btn-rounded center" ng-click="vm.retry()">
             <i class="fa fa-repeat"></i> &nbsp; Retry
           </button>

@@ -24,30 +24,6 @@
             });
         }
 
-        function deleteDeviceNotification(deviceId) {
-            toastr.clear(deviceNotiviations[deviceId]);
-            delete deviceNotiviations[deviceId];
-        }
-
-        socketService.on('device-add', function(data) {
-            deleteDeviceNotification(data.id); //Prevent duplicate notifications for the same device
-            console.log('device added');
-            if (service.isDeviceNotificationEnabled) {
-                deviceNotiviations[data.id] = toastr.info('Click here to choose what to do with the ' + data.type + ' disk.',
-                    'Removable ' + data.type + ' disk', {
-                        'timeOut': 0,
-                        'extendedTimeOut': 0,
-                        'tapToDismiss': false,
-                        'closeButton': true
-                    }
-                );
-            }
-        });
-
-        socketService.on('device-remove', function(data) {
-            deleteDeviceNotification(data.id);
-        });
-
         socketService.on('connection-status', function(data) {
             processConnectionState(data);
         });

@@ -100,6 +100,7 @@
             if (vm.selectedDevice === null) {
                 socketService.once('event', function(event) {
                     if (event.name === 'device-add') {
+
                         if (event.data.size >= minSize) {
                             vm.selectedDevice = event.data;
                             callback();
