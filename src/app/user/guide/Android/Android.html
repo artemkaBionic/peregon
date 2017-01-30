@@ -309,11 +309,9 @@
           <h2><span class="fa fa-check-circle diagnostic-ok"></span>
             You have successfully refreshed the Android device</h2>
         </div>
-        <div class="wizard-contents">
-        </div>
-        <div class="row">
+        <div class="row finish-success-button">
           <button class="btn btn-primary btn-rounded center" ng-click="vm.refreshEnd()">
-            Finish <i class="fa fa-caret-right"></i>
+            <strong>Finish </Strong><i class="fa fa-caret-right"></i>
           </button>
         </div>
       </div>
@@ -333,7 +331,7 @@
         </div>
         <div class="row nav-btn">
           <button class="btn btn-primary btn-rounded center" ng-click="vm.refreshEnd()">
-            Finish <i class="fa fa-caret-right"></i>
+            <strong>Finish </Strong><i class="fa fa-caret-right"></i>
           </button>
         </div>
       </div>
@@ -344,11 +342,11 @@
           <h3 class="text-align-center">For security reasons your session expired<span ng-if="vm.deviceLockService === 'siperlock'">&nbsp;and siperLOCK has been locked</span><span ng-if="vm.deviceLockService === 'wsa'">&nbsp;and WSA has been locked</span></h3>
         </div>
         <div class="row nav-btn">
-          <div class="col-md-6">
+          <div class="col-md-6 col-sm-6">
             <button ng-click="vm.activate()" class="btn btn-choose-med btn-info pull-right">Restart
             </button>
           </div>
-          <div class="col-md-6">
+          <div class="col-md-6 col-sm-6">
             <button ng-click="vm.refreshEnd()" class="btn btn-choose-med btn-danger pull-left">Cancel
             </button>
           </div>
