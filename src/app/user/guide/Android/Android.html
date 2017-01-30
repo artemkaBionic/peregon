@@ -282,20 +282,23 @@
             <h3 class="text-align-center automated-anim">Follow instructions on the Android Device for manual
               diagnostics...</h3>
           </div>
-          <div class="row hide-small-raspberry">
-            <div class="center circle-bar">
-              <orbicular progression="vm.manualPassed" total="vm.manualSize" counterclockwise>
-                <div ng-click="vm.manualInspection()">
-                  <i class="fa fa-cog fa-spin fa-4x"></i>
-                </div>
-              </orbicular>
+          <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-6 col-sm-6 col-xs-12 hide-small-raspberry">
+              <div class="center circle-bar">
+                <orbicular progression="vm.manualPassed" total="vm.manualSize" counterclockwise>
+                  <div ng-click="vm.manualInspection()">
+                    <i class="fa fa-cog fa-spin fa-4x"></i>
+                  </div>
+                </orbicular>
+              </div>
+            </div>
+            <div ng-hide="vm.manualShowLastAction" class="col-xl-12 col-lg-12 col-md-6 col-sm-6 col-xs-12">
+              <h3 class="text-align-center automated-anim-medium automated-anim">Manual Test <strong>{{vm.manualPassed}}</strong> of <strong>{{vm.manualSize}}</strong>
+              </h3>
             </div>
           </div>
         </div>
-          <div ng-hide="vm.manualShowLastAction" class="row">
-            <h3 class="text-align-center automated-anim">Manual Test <strong>{{vm.manualPassed}}</strong> of <strong>{{vm.manualSize}}</strong>
-            </h3>
-          </div>
+
         <div ng-show="vm.manualShowLastAction" class="row android-manual-complete">
           <h3 class="text-align-center">Press <strong>Activate</strong> on the device to continue...</h3>
         </div>
@@ -322,14 +325,6 @@
             Device needs to be repaired</h2>
           <h2 ng-show="vm.TestsFault">
             The following tests failed:</h2>
-          <h4 class="failed-tests">testName<br/>
-            testName<br/>
-            testName<br/>
-            testName<br/>
-            testName<br/>
-            testName<br/>
-            testName<br/>
-            testName<br/></h4>
           <h4 class="failed-tests" ng-show="vm.TestsFault" ng-repeat="testName in vm.failedTests">
             {{testName}}
           </h4>

@@ -58,7 +58,7 @@
             $state.go('root.user');
         };
 
-        vm.step = vm.steps.prepareRefreshUsbInsert;
+        vm.step = vm.steps.failed;
         vm.errorMessage = '';
 
         function activate() {

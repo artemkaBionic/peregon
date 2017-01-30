@@ -1242,7 +1242,7 @@ button[disabled]:hover {
 
 /*=========Checkbox========*/
 //you can find original uncompiled Checkbox SCSS here http://codepen.io/chiefman/pen/NbgJNQ
-@media (min-width: 640px) {
+@media (min-width:991px) {
   /* Checkmark style starts */
   @-moz-keyframes dothabottomcheck {
     0% {
@@ -1385,7 +1385,7 @@ button[disabled]:hover {
 
 }
 
-@media (max-width: 639px) {
+@media (max-width: 992px) {
   /* Checkmark style starts */
   @-moz-keyframes dothabottomcheck {
     0% {
@@ -1715,12 +1715,15 @@ orbicular i {
   background-color: #927CB3 !important;
   color: white !important;
 }
-
+.front-keypad-medium {
+  display: none;
+}
 /*============================End Raspberry Home Screen====================*/
 
 /*============================Start Responsive====================*/
 
-@media (max-width: 639px) {
+@media (max-width: 767px) {
+
   .header-col, .header-row, .main-header {
     height: 7vh;
   }
@@ -2167,7 +2170,7 @@ orbicular i {
 
 /*============Start Some settings for Raspberry 7"(480x800) screen ============ */
 
-@media (max-width: 639px) and (min-width: 321px)  {
+@media (min-width: 321px) and (max-width: 576px)   {
   #progress-tracker {
     font-size: 1.5vh;
   }
@@ -2199,11 +2202,136 @@ orbicular i {
 /*============End Some settings for for FullHd Screen ============ */
 
 /*============Some settings for Raspbetty 7" landscape Screen (800x480)============ */
-@media (min-width: 799px) and (max-width: 1300px) {
+@media (min-width: 576px) and (max-width: 991px) {
+
+  .front-keypad-medium {
+    display: block;
+  }
+
+  .front-keypad, .front-general {
+    display: none;
+  }
 
   .xbox-one .wizard-graphics {
     margin: 0;
   }
+
+  .modal-content {
+    height: 100vh;
+  }
+
+  .modal-lg {
+    height: 100vh;
+    width: 100vw;
+  }
+
+  .wizard-modal {
+    height: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .modal-graphics {
+    text-align: center;
+  }
+
+  .modal-offline .modal-graphics img, .wizard-image {
+    height: 20vh;
+  }
+
+  .modal-graphics div {
+    font-size: 2vh;
+  }
+
+  .modal-contents {
+    font-size: 4vh;
+  }
+
+  .wizard-image-big {
+    -webkit-animation: fadeIn .5s;
+    animation: fadeIn .5s;
+    position: fixed;
+    z-index: 999999;
+    width: 100vw;
+    border-radius: 7px;
+    top: 0;
+    bottom: 0;
+    height: auto !important;
+    left: 0;
+    right: 0;
+    margin: auto;
+  }
+
+/* ================= Start Home Page================= */
+
+  .item-details {
+    font-size: 4vh;
+  }
+
+  .bc-keypad__key::before {
+    padding-top: 75% !important;;
+  }
+
+  .bc-keypad [angular-ripple].bc-keypad__key-button {
+    font-size: 6vh;
+  }
+
+  .bc-keypad__key {
+    width: calc(100% / 3 - 8px) !important;
+  }
+
+  .header-middle-col .front-keypad {
+    display: block
+  }
+
+  .front-keypad-medium-row {
+    top: 15vh;
+    position: absolute;
+    width: 100%;
+  }
+
+  .guide-logo-small {
+    width: 25vh;
+  }
+
+  .item-info-input-medium {
+    margin-top: 12vh;
+  }
+
+  .item-info-medium {
+
+  }
+
+  .item-info-input-medium .text-input-medium {
+    margin: 5vh;
+  }
+
+  .text-input-medium input {
+    text-align: center;
+    height: 17vh;
+    line-height: normal;
+    font-size: 4vw;
+    color: #414141;
+    border-radius: 4px;
+  }
+
+  .item-details-medium {
+    text-align: center;
+    font-size: 5vh;
+  }
+  /* ================= End Home Page================= */
+
+  /* ================= Start Android Guide================= */
+  .guide-android h2 {font-size: 5vh}
+
+ .guide-android .inspect-mode > .row {
+    margin: 2px auto;
+  }
+
+  .guide-android .inspection-question {
+    margin: 3vh auto;
+  }
+
 
   .guide-android .inspect-mode {
     margin: 0 auto;
@@ -2231,21 +2359,36 @@ orbicular i {
     margin-top: 0;
   }
 
-  .logo-center {
-    margin-top: 0;
+
+  .android-modal-row {
+    height: 45vh;
   }
 
-  .enterItemNumber {
-    margin-top: 10px;
+  .modal-android .navigtion-buttons {
+    bottom: 0;
+    padding: 2vw;
+    position: absolute;
+    width: 100%;
   }
 
-  .home-buttons {
-    margin-top: 10px;
+  .android-modal-list {
+    max-height: 52vh;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    margin-top: 2vh;
   }
 
-  .item-details {
-    font-size: 4vh;
+  .guide-android .unlock-list {
+    margin: 0;
   }
 
+  .connect-gif {
+    height: 36vh;
+  }
+
+  .automated-anim-medium {
+    margin-top: 20vh;
+  }
+  /* =================End Android Guide================= */
 }
 /*============================End Responsive====================*/
