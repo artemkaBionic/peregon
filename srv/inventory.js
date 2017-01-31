@@ -5,17 +5,19 @@ const request = require('request');
 var config = require('./config');
 var mongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
+const Promise = require("bluebird");
 
 const MONGO_DB_URL = 'mongodb://localhost/AppChord?connectTimeoutMS=30000';
 const INVENTORY_LOOKUP_URL = 'https://' + config.apiHost + '/api/inventorylookup/';
-const ANDROID_LOCK_URL ='https://api2.basechord.com';
+const API_URL ='https://api2.basechord.com';
 
 var isDevelopment = process.env.NODE_ENV === 'development';
-var sessionType = null;
-var session = null;
+var sessionTypes = {};
+var sessions = {};
 
 function initSession(manufacturer, model, serialNumber, itemNumber, sku) {
-    var session = {
+
+    sessions[itemNumber] = {
         'SessionDate': new Date(),
         'LastUpdated': new Date(),
         'DiagnoseOnly': false,
@@ -52,8 +54,8 @@ function initSession(manufacturer, model, serialNumber, itemNumber, sku) {
         'AuditLogEntries': [],
         'CurrentState': 'Started' };
 
-    updateSessionDb(session);
-    return session;
+    updateSessionDb(sessions[itemNumber]);
+    return sessions[itemNumber];
 }
 
 function updateSessionDb(session) {
@@ -98,10 +100,46 @@ function logSession(session, processState, message) {
 
 function closeSession(session) {
     session.Closed = new Date();
-    updateSessionDb(session);
-    session = null;
-    sessionType = null;
+ 
+    Promise.all([sendSession(session), updateSessionDb(session)])
+        .then(results => {           
+            return results[0];            
+        })      
 }
+
+
+
+function sendSession(session) {
+    Promise.
+        request({
+            method: 'POST',
+            url: API_URL + '/session',
+            headers: {
+                'Authorization': config.api2Authorization
+            },
+            body: session,
+            rejectUnauthorized: false,
+            json: true
+        })
+        .then(function(res) {
+            if (!res.body) {
+                session = null;
+                return true
+            }
+            else {
+                return false
+            }
+        })
+        .catch(function(err) {
+                return false
+        }) 
+        }
+
+exports.resendSession = function(itemNumber, callback) {
+        var uploaded = sendSession(sessions[itemNumber]);
+        callback({success: sessions[itemNumber].SessionState = 'Completed', uploaded: uploaded });
+}
+
 
 function filesExist(directory, files) {
     if (files.length === 0) {
@@ -117,6 +155,8 @@ function filesExist(directory, files) {
         }
     }
 }
+
+
 
 exports.getItem = function(id, callback) {
     request({
@@ -142,9 +182,9 @@ exports.getItem = function(id, callback) {
 exports.lockAndroid = function(imei, callback) {
     request({
         method: 'POST',
-        url: ANDROID_LOCK_URL + '/unlockapi/lock',
+        url: API_URL + '/unlockapi/lock',
         headers: {
-            'Authorization': config.androidApiAuthorization
+            'Authorization': config.api2Authorization
         },
         body: {'IMEI': imei},
         rejectUnauthorized: false,
@@ -166,9 +206,9 @@ exports.lockAndroid = function(imei, callback) {
 exports.unlockAndroid = function(imei, callback) {
     request({
         method: 'POST',
-        url: ANDROID_LOCK_URL + '/unlockapi/unlock',
+        url: API_URL + '/unlockapi/unlock',
         headers: {
-            'Authorization': config.androidApiAuthorization
+            'Authorization': config.api2Authorization
         },
         body: {'IMEI': imei},
         rejectUnauthorized: false,
@@ -188,56 +228,56 @@ exports.unlockAndroid = function(imei, callback) {
 };
 
 exports.sessionStart = function(type, item, callback) {
-    sessionType = type;
-    session = initSession(item.Manufacturer, item.Model, item.Serial, item.InventoryNumber, item.Sku);
+    sessionTypes[item.InventoryNumber] = type;
+    sessions[item.InventoryNumber] = initSession(item.Manufacturer, item.Model, item.Serial, item.InventoryNumber, item.Sku);
     callback();
 };
 
-exports.sessionUpdate = function(message, callback) {
-    logSession(session, "Started", message);
+exports.sessionUpdate = function(itemNumber, message, callback) {
+    logSession(sessions[itemNumber], "Started", message);
     callback();
 };
 
-exports.sessionFinish = function (details, callback) {
-    console.log('A client requested to finish an ' + sessionType + ' refresh of item number ' + session.Computer.ItemNumber);
-    if (sessionType === 'xbox-one') {
+exports.sessionFinish = function (itemNumber, details, callback) {
+    console.log('A client requested to finish an ' + sessionTypes[itemNumber] + ' refresh of item number ' + itemNumber);
+    if (sessionTypes[itemNumber] === 'xbox-one') {
         if (isDevelopment) {
             console.log('Simulating verifying a refresh in a development environment by waiting 3 seconds.');
             setTimeout(function() {
                 callback({success: true, device: details.device});
             }, 3000);
         } else {
-            logSession(session, "Started", 'Checking ' + details.device.id + ' for evidence that the refresh completed successfully.');
+            logSession(sessions[itemNumber], "Started", 'Checking ' + details.device.id + ' for evidence that the refresh completed successfully.');
             var mountSource = '/dev/' + details.device.id + '1';
             var mountTarget = '/mnt/' + details.device.id + '1';
             fs.mkdir(mountTarget, function(err) {
                 if (err && err.code !== 'EEXIST') {
-                    logSession(session, "Started", 'Error creating directory ' + mountTarget);
-                    logSession(session, "Started", err);
+                    logSession(sessions[itemNumber], "Started", 'Error creating directory ' + mountTarget);
+                    logSession(sessions[itemNumber], "Started", err);
                 } else {
-                    logSession(session, "Started", 'Attempting to mount ' + mountSource + ' to ' + mountTarget);
+                    logSession(sessions[itemNumber], "Started", 'Attempting to mount ' + mountSource + ' to ' + mountTarget);
                     var mount = childProcess.spawn('mount', [mountSource, mountTarget]);
                     mount.on('close', function (code) {
                         var systemUpdateDir = path.join(mountTarget, '$SystemUpdate');
                         if (code !== 0) {
-                            logSession(session, "Started", 'Error, failed to mount ' + mountSource + ' to ' + mountTarget);
-                            logSession(session, "Started", 'mount command failed with error code ' + code);
+                            logSession(sessions[itemNumber], "Started", 'Error, failed to mount ' + mountSource + ' to ' + mountTarget);
+                            logSession(sessions[itemNumber], "Started", 'mount command failed with error code ' + code);
                         } else {
-                            logSession(session, "Started", 'Successfully mounted ' + mountSource + ' to ' + mountTarget);
+                            logSession(sessions[itemNumber], "Started", 'Successfully mounted ' + mountSource + ' to ' + mountTarget);
                             var success = filesExist(systemUpdateDir, ['smcerr.log', 'update.cfg', 'update.log', 'update2.cfg']);
                             rimraf(path.join(mountTarget, '*'), function(err) {
                                 childProcess.spawn('umount', [mountTarget]);
                                 if (success) {
-                                    logSession(session, "Completed", 'Refresh completed successfully.');
-                                    session.SessionState = session.CurrentState = 'Completed';
-                                    closeSession(session);
-                                    callback({success: true});
+                                    logSession(sessions[itemNumber], "Completed", 'Refresh completed successfully.');
+                                    sessions[itemNumber].SessionState = sessions[itemNumber].CurrentState = 'Completed';
+                                    var uploaded = closeSession(sessions[itemNumber]);
+                                    callback({success: true, uploaded: uploaded });
                                 } else {
-                                    logSession(session, "VerifyRefreshFailed", 'Refresh failed.');
-                                    session.CurrentState = 'VerifyRefreshFailed';
-                                    session.SessionState = 'Aborted';
-                                    closeSession(session);
-                                    callback({success: false});
+                                    logSession(sessions[itemNumber], "VerifyRefreshFailed", 'Refresh failed.');
+                                    sessions[itemNumber].CurrentState = 'VerifyRefreshFailed';
+                                    sessions[itemNumber].SessionState = 'Aborted';
+                                     var uploaded = closeSession(sessions[itemNumber]);
+                                    callback({success: false, uploaded: uploaded });
                                 }
                             });
                         }
@@ -247,16 +287,16 @@ exports.sessionFinish = function (details, callback) {
         }
     } else {
         if (details.complete) {
-            logSession(session, "Completed", 'Refresh completed successfully.');
-            session.SessionState = session.CurrentState = 'Completed';
-            closeSession(session);
-            callback({success: true});
+            logSession(sessions[itemNumber], "Completed", 'Refresh completed successfully.');
+            sessions[itemNumber].SessionState = sessions[itemNumber].CurrentState = 'Completed';
+            var uploaded = closeSession(sessions[itemNumber]);
+            callback({success: true, uploaded: uploaded });
         } else {
-            logSession(session, "VerifyRefreshFailed", 'Refresh failed.');
-            session.CurrentState = 'VerifyRefreshFailed';
-            session.SessionState = 'Aborted';
-            closeSession(session);
-            callback({success: false});
+            logSession(sessions[itemNumber], "VerifyRefreshFailed", 'Refresh failed.');
+            sessions[itemNumber].CurrentState = 'VerifyRefreshFailed';
+            sessions[itemNumber].SessionState = 'Aborted';
+            var uploaded = closeSession(sessions[itemNumber]);
+            callback({success: false, uploaded: uploaded });
         }
     }
 };
