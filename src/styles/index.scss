@@ -342,7 +342,7 @@ figcaption {
 /*========================UI====================== */
 
 .enterItemNumber {
-  margin-top: 40px;
+  margin-top: 4vh;
 }
 
 .bsSquare{
@@ -1042,6 +1042,11 @@ button[disabled]:hover {
   text-align: right;
 }
 
+.item-button-error {
+  border: none;
+  background: inherit;
+  color: #D5484A;
+}
 /*============================ End Guide and Home Header====================*/
 
 /*============================ Start Android Refresh====================*/
@@ -1722,7 +1727,7 @@ orbicular i {
 
 /*============================Start Responsive====================*/
 
-@media (max-width: 767px) {
+@media (max-width: 799px) {
 
   .header-col, .header-row, .main-header {
     height: 7vh;
@@ -2117,8 +2122,8 @@ orbicular i {
 
 }
 
-/*============Start Some settings for Raspberry 4" (320x480) screen ============ */
-@media (max-width: 321px)  {
+/*============Start Some settings for Raspberry 4" (320x480) Portrait screen ============ */
+@media (max-width: 479px) and (max-height: 799px)  {
 
   .hide-small-raspberry{
     display: none;
@@ -2166,43 +2171,10 @@ orbicular i {
   }
 
 }
-/*============End Some settings for Raspberry 4" screen ============ */
+/*============End Some settings for Raspberry 4" Portrait screen ============ */
 
-/*============Start Some settings for Raspberry 7"(480x800) screen ============ */
-
-@media (min-width: 321px) and (max-width: 576px)   {
-  #progress-tracker {
-    font-size: 1.5vh;
-  }
-
-  .xbox-one .ref-list ol {
-    font-size: 2.3vh;
-  }
-
-  .inspection-question span {
-    font-size: 3vh;
-  }
-  .android-manual-complete h2 {
-    font-size: 4vh;
-  }
-
-}
-
-/*============End Some settings for Raspberry 7" screen ============ */
-
-/*============Some settings for FullHd Screen ============ */
-@media (min-width: 1400px) {
-  .station-online:hover .station-online-check {
-    right: 12.5vw;
-  }
-  .station-online-full{
-    right: 0;
-  }
-}
-/*============End Some settings for for FullHd Screen ============ */
-
-/*============Some settings for Raspbetty 7" landscape Screen (800x480)============ */
-@media (min-width: 576px) and (max-width: 991px) {
+/*============Some settings for Raspbetty 4" landscape Screen (320x480)============ */
+@media (min-width: 480px) and (max-width: 799px) and (min-height: 320px) and (max-height: 479px)  {
 
   .front-keypad-medium {
     display: block;
@@ -2247,6 +2219,347 @@ orbicular i {
     font-size: 4vh;
   }
 
+  .modal-sm {
+    width: 80vw;
+    height: 40vw;
+  }
+
+  .power-window {
+    width: 80vw;
+    height: 40vw;
+  }
+
+  .power-button, .reset-button {
+    width: 30vw;
+    height: 30vw;
+  }
+
+  .power-button {
+    position: absolute;
+    right: 5vw;
+    top: 5vw;
+    left: inherit;
+    bottom: inherit;
+    margin: auto;
+  }
+
+  .reset-button {
+    position: absolute;
+    left: 5vw;
+    top: 5vw;
+    right: inherit;
+    bottom: inherit;
+    margin: auto;
+  }
+  /* ================= Start Home Page================= */
+
+  .apc-sheet-content {
+    margin-top: 9vh;
+  }
+
+  .item-details {
+    font-size: 4vh;
+  }
+
+  .bc-keypad__key::before {
+    padding-top: 75% !important;;
+  }
+
+  .bc-keypad [angular-ripple].bc-keypad__key-button {
+    font-size: 6vh;
+  }
+
+  .bc-keypad__key {
+    width: calc(100% / 3 - 8px) !important;
+  }
+
+  .header-middle-col .front-keypad {
+    display: block
+  }
+
+  .front-keypad-medium-row {
+    top: 15vh;
+    position: absolute;
+    width: 100%;
+  }
+
+  .guide-logo-small {
+    width: 25vh;
+  }
+
+  .guide-header {
+    height: 9vh;
+  }
+
+  .header-col, .header-row, .main-header {
+    height: 9vh;
+  }
+
+  .guide-header .header-col {
+    height: 9vh;
+  }
+
+  .guide-header .header-middle-col {
+    height: 7vh;
+  }
+
+  .guide-header .guide-logo {
+    width: auto;
+    height: 6vh;
+  }
+
+  .item-info-input-medium {
+    margin-top: 12vh;
+  }
+
+  .item-info-input-medium .text-input-medium {
+    margin: 5vh;
+  }
+
+  .text-input-medium input {
+    text-align: center;
+    height: 17vh;
+    line-height: normal;
+    font-size: 4vw;
+    color: #414141;
+    border-radius: 4px;
+  }
+
+  .item-details-medium {
+    text-align: center;
+    font-size: 5vh;
+  }
+
+  .small-land-guide-item-info {
+    width: 50%;
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+
+  .guide-header .header-item-icon {
+    width: 3vw;
+  }
+
+  .guide-header .header-middle-col-right {
+    margin: auto;
+    height: 7vh;
+  }
+
+  #toast-container > div {
+    padding: 6px 6px 6px 50px;
+    width: 18em;
+  }
+
+  #toast-container {
+    top: 0.7vh !important;
+    right: 0.7vh;
+    margin: auto;
+    width: 300px;
+  }
+
+  .modal-offline .modal-graphics img, .wizard-image {
+    height: 20vh;
+    width: auto;
+  }
+
+  .modal-offline .navigtion-buttons p {
+    display: none;
+  }
+
+  .modal-offline .wizard-image-big {
+   display: none;
+  }
+  /* ================= End Home Page================= */
+
+  /* ================= Start Android Guide================= */
+  .guide-android h2 {font-size: 5vh}
+
+  .guide-android .inspect-mode > .row {
+    margin: 2px auto;
+  }
+
+  .guide-android .inspection-question {
+    margin: 3vh auto;
+  }
+
+
+  .guide-android .inspect-mode {
+    margin: 0 auto;
+  }
+
+  .guide-android h2 {
+    margin: 0;
+  }
+
+  #progress-tracker {
+    font-size: 2.5vh;
+  }
+
+  .guide-android .android-modal-list {
+    max-width: 60vw;
+  }
+
+  .guide-android .connect-gif {
+    margin: 0 auto;
+  }
+
+  .guide-android .step-header-diagnostic {
+    padding-bottom: 0;
+    border-bottom: 2px solid rgba(168, 150, 194, 0.7);
+    margin-top: 0;
+  }
+
+
+  .android-modal-row {
+    height: 45vh;
+  }
+
+  .modal-android .navigtion-buttons {
+    bottom: 0;
+    padding: 2vw;
+    position: absolute;
+    width: 100%;
+  }
+
+  .android-modal-list {
+    max-height: 52vh;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    margin-top: 2vh;
+  }
+
+  .guide-android .unlock-list {
+    margin: 0;
+  }
+
+  .connect-gif {
+    height: 36vh;
+  }
+
+  .automated-anim-medium {
+    margin-top: 20vh;
+  }
+
+  .finish-success-button {
+    margin-top: 12vh;
+  }
+
+  .guide-android .inspection-tap {
+    padding: 17px 30px;
+  }
+
+  .nav-btn {
+    padding: 0;
+    margin-top: 0;
+  }
+
+ .guide-android #progress-tracker {
+    display: none;
+  }
+
+  .android-video img {
+    width: 35vw;
+  }
+  /* =================End Android Guide================= */
+  /* =================Start Xbox Guide================= */
+
+  .xbox-one .wizard-graphics img {
+    height: 40vh;
+  }
+
+  .xbox-one .h3-todo {
+    position: static;
+  }
+
+  .xbox-one video {
+    width: 50vw;
+  }
+  /* =================End Xbox Guide================= */
+
+  .hidden-md-down {
+    display: none;
+  }
+
+  .inspection-question span {
+    font-size: 4.5vh;
+  }
+
+}
+/*============ End Some settings for Raspbetty 4" landscape Screen (320x480)============ */
+
+/*============Start Some settings for Raspberry 7"(480x800) Portrait screen ============ */
+
+@media (min-width: 480px) and (max-width: 720px) and (min-height: 800px) and (max-height: 1200px)  {
+  #progress-tracker {
+    font-size: 1.5vh;
+  }
+
+  .xbox-one .ref-list ol {
+    font-size: 2.3vh;
+  }
+
+  .inspection-question span {
+    font-size: 3vh;
+  }
+  .android-manual-complete h2 {
+    font-size: 4vh;
+  }
+
+}
+
+/*============End Some settings for Raspberry 7" Portrait screen ============ */
+
+/*============Some settings for Raspbetty 7" landscape Screen (800x480)============ */
+@media (min-width: 800px) and (max-width: 1200px) and (min-height: 480px) and (max-height: 720px) {
+
+  .front-keypad-medium {
+    display: block;
+  }
+
+  .front-keypad, .front-general {
+    display: none;
+  }
+
+  .xbox-one .wizard-graphics {
+    margin: 0;
+  }
+
+  .modal-content {
+    height: 100vh;
+  }
+
+  .modal-lg {
+    height: 100vh;
+    width: 100vw;
+  }
+
+  .wizard-modal {
+    height: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .modal-graphics {
+    text-align: center;
+  }
+
+  .modal-offline .modal-graphics img, .wizard-image {
+    height: 20vh;
+  }
+
+  .xbox-one .wizard-image {
+    height: 40vh;
+  }
+
+  .modal-graphics div {
+    font-size: 2vh;
+  }
+
+  .modal-contents {
+    font-size: 4vh;
+  }
+
   .wizard-image-big {
     -webkit-animation: fadeIn .5s;
     animation: fadeIn .5s;
@@ -2262,6 +2575,18 @@ orbicular i {
     margin: auto;
   }
 
+  #toast-container > div {
+    padding: 8px 8px 8px 50px;
+  }
+
+  #toast-container {
+    top: 0.7vh;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    margin: auto;
+    width: 300px;
+  }
 /* ================= Start Home Page================= */
 
   .item-details {
@@ -2319,6 +2644,7 @@ orbicular i {
     text-align: center;
     font-size: 5vh;
   }
+
   /* ================= End Home Page================= */
 
   /* ================= Start Android Guide================= */
@@ -2392,7 +2718,18 @@ orbicular i {
 
   .finish-success-button {
   margin-top: 12vh;
-}
+  }
   /* =================End Android Guide================= */
 }
+
+/*============Some settings for FullHd Screen ============ */
+@media (min-width: 1400px) {
+  .station-online:hover .station-online-check {
+    right: 12.5vw;
+  }
+  .station-online-full{
+    right: 0;
+  }
+}
+/*============End Some settings for for FullHd Screen ============ */
 /*============================End Responsive====================*/

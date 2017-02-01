@@ -15,7 +15,9 @@
         vm.item = null;
         vm.guide = null;
         vm.AndroidEmei = null;
+        vm.itemNumberError = false;
         vm.searchStringChange = function() {
+            vm.itemNumberError = false;
             if (config.itemNumberRegEx.test(vm.searchString)) {
                 vm.item = null;
                 inventoryService.getItem(vm.searchString).then(function(item) {
@@ -25,10 +27,15 @@
                             vm.guide = guide;
                         });
                     }
-                });
+                }, vm.checkItem);
+
             } else {
                 vm.item = null;
             }
+        };
+
+        vm.checkItem = function() {
+            vm.itemNumberError = true;
         };
 
         vm.showGuide = function() {

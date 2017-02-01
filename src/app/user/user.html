@@ -11,13 +11,9 @@
       </div>
       <div class="row item-info-small">
           <div class="item-details-small" ng-hide="vm.item === null"><button class="item-button" type="submit"><strong>{{'SKU: '+vm.item.Sku}}</strong><br/>{{vm.guide.Manufacturer}} {{vm.guide.Model}}</button></div>
+        <div class="item-details-small item-button-error" ng-show="vm.itemNumberError"><strong>Item not found</strong><br/>Check the ItemNumber</div>
       </div>
       <div class="keyboard-small">
-            <!--<div class="row" ng-controller="UserController">-->
-              <!--<div class="home-buttons col-sm-12 col-xs-12 text-center">-->
-                <!--<button ng-disabled="vm.item === null" type="submit" class="btn-primary btn-rounded">Start</button>-->
-              <!--</div>-->
-            <!--</div>-->
         <bc-keypad
           bc-max-length="10"
           bc-number-model="vm.searchString"
@@ -41,17 +37,13 @@
             </div>
             <div class="row item-info-medium">
               <div class="item-details-medium" ng-hide="vm.item === null"><button class="item-button" type="submit"><strong>{{'SKU: '+vm.item.Sku}}</strong><br/>{{vm.guide.Manufacturer}} {{vm.guide.Model}}</button></div>
+              <div class="item-details-medium item-button-error" ng-show="vm.itemNumberError"><strong>Item not found</strong><br/>Check the ItemNumber</div>
             </div>
           </div>
         </div>
 
         <div class="col-xs-6 col-sm-6">
           <div class="keyboard-medium">
-            <!--<div class="row" ng-controller="UserController">-->
-            <!--<div class="home-buttons col-sm-12 col-xs-12 text-center">-->
-            <!--<button ng-disabled="vm.item === null" type="submit" class="btn-primary btn-rounded">Start</button>-->
-            <!--</div>-->
-            <!--</div>-->
             <bc-keypad
               bc-max-length="10"
               bc-number-model="vm.searchString"
@@ -97,6 +89,7 @@
       <!--===========End Test Content===============-->
       <div class="row item-info">
         <div class="item-details" ng-hide="vm.item === null"><button class="item-button" type="submit"><strong>{{'SKU: '+vm.item.Sku}}</strong><br/>{{vm.guide.Manufacturer}} {{vm.guide.Model}}</button></div>
+        <div class="item-details item-button-error" ng-show="vm.itemNumberError"><strong>Item not found</strong><br/>Check the ItemNumber</div>
       </div>
     </form>
   </section>

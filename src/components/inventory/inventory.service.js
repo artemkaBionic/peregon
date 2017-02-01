@@ -19,7 +19,6 @@
         function isValidItem(item) {
             return item && item.Sku;
         }
-        service.ErrorToast = null;
         service.getItem = function(id) {
             var url = '/data/inventory/' + id;
             var deferred = $q.defer();
@@ -31,24 +30,26 @@
                     if (result.data.error) {
                         stationService.getConnectionState().then(function(connectionState) {
                             if (connectionState.isOnline) {
-                                toastr.clear(service.ErrorToast);
-                                service.ErrorToast = toastr.error('Check the ItemNumber','Item not found.', {
-                                    'timeOut': 2000,
-                                    'extendedTimeOut': 2000,
-                                    'tapToDismiss': false,
-                                    'newest-on-top': false,
-                                    'closeButton': true
-                                });
+                                service.ErrorToast = true;
+                                // toastr.clear(service.ErrorToast);
+                                // service.ErrorToast = toastr.error('Check the ItemNumber','Item not found.', {
+                                //     'timeOut': 2000,
+                                //     'extendedTimeOut': 2000,
+                                //     'tapToDismiss': false,
+                                //     'newest-on-top': false,
+                                //     'closeButton': true
+                                // });
                                console.log('Item number not found. Please check the number and try again.');
                             } else {
-                                toastr.clear(service.ErrorToast);
-                                service.ErrorToast = toastr.error('Refresh Station is Offline','Unable to lookup item', {
-                                    'timeOut': 2000,
-                                    'extendedTimeOut': 2000,
-                                    'tapToDismiss': false,
-                                    'newest-on-top': false,
-                                    'closeButton': true
-                                });
+                                service.ErrorToast = true;
+                                // toastr.clear(service.ErrorToast);
+                                // service.ErrorToast = toastr.error('Refresh Station is Offline','Unable to lookup item', {
+                                //     'timeOut': 2000,
+                                //     'extendedTimeOut': 2000,
+                                //     'tapToDismiss': false,
+                                //     'newest-on-top': false,
+                                //     'closeButton': true
+                                // });
                                 console.log('Unable to lookup item because the Station is Offline.');
                             }
                         });
@@ -60,14 +61,16 @@
                     }
 
                     else {
-                        toastr.clear(service.ErrorToast);
-                        service.ErrorToast = toastr.error('Please try again','Item not found', {
-                            'timeOut': 2000,
-                            'extendedTimeOut': 2000,
-                            'tapToDismiss': false,
-                            'newest-on-top':false,
-                            'closeButton': true
-                        });
+                        deferred.reject();
+                        service.ErrorToast = true;
+                        // toastr.clear(service.ErrorToast);
+                        // service.ErrorToast = toastr.error('Please try again','Item not found', {
+                        //     'timeOut': 2000,
+                        //     'extendedTimeOut': 2000,
+                        //     'tapToDismiss': false,
+                        //     'newest-on-top':false,
+                        //     'closeButton': true
+                        // });
                        console.log('Item not found. Please try again.');
                     }
                 });
