@@ -8,7 +8,7 @@ var assert = require('assert');
 
 const MONGO_DB_URL = 'mongodb://localhost/AppChord?connectTimeoutMS=30000';
 const INVENTORY_LOOKUP_URL = 'https://' + config.apiHost + '/api/inventorylookup/';
-const ANDROID_LOCK_URL ='https://unlock.basechord.com';
+const ANDROID_LOCK_URL ='https://api2.basechord.com';
 
 var isDevelopment = process.env.NODE_ENV === 'development';
 var sessionType = null;
@@ -142,7 +142,7 @@ exports.getItem = function(id, callback) {
 exports.lockAndroid = function(imei, callback) {
     request({
         method: 'POST',
-        url: ANDROID_LOCK_URL + '/api/lock',
+        url: ANDROID_LOCK_URL + '/unlockapi/lock',
         headers: {
             'Authorization': config.androidApiAuthorization
         },
@@ -166,7 +166,7 @@ exports.lockAndroid = function(imei, callback) {
 exports.unlockAndroid = function(imei, callback) {
     request({
         method: 'POST',
-        url: ANDROID_LOCK_URL + '/api/unlock',
+        url: ANDROID_LOCK_URL + '/unlockapi/unlock',
         headers: {
             'Authorization': config.androidApiAuthorization
         },
