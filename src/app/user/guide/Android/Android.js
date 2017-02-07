@@ -59,7 +59,7 @@
             if (vm.item) {
                 inventoryService.unlock(vm.item.Serial).then(function(data) {
                     if (data.error) {
-                        inventoryService.updateSession('Unable to request device unlock.\n' + JSON.stringify(data.error, null, 2));
+                        inventoryService.updateSession(vm.item.InventoryNumber, 'Unable to request device unlock.\n' + JSON.stringify(data.error, null, 2));
                     }
                     else {
                         vm.deviceLockService = data.result.service;
@@ -67,7 +67,7 @@
                         if (vm.step === vm.steps.waitForUnlock) {
                             vm.step = vm.steps.preparationOne;
                         }
-                        inventoryService.updateSession('Device is unlocked by ' + vm.deviceLockService);
+                        inventoryService.updateSession(vm.item.InventoryNumber, 'Device is unlocked by ' + vm.deviceLockService);
                     }
                 });
             }
@@ -77,10 +77,10 @@
             if (vm.item) {
                 inventoryService.lock(vm.item.Serial).then(function(data) {
                     if (data.error) {
-                        inventoryService.updateSession('Unable to request device lock.\n' + JSON.stringify(data.error, null, 2));
+                        inventoryService.updateSession(vm.item.InventoryNumber, 'Unable to request device lock.\n' + JSON.stringify(data.error, null, 2));
                     }
                     else {
-                        inventoryService.updateSession('Device is locked by ' + vm.deviceLockService);
+                        inventoryService.updateSession(vm.item.InventoryNumber, 'Device is locked by ' + vm.deviceLockService);
                     }
                 });
             }
@@ -231,22 +231,22 @@
 
         vm.sessionExpired = function() {
             lockDevice();
-            inventoryService.updateSession('Session expired.');
-            inventoryService.finishSession({'complete': false});
+            inventoryService.updateSession(vm.item.InventoryNumber, 'Session expired.');
+            inventoryService.finishSession(vm.item.InventoryNumber, {'complete': false});
             vm.step = vm.steps.sessionExpired;
         };
 
         vm.finishFail = function() {
             lockDevice();
-            inventoryService.updateSession('Session failed.');
-            inventoryService.finishSession({'complete': false});
+            inventoryService.updateSession(vm.item.InventoryNumber, 'Session failed.');
+            inventoryService.finishSession(vm.item.InventoryNumber, {'complete': false});
             vm.step = vm.steps.finishFail;
         };
 
         vm.finishSuccess = function() {
             lockDevice();
-            inventoryService.updateSession('Session complete.');
-            inventoryService.finishSession({'complete': true});
+            inventoryService.updateSession(vm.item.InventoryNumber, 'Session complete.');
+            inventoryService.finishSession(vm.item.InventoryNumber, {'complete': true});
             vm.step = vm.steps.finishSuccess;
         };
 
@@ -299,7 +299,7 @@
                 'Screen and casing are in good condition: ' + vm.ExternalGood + '\n' +
                 'Device turns on: ' + vm.PowerGood + '\n' +
                 'Touch screen and buttons work: ' + vm.ButtonsGood;
-            inventoryService.updateSession(message);
+            inventoryService.updateSession(vm.item.InventoryNumber, message);
 
             if (!vm.ExternalGood) {
                 // Exterior Check
@@ -322,7 +322,7 @@
         };
 
         vm.notTurnOn = function() {
-            inventoryService.updateSession('After charging, the device still does NOT turn on.');
+            inventoryService.updateSession(vm.item.InventoryNumber, 'After charging, the device still does NOT turn on.');
             vm.Broken = true;
             vm.finish();
         };
@@ -332,7 +332,7 @@
         };
 
         vm.deviceTurnsOn = function() {
-            inventoryService.updateSession('After charging, the device turns on.');
+            inventoryService.updateSession(vm.item.InventoryNumber, 'After charging, the device turns on.');
             vm.PowerGood = true;
             waitForUnlock();
         };
@@ -397,7 +397,7 @@
         function waitForAndroidAdd() {
             socketService.on('event', function(event) {
                 if (event.name === 'android-add') {
-                    inventoryService.updateSession('Android device connected.');
+                    inventoryService.updateSession(vm.item.InventoryNumber, 'Android device connected.');
                     vm.AndroidDisconnected = false;
                    toastr.clear(vm.AndroidNotification);
                     vm.AndroidNotification = toastr.info('Follow the instructions on the Android Device', 'Android Device Connected', {
@@ -423,14 +423,14 @@
                         });//Toast Pop-Up notification parameters
                     } else {
                         vm.AndroidDisconnected = true;
-                        inventoryService.updateSession('Android device has been disconnected.');
+                        inventoryService.updateSession(vm.item.InventoryNumber, 'Android device has been disconnected.');
                         vm.AndroidConnectionCheck();
                         timeouts.push($timeout(vm.preparationFour,500));
                     }
                 }
 
                 if (event.name === 'app-start') {
-                    inventoryService.updateSession('Android refresh app has started.');
+                    inventoryService.updateSession(vm.item.InventoryNumber, 'Android refresh app has started.');
                     vm.autoSize = event.data.data.auto;//Get number of Auto tests
                     vm.manualSize = event.data.data.manual;//Get number of Manual tests
                     vm.refreshAppStarted = true;
@@ -441,7 +441,7 @@
 
                 if (event.name === 'android-test') {
                     var message = event.data.commandName + ' ' + (event.data.passed ? 'passed' : 'failed') + '\n' + JSON.stringify(event.data.data, null, 2);
-                    inventoryService.updateSession(message);
+                    inventoryService.updateSession(vm.item.InventoryNumber, message);
 
                     if (event.data.passed === false) {
                         vm.TestsFault = true;//If one of the Auto tests Fails
@@ -463,7 +463,7 @@
                     }
                 }
                 if (event.name === 'android-reset') {
-                    inventoryService.updateSession('Android refresh app has initiated a factory reset.');
+                    inventoryService.updateSession(vm.item.InventoryNumber, 'Android refresh app has initiated a factory reset.');
                     vm.finish();
                 }
             });
@@ -477,7 +477,7 @@
             }
         };
         vm.AndroidConnectionCheck = function() {
-            vm.AndroidNotification = toastr.info('Connect the device to start over the diagnostics', 'Android Device has been Disconnected', {
+            vm.AndroidNotification = toastr.info(vm.item.InventoryNumber, 'Connect the device to start over the diagnostics', 'Android Device has been Disconnected', {
                 'tapToDismiss': false,
                 'timeOut': 60000,
                 'extendedTimeOut': 0,

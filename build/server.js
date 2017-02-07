@@ -65,6 +65,21 @@ gulp.task('serve', ['dev', 'nodemon', 'watch'], function () {
     ]);
 });
 
+gulp.task('uiserve', function () {
+    browserSyncInit([
+        'src',
+        '.tmp',
+        'data'
+    ], [
+        'data/**/*.*',
+        '.tmp/**/*.css',
+        '.tmp/**/*.css.map',
+        'src/assets/images/**/*',
+        'src/**/*.html',
+        'src/**/*.js'
+    ]);
+});
+
 gulp.task('serve:dist', ['build'], function () {
     browserSyncInit('dist');
 });
