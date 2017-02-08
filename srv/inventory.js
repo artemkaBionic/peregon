@@ -9,7 +9,7 @@ const Promise = require("bluebird");
 var request = require("request");
 var os = require('os');
 var exec = require('child_process').exec;
-var service_tag = null;
+var SERVICE_TAG = getServiceTag();
 
 const sessions = require('./sessionCache');
 
@@ -114,11 +114,8 @@ function sessionStart(type, item, callback) {
 };
 
 function sessionUpdate(itemNumber, message, callback) {
-  //  console.log(itemNumber);
-   // console.log(message);
     let session = sessions.get(itemNumber);
-    console.log(session);
-    logSession(session, "Started", message);
+    logSession(session, "Started", message);    
     callback();
 };
 
@@ -173,14 +170,12 @@ function sessionFinish(itemNumber, details, callback) {
             });
         }
     } else {
-        if (details.complete) {
-           // console.log(session);
+        if (details.complete) {          
             logSession(session, "Completed", 'Refresh completed successfully.');
             session.SessionState = session.CurrentState = 'Completed';
             var uploaded = closeSession(session);
             callback({success: true, uploaded: uploaded });
-        } else {
-           // console.log(session);
+        } else {           
             logSession(session, "VerifyRefreshFailed", 'Refresh failed.');
             session.CurrentState = 'VerifyRefreshFailed';
             session.SessionState = 'Aborted';
@@ -211,15 +206,13 @@ function getServiceTag() {
 
 
 function initSession(device, diagnose_only=false) {        
-    session_device = {
-        
-    } 
+    let session_device = changeDeviceFormat(device); 
     let newSession = {
         "start_time" : new Date(),
         "end_time": null,
         "status": 'Incomplete',
         "diagnose_only": diagnose_only,
-        "device": device, 
+        "device": session_device, 
         "station": {
             "name": os.hostname(),
             "service_tag": SERVICE_TAG
@@ -227,13 +220,12 @@ function initSession(device, diagnose_only=false) {
         "logs": []
     };
 
-    sessions.set(device.InventoryNumber, newSession);
-   // console.log(sessions); 
+    sessions.set(device.InventoryNumber, newSession);   
 }
 
 
 function logSession(session, processState, message) {
-    console.log(session);
+    //console.log(session);
     logDate = new Date();
 
     logEntry = {};
@@ -248,10 +240,10 @@ function logSession(session, processState, message) {
     session.logs.push(logEntry);
 }
 
-function closeSession(itemNumber) {
+function closeSession(session) {
     
     console.log("closing session");
-    let session = sessions.get(itemNumber);
+    console.log(session);
     session.end_time = new Date(); 
     
     sendSession(session, 0)
@@ -286,6 +278,7 @@ function sendSession(session, attempt) {
                 }
             }
             else {
+                console.log(error);
                 resolve(body);
             }
         })
@@ -306,5 +299,32 @@ function filesExist(directory, files) {
             return false;
         }
     }
+}
+
+function changeDeviceFormat(device) {
+    let session_device = {};
+    for (var prop in device) {
+        if (device.hasOwnProperty(prop)) {            
+            switch (prop) {
+                case 'Sku':
+                    session_device.sku = device.Sku;                    
+                    break;
+                case 'InventoryNumber':
+                    session_device.item_number = device.InventoryNumber;                    
+                    break;
+                case 'Model':
+                    session_device.model = device.Model;                   
+                    break;
+                case 'Manufacturer':
+                    session_device.manufacturer = device.Manufacturer;                
+                    break;
+                case 'Serial':
+                    session_device.serial_number = device.Serial;                   
+                    break;
+                
+}
+    }
+}
+    return session_device;
 }
 
