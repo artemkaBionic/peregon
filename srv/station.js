@@ -7,6 +7,8 @@ var connectionState = null;
 var service_tag = getServiceTag();
 
 
+exports.service_tag = service_tag;
+
 exports.setConnectionState = function(state) {
     connectionState = state;
 };
@@ -46,7 +48,7 @@ exports.shutdown = function() {
     console.log('Shutdown requested.');
     if (!isDevelopment) {
         childProcess.spawn('python', ['/opt/powercontrol.py', '--poweroff']);
-    }  
+    }
 };
 
 function getServiceTag() {
@@ -55,7 +57,7 @@ function getServiceTag() {
         if (error) {
             console.log(error);
         }
-        if (!error) {                      
+        if (!error) {
             SERVICE_TAG = stdout;
         }
 });
