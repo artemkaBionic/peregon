@@ -8,11 +8,8 @@ var assert = require('assert');
 const Promise = require("bluebird");
 var request = require("request");
 var os = require('os');
-var exec = require('child_process').exec;
-var SERVICE_TAG = getServiceTag();
-
+var station = require('./station');
 const sessions = require('./sessionCache');
-
 
 
 const MONGO_DB_URL = 'mongodb://localhost/AppChord?connectTimeoutMS=30000';
@@ -20,8 +17,6 @@ const INVENTORY_LOOKUP_URL = 'https://' + config.apiHost + '/api/inventorylookup
 const API_URL ='https://api2.basechord.com';
 const API_RETRIES = 3;
 const API_RETRY_DELAY = 1000;
-
-
 
 
 var isDevelopment = process.env.NODE_ENV === 'development';
@@ -36,6 +31,7 @@ exports.resendSession = resendSession;
 exports.getItem = getItem;
 exports.lockAndroid = lockAndroid;
 exports.unlockAndroid = unlockAndroid;
+
 
 
 function getItem(id, callback) {
@@ -152,14 +148,14 @@ function sessionFinish(itemNumber, details, callback) {
                             rimraf(path.join(mountTarget, '*'), function(err) {
                                 childProcess.spawn('umount', [mountTarget]);
                                 if (success) {
-                                    logSession(session, "Completed", 'Refresh completed successfully.');
-                                    session.SessionState = session.CurrentState = 'Completed';
+                                    logSession(session, "Success", 'Refresh completed successfully.');
+                                    session.SessionState = session.CurrentState = 'Success';
                                     var uploaded = closeSession(session);
                                     callback({success: true, uploaded: uploaded });
                                 } else {
                                     logSession(session, "VerifyRefreshFailed", 'Refresh failed.');
                                     session.CurrentState = 'VerifyRefreshFailed';
-                                    session.SessionState = 'Aborted';
+                                    session.SessionState = 'Fail';
                                      var uploaded = closeSession(session);
                                     callback({success: false, uploaded: uploaded });
                                 }
@@ -171,14 +167,14 @@ function sessionFinish(itemNumber, details, callback) {
         }
     } else {
         if (details.complete) {          
-            logSession(session, "Completed", 'Refresh completed successfully.');
-            session.SessionState = session.CurrentState = 'Completed';
+            logSession(session, "Success", 'Refresh completed successfully.');
+            session.SessionState = session.CurrentState = 'Success';
             var uploaded = closeSession(session);
             callback({success: true, uploaded: uploaded });
         } else {           
             logSession(session, "VerifyRefreshFailed", 'Refresh failed.');
             session.CurrentState = 'VerifyRefreshFailed';
-            session.SessionState = 'Aborted';
+            session.SessionState = 'Fail';
             var uploaded = closeSession(session);
             callback({success: false, uploaded: uploaded });
         }
@@ -188,21 +184,10 @@ function sessionFinish(itemNumber, details, callback) {
 function resendSession(itemNumber, callback) {
         let session = sessions.get(itemNumber);
         var uploaded = sendSession(session);
-        callback({success: session.SessionState = 'Completed', uploaded: uploaded });
+        callback({success: session.SessionState = 'Success', uploaded: uploaded });
 }
 
-//Get Station ServiceTAG
-function getServiceTag() {
-    var cmd = 'dmidecode -s system-serial-number';
-    exec(cmd, function(error, stdout, stderr) {
-        if (error) {
-            console.log(error);
-        }
-        if (!error) {                      
-            SERVICE_TAG = stdout;
-        }
-});
-}
+
 
 
 function initSession(device, diagnose_only=false) {        
@@ -215,7 +200,7 @@ function initSession(device, diagnose_only=false) {
         "device": session_device, 
         "station": {
             "name": os.hostname(),
-            "service_tag": SERVICE_TAG
+            "service_tag": station.service_tag
         },
         "logs": []
     };
@@ -264,7 +249,7 @@ function sendSession(session, attempt) {
             method: 'POST',
             url: API_URL + '/session',
             headers: {
-                'Authorization': config.api3Authorization
+                'Authorization': config.api2Authorization
             },
             body: session,
             rejectUnauthorized: false,
