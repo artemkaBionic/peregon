@@ -76,7 +76,7 @@
             var url = '/data/inventory/session/start';
             var deferred = $q.defer();
 
-            $http.post(url, {'type': type, 'item': item}).then(function(result) {
+            $http.post(url, {'type': type, 'item': item}).then(function(result) {                
                 deferred.resolve(result.data);
             });
 
