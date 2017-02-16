@@ -54,8 +54,7 @@ describe('android_session', function () {
 
             });
     })
-    it('should convert device object to AWS API format', function () {
-    
+    it('should convert device object to AWS API format', function () {    
         var device = {
             InventoryNumber: '1302762807',
             Manufacturer: 'Samsung',
