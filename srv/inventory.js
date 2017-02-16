@@ -111,7 +111,7 @@ function sessionStart(type, item, callback) {
 
 function sessionUpdate(itemNumber, message, callback) {
     let session = sessions.get(itemNumber);
-    logSession(session, "Started", message);    
+    logSession(session, "Started", message);
     callback();
 };
 
@@ -166,12 +166,12 @@ function sessionFinish(itemNumber, details, callback) {
             });
         }
     } else {
-        if (details.complete) {          
+        if (details.complete) {
             logSession(session, "Success", 'Refresh completed successfully.');
             session.SessionState = session.CurrentState = 'Success';
             var uploaded = closeSession(session);
             callback({success: true, uploaded: uploaded });
-        } else {           
+        } else {
             logSession(session, "VerifyRefreshFailed", 'Refresh failed.');
             session.CurrentState = 'VerifyRefreshFailed';
             session.SessionState = 'Fail';
@@ -190,14 +190,14 @@ function resendSession(itemNumber, callback) {
 
 
 
-function initSession(device, diagnose_only=false) {        
-    let session_device = changeDeviceFormat(device); 
+function initSession(device, diagnose_only=false) {
+    let session_device = changeDeviceFormat(device);
     let newSession = {
         "start_time" : new Date(),
         "end_time": null,
         "status": 'Incomplete',
         "diagnose_only": diagnose_only,
-        "device": session_device, 
+        "device": session_device,
         "station": {
             "name": os.hostname(),
             "service_tag": station.service_tag
@@ -205,44 +205,44 @@ function initSession(device, diagnose_only=false) {
         "logs": []
     };
 
-    sessions.set(device.InventoryNumber, newSession);   
+    sessions.set(device.InventoryNumber, newSession);
 }
 
 
-function logSession(session, processState, message) {
+function logSession(session, status, message) {
     //console.log(session);
     logDate = new Date();
 
-    logEntry = {};
-    logEntry.Importance = "Info";
-    logEntry.TimeStamp = logDate;
-    logEntry.LogTimeStamp = logDate;
-    logEntry.Details = null;
-    logEntry.ProcessState = processState;
-    logEntry.Message = message;
+    let logEntry = {
+        "message": message,
+        "details": null,
+        "timestamp": logDate,
+        "level": "Info",
+        "status": status
+    };
 
-    session.LastUpdated = new Date();
+    session.LastUpdated = logDate;
     session.logs.push(logEntry);
 }
 
 function closeSession(session) {
-    
+
     console.log("closing session");
     console.log(session);
-    session.end_time = new Date(); 
-    
+    session.end_time = new Date();
+
     sendSession(session, 0)
         .then(function (body) {
             if (body)
 
             console.log(body);
         })
-        .catch(function (e) { console.log(e); }); 
+        .catch(function (e) { console.log(e); });
 }
 
 function sendSession(session, attempt) {
     console.log("Start sending");
-    
+
     return new Promise((resolve,reject) => {
        // console.log(realtime_session);
         request({
@@ -289,24 +289,24 @@ function filesExist(directory, files) {
 function changeDeviceFormat(device) {
     let session_device = {};
     for (var prop in device) {
-        if (device.hasOwnProperty(prop)) {            
+        if (device.hasOwnProperty(prop)) {
             switch (prop) {
                 case 'Sku':
-                    session_device.sku = device.Sku;                    
+                    session_device.sku = device.Sku;
                     break;
                 case 'InventoryNumber':
-                    session_device.item_number = device.InventoryNumber;                    
+                    session_device.item_number = device.InventoryNumber;
                     break;
                 case 'Model':
-                    session_device.model = device.Model;                   
+                    session_device.model = device.Model;
                     break;
                 case 'Manufacturer':
-                    session_device.manufacturer = device.Manufacturer;                
+                    session_device.manufacturer = device.Manufacturer;
                     break;
                 case 'Serial':
-                    session_device.serial_number = device.Serial;                   
+                    session_device.serial_number = device.Serial;
                     break;
-                
+
 }
     }
 }
