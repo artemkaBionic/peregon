@@ -1,4 +1,4 @@
-<horizontal-ui-sheet class="apc-sheet-full">
+<horizontal-ui-sheet class="apc-sheet-full guide-pc">
   <header class="guide-header">
     <div class="row header-row">
       <div class="col-sm-6 header-col">
@@ -17,6 +17,8 @@
     </div>
   </header>
   <div horizontal-ui-sheet-content>
-    <iframe class="content-frame" ng-src="{{::vm.guideUrl}}"></iframe>
+    <div ng-switch="vm.step.name" class="row wizard">
+
+    </div>
   </div>
 </horizontal-ui-sheet>

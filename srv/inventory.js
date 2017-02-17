@@ -58,17 +58,17 @@ function initSession(manufacturer, model, serialNumber, itemNumber, sku) {
 
 function updateSessionDb(session) {
     if (!isDevelopment) {
-        mongoClient.connect(MONGO_DB_URL, function (err, db) {
+        mongoClient.connect(MONGO_DB_URL, function(err, db) {
             assert.equal(err, null);
             if (session._id === undefined) {
-                db.collection('RefreshSessions').insertOne(session, function (err, result) {
+                db.collection('RefreshSessions').insertOne(session, function(err, result) {
                     assert.equal(err, null);
                     console.log('Inserted refresh session:');
                     console.log(session);
                     db.close();
                 });
             } else {
-                db.collection('RefreshSessions').replaceOne({"_id": session._id}, session, function (err, result) {
+                db.collection('RefreshSessions').replaceOne({"_id": session._id}, session, function(err, result) {
                     assert.equal(err, null);
                     console.log('Updated refresh session:');
                     console.log(session);
@@ -126,7 +126,7 @@ exports.getItem = function(id, callback) {
         },
         rejectUnauthorized: false,
         json: true
-    }, function (error, response, body) {
+    }, function(error, response, body) {
         if (error) {
             console.error(error);
             callback({error: error, item: null});
@@ -149,7 +149,7 @@ exports.lockAndroid = function(imei, callback) {
         body: {'IMEI': imei},
         rejectUnauthorized: false,
         json: true
-    }, function (error, response, body) {
+    }, function(error, response, body) {
         if (error) {
             console.error(error);
             callback({error: error, result: null});
@@ -173,7 +173,7 @@ exports.unlockAndroid = function(imei, callback) {
         body: {'IMEI': imei},
         rejectUnauthorized: false,
         json: true
-    }, function (error, response, body) {
+    }, function(error, response, body) {
         if (error) {
             console.error(error);
             callback({error: error, result: null});
@@ -198,7 +198,7 @@ exports.sessionUpdate = function(message, callback) {
     callback();
 };
 
-exports.sessionFinish = function (details, callback) {
+exports.sessionFinish = function(details, callback) {
     console.log('A client requested to finish an ' + sessionType + ' refresh of item number ' + session.Computer.ItemNumber);
     if (sessionType === 'xbox-one') {
         if (isDevelopment) {
@@ -217,7 +217,7 @@ exports.sessionFinish = function (details, callback) {
                 } else {
                     logSession(session, "Started", 'Attempting to mount ' + mountSource + ' to ' + mountTarget);
                     var mount = childProcess.spawn('mount', [mountSource, mountTarget]);
-                    mount.on('close', function (code) {
+                    mount.on('close', function(code) {
                         var systemUpdateDir = path.join(mountTarget, '$SystemUpdate');
                         if (code !== 0) {
                             logSession(session, "Started", 'Error, failed to mount ' + mountSource + ' to ' + mountTarget);

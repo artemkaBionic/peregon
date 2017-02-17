@@ -5,17 +5,19 @@
         .module('app.user')
         .controller('UserController', UserController);
 
-    UserController.$inject = ['$q', '$state', 'config', '$http', 'inventoryService', '$uibModal', 'guideService', 'eventService', 'stationService'];
+    UserController.$inject = ['$q', '$state', 'config', '$http', 'inventoryService', '$uibModal', 'guideService', 'socketService', 'stationService', 'eventService', '$scope'];
 
-    function UserController($q, $state, config, $http, inventoryService, $uibModal, guideService, eventService, stationService) {
+    function UserController($q, $state, config, $http, inventoryService, $uibModal, guideService, socketService, stationService, eventService, $scope) {
         /*jshint validthis: true */
         var vm = this;
         vm.ready = false;
         vm.searchString = '';
         vm.item = null;
         vm.guide = null;
-
+        vm.AndroidEmei = null;
+        vm.itemNumberError = false;
         vm.searchStringChange = function() {
+            vm.itemNumberError = false;
             if (config.itemNumberRegEx.test(vm.searchString)) {
                 vm.item = null;
                 inventoryService.getItem(vm.searchString).then(function(item) {
@@ -25,10 +27,15 @@
                             vm.guide = guide;
                         });
                     }
-                });
+                }, vm.checkItem);
+
             } else {
                 vm.item = null;
             }
+        };
+
+        vm.checkItem = function() {
+            vm.itemNumberError = true;
         };
 
         vm.showGuide = function() {
@@ -36,12 +43,41 @@
                 var $stateParams = {};
                 $stateParams.itemNumber = vm.item.InventoryNumber;
                 $state.go('root.user.guide', $stateParams);
-                vm.searchString = null;
+                vm.searchString = '';
                 vm.item = null;
             }
         };
 
+        vm.searchStringCheck = function() {
+            if (vm.searchString != null)
+                return vm.searchString
+        };
+
+        $scope.$watch(vm.searchStringCheck, vm.searchStringChange);
+
         activate();
+
+        //=========== Start Working on catching the Android Connect before ItemNumber entered==========
+        socketService.on('app-start', function(data) {
+                // if (!eventService.AndroidGuideInProcess) {
+                //    // =======Code for getting SKU when the Android EMEI is known========
+                //     vm.AndroidEmei = event.data.emei;
+                //     console.log(data.emei);
+                //     inventoryService.getItem(vm.AndroidEmei).then(function(item) {
+                //         vm.item = item;
+                //        // vm.searchString
+                //         if (item.Sku) {
+                //             guideService.getGuide(item.Sku).then(function(guide) {
+                //                 vm.guide = guide;
+                //             });
+                //         }
+                //     });
+                //     vm.showGuide();
+                //     console.log('User.js Event app-start');
+                //
+           // }
+        });
+        //=========== End Working on catching the Android Connect before ItemNumber entered==========
 
         function activate() {
             var queries = [loadData()];
@@ -49,31 +85,7 @@
                 vm.ready = true;
             });
         }
-
         function loadData() {
         }
-// Help Modal Window with Item Number
-
-        if (vm.modalWindow) {
-            vm.eventDispatcher.dispatch();
-        }
-
-        vm.eventDispatcher = {
-            listen: function(callback) {
-                this._callback = callback;
-            },
-            dispatch: function() {
-                this._callback();
-            }
-        };
-        vm.showItemNumber = function() {
-
-            if (vm.modalWindow) {
-                vm.modalWindow.dismiss();
-            }
-            vm.modalWindow = $uibModal.open({templateUrl: 'app/user/item_number/item_number.html',
-                size: 'sm'
-            });
-        };
     }
 })();

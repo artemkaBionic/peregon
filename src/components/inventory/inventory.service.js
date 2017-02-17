@@ -8,9 +8,9 @@
         .module('app.inventory')
         .factory('inventoryService', inventoryService);
 
-    inventoryService.$inject = ['$q', '$http', 'stationService'];
+    inventoryService.$inject = ['$q', '$http', 'stationService', 'toastr'];
 
-    function inventoryService($q, $http, stationService) {
+    function inventoryService($q, $http, stationService, toastr) {
 
         var service = {};
 
@@ -19,7 +19,6 @@
         function isValidItem(item) {
             return item && item.Sku;
         }
-
         service.getItem = function(id) {
             var url = '/data/inventory/' + id;
             var deferred = $q.defer();
@@ -31,18 +30,48 @@
                     if (result.data.error) {
                         stationService.getConnectionState().then(function(connectionState) {
                             if (connectionState.isOnline) {
-                                throw(new Error('Item number not found. Please check the number and try again.'));
+                                service.ErrorToast = true;
+                                // toastr.clear(service.ErrorToast);
+                                // service.ErrorToast = toastr.error('Check the ItemNumber','Item not found.', {
+                                //     'timeOut': 2000,
+                                //     'extendedTimeOut': 2000,
+                                //     'tapToDismiss': false,
+                                //     'newest-on-top': false,
+                                //     'closeButton': true
+                                // });
+                               console.log('Item number not found. Please check the number and try again.');
                             } else {
-                                throw(new Error('Unable to lookup item because the Station is Offline.'));
+                                service.ErrorToast = true;
+                                // toastr.clear(service.ErrorToast);
+                                // service.ErrorToast = toastr.error('Refresh Station is Offline','Unable to lookup item', {
+                                //     'timeOut': 2000,
+                                //     'extendedTimeOut': 2000,
+                                //     'tapToDismiss': false,
+                                //     'newest-on-top': false,
+                                //     'closeButton': true
+                                // });
+                                console.log('Unable to lookup item because the Station is Offline.');
                             }
                         });
                     }
+
                     else if (isValidItem(result.data.item)) {
                         service.items[id] = result.data.item;
                         deferred.resolve(result.data.item);
                     }
+
                     else {
-                        throw(new Error('Item not found. Please try again.'));
+                        deferred.reject();
+                        service.ErrorToast = true;
+                        // toastr.clear(service.ErrorToast);
+                        // service.ErrorToast = toastr.error('Please try again','Item not found', {
+                        //     'timeOut': 2000,
+                        //     'extendedTimeOut': 2000,
+                        //     'tapToDismiss': false,
+                        //     'newest-on-top':false,
+                        //     'closeButton': true
+                        // });
+                       console.log('Item not found. Please try again.');
                     }
                 });
             }

@@ -5,15 +5,16 @@
         .module('app.user')
         .controller('GuideControllerAndroid', GuideControllerAndroid);
 
-    GuideControllerAndroid.$inject = ['$q', '$scope', 'socketService', '$state', 'popupLauncher', 'toastr', '$timeout', 'inventoryService', 'item'];
+    GuideControllerAndroid.$inject = ['$q', '$scope', 'socketService', '$state', 'popupLauncher', 'toastr', '$timeout', 'inventoryService', 'item', 'eventService'];
 
-    function GuideControllerAndroid($q, $scope, socketService, $state, popupLauncher, toastr, $timeout, inventoryService, item) {
+    function GuideControllerAndroid($q, $scope, socketService, $state, popupLauncher, toastr, $timeout, inventoryService, item, eventService) {
 
         /*jshint validthis: true */
         var vm = this;
         var timeouts = [];
         vm.item = item;
         vm.step = null;
+        eventService.AndroidGuideInProcess = true;
         /*=================Checking for Android Refresh process finished to lock the device===============*/
         $scope.$on('$destroy', function() {
             if (!vm.androidFinished) {
@@ -29,6 +30,7 @@
         vm.activate = function() {
             vm.androidFinished = false;//Gonna be 'true' when finish
             vm.deviceLockService = 'none';
+            vm.AndroidDisconnected = false;
             vm.deviceLockServiceUnlocked = false;
             vm.refreshAppStarted = false;
             vm.PowerGood = false;
@@ -49,6 +51,10 @@
             vm.manualPassed = 0;
             vm.failedTests = [];
             vm.step = vm.steps.startOne; //!!! Definition for first Guide Step
+
+            if (eventService.InternetConnection){
+                toastr.clear(eventService.connectionNotification);
+            }
 
             timeouts.push($timeout(vm.sessionExpired,3600000)); //Session expires after an hour after the start
             var queries = [inventoryService.startSession('android', item), unlockDevice()];
@@ -136,7 +142,7 @@
             finishFail: {
                 name: 'finishFail',
                 number: 10,
-                title: 'Ship device to Aaron\u0027s Service Center for repair'
+                title: 'Refresh failed.'
             },
             sessionExpired: {
                 name: 'sessionExpired',
@@ -204,10 +210,18 @@
             }
         }
 
+        vm.preparationOne = function() {
+            vm.NotLocked = false;
+            vm.NotConnected = false;
+            vm.Wifi = false;
+            vm.UsbDebug = false;
+            vm.step = vm.steps.preparationOne;
+        };
+
         vm.preparationFour = function() {
             vm.buttonBackShow = false;
             vm.step = vm.steps.preparationFour;
-            timeouts.push($timeout(vm.buttonBack,15000));
+            timeouts.push($timeout(vm.buttonBack,20000));
         };
 
         function waitForAppStart() {
@@ -251,6 +265,7 @@
         };
 
         vm.finish = function() {
+            eventService.AndroidGuideInProcess = false;
             vm.androidFinished = true;
             if (vm.TestsFault || vm.Broken || vm.AndroidDisconnected){
                 vm.finishFail();
@@ -395,8 +410,8 @@
         /*=================USB Connect end Events===============*/
         waitForAndroidAdd();//Event listener
         function waitForAndroidAdd() {
-            socketService.on('event', function(event) {
-                if (event.name === 'android-add') {
+            socketService.on('android-add', function() {
+
                     inventoryService.updateSession('Android device connected.');
                     vm.AndroidDisconnected = false;
                    toastr.clear(vm.AndroidNotification);
@@ -411,9 +426,8 @@
                     else {
                         waitForAppStart();
                     }
-                }
-
-                if (event.name === 'android-remove') {
+            });
+            socketService.on('android-remove', function() {
                     toastr.clear(vm.AndroidNotification);
                     if (vm.androidFinished){
                         vm.AndroidNotification = toastr.info('Refresh completed', 'Android Device has been Disconnected', {
@@ -427,45 +441,45 @@
                         vm.AndroidConnectionCheck();
                         timeouts.push($timeout(vm.preparationFour,500));
                     }
-                }
+            });
 
-                if (event.name === 'app-start') {
+                socketService.on('app-start', function(data) {
                     inventoryService.updateSession('Android refresh app has started.');
-                    vm.autoSize = event.data.data.auto;//Get number of Auto tests
-                    vm.manualSize = event.data.data.manual;//Get number of Manual tests
+                    vm.autoSize = data.data.auto;//Get number of Auto tests
+                    vm.manualSize = data.data.manual;//Get number of Manual tests
                     vm.refreshAppStarted = true;
                     if (vm.step === vm.steps.waitForAppStart) {
                         vm.diagnosticOne();
                     }
-                }
+                });
 
-                if (event.name === 'android-test') {
-                    var message = event.data.commandName + ' ' + (event.data.passed ? 'passed' : 'failed') + '\n' + JSON.stringify(event.data.data, null, 2);
+            socketService.on('android-test', function(data) {
+                    var message = data.commandName + ' ' + (data.passed ? 'passed' : 'failed') + '\n' + JSON.stringify(data.data, null, 2);
                     inventoryService.updateSession(message);
 
-                    if (event.data.passed === false) {
+                    if (data.passed === false) {
                         vm.TestsFault = true;//If one of the Auto tests Fails
-                        vm.failedTests.push(event.data.commandName);
+                        vm.failedTests.push(data.commandName);
                     }
 
-                    if (event.data.type === 1) {
+                    if (data.type === 1) {
                         if (vm.step !== vm.steps.diagnosticOne){
                             vm.diagnosticOne();//Starting Auto diagnostic from the beginning
                         } // Phone can be connected even on the first Step, if lazy associate
                         progressAuto();
                     }
 
-                    if (event.data.type === 0) {
+                    if (data.type === 0) {
                         if (vm.step !== vm.steps.diagnosticTwo){
                             vm.diagnosticTwo();//Starting Manual diagnostic from the beginning
                         }
                         progressManual();
                     }
-                }
-                if (event.name === 'android-reset') {
+                });
+
+            socketService.on('android-reset', function(data) {
                     inventoryService.updateSession('Android refresh app has initiated a factory reset.');
                     vm.finish();
-                }
             });
         }
         /*=================End USB Connect end Events===============*/
@@ -478,14 +492,15 @@
         };
         vm.AndroidConnectionCheck = function() {
             vm.AndroidNotification = toastr.info('Connect the device to start over the diagnostics', 'Android Device has been Disconnected', {
-                'tapToDismiss': false,
-                'timeOut': 60000,
-                'extendedTimeOut': 0,
+                'tapToDismiss': true,
+                'timeOut': 6000,
+                'extendedTimeOut': 3000,
                 'closeButton': true
             });
             //Toast Pop-Up notification parameters
             timeouts.push($timeout(vm.AndroidConnectionDoubleCheck,60000));
         };
+        vm.TestsFault = true;
         vm.activate();
         /*=================Android Disconnected Actions===============*/
     }

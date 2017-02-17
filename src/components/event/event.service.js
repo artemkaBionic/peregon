@@ -11,7 +11,9 @@
         var service = {};
 
         service.isDeviceNotificationEnabled = true;
-        var connectionNotification = null;
+        service.connectionNotification = null;
+        service.AndroidGuideInProcess = false;
+        service.InternetConnection = null;
         var deviceNotiviations = {};
 
         activate();
@@ -22,48 +24,19 @@
             });
         }
 
-        function deleteDeviceNotification(deviceId) {
-            toastr.clear(deviceNotiviations[deviceId]);
-            delete deviceNotiviations[deviceId];
-        }
-
-        socketService.on('event', function(event) {
-            /*var name = event.name.replace('-', '') + 'EventService';
-            var service = $injector.get(name);
-            service.run(event);*/
-
-            if (event.name === 'device-add') {
-                deleteDeviceNotification(event.data.id); //Prevent duplicate notifications for the same device
-                if (service.isDeviceNotificationEnabled) {
-                    deviceNotiviations[event.data.id] = toastr.info('Click here to choose what to do with the ' + event.data.type + ' disk.',
-                        'Removable ' + event.data.type + ' disk', {
-                            'timeOut': 0,
-                            'extendedTimeOut': 0,
-                            'tapToDismiss': false,
-                            'closeButton': true
-                        }
-                    );
-                }
-            }
-
-            else if (event.name === 'device-remove') {
-                deleteDeviceNotification(event.data.id);
-            }
-
-            else if (event.name === 'connection-status') {
-                processConnectionState(event.data);
-            }
-
-            else if (event.name === 'power-button') {
-                openPowerModal();
-            }
-
+        socketService.on('connection-status', function(data) {
+            processConnectionState(data);
         });
 
+        socketService.on('power-button', function() {
+            openPowerModal();
+        });
+
+        //==================Start - We are currently not using Media on the Station=======================
         socketService.on('device-apply-progress', function(data) {
             if (data.progress >= 100) {
                 if (service.isDeviceNotificationEnabled) {
-                    var toast = toastr.success('Media has been successfully applied, you may remove the device.',
+                    var toast = toastr.info('Media has been successfully applied, you may remove the device.',
                         'Apply Media Complete', {
                             'timeOut': 0
                         }
@@ -76,6 +49,7 @@
                 }
             }
         });
+        //==================End - We are currently not using Media on the Station=======================
 
         service.EnableDeviceNotification = function() {
             service.isDeviceNotificationEnabled = true;
@@ -95,25 +69,19 @@
                 if (service.modalWindow) {
                     service.eventDispatcher.dispatch();
                 }
-
-                toastr.clear(connectionNotification);
-                connectionNotification = toastr.success('Currently Connected to Internet','Station Status: Online', {
-                    'timeOut': 0,
-                    'newest-on-top':false,
-                    'extendedTimeOut': 0,
-                    'tapToDismiss': false,
-                    'closeButton': false
-
-                });
+                service.InternetConnection = true;
+                toastr.clear(service.connectionNotification);
             }
 
             else {
-                toastr.clear(connectionNotification);
-                connectionNotification = toastr.error('Click here for more information','Station Status: Offline.', {
+                console.log('show error');
+                toastr.clear(service.connectionNotification);
+                service.InternetConnection = false;
+                service.connectionNotification = toastr.error('Click here for more information','Station Status: Offline.', {
                     'timeOut': 0,
                     'extendedTimeOut': 0,
                     'tapToDismiss': false,
-                    'newest-on-top':false,
+                    'newest-on-top': false,
                     'closeButton': false,
                     'onShown': function() {
                         openModal(connectionState);

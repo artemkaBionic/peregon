@@ -132,7 +132,7 @@ module.exports = function(io, data) {
             station.setConnectionState(event.data);
         }
 
-        io.emit('event', event);
+        io.emit(event.name, event.data);
         res.json();
     });
 

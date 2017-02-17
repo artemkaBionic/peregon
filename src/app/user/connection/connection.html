@@ -19,8 +19,8 @@
 
   <div ng-switch="vm.step.name" class="row center wizard-modal">
 
-    <div ng-switch-when="connect">
-      <div class="row modal-contents">
+    <div ng-switch-when="selectNetworkDevice">
+      <div class="row modal-contents connection-select-device">
         <p>What should your Refresh Station be plugged into?</p>
         <p>Can't decide?</p>
         <ul>
@@ -50,7 +50,7 @@
       <div class="row modal-contents">
         <div ng-if="vm.connectionState.displayDescription == null">
           <p>Please connect the Refresh Station to:<br/>port <strong>{{vm.selectedNetworkDevice.correctPort}}</strong>
-            of the <strong>{{vm.selectedNetworkDevice.displayDescription}}</strong> (see wiring diagram).</p>
+            of the <strong>{{vm.selectedNetworkDevice.displayDescription}}</strong> (see diagram).</p>
         </div>
         <div ng-if="vm.connectionState.displayDescription != null">
           <div ng-if="vm.connectionState.displayDescription == vm.selectedNetworkDevice.displayDescription && vm.connectionState.port == vm.selectedNetworkDevice.correctPort">
@@ -64,7 +64,7 @@
               <span ng-show="vm.connectionState.isPortDetectable">port <strong>{{vm.connectionState.port}}</strong> of </span>the <strong>{{vm.connectionState.displayDescription}}</strong>.
             </p>
             <p>Please connect it to:<br/>port <strong>{{vm.selectedNetworkDevice.correctPort}}</strong> of the
-              <strong>{{vm.selectedNetworkDevice.displayDescription}}</strong> (see wiring diagram).</p>
+              <strong>{{vm.selectedNetworkDevice.displayDescription}}</strong> (see diagram).</p>
           </div>
         </div>
       </div>
@@ -88,6 +88,6 @@
       <span ng-if="vm.isFinished">OK</span>
       <span ng-if="!vm.isFinished">Dismiss</span>
     </button>
-    <p>If you need help, please call the National Support Center at (678) 402-0015.</p>
+    <p>If you need help, please call the National Support Center at <br/> (678) 402-0015.</p>
   </div>
 </horizontal-ui-sheet>
