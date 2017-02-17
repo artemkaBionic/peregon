@@ -38,7 +38,7 @@
             vm.ButtonsGood = false;
             vm.Broken = false; //The reason for the transition to the Fail finish
             vm.NotLocked = false;
-            vm.NotConnected = false;
+            //vm.NotConnected = false;
             vm.Wifi = false;
             vm.UsbDebug = false;
             vm.buttonBackShow = false; //If Checkboxes passed but device not connected
@@ -173,11 +173,11 @@
                 number: 2,
                 title: 'Disable any Android locks'
             },
-            googleAccount: {
+            /*googleAccount: {
                 name: 'googleAccount',
                 number: 3,
                 title: 'Remove Google account'
-            },
+            },*/
             usbDebug: {
                 name: 'usbDebug',
                 number: 4,
@@ -212,7 +212,7 @@
 
         vm.preparationOne = function() {
             vm.NotLocked = false;
-            vm.NotConnected = false;
+            //vm.NotConnected = false;
             vm.Wifi = false;
             vm.UsbDebug = false;
             vm.step = vm.steps.preparationOne;
@@ -296,10 +296,10 @@
             vm.ModalStep = vm.ModalSteps.unlock;
             vm.openModal('lg');
         };
-        vm.modalGoogleAccount = function() {
+        /*vm.modalGoogleAccount = function() {
             vm.ModalStep = vm.ModalSteps.googleAccount;
             vm.openModal('lg');
-        };
+        };*/
         vm.modalUsbDebug = function() {
             vm.ModalStep = vm.ModalSteps.usbDebug;
             vm.openModal('lg');
@@ -355,7 +355,7 @@
         /*=================Preparation===============*/
 
         vm.startPreparation = function() {
-            if (vm.NotLocked && vm.NotConnected && vm.Wifi && vm.UsbDebug) {
+            if (vm.NotLocked && vm.Wifi && vm.UsbDebug) {
                 timeouts.push($timeout(vm.preparationFour,500));
             }
         }; // Preparation Toggles function

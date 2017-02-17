@@ -167,7 +167,7 @@
               </div>
             </div>
 
-            <div class="row">
+            <!--<div class="row">
               <div class="col-md-2">
               </div>
               <div class="col-md-8 col-xs-10 inspection-tap" ng-class="vm.NotConnected ? 'inspection-tap-checked' : ''"
@@ -181,7 +181,7 @@
               <div class="col-md-2 col-xs-2 inspection-ask">
                 <i ng-click="vm.modalGoogleAccount()" class="fa fa-question-circle" aria-hidden="true"></i>
               </div>
-            </div>
+            </div>-->
 
             <div class="row">
               <div class="col-md-2">
@@ -201,8 +201,7 @@
 
           </div>
           <div class="row nav-btn">
-            <button ng-disabled="!(vm.NotConnected && vm.NotLocked && vm.Wifi && vm.UsbDebug)"
-                    class="btn btn-primary btn-rounded center" type="submit">
+            <button ng-disabled="!(vm.NotLocked && vm.Wifi && vm.UsbDebug)" class="btn btn-primary btn-rounded center" type="submit">
               <strong>Next</strong> <i class="fa fa-caret-right"></i>
             </button>
           </div>
