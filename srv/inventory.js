@@ -6,7 +6,7 @@ var config = require('./config');
 var mongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
 const Promise = require("bluebird");
-var request = require("request");
+var request = require("requestretry");
 var os = require('os');
 var station = require('./station');
 const sessions = require('./sessionCache');
@@ -23,15 +23,14 @@ var isDevelopment = process.env.NODE_ENV === 'development';
 var sessionTypes = {};
 var result = null;
 
+
 exports.sessionStart = sessionStart;
 exports.sessionUpdate = sessionUpdate;
 exports.sessionFinish = sessionFinish;
 exports.resendSession = resendSession;
-
 exports.getItem = getItem;
 exports.lockAndroid = lockAndroid;
 exports.unlockAndroid = unlockAndroid;
-
 
 
 function getItem(id, callback) {
@@ -53,7 +52,7 @@ function getItem(id, callback) {
             callback({error: null, item: body});
         }
     });
-};
+}
 
 function lockAndroid(imei, callback) {
     request({
@@ -77,7 +76,7 @@ function lockAndroid(imei, callback) {
         }
     });
     console.log('Lock request has been sent');
-};
+}
 
 function unlockAndroid(imei, callback) {
     request({
@@ -101,19 +100,19 @@ function unlockAndroid(imei, callback) {
         }
     });
     console.log('Unlock request has been sent');
-};
+}
 
 function sessionStart(type, item, callback) {
     sessionTypes[item.InventoryNumber] = type;
     initSession(item);
     callback();
-};
+}
 
 function sessionUpdate(itemNumber, message, callback) {
     let session = sessions.get(itemNumber);
     logSession(session, "Started", message);
     callback();
-};
+}
 
 function sessionFinish(itemNumber, details, callback) {
 
@@ -122,9 +121,12 @@ function sessionFinish(itemNumber, details, callback) {
     console.log('A client requested to finish an ' + sessionTypes[itemNumber] + ' refresh of item number ' + itemNumber);
     if (sessionTypes[itemNumber] === 'xbox-one') {
         if (isDevelopment) {
+            logSession(session, "Started", 'Checking ' + details.device.id + ' for evidence that the refresh completed successfully.');
+            logSession(session, "Started", 'Simulating verifying a refresh in a development environment by waiting 3 seconds.');
             console.log('Simulating verifying a refresh in a development environment by waiting 3 seconds.');
             setTimeout(function() {
-                callback({success: true, device: details.device});
+                logSession(session, "Success", 'Refresh completed successfully.');
+                closeSession(session, callback);
             }, 3000);
         } else {
             logSession(session, "Started", 'Checking ' + details.device.id + ' for evidence that the refresh completed successfully.');
@@ -150,14 +152,12 @@ function sessionFinish(itemNumber, details, callback) {
                                 if (success) {
                                     logSession(session, "Success", 'Refresh completed successfully.');
                                     session.SessionState = session.CurrentState = 'Success';
-                                    var uploaded = closeSession(session);
-                                    callback({success: true, uploaded: uploaded });
+                                    closeSession(session, callback);
                                 } else {
                                     logSession(session, "VerifyRefreshFailed", 'Refresh failed.');
                                     session.CurrentState = 'VerifyRefreshFailed';
                                     session.SessionState = 'Fail';
-                                     var uploaded = closeSession(session);
-                                    callback({success: false, uploaded: uploaded });
+                                    closeSession(session, callback);
                                 }
                             });
                         }
@@ -169,26 +169,15 @@ function sessionFinish(itemNumber, details, callback) {
         if (details.complete) {
             logSession(session, "Success", 'Refresh completed successfully.');
             session.SessionState = session.CurrentState = 'Success';
-            var uploaded = closeSession(session);
-            callback({success: true, uploaded: uploaded });
+            closeSession(session, callback);
         } else {
             logSession(session, "VerifyRefreshFailed", 'Refresh failed.');
             session.CurrentState = 'VerifyRefreshFailed';
             session.SessionState = 'Fail';
-            var uploaded = closeSession(session);
-            callback({success: false, uploaded: uploaded });
+            closeSession(session, callback);
         }
     }
-};
-
-function resendSession(itemNumber, callback) {
-        let session = sessions.get(itemNumber);
-        var uploaded = sendSession(session);
-        callback({success: session.SessionState = 'Success', uploaded: uploaded });
 }
-
-
-
 
 function initSession(device, diagnose_only=false) {
     let session_device = changeDeviceFormat(device);
@@ -208,10 +197,8 @@ function initSession(device, diagnose_only=false) {
     sessions.set(device.InventoryNumber, newSession);
 }
 
-
 function logSession(session, status, message) {
-    //console.log(session);
-    logDate = new Date();
+    let logDate = new Date();
 
     let logEntry = {
         "message": message,
@@ -225,50 +212,37 @@ function logSession(session, status, message) {
     session.logs.push(logEntry);
 }
 
-function closeSession(session) {
+function closeSession(session, callback) {
 
     console.log("closing session");
     console.log(session);
     session.end_time = new Date();
 
-    sendSession(session, 0)
-        .then(function (body) {
-            if (body)
-
-            console.log(body);
-        })
-        .catch(function (e) { console.log(e); });
+    sendSession(session, callback);
 }
 
-function sendSession(session, attempt) {
-    console.log("Start sending");
+function resendSession(itemNumber, callback) {
+    let session = sessions.get(itemNumber);
+    sendSession(session, callback);
+}
 
-    return new Promise((resolve,reject) => {
-       // console.log(realtime_session);
-        request({
-            method: 'POST',
-            url: API_URL + '/session',
-            headers: {
-                'Authorization': config.api2Authorization
-            },
-            body: session,
-            rejectUnauthorized: false,
-            json: true
-        }, (error, response, body) => {
-            if (error || (response.statusCode !== 200 && body === undefined)) {
-                if (attept < API_RETRIES) {
-                    return sendSession(session, attempt++);
-                } else {
-                    return reject(error);
-                }
-            }
-            else {
-                console.log(error);
-                resolve(body);
-            }
-        })
+function sendSession(session, callback) {
+    return request({
+        method: 'POST',
+        url: API_URL + '/session',
+        headers: {
+            'Authorization': config.api2Authorization
+        },
+        body: session,
+        rejectUnauthorized: false,
+        json: true
+    }).then(function (body) {
+        callback({success: session.SessionState = 'Success', sent: true });
+    }).catch(function (error) {
+        console.log('ERROR: Unable to send session.');
+        console.log(error);
+        callback({success: session.SessionState = 'Success', sent: false });
     });
-
 }
 
 function filesExist(directory, files) {
@@ -307,9 +281,8 @@ function changeDeviceFormat(device) {
                     session_device.serial_number = device.Serial;
                     break;
 
-}
+            }
+        }
     }
-}
     return session_device;
 }
-

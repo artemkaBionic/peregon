@@ -172,7 +172,12 @@
             data.device = vm.selectedDevice;
             inventoryService.finishSession(data).then(function(response) {
                 if (response.success) {
-                    vm.step = vm.steps.complete;
+                    if (response.sent) {
+                        vm.step = vm.steps.complete;
+                    } else {
+                        vm.errorMessage = 'Refresh session was not reported correctly.';
+                        vm.step = vm.steps.failed;
+                    }
                 } else {
                     vm.errorMessage = 'Factory reset did not complete correctly.';
                     vm.step = vm.steps.failed;

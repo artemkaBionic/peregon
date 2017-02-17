@@ -25,7 +25,7 @@
             var deferred = $q.defer();
 
             if (isValidItem(service.items[id])) {
-                deferred.resolve(service.items[id])
+                deferred.resolve(service.items[id]);
             } else {
                 $http.get(url).then(function(result) {
                     if (result.data.error) {
@@ -76,7 +76,7 @@
             var url = '/data/inventory/session/start';
             var deferred = $q.defer();
 
-            $http.post(url, {'type': type, 'item': item}).then(function(result) {                
+            $http.post(url, {'type': type, 'item': item}).then(function(result) {
                 deferred.resolve(result.data);
             });
 
@@ -100,7 +100,11 @@
             var deferred = $q.defer();
 
             $http.post(url, {'details': details, 'itemNumber': itemNumber}).then(function(result) {
-                deferred.resolve(result.data);
+                if (result.data.sent) {
+                    deferred.resolve(result.data);
+                } else {
+
+                }
             });
 
             return deferred.promise;
