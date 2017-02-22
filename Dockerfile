@@ -1,7 +1,7 @@
 FROM ubuntu:14.04
 
 RUN apt-get update
-RUN apt-get -y install nodejs-legacy \
+RUN apt-get -y install --no-install-recommends nodejs-legacy \
                      python \
 		     parted \
 		     ntfs-3g \
