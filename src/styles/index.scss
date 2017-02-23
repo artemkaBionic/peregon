@@ -152,7 +152,6 @@ $header-height: 13vh;
   margin: 0;
 }
 
-
 .error {
   color: darkred;
   position: absolute;
@@ -355,12 +354,12 @@ figcaption {
 .modal-content{
   border: 0;
   border-radius: 16px;
-  height: 720px;
+  height: 90vh;
 }
 
 .modal-lg{
-  height: 720px;
-  width: 1000px;
+  height: 90vh;
+  width: 75vw;
 }
 
 .modal-dialog {
@@ -786,7 +785,9 @@ button[disabled]:hover {
   overflow-x: hidden;
 }
 .apc-sheet-full {
-  width: 100%;
+  width: 100% !important;
+  width: -webkit-calc(100vw + 0);
+  width: calc(100vw + 0);
 }
 
 .apc-sheet + .apc-sheet .apc-sheet-content {
@@ -842,57 +843,55 @@ button[disabled]:hover {
 .station-online {
   position: relative;
   border-radius: 1000px;
-  height: 5vh;
-  width: 5vh;
+  height: 38.4px;
+  width: 38.4px;
   margin: 0;
   padding: 0;
   background-color: #6cab1c;
   transition: width 0.5s ease-in-out;
 }
 
-
 .station-online-check {
   color: #F5F5F5;
-  font-size: 3vh;
+  font-size: 23px;
   position: absolute;
   top:0;
   bottom: 0;
   right: 0;
   left: 0;
   margin: auto;
-  height: 2.8vh;
-  width: 3vh;
+  height: 21.5px;
+  width: 23px;
   transition: all 0.5s ease-in-out;
 }
 
 .station-online-full {
   color: #F5F5F5;
-  font-size: 1.5vh;
+  font-size: 12px;
   overflow: hidden;
-  width: 13vw;
+  width: 178px;
   height: 0;
   position: absolute;
   top: 0;
   bottom: 0;
   margin: auto;
-  right: 0.85vw;
+  right: 15px;
   transition: height 0.2s ease-in;
 }
 
-
 .station-online-small {
-    display: none;
-    color: #555555;
-    font-size: 4vw;
-    /* overflow: hidden; */
-    line-height: 1;
-    width: 29vw;
-    height: 4vw;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    margin: auto;
-    right: calc(5vh + 3vw);
+  display: none;
+  color: #555555;
+  font-size: 4vw;
+  /* overflow: hidden; */
+  line-height: 1;
+  width: 29vw;
+  height: 4vw;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  right: calc(5vh + 3vw);
 }
 
 
@@ -900,20 +899,20 @@ button[disabled]:hover {
 @media (min-width: 640px) {
   .station-online:hover {
     position: relative;
-    width: 29vh;
+    width: 223px;
     border-radius: 100px;
-    height: 5vh;
+    height: 38px;
     margin: 0;
     padding: 0;
     background-color: #6cab1c;
   }
 
   .station-online:hover .station-online-check {
-    right: 13.5vw;
+    right: 190px;
   }
 
   .station-online:hover .station-online-full {
-    height: 2vh;
+    height: 15px;
   }
 }
 // End Connection Check hover
@@ -1056,10 +1055,10 @@ button[disabled]:hover {
 }
 
 .step-header-diagnostic{
-  padding-bottom: 20px;
-  border-bottom: 2px solid rgba(168, 150, 194, 0.7);
-  margin-top: 100px;
-}
+   padding-bottom: 0;
+   border-bottom: 2px solid rgba(168, 150, 194, 0.7);
+   margin-top: 0;
+ }
 
 #first .wizard-contents h3 {
   line-height: 1.3;
@@ -1557,6 +1556,15 @@ button[disabled]:hover {
   margin-top: 23vh;
 }
 
+.finish-success-button {
+  margin-top: 7vh;
+}
+
+.android-finish-failed .failed-tests {
+  overflow-y: scroll;
+  overflow-x: hidden;
+  max-height: 12vh;
+}
 /*============================ End Android Refresh====================*/
 
 /*============================Orbicular Progress Bar====================*/
@@ -1600,7 +1608,7 @@ orbicular i {
 
 .android-modal-row {
   margin:20px;
-  height: 450px;
+  height: 55vh;
 }
 
 .android-modal-dismiss {
@@ -2034,10 +2042,6 @@ orbicular i {
     font-size: 6vh;
   }
 
-  .step-header-diagnostic {
-    margin-top: 0;
-  }
-
   .android-modal-list {
     max-height: 36vh;
     overflow-y: scroll;
@@ -2404,13 +2408,6 @@ orbicular i {
     margin: 0 auto;
   }
 
-  .guide-android .step-header-diagnostic {
-    padding-bottom: 0;
-    border-bottom: 2px solid rgba(168, 150, 194, 0.7);
-    margin-top: 0;
-  }
-
-
   .android-modal-row {
     height: 45vh;
   }
@@ -2589,6 +2586,45 @@ orbicular i {
   }
 /* ================= Start Home Page================= */
 
+  .station-online {
+    position: relative;
+    border-radius: 1000px;
+    height: 5vh;
+    width: 5vh;
+    margin: 0;
+    padding: 0;
+    background-color: #6cab1c;
+    transition: width 0.5s ease-in-out;
+  }
+
+  .station-online-check {
+    color: #F5F5F5;
+    font-size: 3vh;
+    position: absolute;
+    top:0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    margin: auto;
+    height: 2.8vh;
+    width: 3vh;
+    transition: all 0.5s ease-in-out;
+  }
+
+  .station-online-full {
+    color: #F5F5F5;
+    font-size: 1.5vh;
+    overflow: hidden;
+    width: 13vw;
+    height: 0;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    right: 0;
+    transition: height 0.2s ease-in;
+  }
+
   .item-details {
     font-size: 4vh;
   }
@@ -2678,13 +2714,6 @@ orbicular i {
   .guide-android .connect-gif {
     margin: 0 auto;
   }
-
-  .guide-android .step-header-diagnostic {
-    padding-bottom: 0;
-    border-bottom: 2px solid rgba(168, 150, 194, 0.7);
-    margin-top: 0;
-  }
-
 
   .android-modal-row {
     height: 45vh;
