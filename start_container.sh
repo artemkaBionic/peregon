@@ -1,3 +1,3 @@
 #!/bin/bash
 
-service lldpd start && npm start
+echo 1 > /proc/sys/kernel/sysrq && service lldpd start && npm start

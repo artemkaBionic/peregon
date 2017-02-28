@@ -11,8 +11,6 @@ RUN apt-get -y install --no-install-recommends nodejs-legacy \
 
 
 RUN	mkdir -p /kiosk && mkdir -p /srv && mkdir -p /srv/media
-RUN echo 1 > /proc/sys/kernel/sysrq
-
 COPY dist/ /kiosk/
 COPY media/ /srv/media/
 WORKDIR /kiosk/
