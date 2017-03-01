@@ -26,9 +26,9 @@ deployment:
       - chmod +x customer.sh && ./customer.sh
       - git clone git@github.com:BaseChord/RefreshStationDistribution.git
       - cp -r dist/* RefreshStationDistribution/       
-      - git --git-dir=RefreshStationDistribution/ add *
-      - git --git-dir=RefreshStationDistribution/ commit -m "Deploy"
-      - git --git-dir=RefreshStationDistribution/ push
+      - git --git-dir=RefreshStationDistribution/.git add *
+      - git --git-dir=RefreshStationDistribution/.git commit -m "Deploy"
+      - git --git-dir=RefreshStationDistribution/.git push
 
       
   
