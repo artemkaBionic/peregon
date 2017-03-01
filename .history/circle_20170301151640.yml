@@ -1,0 +1,58 @@
+machine:
+  node:
+     version: 7.2.1
+  services:
+     - docker
+
+
+dependencies:
+  override:
+    - if [ ! -v ENV ] ; then npm install -g gulp bower ; fi
+    - if [ ! -v ENV ] ; then gem install sass ; fi
+    - if [ ! -v ENV ] ; then npm install ; fi
+    - if [ ! -v ENV ] ; then bower install ; fi 
+    - if [ ! -v ENV ] ; then gulp build ; fi 
+   
+test:
+  pre:
+     - echo "tests"
+
+
+deployment:
+  lab:
+    branch: master
+    commands:
+      
+      # Add customer data. Need to add customer as a script parameter for other clients!
+      - chmod +x customer.sh && ./customer.sh
+      - docker build --rm=false -t basechord/portal .
+      - docker tag basechord/portal basechord/portal:lab
+      - docker push basechord/portal:lab
+  canary:
+    branch: canary
+    commands:
+      
+      # Add customer data. Need to add customer as a script parameter for other clients!
+      - chmod +x customer.sh && ./customer.sh
+      - docker build --rm=false -t basechord/portal .
+      - docker tag basechord/portal basechord/portal:canary
+      - docker push basechord/portal:canary
+  canary2:
+    branch: canary2
+    commands:
+      - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+      # Add customer data. Need to add customer as a script parameter for other clients!
+      - chmod +x customer.sh && ./customer.sh
+      - docker build --rm=false -t basechord/portal .
+      - docker tag basechord/portal basechord/portal:canary2
+      - docker push basechord/portal:canary2
+  production:
+    branch:  production
+    commands:
+      - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+      # Add customer data. Need to add customer as a script parameter for other clients!
+      - chmod +x customer.sh && ./customer.sh
+      - docker build --rm=false -t basechord/portal .
+      - docker tag basechord/portal basechord/portal:production
+      - docker push basechord/portal:production
+

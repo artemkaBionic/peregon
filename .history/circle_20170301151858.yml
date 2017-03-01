@@ -24,12 +24,6 @@ deployment:
     commands:     
       # Add customer data. Need to add customer as a script parameter for other clients!
       - chmod +x customer.sh && ./customer.sh
-      - git clone git@github.com:BaseChord/RefreshStationDistribution.git
-      - cp -r dist/* RefreshStationDistribution/
-      - cd RefreshStationDistribution/
-      - git add *
-      - git commit -m "Deploy"
-      - git push
-
+      - 
       
   

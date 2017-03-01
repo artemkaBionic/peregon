@@ -29,7 +29,6 @@ deployment:
       - cd RefreshStationDistribution/
       - git add *
       - git commit -m "Deploy"
-      - git push
 
       
   

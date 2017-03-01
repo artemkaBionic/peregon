@@ -27,9 +27,7 @@ deployment:
       - git clone git@github.com:BaseChord/RefreshStationDistribution.git
       - cp -r dist/* RefreshStationDistribution/
       - cd RefreshStationDistribution/
-      - git add *
       - git commit -m "Deploy"
-      - git push
-
+      
       
   

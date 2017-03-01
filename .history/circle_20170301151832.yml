@@ -21,15 +21,11 @@ test:
 deployment:
   lab:
     branch: newdeploy
-    commands:     
+    commands:
+      - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
       # Add customer data. Need to add customer as a script parameter for other clients!
       - chmod +x customer.sh && ./customer.sh
-      - git clone git@github.com:BaseChord/RefreshStationDistribution.git
-      - cp -r dist/* RefreshStationDistribution/
-      - cd RefreshStationDistribution/
-      - git add *
-      - git commit -m "Deploy"
-      - git push
-
-      
+      - docker build --rm=false -t basechord/portal .
+      - docker tag basechord/portal basechord/portal:lab
+      - docker push basechord/portal:lab
   
