@@ -21,38 +21,36 @@ test:
 deployment:
   lab:
     branch: master
-    commands:
-      - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+    commands:     
       # Add customer data. Need to add customer as a script parameter for other clients!
       - chmod +x customer.sh && ./customer.sh
-      - docker build --rm=false -t basechord/portal .
-      - docker tag basechord/portal basechord/portal:lab
-      - docker push basechord/portal:lab
+      - git clone git@github.com:BaseChord/KioskDistribution.git
+      - cp -r dist/* KioskDistribution/ 
+      - cd KioskDistribution && git add * && git commit -m "Deploy $CIRCLE_BUILD_NUM" && git push               
   canary:
     branch: canary
-    commands:
-      - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+    commands:     
       # Add customer data. Need to add customer as a script parameter for other clients!
       - chmod +x customer.sh && ./customer.sh
-      - docker build --rm=false -t basechord/portal .
-      - docker tag basechord/portal basechord/portal:canary
-      - docker push basechord/portal:canary
+      - git clone -b canary git@github.com:BaseChord/KioskDistribution.git
+      - cp -r dist/* KioskDistribution/ 
+      - cd KioskDistribution && git add * && git commit -m "Deploy $CIRCLE_BUILD_NUM" && git push 
   canary2:
     branch: canary2
-    commands:
-      - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+    commands:     
       # Add customer data. Need to add customer as a script parameter for other clients!
       - chmod +x customer.sh && ./customer.sh
-      - docker build --rm=false -t basechord/portal .
-      - docker tag basechord/portal basechord/portal:canary2
-      - docker push basechord/portal:canary2
+      - git clone -b canary2 git@github.com:BaseChord/KioskDistribution.git
+      - cp -r dist/* KioskDistribution/ 
+      - cd KioskDistribution && git add * && git commit -m "Deploy $CIRCLE_BUILD_NUM" && git push 
   production:
-    branch:  production
-    commands:
-      - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+    branch: production
+    commands:     
       # Add customer data. Need to add customer as a script parameter for other clients!
       - chmod +x customer.sh && ./customer.sh
-      - docker build --rm=false -t basechord/portal .
-      - docker tag basechord/portal basechord/portal:production
-      - docker push basechord/portal:production
+      - git clone -b production git@github.com:BaseChord/KioskDistribution.git
+      - cp -r dist/* KioskDistribution/ 
+      - cd KioskDistribution && git add * && git commit -m "Deploy $CIRCLE_BUILD_NUM" && git push 
 
+      
+  

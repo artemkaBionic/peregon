@@ -8,3 +8,4 @@ dist/
 *.log
 sn.conf.js
 aws.*
+.history/
