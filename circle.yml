@@ -20,14 +20,37 @@ test:
 
 deployment:
   lab:
-    branch: newdeploy
+    branch: master
     commands:     
       # Add customer data. Need to add customer as a script parameter for other clients!
       - chmod +x customer.sh && ./customer.sh
-      - git clone git@github.com:BaseChord/RefreshStationDistribution.git
-      - cp -r dist/* RefreshStationDistribution/ 
-      - cd RefreshStationDistribution && git add * && git commit -m "Deploy" && git push               
-    
+      - git clone git@github.com:BaseChord/KioskDistribution.git
+      - cp -r dist/* KioskDistribution/ 
+      - cd KioskDistribution && git add * && git commit -m "Deploy $CIRCLE_BUILD_NUM" && git push               
+  canary:
+    branch: canary
+    commands:     
+      # Add customer data. Need to add customer as a script parameter for other clients!
+      - chmod +x customer.sh && ./customer.sh
+      - git clone -b canary git@github.com:BaseChord/KioskDistribution.git
+      - cp -r dist/* KioskDistribution/ 
+      - cd KioskDistribution && git add * && git commit -m "Deploy $CIRCLE_BUILD_NUM" && git push 
+  canary2:
+    branch: canary2
+    commands:     
+      # Add customer data. Need to add customer as a script parameter for other clients!
+      - chmod +x customer.sh && ./customer.sh
+      - git clone -b canary2 git@github.com:BaseChord/KioskDistribution.git
+      - cp -r dist/* KioskDistribution/ 
+      - cd KioskDistribution && git add * && git commit -m "Deploy $CIRCLE_BUILD_NUM" && git push 
+  production:
+    branch: production
+    commands:     
+      # Add customer data. Need to add customer as a script parameter for other clients!
+      - chmod +x customer.sh && ./customer.sh
+      - git clone -b production git@github.com:BaseChord/KioskDistribution.git
+      - cp -r dist/* KioskDistribution/ 
+      - cd KioskDistribution && git add * && git commit -m "Deploy $CIRCLE_BUILD_NUM" && git push 
 
       
   
