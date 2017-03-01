@@ -20,39 +20,11 @@ test:
 
 deployment:
   lab:
-    branch: master
-    commands:
-      - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+    branch: newdeploy
+    commands:     
       # Add customer data. Need to add customer as a script parameter for other clients!
       - chmod +x customer.sh && ./customer.sh
-      - docker build --rm=false -t basechord/portal .
-      - docker tag basechord/portal basechord/portal:lab
-      - docker push basechord/portal:lab
-  canary:
-    branch: canary
-    commands:
-      - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
-      # Add customer data. Need to add customer as a script parameter for other clients!
-      - chmod +x customer.sh && ./customer.sh
-      - docker build --rm=false -t basechord/portal .
-      - docker tag basechord/portal basechord/portal:canary
-      - docker push basechord/portal:canary
-  canary2:
-    branch: canary2
-    commands:
-      - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
-      # Add customer data. Need to add customer as a script parameter for other clients!
-      - chmod +x customer.sh && ./customer.sh
-      - docker build --rm=false -t basechord/portal .
-      - docker tag basechord/portal basechord/portal:canary2
-      - docker push basechord/portal:canary2
-  production:
-    branch:  production
-    commands:
-      - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
-      # Add customer data. Need to add customer as a script parameter for other clients!
-      - chmod +x customer.sh && ./customer.sh
-      - docker build --rm=false -t basechord/portal .
-      - docker tag basechord/portal basechord/portal:production
-      - docker push basechord/portal:production
-
+      - git clone git@github.com:BaseChord/RefreshStationDistribution.git
+      - cp dist/* RefreshStationDistribution/
+      
+  
