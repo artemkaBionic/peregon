@@ -5,6 +5,10 @@ const request = require('request');
 var config = require('./config');
 var mongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
+var path = require('path');
+var fs = require('fs');
+var childProcess = require('child_process');
+var rimraf = require('rimraf');
 
 const MONGO_DB_URL = 'mongodb://localhost/AppChord?connectTimeoutMS=30000';
 const INVENTORY_LOOKUP_URL = 'https://' + config.apiHost + '/api/inventorylookup/';
