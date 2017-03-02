@@ -11,7 +11,9 @@ dependencies:
     - if [ ! -v ENV ] ; then gem install sass ; fi
     - if [ ! -v ENV ] ; then npm install ; fi
     - if [ ! -v ENV ] ; then bower install ; fi 
-    - if [ ! -v ENV ] ; then gulp build ; fi 
+    - if [ ! -v ENV ] ; then gulp build ; fi
+    - git config user.name "bot"
+    - git config user.email "bchordbot@basechord.com" 
    
 test:
   pre:
