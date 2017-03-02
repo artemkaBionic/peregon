@@ -102,6 +102,7 @@ $header-height: 13vh;
   font-weight: 400;
   padding: 6px 24px;
 }
+
 .xbox-one .wizard-contents {
   text-align: center;
 }
@@ -732,7 +733,13 @@ figcaption {
   cursor:wait;
 }
 
-.power-window-message .reboot-message{height: 90px;}
+.power-window-message .reboot-message{
+  height: calc(340px - 1.5em);
+}
+
+.power-window-message .power-message{
+  height: calc(380px + 1.5em);
+}
 
 .power-window-message {
   width: 660px;
@@ -1724,10 +1731,15 @@ orbicular i {
   margin-bottom: 3vh;
 }
 
-.bc-keypad__key-button--submit {
+.keyboard-medium {
+  margin: 15px;
+}
+
+.bc-keypad-submit-active {
   background-color: #927CB3 !important;
   color: white !important;
 }
+
 .front-keypad-medium {
   display: none;
 }
