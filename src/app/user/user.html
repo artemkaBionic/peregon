@@ -5,7 +5,7 @@
       <div class="row">
         <div class="col-xs-12">
           <div class="text-input-small">
-            <input maxlength="10" autofocus ng-focus="vm.item === null;" class="form-control item-number-input" placeholder="Enter Item Number" type="text" ng-model="vm.searchString" ng-change="vm.searchStringChange()">
+            <input maxlength="10" autofocus ng-focus="vm.item === null;" class="form-control item-number-input" placeholder="Enter Item Number" type="text" ng-model="vm.searchString">
           </div>
         </div>
       </div>
@@ -14,26 +14,26 @@
         <div class="item-details-small item-button-error" ng-show="vm.itemNumberError"><strong>Item not found</strong><br/>Check the ItemNumber</div>
       </div>
     </form>
-      <div class="keyboard-small">
-        <bc-keypad
-          bc-max-length="10"
-          bc-number-model="vm.searchString"
-          bc-left-button="backspace"
-          bc-right-button="submit"
-          bc-right-button-type="submit"
-          bc-right-button-method="vm.showGuide"
-        ></bc-keypad>
-      </div>
+    <div class="keyboard-small">
+      <bc-keypad
+        bc-max-length="10"
+        bc-number-model="vm.searchString"
+        bc-left-button="backspace"
+        bc-right-button="submit"
+        bc-right-button-type="submit"
+        bc-right-button-method="vm.showGuide()"
+      ></bc-keypad>
+    </div>
   </div>
 
   <div class="front-keypad-medium">
     <header user-header></header>
-      <div class="front-keypad-medium-row">
-        <form ng-submit="vm.showGuide()">
+    <div class="front-keypad-medium-row">
+      <form ng-submit="vm.showGuide()">
         <div class="col-xs-6 col-sm-6">
           <div class="item-info-input-medium">
             <div class="row text-input-medium">
-              <input maxlength="10" autofocus ng-focus="vm.item === null;" class="form-control item-number-input" placeholder="Enter Item Number" type="text" ng-model="vm.searchString" ng-change="vm.searchStringChange()">
+              <input maxlength="10" autofocus ng-focus="vm.item === null;" class="form-control item-number-input" placeholder="Enter Item Number" type="text" ng-model="vm.searchString">
             </div>
             <div class="row item-info-medium">
               <div class="item-details-medium" ng-hide="vm.item === null"><button class="item-button" type="submit"><strong>{{'SKU: '+vm.item.Sku}}</strong><br/>{{vm.guide.Manufacturer}} {{vm.guide.Model}}</button></div>
@@ -41,19 +41,19 @@
             </div>
           </div>
         </div>
-        </form>
-        <div class="col-xs-6 col-sm-6">
-          <div class="keyboard-medium">
-            <bc-keypad
-              bc-max-length="10"
-              bc-number-model="vm.searchString"
-              bc-left-button="backspace"
-              bc-right-button="submit"
-              bc-right-button-method="vm.showGuide"
-            ></bc-keypad>
-          </div>
+      </form>
+      <div class="col-xs-6 col-sm-6">
+        <div class="keyboard-medium">
+          <bc-keypad
+            bc-max-length="10"
+            bc-number-model="vm.searchString"
+            bc-left-button="backspace"
+            bc-right-button="submit"
+            bc-right-button-method="vm.showGuide()"
+          ></bc-keypad>
         </div>
       </div>
+    </div>
   </div>
   <header class="front-general" user-header></header>
 
@@ -68,7 +68,7 @@
             <div class="col-lg-4 col-md-6 col-sm-6">
                 <div class="text-input">
                   <span class="fa fa-barcode"></span>
-                  <input maxlength="10" autofocus ng-focus="vm.item === null;" class="form-control item-number-input" placeholder="Enter Item Number" type="text" ng-model="vm.searchString" ng-change="vm.searchStringChange()">
+                  <input maxlength="10" autofocus ng-focus="vm.item === null;" class="form-control item-number-input" placeholder="Enter Item Number" type="text" ng-model="vm.searchString">
                 </div>
             </div>
             <div class="col-lg-4 col-md-3 col-sm-3">

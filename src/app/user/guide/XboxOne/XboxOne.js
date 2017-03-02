@@ -62,11 +62,18 @@
         vm.errorMessage = '';
 
         function activate() {
-            var queries = [inventoryService.startSession('xbox-one', item), eventService.DisableDeviceNotification(), loadDevices(), loadMediaPackages()];
-            $q.all(queries);
-            queries.push(guideService.getGuide(item.Sku).then(function(guide) {
-                vm.guide = guide;
-            }));
+            var queries = [
+                inventoryService.startSession('xbox-one', item),
+                eventService.DisableDeviceNotification(),
+                loadDevices(),
+                loadMediaPackages(),
+                guideService.getGuide(item.Sku).then(function(guide) {
+                    vm.guide = guide;
+                })
+            ];
+            $q.all(queries).then(function() {
+                vm.prepareRefreshUsbStart();
+            });
         }
 
         vm.$onDestroy = function() {
@@ -74,7 +81,7 @@
         };
 
         function loadDevices() {
-            deviceService.getDevices().then(function(devices) {
+            return deviceService.getDevices().then(function(devices) {
                 if (vm.selectedDevice === null && devices.length > 0) {
                     for (var i = devices.length - 1; i >= 0; --i) {
                         if (devices[i].size >= usbDeviceMinSize) {
@@ -87,7 +94,7 @@
         }
 
         function loadMediaPackages() {
-            packageService.getMediaPackages('xbox-one').then(function(mediaPackages) {
+            return packageService.getMediaPackages('xbox-one').then(function(mediaPackages) {
                 for (var i = mediaPackages.length - 1; i >= 0; --i) {
                     if (vm.refreshMediaPackage === null && mediaPackages[i].name === refreshMediaPackageName) {
                         vm.refreshMediaPackage = mediaPackages[i];
@@ -98,15 +105,12 @@
 
         function waitForUsbAdd(minSize, callback) {
             if (vm.selectedDevice === null) {
-                socketService.once('event', function(event) {
-                    if (event.name === 'device-add') {
-
-                        if (event.data.size >= minSize) {
-                            vm.selectedDevice = event.data;
-                            callback();
-                        } else {
-                            waitForUsbAdd(minSize, callback);
-                        }
+                socketService.once('device-add', function(data) {
+                    if (data.size >= minSize) {
+                        vm.selectedDevice = data;
+                        callback();
+                    } else {
+                        waitForUsbAdd(minSize, callback);
                     }
                 });
             } else {
@@ -115,8 +119,8 @@
         }
 
         function waitForUsbRemove(callback) {
-            socketService.once('event', function(event) {
-                if (event.name === 'device-remove' && event.data.id === vm.selectedDevice.id) {
+            socketService.once('device-remove', function(data) {
+                if (data.id === vm.selectedDevice.id) {
                     vm.selectedDevice = null;
                     callback();
                 } else {
@@ -127,7 +131,6 @@
 
         vm.retry = function() {
             activate();
-            vm.prepareRefreshUsbStart();
         };
 
         vm.prepareRefreshUsbStart = function() {

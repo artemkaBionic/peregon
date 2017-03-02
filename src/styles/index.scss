@@ -784,7 +784,6 @@ button[disabled] {
     background-color: #999999;
 }
 button[disabled]:hover {
-  background-color: #999999 !important;
   cursor: not-allowed;
 }
 //Removing horizontal scroll
@@ -1735,9 +1734,22 @@ orbicular i {
   margin: 15px;
 }
 
-.bc-keypad-submit-active {
+.bc-keypad__key-button--submit {
+  background-color: #999999 !important;
+  color: white !important;
+}
+
+.bc-keypad__key-button--submit:hover {
+  cursor: not-allowed;
+}
+
+.bc-keypad-submit-enabled {
   background-color: #927CB3 !important;
   color: white !important;
+}
+
+.bc-keypad-submit-enabled:hover {
+  cursor: pointer !important;
 }
 
 .front-keypad-medium {

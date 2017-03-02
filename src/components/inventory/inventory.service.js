@@ -24,7 +24,7 @@
             var deferred = $q.defer();
 
             if (isValidItem(service.items[id])) {
-                deferred.resolve(service.items[id])
+                deferred.resolve(service.items[id]);
             } else {
                 $http.get(url).then(function(result) {
                     if (result.data.error) {
