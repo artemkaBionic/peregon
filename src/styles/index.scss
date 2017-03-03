@@ -718,8 +718,7 @@ figcaption {
   background-color: rgba(0,0,0,.5);
 }
 
-.power-window-message .power-message,.power-window-message .reboot-message{
-  height: 200px;
+.power-window-message .power-message,.power-window-message .reboot-message {
   width: 500px;
   position:absolute;
   top: 0;
@@ -727,21 +726,26 @@ figcaption {
   bottom: 0;
   left: 0;
   margin: auto;
-  color:white;
-  font-size:1.5em;
+  color: white;
+  font-size: 30px;
   text-align: center;
   cursor:wait;
 }
 
-.power-window-message .reboot-message{
-  height: calc(340px - 1.5em);
+.power-window-message .power-message{
+  height: 165px;
 }
 
-.power-window-message .power-message{
-  height: calc(380px + 1.5em);
+.power-window-message .reboot-message{
+  height: 30px;
+}
+
+.power-window-message .reboot-message h2, .power-window-message .power-message h2 {
+  margin: 0;
 }
 
 .power-window-message {
+  position: relative;
   width: 660px;
   height: 340px;
   background-color: rgba(0, 0, 0, 0.75);

@@ -1,8 +1,7 @@
 <div ng-class="(vm.rebooting||vm.turningOff)? 'power-window-message':'power-window'">
-  <div ng-class="vm.turningOff? 'power-message':'message-none'"><h2>Shutting Down...</h2><br/>
-    <p class="center">
-      Please note that the Refresh Station <strong>must</strong> be on and connected to the Internet to get updates.
-    </p>
+  <div ng-class="vm.turningOff? 'power-message':'message-none'"><h2><strong>Shutting Down...</strong><br/><br/>
+    Please note that the Refresh Station <strong>must</strong> be on and connected to the Internet to get updates.
+  </h2>
   </div>
   <div ng-class="vm.rebooting? 'reboot-message':'message-none'"><h2>Rebooting...</h2></div>
   <div class="reset-button">
