@@ -1,8 +1,13 @@
 var fs = require('fs');
 var childProcess = require('child_process');
+var exec = require('child_process').exec;
 
 var isDevelopment = process.env.NODE_ENV === 'development';
 var connectionState = null;
+var service_tag = getServiceTag();
+
+
+exports.service_tag = service_tag;
 
 exports.setConnectionState = function(state) {
     connectionState = state;
@@ -45,3 +50,17 @@ exports.shutdown = function() {
         childProcess.spawn('python', ['/opt/powercontrol.py', '--poweroff']);
     }
 };
+
+function getServiceTag() {
+    var cmd = 'dmidecode -s system-serial-number';
+    exec(cmd, function(error, stdout, stderr) {
+        if (error) {
+            console.log(error);
+        }
+        if (!error) {
+            SERVICE_TAG = stdout;
+        }
+});
+}
+
+

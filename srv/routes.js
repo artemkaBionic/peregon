@@ -53,13 +53,25 @@ module.exports = function(io, data) {
     });
 
     router.post('/data/inventory/session/update', function (req, res) {
-        inventory.sessionUpdate(req.body.message, function (result) {
+        console.log(req.body.itemNumber);
+      //  console.log(req.body.InventoryNumber);
+        inventory.sessionUpdate(req.body.itemNumber, req.body.message, function (err, result) {
+            if(err) {
+                console.log(err);
+            }
             res.json(result);
         });
     });
 
     router.post('/data/inventory/session/finish', function (req, res) {
-        inventory.sessionFinish(req.body.details, function (result) {
+        console.log(req.body.itemNumber);
+        inventory.sessionFinish(req.body.itemNumber, req.body.details, function (result) {
+            res.json(result);
+        });
+    });
+
+    router.post('/data/inventory/session/resend', function (req, res) {
+        inventory.resendSession(req.body.itemNumber, function (result) {
             res.json(result);
         });
     });
@@ -145,6 +157,8 @@ module.exports = function(io, data) {
         console.log('Shutting down...');
         station.shutdown();
     });
+
+    
 
 
 

@@ -1,7 +1,7 @@
 /**
  * Created by larry on 3/3/2016.
  */
-const request = require('request');
+
 var config = require('./config');
 var mongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
@@ -9,120 +9,33 @@ var path = require('path');
 var fs = require('fs');
 var childProcess = require('child_process');
 var rimraf = require('rimraf');
+const Promise = require("bluebird");
+var request = require("requestretry");
+var os = require('os');
+var station = require('./station');
+const sessions = require('./sessionCache');
 
 const MONGO_DB_URL = 'mongodb://localhost/AppChord?connectTimeoutMS=30000';
 const INVENTORY_LOOKUP_URL = 'https://' + config.apiHost + '/api/inventorylookup/';
-const ANDROID_LOCK_URL ='https://api2.basechord.com';
+const API_URL ='https://api2.basechord.com';
+const API_RETRIES = 3;
+const API_RETRY_DELAY = 1000;
 
 var isDevelopment = process.env.NODE_ENV === 'development';
-var sessionType = null;
-var session = null;
+var sessionTypes = {};
+var result = null;
 
-function initSession(manufacturer, model, serialNumber, itemNumber, sku) {
-    var session = {
-        'SessionDate': new Date(),
-        'LastUpdated': new Date(),
-        'DiagnoseOnly': false,
-        'Computer': {
-            'SKU': sku,
-            'ServiceTag': null,
-            'ComputerName': null,
-            'AppChordId': null,
-            'SerialNumber': serialNumber,
-            'ComputerManufacturer': manufacturer,
-            'Address': null,
-            'NetworkAdapters': [],
-            'Model': model,
-            'ItemNumber': itemNumber
-        },
-        'RefreshStation': {
-            'SKU': null,
-            'ServiceTag': null,
-            'ComputerName': null,
-            'UUID': null,
-            'AppChordId': null,
-            'MsdmProductKey': null,
-            'SerialNumber': null,
-            'ComputerManufacturer': null,
-            'Address': '192.168.108.5',
-            'AssetTag': null,
-            'NetworkAdapters': [  {
-                'MacAddress': '',
-                'IpAddress': '192.168.108.5' } ],
-            'Model': null,
-            'MsdmOemId': null },
-        'Closed': null,
-        'SessionState': 'Started',
-        'AuditLogEntries': [],
-        'CurrentState': 'Started' };
 
-    updateSessionDb(session);
-    return session;
-}
+exports.sessionStart = sessionStart;
+exports.sessionUpdate = sessionUpdate;
+exports.sessionFinish = sessionFinish;
+exports.resendSession = resendSession;
+exports.getItem = getItem;
+exports.lockAndroid = lockAndroid;
+exports.unlockAndroid = unlockAndroid;
 
-function updateSessionDb(session) {
-    if (!isDevelopment) {
-        mongoClient.connect(MONGO_DB_URL, function(err, db) {
-            assert.equal(err, null);
-            if (session._id === undefined) {
-                db.collection('RefreshSessions').insertOne(session, function(err, result) {
-                    assert.equal(err, null);
-                    console.log('Inserted refresh session:');
-                    console.log(session);
-                    db.close();
-                });
-            } else {
-                db.collection('RefreshSessions').replaceOne({"_id": session._id}, session, function(err, result) {
-                    assert.equal(err, null);
-                    console.log('Updated refresh session:');
-                    console.log(session);
-                    db.close();
-                });
-            }
-        });
-    }
-}
 
-function logSession(session, processState, message) {
-    logDate = new Date();
-
-    logEntry = {};
-    logEntry.Importance = "Info";
-    logEntry.TimeStamp = logDate;
-    logEntry.LogTimeStamp = logDate;
-    logEntry.Details = null;
-    logEntry.ProcessState = processState;
-    logEntry.Message = message;
-
-    session.LastUpdated = new Date();
-    session.AuditLogEntries.push(logEntry);
-
-    updateSessionDb(session);
-}
-
-function closeSession(session) {
-    session.Closed = new Date();
-    updateSessionDb(session);
-    session = null;
-    sessionType = null;
-}
-
-function filesExist(directory, files) {
-    if (files.length === 0) {
-        return true;
-    } else {
-        var filePath = path.join(directory, files.pop());
-        try {
-            var stats = fs.statSync(filePath);
-            return stats.isFile() && filesExist(directory, files);
-        }
-        catch (e) {
-            return false;
-        }
-    }
-}
-
-exports.getItem = function(id, callback) {
+function getItem(id, callback) {
     request({
         url: INVENTORY_LOOKUP_URL + id,
         headers: {
@@ -141,14 +54,14 @@ exports.getItem = function(id, callback) {
             callback({error: null, item: body});
         }
     });
-};
+}
 
-exports.lockAndroid = function(imei, callback) {
+function lockAndroid(imei, callback) {
     request({
         method: 'POST',
-        url: ANDROID_LOCK_URL + '/unlockapi/lock',
+        url: API_URL + '/unlockapi/lock',
         headers: {
-            'Authorization': config.androidApiAuthorization
+            'Authorization': config.api2Authorization
         },
         body: {'IMEI': imei},
         rejectUnauthorized: false,
@@ -165,14 +78,14 @@ exports.lockAndroid = function(imei, callback) {
         }
     });
     console.log('Lock request has been sent');
-};
+}
 
-exports.unlockAndroid = function(imei, callback) {
+function unlockAndroid(imei, callback) {
     request({
         method: 'POST',
-        url: ANDROID_LOCK_URL + '/unlockapi/unlock',
+        url: API_URL + '/unlockapi/unlock',
         headers: {
-            'Authorization': config.androidApiAuthorization
+            'Authorization': config.api2Authorization
         },
         body: {'IMEI': imei},
         rejectUnauthorized: false,
@@ -189,26 +102,32 @@ exports.unlockAndroid = function(imei, callback) {
         }
     });
     console.log('Unlock request has been sent');
-};
+}
 
-exports.sessionStart = function(type, item, callback) {
-    sessionType = type;
-    session = initSession(item.Manufacturer, item.Model, item.Serial, item.InventoryNumber, item.Sku);
+function sessionStart(type, item, callback) {
+    sessionTypes[item.InventoryNumber] = type;
+    initSession(item);
     callback();
-};
+}
 
-exports.sessionUpdate = function(message, callback) {
+function sessionUpdate(itemNumber, message, callback) {
+    let session = sessions.get(itemNumber);
     logSession(session, "Started", message);
     callback();
-};
+}
 
-exports.sessionFinish = function(details, callback) {
-    console.log('A client requested to finish an ' + sessionType + ' refresh of item number ' + session.Computer.ItemNumber);
-    if (sessionType === 'xbox-one') {
+function sessionFinish(itemNumber, details, callback) {
+    let session = sessions.get(itemNumber);
+
+    console.log('A client requested to finish an ' + sessionTypes[itemNumber] + ' refresh of item number ' + itemNumber);
+    if (sessionTypes[itemNumber] === 'xbox-one') {
         if (isDevelopment) {
+            logSession(session, "Started", 'Checking ' + details.device.id + ' for evidence that the refresh completed successfully.');
+            logSession(session, "Started", 'Simulating verifying a refresh in a development environment by waiting 3 seconds.');
             console.log('Simulating verifying a refresh in a development environment by waiting 3 seconds.');
             setTimeout(function() {
-                callback({success: true, device: details.device});
+                logSession(session, "Success", 'Refresh completed successfully.');
+                closeSession(session, callback);
             }, 3000);
         } else {
             logSession(session, "Started", 'Checking ' + details.device.id + ' for evidence that the refresh completed successfully.');
@@ -232,16 +151,14 @@ exports.sessionFinish = function(details, callback) {
                             rimraf(path.join(mountTarget, '*'), function(err) {
                                 childProcess.spawn('umount', [mountTarget]);
                                 if (success) {
-                                    logSession(session, "Completed", 'Refresh completed successfully.');
-                                    session.SessionState = session.CurrentState = 'Completed';
-                                    closeSession(session);
-                                    callback({success: true});
+                                    logSession(session, "Success", 'Refresh completed successfully.');
+                                    session.SessionState = session.CurrentState = 'Success';
+                                    closeSession(session, callback);
                                 } else {
                                     logSession(session, "VerifyRefreshFailed", 'Refresh failed.');
                                     session.CurrentState = 'VerifyRefreshFailed';
-                                    session.SessionState = 'Aborted';
-                                    closeSession(session);
-                                    callback({success: false});
+                                    session.SessionState = 'Fail';
+                                    closeSession(session, callback);
                                 }
                             });
                         }
@@ -251,16 +168,122 @@ exports.sessionFinish = function(details, callback) {
         }
     } else {
         if (details.complete) {
-            logSession(session, "Completed", 'Refresh completed successfully.');
-            session.SessionState = session.CurrentState = 'Completed';
-            closeSession(session);
-            callback({success: true});
+            logSession(session, "Success", 'Refresh completed successfully.');
+            session.SessionState = session.CurrentState = 'Success';
+            closeSession(session, callback);
         } else {
             logSession(session, "VerifyRefreshFailed", 'Refresh failed.');
             session.CurrentState = 'VerifyRefreshFailed';
-            session.SessionState = 'Aborted';
-            closeSession(session);
-            callback({success: false});
+            session.SessionState = 'Fail';
+            closeSession(session, callback);
         }
     }
-};
+}
+
+function initSession(device, diagnose_only=false) {
+    let session_device = changeDeviceFormat(device);
+    let newSession = {
+        "start_time" : new Date(),
+        "end_time": null,
+        "status": 'Incomplete',
+        "diagnose_only": diagnose_only,
+        "device": session_device,
+        "station": {
+            "name": os.hostname(),
+            "service_tag": station.service_tag
+        },
+        "logs": []
+    };
+
+    sessions.set(device.InventoryNumber, newSession);
+}
+
+function logSession(session, status, message) {
+    let logDate = new Date();
+
+    let logEntry = {
+        "message": message,
+        "details": null,
+        "timestamp": logDate,
+        "level": "Info",
+        "status": status
+    };
+
+    session.LastUpdated = logDate;
+    session.logs.push(logEntry);
+}
+
+function closeSession(session, callback) {
+
+    console.log("closing session");
+    console.log(session);
+    session.end_time = new Date();
+
+    sendSession(session, callback);
+}
+
+function resendSession(itemNumber, callback) {
+    let session = sessions.get(itemNumber);
+    sendSession(session, callback);
+}
+
+function sendSession(session, callback) {
+    return request({
+        method: 'POST',
+        url: API_URL + '/session',
+        headers: {
+            'Authorization': config.api2Authorization
+        },
+        body: session,
+        rejectUnauthorized: false,
+        json: true
+    }).then(function (body) {
+        callback({success: session.SessionState = 'Success', sent: true });
+    }).catch(function (error) {
+        console.log('ERROR: Unable to send session.');
+        console.log(error);
+        callback({success: session.SessionState = 'Success', sent: false });
+    });
+}
+
+function filesExist(directory, files) {
+    if (files.length === 0) {
+        return true;
+    } else {
+        var filePath = path.join(directory, files.pop());
+        try {
+            var stats = fs.statSync(filePath);
+            return stats.isFile() && filesExist(directory, files);
+        }
+        catch (e) {
+            return false;
+        }
+    }
+}
+
+function changeDeviceFormat(device) {
+    let session_device = {};
+    for (var prop in device) {
+        if (device.hasOwnProperty(prop)) {
+            switch (prop) {
+                case 'Sku':
+                    session_device.sku = device.Sku;
+                    break;
+                case 'InventoryNumber':
+                    session_device.item_number = device.InventoryNumber;
+                    break;
+                case 'Model':
+                    session_device.model = device.Model;
+                    break;
+                case 'Manufacturer':
+                    session_device.manufacturer = device.Manufacturer;
+                    break;
+                case 'Serial':
+                    session_device.serial_number = device.Serial;
+                    break;
+
+            }
+        }
+    }
+    return session_device;
+}

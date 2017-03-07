@@ -112,24 +112,28 @@
             return deferred.promise;
         };
 
-        service.updateSession = function(message) {
+        service.updateSession = function(itemNumber, message) {
             var url = '/data/inventory/session/update';
             var deferred = $q.defer();
 
             console.log(message);
-            $http.post(url, {'message': message}).then(function(result) {
+            $http.post(url, {'message': message, 'itemNumber': itemNumber}).then(function(result) {
                 deferred.resolve(result.data);
             });
 
             return deferred.promise;
         };
 
-        service.finishSession = function(details) {
+        service.finishSession = function(itemNumber, details) {
             var url = '/data/inventory/session/finish';
             var deferred = $q.defer();
 
-            $http.post(url, {'details': details}).then(function(result) {
-                deferred.resolve(result.data);
+            $http.post(url, {'details': details, 'itemNumber': itemNumber}).then(function(result) {
+                if (result.data.sent) {
+                    deferred.resolve(result.data);
+                } else {
+
+                }
             });
 
             return deferred.promise;
