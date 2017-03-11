@@ -18,8 +18,7 @@
             .state('root.user.guide', {
                 url: '/guide/:itemNumber',
                 resolve: {
-                    item: getItem,
-                    guide: getGuide
+                    item: getItem
                 },
                 templateProvider: guideTemplate,
                 controllerProvider: guideController,
@@ -56,22 +55,11 @@
             });
         }
 
-        getGuide.$inject = ['guideService', 'item'];
-        function getGuide(guideService, item) {
-            return guideService.getGuide(item.Sku).then(function(guide) {
-                if (guide) {
-                    return guide;
-                } else {
-                    throw(new Error('SKU ' + item.Sku + ' not found.'));
-                }
-            });
-        }
-
-        guideTemplate.$inject = ['$templateCache', '$http', 'guide'];
-        function guideTemplate($templateCache, $http, guide) {
-            var templateUrl = 'app/user/guide/guide.html';
-            if (guide.DynamicGuideName) {
-                templateUrl = 'app/user/guide/' + guide.DynamicGuideName + '/' + guide.DynamicGuideName + '.html';
+        guideTemplate.$inject = ['$templateCache', '$http', 'item'];
+        function guideTemplate($templateCache, $http, item) {
+            var templateUrl = 'app/user/guide/unsupported.html';
+            if (item.Type !== null) {
+                templateUrl = 'app/user/guide/' + item.Type + '/' + item.Type + '.html';
             }
             var templateContent = $templateCache.get(templateUrl);
             if (!templateContent) {
@@ -84,11 +72,11 @@
             }
         }
 
-        guideController.$inject = ['guide'];
-        function guideController(guide) {
-            var controllerName = 'GuideController';
-            if (guide.DynamicGuideName) {
-                controllerName = 'GuideController' + guide.DynamicGuideName;
+        guideController.$inject = ['item'];
+        function guideController(item) {
+            var controllerName = 'GuideControllerUnsupported';
+            if (item.Type !== null) {
+                controllerName = 'GuideController' + item.Type;
             }
             return controllerName;
         }

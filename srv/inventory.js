@@ -3,36 +3,40 @@
  */
 
 var config = require('./config');
-var mongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
 var path = require('path');
 var fs = require('fs');
 var childProcess = require('child_process');
 var rimraf = require('rimraf');
-const Promise = require("bluebird");
 var request = require("requestretry");
 var os = require('os');
+var uuid = require('uuid/v1');
 var station = require('./station');
 const sessions = require('./sessionCache');
 
-const MONGO_DB_URL = 'mongodb://localhost/AppChord?connectTimeoutMS=30000';
+const UNSENT_SESSIONS_DIRECTORY = './unsentSessions';
 const INVENTORY_LOOKUP_URL = 'https://' + config.apiHost + '/api/inventorylookup/';
 const API_URL ='https://api2.basechord.com';
-const API_RETRIES = 3;
-const API_RETRY_DELAY = 1000;
+const RESEND_SESSIONS_INTERVAL = 900000; // 15 minutes
 
 var isDevelopment = process.env.NODE_ENV === 'development';
-var sessionTypes = {};
 var result = null;
 
 
 exports.sessionStart = sessionStart;
 exports.sessionUpdate = sessionUpdate;
 exports.sessionFinish = sessionFinish;
-exports.resendSession = resendSession;
+exports.resendSessions = resendSessions;
 exports.getItem = getItem;
 exports.lockAndroid = lockAndroid;
 exports.unlockAndroid = unlockAndroid;
+
+
+// Periodically resend unsent sessions
+resendSessions();
+setInterval(function(){
+    resendSessions();
+}, RESEND_SESSIONS_INTERVAL);
 
 
 function getItem(id, callback) {
@@ -104,23 +108,22 @@ function unlockAndroid(imei, callback) {
     console.log('Unlock request has been sent');
 }
 
-function sessionStart(type, item, callback) {
-    sessionTypes[item.InventoryNumber] = type;
+function sessionStart(item, callback) {
     initSession(item);
     callback();
 }
 
 function sessionUpdate(itemNumber, message, callback) {
-    let session = sessions.get(itemNumber);
+    var session = sessions.get(itemNumber);
     logSession(session, "Started", message);
     callback();
 }
 
 function sessionFinish(itemNumber, details, callback) {
-    let session = sessions.get(itemNumber);
+    var session = sessions.get(itemNumber);
 
-    console.log('A client requested to finish an ' + sessionTypes[itemNumber] + ' refresh of item number ' + itemNumber);
-    if (sessionTypes[itemNumber] === 'xbox-one') {
+    console.log('A client requested to finish an ' + session.device.type + ' refresh of item number ' + itemNumber);
+    if (session.device.type === 'XboxOne') {
         if (isDevelopment) {
             logSession(session, "Started", 'Checking ' + details.device.id + ' for evidence that the refresh completed successfully.');
             logSession(session, "Started", 'Simulating verifying a refresh in a development environment by waiting 3 seconds.');
@@ -181,15 +184,15 @@ function sessionFinish(itemNumber, details, callback) {
 }
 
 function initSession(device, diagnose_only=false) {
-    let session_device = changeDeviceFormat(device);
-    let newSession = {
+    var session_device = changeDeviceFormat(device);
+    var newSession = {
         "start_time" : new Date(),
         "end_time": null,
         "status": 'Incomplete',
         "diagnose_only": diagnose_only,
         "device": session_device,
         "station": {
-            "name": os.hostname(),
+            "name": station.name,
             "service_tag": station.service_tag
         },
         "logs": []
@@ -199,9 +202,9 @@ function initSession(device, diagnose_only=false) {
 }
 
 function logSession(session, status, message) {
-    let logDate = new Date();
+    var logDate = new Date();
 
-    let logEntry = {
+    var logEntry = {
         "message": message,
         "details": null,
         "timestamp": logDate,
@@ -222,9 +225,67 @@ function closeSession(session, callback) {
     sendSession(session, callback);
 }
 
-function resendSession(itemNumber, callback) {
-    let session = sessions.get(itemNumber);
-    sendSession(session, callback);
+function saveSessionFile(session, filename) {
+    fs.writeFile(filename, JSON.stringify(session), function(err) {
+        if (err) {
+            console.error('Unable to write the file ' + filename + '. Cannot save session for resend!', err);
+            console.error(session);
+        }
+        sessions.delete(session.device.InventoryNumber);
+    })
+}
+
+function saveSessionForResend(session) {
+    var sessionFileName = UNSENT_SESSIONS_DIRECTORY + '/' + uuid() + '.json';
+    fs.stat(UNSENT_SESSIONS_DIRECTORY, function(err, stats) {
+        if (err) {
+            if (err.code === "ENOENT") {
+                fs.mkdir(UNSENT_SESSIONS_DIRECTORY, saveSessionFile(session, sessionFileName));
+            } else {
+                console.error('Unable to check the existence of ' + UNSENT_SESSIONS_DIRECTORY + '. Cannot save session for resend!', err);
+                console.error(session);
+            }
+        } else {
+            saveSessionFile(session, sessionFileName);
+        }
+    });
+}
+
+function resendSessions() {
+    // Loop through all the files in the unsent sessions directory
+    fs.readdir( UNSENT_SESSIONS_DIRECTORY, function( err, files ) {
+        if( err ) {
+            if (err.code !== "ENOENT") {
+                console.error("Could not list the unsent sessions directory.", err);
+            }
+        } else {
+            files.forEach( function(file) {
+                file = UNSENT_SESSIONS_DIRECTORY + '/' + file;
+                fs.readFile(file, function (err, data) {
+                    if (err) {
+                        console.error("Could not read " + file, err);
+                    } else {
+                        return request({
+                            method: 'POST',
+                            url: API_URL + '/session',
+                            headers: {
+                                'Authorization': config.api2Authorization
+                            },
+                            body: JSON.parse(data),
+                            rejectUnauthorized: false,
+                            json: true
+                        }).then(function (body) {
+                            // Delete the file if it was successfully sent
+                            fs.unlinkSync(file);
+                        }).catch(function (error) {
+                            console.log('ERROR: Unable to resend session.');
+                            console.log(error);
+                        });
+                    }
+                });
+            });
+        }
+    } );
 }
 
 function sendSession(session, callback) {
@@ -238,10 +299,12 @@ function sendSession(session, callback) {
         rejectUnauthorized: false,
         json: true
     }).then(function (body) {
+        sessions.delete(session.device.InventoryNumber);
         callback({success: session.SessionState = 'Success', sent: true });
     }).catch(function (error) {
         console.log('ERROR: Unable to send session.');
         console.log(error);
+        saveSessionForResend(session);
         callback({success: session.SessionState = 'Success', sent: false });
     });
 }
@@ -262,7 +325,7 @@ function filesExist(directory, files) {
 }
 
 function changeDeviceFormat(device) {
-    let session_device = {};
+    var session_device = {};
     for (var prop in device) {
         if (device.hasOwnProperty(prop)) {
             switch (prop) {
@@ -281,7 +344,9 @@ function changeDeviceFormat(device) {
                 case 'Serial':
                     session_device.serial_number = device.Serial;
                     break;
-
+                case 'Type':
+                    session_device.type = device.Type;
+                    break;
             }
         }
     }

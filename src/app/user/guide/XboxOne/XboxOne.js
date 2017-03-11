@@ -5,9 +5,9 @@
         .module('app.user')
         .controller('GuideControllerXboxOne', GuideControllerXboxOne);
 
-    GuideControllerXboxOne.$inject = ['$q', 'item', 'deviceService', 'packageService', 'socketService', 'eventService', 'inventoryService', 'guideService', '$state'];
+    GuideControllerXboxOne.$inject = ['$q', 'item', 'deviceService', 'packageService', 'socketService', 'eventService', 'inventoryService', '$state'];
 
-    function GuideControllerXboxOne($q, item, deviceService, packageService, socketService, eventService, inventoryService, guideService, $state) {
+    function GuideControllerXboxOne($q, item, deviceService, packageService, socketService, eventService, inventoryService, $state) {
         var refreshMediaPackageName = 'Xbox One Refresh';
         var usbDeviceMinSize = 4000000000;
 
@@ -63,13 +63,10 @@
 
         function activate() {
             var queries = [
-                inventoryService.startSession('xbox-one', item),
+                inventoryService.startSession(item),
                 eventService.DisableDeviceNotification(),
                 loadDevices(),
-                loadMediaPackages(),
-                guideService.getGuide(item.Sku).then(function(guide) {
-                    vm.guide = guide;
-                })
+                loadMediaPackages()
             ];
             $q.all(queries).then(function() {
                 vm.prepareRefreshUsbStart();

@@ -101,11 +101,11 @@
             return deferred.promise;
         };
 
-        service.startSession = function(type, item) {
+        service.startSession = function(item) {
             var url = '/data/inventory/session/start';
             var deferred = $q.defer();
 
-            $http.post(url, {'type': type, 'item': item}).then(function(result) {
+            $http.post(url, item).then(function(result) {
                 deferred.resolve(result.data);
             });
 
@@ -129,11 +129,7 @@
             var deferred = $q.defer();
 
             $http.post(url, {'details': details, 'itemNumber': itemNumber}).then(function(result) {
-                if (result.data.sent) {
-                    deferred.resolve(result.data);
-                } else {
-
-                }
+                deferred.resolve(result.data);
             });
 
             return deferred.promise;

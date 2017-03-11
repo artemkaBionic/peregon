@@ -45,9 +45,8 @@ module.exports = function(io, data) {
 
     router.post('/data/inventory/session/start', function (req, res) {
         console.log('session start requested');
-        console.log(req.body.type);
-        console.log(req.body.item);
-        inventory.sessionStart(req.body.type, req.body.item, function (result) {
+        console.log(req.body);
+        inventory.sessionStart(req.body, function (result) {
             res.json(result);
         });
     });
@@ -141,7 +140,11 @@ module.exports = function(io, data) {
         } else if (event.name === "device-remove") {
             delete data.devices[event.data.id];
         } else if (event.name === "connection-status") {
-            station.setConnectionState(event.data);
+            var connectionState = event.data;
+            station.setConnectionState(connectionState);
+            if(connectionState.isOnline) {
+                inventory.resendSessions();
+            }
         }
 
         io.emit(event.name, event.data);

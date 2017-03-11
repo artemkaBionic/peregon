@@ -8,7 +8,6 @@
          */
         'app.env',
         'app.core',
-        'app.guide',
         'app.socket',
         'app.station',
         'app.device',
