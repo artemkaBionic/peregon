@@ -1,4 +1,4 @@
-<horizontal-ui-sheet class="apc-sheet-full guide-pc">
+<horizontal-ui-sheet class="apc-sheet-full">
   <header class="guide-header">
     <div class="row header-row">
       <div class="col-sm-6 header-col">
@@ -16,9 +16,11 @@
       </div>
     </div>
   </header>
-  <div horizontal-ui-sheet-content>
-    <div ng-switch="vm.step.name" class="row wizard">
-
-    </div>
+  <div horizontal-ui-sheet-content ng-if="vm.isPackageReady">
+    <iframe class="content-frame" ng-src="{{vm.guideUrl}}"></iframe>
+  </div>
+  <div horizontal-ui-sheet-content ng-if="!vm.isPackageReady">
+    <p>The files for this device have not finished downloading.</p>
+    <p>The download should be complete within a couple days. If not, please contact the National Support Center.</p>
   </div>
 </horizontal-ui-sheet>

@@ -5,15 +5,14 @@
         .module('app.user')
         .controller('UserController', UserController);
 
-    UserController.$inject = ['$q', '$state', 'config', '$http', 'inventoryService', '$uibModal', 'guideService', 'socketService', 'stationService', 'eventService', '$scope'];
+    UserController.$inject = ['$q', '$state', 'config', 'inventoryService', 'socketService', '$scope'];
 
-    function UserController($q, $state, config, $http, inventoryService, $uibModal, guideService, socketService, stationService, eventService, $scope) {
+    function UserController($q, $state, config, inventoryService, socketService, $scope) {
         /*jshint validthis: true */
         var vm = this;
         vm.ready = false;
         vm.searchString = '';
         vm.item = null;
-        vm.guide = null;
         vm.AndroidEmei = null;
         vm.itemNumberError = false;
 
@@ -23,13 +22,8 @@
                 vm.item = null;
                 inventoryService.getItem(vm.searchString).then(function(item) {
                     vm.item = item;
-                    if (item.Sku) {
-                        // enable keypad submit button
-                        $('.bc-keypad__key-button--submit').addClass('bc-keypad-submit-enabled');
-                        guideService.getGuide(item.Sku).then(function(guide) {
-                            vm.guide = guide;
-                        });
-                    }
+                    // enable keypad submit button
+                    $('.bc-keypad__key-button--submit').addClass('bc-keypad-submit-enabled');
                 }, vm.checkItem);
 
             } else {
@@ -51,7 +45,6 @@
                 var $stateParams = {};
                 $stateParams.itemNumber = vm.item.InventoryNumber;
                 vm.item = null;
-                vm.guide = null;
                 vm.searchString = '';
                 $state.go('root.user.guide', $stateParams);
             }
@@ -65,12 +58,6 @@
             //     console.log(data.emei);
             //     inventoryService.getItem(vm.AndroidEmei).then(function(item) {
             //         vm.item = item;
-            //        // vm.searchString
-            //         if (item.Sku) {
-            //             guideService.getGuide(item.Sku).then(function(guide) {
-            //                 vm.guide = guide;
-            //             });
-            //         }
             //     });
             //     vm.showGuide();
             //     console.log('User.js Event app-start');

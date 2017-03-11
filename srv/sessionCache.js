@@ -14,4 +14,8 @@ SessionCache.prototype.get = function(key) {
     return this._sessions[key];
 };
 
+SessionCache.prototype.delete = function(key) {
+    delete this._sessions[key];
+}
+
 module.exports = new SessionCache();

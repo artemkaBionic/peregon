@@ -57,7 +57,7 @@
             }
 
             timeouts.push($timeout(vm.sessionExpired,3600000)); //Session expires after an hour after the start
-            var queries = [inventoryService.startSession('android', item), unlockDevice()];
+            var queries = [inventoryService.startSession(item), unlockDevice()];
             $q.all(queries);
         };
 

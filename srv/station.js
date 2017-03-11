@@ -5,9 +5,11 @@ var exec = require('child_process').exec;
 var isDevelopment = process.env.NODE_ENV === 'development';
 var connectionState = null;
 var service_tag = getServiceTag();
+var name = getName();
 
 
 exports.service_tag = service_tag;
+exports.name = name;
 
 exports.setConnectionState = function(state) {
     connectionState = state;
@@ -52,15 +54,26 @@ exports.shutdown = function() {
 };
 
 function getServiceTag() {
-    var cmd = 'dmidecode -s system-serial-number';
-    exec(cmd, function(error, stdout, stderr) {
-        if (error) {
-            console.log(error);
-        }
-        if (!error) {
-            SERVICE_TAG = stdout;
-        }
-});
+    if (isDevelopment) {
+        service_tag = '2UA3340ZS6'; // Lab Station
+    } else {
+        exec('dmidecode -s system-serial-number', function(error, stdout, stderr) {
+            if (error) {
+                console.log(error);
+            }
+            if (!error) {
+                service_tag = stdout;
+            }
+        });
+    }
+}
+
+function getName() {
+    if (isDevelopment) {
+        name = 'station7446a09dac51'; // Lab Station
+    } else {
+        name = os.hostname();
+    }
 }
 
 
