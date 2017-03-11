@@ -6,16 +6,16 @@ function SessionCache() {
 
 Object.setPrototypeOf(SessionCache.prototype, Object.prototype);
 
-SessionCache.prototype.set = function(key, session) {
+SessionCache.prototype.set = function (key, session) {
     this._sessions[key] = session;
 };
 
-SessionCache.prototype.get = function(key) {
+SessionCache.prototype.get = function (key) {
     return this._sessions[key];
 };
 
-SessionCache.prototype.delete = function(key) {
+SessionCache.prototype.delete = function (key) {
     delete this._sessions[key];
-}
+};
 
 module.exports = new SessionCache();

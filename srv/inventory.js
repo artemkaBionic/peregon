@@ -9,14 +9,13 @@ var fs = require('fs');
 var childProcess = require('child_process');
 var rimraf = require('rimraf');
 var request = require("requestretry");
-var os = require('os');
 var uuid = require('uuid/v1');
 var station = require('./station');
 const sessions = require('./sessionCache');
 
 const UNSENT_SESSIONS_DIRECTORY = './unsentSessions';
 const INVENTORY_LOOKUP_URL = 'https://' + config.apiHost + '/api/inventorylookup/';
-const API_URL ='https://api2.basechord.com';
+const API_URL = 'https://api2.basechord.com';
 const RESEND_SESSIONS_INTERVAL = 900000; // 15 minutes
 
 var isDevelopment = process.env.NODE_ENV === 'development';
@@ -34,7 +33,7 @@ exports.unlockAndroid = unlockAndroid;
 
 // Periodically resend unsent sessions
 resendSessions();
-setInterval(function(){
+setInterval(function () {
     resendSessions();
 }, RESEND_SESSIONS_INTERVAL);
 
@@ -47,7 +46,7 @@ function getItem(id, callback) {
         },
         rejectUnauthorized: false,
         json: true
-    }, function(error, response, body) {
+    }, function (error, response, body) {
         if (error) {
             console.error(error);
             callback({error: error, item: null});
@@ -70,7 +69,7 @@ function lockAndroid(imei, callback) {
         body: {'IMEI': imei},
         rejectUnauthorized: false,
         json: true
-    }, function(error, response, body) {
+    }, function (error, response, body) {
         if (error) {
             console.error(error);
             callback({error: error, result: null});
@@ -94,7 +93,7 @@ function unlockAndroid(imei, callback) {
         body: {'IMEI': imei},
         rejectUnauthorized: false,
         json: true
-    }, function(error, response, body) {
+    }, function (error, response, body) {
         if (error) {
             console.error(error);
             callback({error: error, result: null});
@@ -128,7 +127,7 @@ function sessionFinish(itemNumber, details, callback) {
             logSession(session, "Started", 'Checking ' + details.device.id + ' for evidence that the refresh completed successfully.');
             logSession(session, "Started", 'Simulating verifying a refresh in a development environment by waiting 3 seconds.');
             console.log('Simulating verifying a refresh in a development environment by waiting 3 seconds.');
-            setTimeout(function() {
+            setTimeout(function () {
                 logSession(session, "Success", 'Refresh completed successfully.');
                 closeSession(session, callback);
             }, 3000);
@@ -136,14 +135,14 @@ function sessionFinish(itemNumber, details, callback) {
             logSession(session, "Started", 'Checking ' + details.device.id + ' for evidence that the refresh completed successfully.');
             var mountSource = '/dev/' + details.device.id + '1';
             var mountTarget = '/mnt/' + details.device.id + '1';
-            fs.mkdir(mountTarget, function(err) {
+            fs.mkdir(mountTarget, function (err) {
                 if (err && err.code !== 'EEXIST') {
                     logSession(session, "Started", 'Error creating directory ' + mountTarget);
                     logSession(session, "Started", err);
                 } else {
                     logSession(session, "Started", 'Attempting to mount ' + mountSource + ' to ' + mountTarget);
                     var mount = childProcess.spawn('mount', [mountSource, mountTarget]);
-                    mount.on('close', function(code) {
+                    mount.on('close', function (code) {
                         var systemUpdateDir = path.join(mountTarget, '$SystemUpdate');
                         if (code !== 0) {
                             logSession(session, "Started", 'Error, failed to mount ' + mountSource + ' to ' + mountTarget);
@@ -151,7 +150,7 @@ function sessionFinish(itemNumber, details, callback) {
                         } else {
                             logSession(session, "Started", 'Successfully mounted ' + mountSource + ' to ' + mountTarget);
                             var success = filesExist(systemUpdateDir, ['smcerr.log', 'update.cfg', 'update.log', 'update2.cfg']);
-                            rimraf(path.join(mountTarget, '*'), function(err) {
+                            rimraf(path.join(mountTarget, '*'), function (err) {
                                 childProcess.spawn('umount', [mountTarget]);
                                 if (success) {
                                     logSession(session, "Success", 'Refresh completed successfully.');
@@ -186,7 +185,7 @@ function sessionFinish(itemNumber, details, callback) {
 function initSession(device, diagnose_only=false) {
     var session_device = changeDeviceFormat(device);
     var newSession = {
-        "start_time" : new Date(),
+        "start_time": new Date(),
         "end_time": null,
         "status": 'Incomplete',
         "diagnose_only": diagnose_only,
@@ -226,7 +225,7 @@ function closeSession(session, callback) {
 }
 
 function saveSessionFile(session, filename) {
-    fs.writeFile(filename, JSON.stringify(session), function(err) {
+    fs.writeFile(filename, JSON.stringify(session), function (err) {
         if (err) {
             console.error('Unable to write the file ' + filename + '. Cannot save session for resend!', err);
             console.error(session);
@@ -237,7 +236,7 @@ function saveSessionFile(session, filename) {
 
 function saveSessionForResend(session) {
     var sessionFileName = UNSENT_SESSIONS_DIRECTORY + '/' + uuid() + '.json';
-    fs.stat(UNSENT_SESSIONS_DIRECTORY, function(err, stats) {
+    fs.stat(UNSENT_SESSIONS_DIRECTORY, function (err, stats) {
         if (err) {
             if (err.code === "ENOENT") {
                 fs.mkdir(UNSENT_SESSIONS_DIRECTORY, saveSessionFile(session, sessionFileName));
@@ -253,13 +252,13 @@ function saveSessionForResend(session) {
 
 function resendSessions() {
     // Loop through all the files in the unsent sessions directory
-    fs.readdir( UNSENT_SESSIONS_DIRECTORY, function( err, files ) {
-        if( err ) {
+    fs.readdir(UNSENT_SESSIONS_DIRECTORY, function (err, files) {
+        if (err) {
             if (err.code !== "ENOENT") {
                 console.error("Could not list the unsent sessions directory.", err);
             }
         } else {
-            files.forEach( function(file) {
+            files.forEach(function (file) {
                 file = UNSENT_SESSIONS_DIRECTORY + '/' + file;
                 fs.readFile(file, function (err, data) {
                     if (err) {
@@ -285,7 +284,7 @@ function resendSessions() {
                 });
             });
         }
-    } );
+    });
 }
 
 function sendSession(session, callback) {
@@ -300,12 +299,12 @@ function sendSession(session, callback) {
         json: true
     }).then(function (body) {
         sessions.delete(session.device.InventoryNumber);
-        callback({success: session.SessionState = 'Success', sent: true });
+        callback({success: session.SessionState = 'Success', sent: true});
     }).catch(function (error) {
         console.log('ERROR: Unable to send session.');
         console.log(error);
         saveSessionForResend(session);
-        callback({success: session.SessionState = 'Success', sent: false });
+        callback({success: session.SessionState = 'Success', sent: false});
     });
 }
 
