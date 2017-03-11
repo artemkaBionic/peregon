@@ -182,7 +182,10 @@ function sessionFinish(itemNumber, details, callback) {
     }
 }
 
-function initSession(device, diagnose_only=false) {
+function initSession(device, diagnose_only) {
+    if (typeof diagnose_only === "undefined" || diagnose_only === null) {
+        diagnose_only = false;
+    }
     var session_device = changeDeviceFormat(device);
     var newSession = {
         "start_time": new Date(),
