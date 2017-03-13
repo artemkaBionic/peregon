@@ -5,12 +5,41 @@ var exec = require('child_process').exec;
 
 var isDevelopment = process.env.NODE_ENV === 'development';
 var connectionState = null;
-var service_tag = getServiceTag();
-var name = getName();
+var service_tag = null;
+var name = null;
 
 
-exports.service_tag = service_tag;
-exports.name = name;
+exports.getServiceTag = function (callback) {
+    if (service_tag === null) {
+        if (isDevelopment) {
+            service_tag = '2UA3340ZS6'; // Lab Station
+            callback(service_tag);
+        } else {
+            exec('dmidecode -s system-serial-number', function (error, stdout, stderr) {
+                if (error) {
+                    console.log(error);
+                    console.log(stderr);
+                } else {
+                    service_tag = stdout.substr(0, stdout.indexOf("\n")); // First line
+                }
+                callback(service_tag);
+            });
+        }
+    } else {
+        callback(service_tag);
+    }
+};
+
+exports.getName = function () {
+    if (name === null) {
+        if (isDevelopment) {
+            name = 'station7446a09dac51'; // Lab Station
+        } else {
+            name = os.hostname();
+        }
+    }
+    return name;
+};
 
 exports.setConnectionState = function (state) {
     connectionState = state;
@@ -53,28 +82,4 @@ exports.shutdown = function () {
         childProcess.spawn('python', ['/opt/powercontrol.py', '--poweroff']);
     }
 };
-
-function getServiceTag() {
-    if (isDevelopment) {
-        service_tag = '2UA3340ZS6'; // Lab Station
-    } else {
-        exec('dmidecode -s system-serial-number', function (error, stdout, stderr) {
-            if (error) {
-                console.log(error);
-            }
-            if (!error) {
-                service_tag = stdout;
-            }
-        });
-    }
-}
-
-function getName() {
-    if (isDevelopment) {
-        name = 'station7446a09dac51'; // Lab Station
-    } else {
-        name = os.hostname();
-    }
-}
-
 

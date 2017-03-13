@@ -107,9 +107,27 @@ function unlockAndroid(imei, callback) {
     console.log('Unlock request has been sent');
 }
 
-function sessionStart(item, callback) {
-    initSession(item);
-    callback();
+function sessionStart(device, callback) {
+    var diagnose_only = false;
+    var session_device = changeDeviceFormat(device);
+    var station_name = station.getName();
+    station.getServiceTag(function (station_service_tag) {
+        var newSession = {
+            "start_time": new Date(),
+            "end_time": null,
+            "status": 'Incomplete',
+            "diagnose_only": diagnose_only,
+            "device": session_device,
+            "station": {
+                "name": station_name,
+                "service_tag": station_service_tag
+            },
+            "logs": []
+        };
+
+        sessions.set(session_device.item_number, newSession);
+        callback();
+    });
 }
 
 function sessionUpdate(itemNumber, message, callback) {
@@ -182,27 +200,6 @@ function sessionFinish(itemNumber, details, callback) {
     }
 }
 
-function initSession(device, diagnose_only) {
-    if (typeof diagnose_only === "undefined" || diagnose_only === null) {
-        diagnose_only = false;
-    }
-    var session_device = changeDeviceFormat(device);
-    var newSession = {
-        "start_time": new Date(),
-        "end_time": null,
-        "status": 'Incomplete',
-        "diagnose_only": diagnose_only,
-        "device": session_device,
-        "station": {
-            "name": station.name,
-            "service_tag": station.service_tag
-        },
-        "logs": []
-    };
-
-    sessions.set(device.InventoryNumber, newSession);
-}
-
 function logSession(session, status, message) {
     var logDate = new Date();
 
@@ -233,7 +230,7 @@ function saveSessionFile(session, filename) {
             console.error('Unable to write the file ' + filename + '. Cannot save session for resend!', err);
             console.error(session);
         }
-        sessions.delete(session.device.InventoryNumber);
+        sessions.delete(session.device.item_number);
     })
 }
 
@@ -301,7 +298,7 @@ function sendSession(session, callback) {
         rejectUnauthorized: false,
         json: true
     }).then(function (body) {
-        sessions.delete(session.device.InventoryNumber);
+        sessions.delete(session.device.item_number);
         callback({success: session.SessionState = 'Success', sent: true});
     }).catch(function (error) {
         console.log('ERROR: Unable to send session.');

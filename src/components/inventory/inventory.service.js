@@ -19,6 +19,7 @@
         function isValidItem(item) {
             return item && item.Sku;
         }
+
         service.getItem = function(id) {
             var url = '/data/inventory/' + id;
             var deferred = $q.defer();
@@ -39,7 +40,7 @@
                                 //     'newest-on-top': false,
                                 //     'closeButton': true
                                 // });
-                               console.log('Item number not found. Please check the number and try again.');
+                                console.log('Item number not found. Please check the number and try again.');
                             } else {
                                 service.ErrorToast = true;
                                 // toastr.clear(service.ErrorToast);
@@ -71,7 +72,7 @@
                         //     'newest-on-top':false,
                         //     'closeButton': true
                         // });
-                       console.log('Item not found. Please try again.');
+                        console.log('Item not found. Please try again.');
                     }
                 });
             }

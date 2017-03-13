@@ -20,7 +20,7 @@
             if (!vm.androidFinished) {
                 lockDevice();
             }
-            timeouts.forEach(function(timeout){
+            timeouts.forEach(function(timeout) {
                 $timeout.cancel(timeout);
             });
         });//'$destroy' event appears just before the destruction of the controller
@@ -52,11 +52,11 @@
             vm.failedTests = [];
             vm.step = vm.steps.startOne; //!!! Definition for first Guide Step
 
-            if (eventService.InternetConnection){
+            if (eventService.InternetConnection) {
                 toastr.clear(eventService.connectionNotification);
             }
 
-            timeouts.push($timeout(vm.sessionExpired,3600000)); //Session expires after an hour after the start
+            timeouts.push($timeout(vm.sessionExpired, 3600000)); //Session expires after an hour after the start
             var queries = [inventoryService.startSession(item), unlockDevice()];
             $q.all(queries);
         };
@@ -91,6 +91,7 @@
                 });
             }
         }
+
         /*=================End Device lock and unlock functions ==============*/
         /*=================Guide Steps definition===============*/
         vm.steps = {
@@ -174,10 +175,10 @@
                 title: 'Disable any Android locks'
             },
             /*googleAccount: {
-                name: 'googleAccount',
-                number: 3,
-                title: 'Remove Google account'
-            },*/
+             name: 'googleAccount',
+             number: 3,
+             title: 'Remove Google account'
+             },*/
             usbDebug: {
                 name: 'usbDebug',
                 number: 4,
@@ -221,7 +222,7 @@
         vm.preparationFour = function() {
             vm.buttonBackShow = false;
             vm.step = vm.steps.preparationFour;
-            timeouts.push($timeout(vm.buttonBack,20000));
+            timeouts.push($timeout(vm.buttonBack, 20000));
         };
 
         function waitForAppStart() {
@@ -267,7 +268,7 @@
         vm.finish = function() {
             eventService.AndroidGuideInProcess = false;
             vm.androidFinished = true;
-            if (vm.TestsFault || vm.Broken || vm.AndroidDisconnected){
+            if (vm.TestsFault || vm.Broken || vm.AndroidDisconnected) {
                 vm.finishFail();
             }
             else {
@@ -297,9 +298,9 @@
             vm.openModal('lg');
         };
         /*vm.modalGoogleAccount = function() {
-            vm.ModalStep = vm.ModalSteps.googleAccount;
-            vm.openModal('lg');
-        };*/
+         vm.ModalStep = vm.ModalSteps.googleAccount;
+         vm.openModal('lg');
+         };*/
         vm.modalUsbDebug = function() {
             vm.ModalStep = vm.ModalSteps.usbDebug;
             vm.openModal('lg');
@@ -343,7 +344,7 @@
         };
 
         vm.startResultLast = function() {
-            timeouts.push($timeout(vm.startResult,500));
+            timeouts.push($timeout(vm.startResult, 500));
         };
 
         vm.deviceTurnsOn = function() {
@@ -356,7 +357,7 @@
 
         vm.startPreparation = function() {
             if (vm.NotLocked && vm.Wifi && vm.UsbDebug) {
-                timeouts.push($timeout(vm.preparationFour,500));
+                timeouts.push($timeout(vm.preparationFour, 500));
             }
         }; // Preparation Toggles function
 
@@ -368,7 +369,7 @@
         /*=================Diagnostics=================*/
 
         function actionManual() {
-            if (vm.manualPassed === vm.manualSize){
+            if (vm.manualPassed === vm.manualSize) {
                 timeouts.push($timeout(makeActionManual, 1500));
             }
         }
@@ -384,107 +385,110 @@
         }
 
         function doesAppStarted() {
-            timeouts.push($timeout(makeAppNotStarted,30000));
+            timeouts.push($timeout(makeAppNotStarted, 30000));
         }
+
         /*=================End Diagnostics=================*/
         /*=================Diagnostics Orbicular Progress Bar Definition=================*/
 
         function progressAuto() {
             vm.manualPassed = 0;// Reset The amount of passed steps
-            if (vm.step === vm.steps.diagnosticOne){
+            if (vm.step === vm.steps.diagnosticOne) {
                 vm.autoPassed += 1;
                 if (vm.autoPassed === vm.autoSize) {
-                    timeouts.push($timeout(vm.diagnosticTwo,1000));
+                    timeouts.push($timeout(vm.diagnosticTwo, 1000));
                 }
             }
         }
 
         function progressManual() {
             vm.autoPassed = 0;// Reset The amount of passed steps
-            if (vm.step === vm.steps.diagnosticTwo){
+            if (vm.step === vm.steps.diagnosticTwo) {
                 vm.manualPassed += 1;
                 actionManual();
             }
         }
+
         /*=================End Diagnostics Orbicular Progress Bar Definition=================*/
         /*=================USB Connect end Events===============*/
         waitForAndroidAdd();//Event listener
         function waitForAndroidAdd() {
             socketService.on('android-add', function() {
-                    inventoryService.updateSession('Android device connected.');
-                    vm.AndroidDisconnected = false;
-                   toastr.clear(vm.AndroidNotification);
-                    vm.AndroidNotification = toastr.info('Follow the instructions on the Android Device', 'Android Device Connected', {
+                inventoryService.updateSession(vm.item.InventoryNumber, 'Android device connected.');
+                vm.AndroidDisconnected = false;
+                toastr.clear(vm.AndroidNotification);
+                vm.AndroidNotification = toastr.info('Follow the instructions on the Android Device', 'Android Device Connected', {
+                    'tapToDismiss': true,
+                    'timeOut': 3000,
+                    'closeButton': true
+                });//Toast Pop-Up notification parameters
+                if (vm.androidFinished) {
+                    return;
+                }
+                else {
+                    waitForAppStart();
+                }
+            });
+            socketService.on('android-remove', function() {
+                toastr.clear(vm.AndroidNotification);
+                if (vm.androidFinished) {
+                    vm.AndroidNotification = toastr.info('Refresh completed', 'Android Device has been Disconnected', {
                         'tapToDismiss': true,
                         'timeOut': 3000,
                         'closeButton': true
                     });//Toast Pop-Up notification parameters
-                    if (vm.androidFinished){
-                        return;
-                    }
-                    else {
-                        waitForAppStart();
-                    }
-            });
-            socketService.on('android-remove', function() {
-                    toastr.clear(vm.AndroidNotification);
-                    if (vm.androidFinished){
-                        vm.AndroidNotification = toastr.info('Refresh completed', 'Android Device has been Disconnected', {
-                            'tapToDismiss': true,
-                            'timeOut': 3000,
-                            'closeButton': true
-                        });//Toast Pop-Up notification parameters
-                    } else {
-                        vm.AndroidDisconnected = true;
-                        inventoryService.updateSession(vm.item.InventoryNumber, 'Android device has been disconnected.');
-                        vm.AndroidConnectionCheck();
-                        timeouts.push($timeout(vm.preparationFour,500));
-                    }
+                } else {
+                    vm.AndroidDisconnected = true;
+                    inventoryService.updateSession(vm.item.InventoryNumber, 'Android device has been disconnected.');
+                    vm.AndroidConnectionCheck();
+                    timeouts.push($timeout(vm.preparationFour, 500));
+                }
             });
 
-                socketService.on('app-start', function(data) {
-                    inventoryService.updateSession('Android refresh app has started.');
-                    vm.autoSize = data.data.auto;//Get number of Auto tests
-                    vm.manualSize = data.data.manual;//Get number of Manual tests
-                    vm.refreshAppStarted = true;
-                    if (vm.step === vm.steps.waitForAppStart) {
-                        vm.diagnosticOne();
-                    }
-                });
+            socketService.on('app-start', function(data) {
+                inventoryService.updateSession(vm.item.InventoryNumber, 'Android refresh app has started.');
+                vm.autoSize = data.data.auto;//Get number of Auto tests
+                vm.manualSize = data.data.manual;//Get number of Manual tests
+                vm.refreshAppStarted = true;
+                if (vm.step === vm.steps.waitForAppStart) {
+                    vm.diagnosticOne();
+                }
+            });
 
             socketService.on('android-test', function(data) {
-                    var message = data.commandName + ' ' + (data.passed ? 'passed' : 'failed') + '\n' + JSON.stringify(data.data, null, 2);
-                    inventoryService.updateSession(message);
+                var message = data.commandName + ' ' + (data.passed ? 'passed' : 'failed') + '\n' + JSON.stringify(data.data, null, 2);
+                inventoryService.updateSession(vm.item.InventoryNumber, message);
 
-                    if (data.passed === false) {
-                        vm.TestsFault = true;//If one of the Auto tests Fails
-                        vm.failedTests.push(data.commandName);
-                    }
+                if (data.passed === false) {
+                    vm.TestsFault = true;//If one of the Auto tests Fails
+                    vm.failedTests.push(data.commandName);
+                }
 
-                    if (data.type === 1) {
-                        if (vm.step !== vm.steps.diagnosticOne){
-                            vm.diagnosticOne();//Starting Auto diagnostic from the beginning
-                        } // Phone can be connected even on the first Step, if lazy associate
-                        progressAuto();
-                    }
+                if (data.type === 1) {
+                    if (vm.step !== vm.steps.diagnosticOne) {
+                        vm.diagnosticOne();//Starting Auto diagnostic from the beginning
+                    } // Phone can be connected even on the first Step, if lazy associate
+                    progressAuto();
+                }
 
-                    if (data.type === 0) {
-                        if (vm.step !== vm.steps.diagnosticTwo){
-                            vm.diagnosticTwo();//Starting Manual diagnostic from the beginning
-                        }
-                        progressManual();
+                if (data.type === 0) {
+                    if (vm.step !== vm.steps.diagnosticTwo) {
+                        vm.diagnosticTwo();//Starting Manual diagnostic from the beginning
                     }
-                });
+                    progressManual();
+                }
+            });
 
             socketService.on('android-reset', function(data) {
-                    inventoryService.updateSession('Android refresh app has initiated a factory reset.');
-                    vm.finish();
+                inventoryService.updateSession(vm.item.InventoryNumber, 'Android refresh app has initiated a factory reset.');
+                vm.finish();
             });
         }
+
         /*=================End USB Connect end Events===============*/
         /*=================Android Disconnected Actions===============*/
         vm.AndroidConnectionDoubleCheck = function() {
-            if (vm.AndroidDisconnected){
+            if (vm.AndroidDisconnected) {
                 vm.TestsFault = true;
                 vm.finish();
             }
@@ -497,7 +501,7 @@
                 'closeButton': true
             });
             //Toast Pop-Up notification parameters
-            timeouts.push($timeout(vm.AndroidConnectionDoubleCheck,60000));
+            timeouts.push($timeout(vm.AndroidConnectionDoubleCheck, 60000));
         };
         vm.TestsFault = true;
         vm.activate();

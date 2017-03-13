@@ -17,73 +17,74 @@ module.exports = function(io, data) {
         });
     }
 
-    router.get('/data/devices', function (req, res) {
+    router.get('/data/devices', function(req, res) {
         res.json(data.devices);
     });
 
-    router.get('/data/devices/:id', function (req, res) {
+    router.get('/data/devices/:id', function(req, res) {
         res.json(data.devices[req.params.id]);
     });
 
-    router.get('/data/inventory/:id', function (req, res) {
-        inventory.getItem(req.params.id, function (item) {
+    router.get('/data/inventory/:id', function(req, res) {
+        inventory.getItem(req.params.id, function(item) {
             res.json(item);
         });
     });
 
-    router.get('/data/inventory/lock/:imei', function (req, res) {
-        inventory.lockAndroid(req.params.imei, function (result) {
+    router.get('/data/inventory/lock/:imei', function(req, res) {
+        inventory.lockAndroid(req.params.imei, function(result) {
             res.json(result);
         });
     });
 
-    router.get('/data/inventory/unlock/:imei', function (req, res) {
-        inventory.unlockAndroid(req.params.imei, function (result) {
+    router.get('/data/inventory/unlock/:imei', function(req, res) {
+        inventory.unlockAndroid(req.params.imei, function(result) {
             res.json(result);
         });
     });
 
-    router.post('/data/inventory/session/start', function (req, res) {
-        console.log('session start requested');
-        console.log(req.body);
-        inventory.sessionStart(req.body, function (result) {
+    router.post('/data/inventory/session/start', function(req, res) {
+        inventory.sessionStart(req.body, function(result) {
             res.json(result);
         });
     });
 
-    router.post('/data/inventory/session/update', function (req, res) {
-        console.log(req.body.itemNumber);
-      //  console.log(req.body.InventoryNumber);
-        inventory.sessionUpdate(req.body.itemNumber, req.body.message, function (err, result) {
-            if(err) {
+    router.post('/data/inventory/session/update', function(req, res) {
+        inventory.sessionUpdate(req.body.itemNumber, req.body.message, function(err, result) {
+            if (err) {
                 console.log(err);
             }
             res.json(result);
         });
     });
 
-    router.post('/data/inventory/session/finish', function (req, res) {
-        console.log(req.body.itemNumber);
-        inventory.sessionFinish(req.body.itemNumber, req.body.details, function (result) {
+    router.post('/data/inventory/session/finish', function(req, res) {
+        inventory.sessionFinish(req.body.itemNumber, req.body.details, function(result) {
             res.json(result);
         });
     });
 
-    router.post('/data/inventory/session/resend', function (req, res) {
-        inventory.resendSession(req.body.itemNumber, function (result) {
-            res.json(result);
-        });
-    });
-
-    router.get('/data/packages/:contentType/:contentSubtype?', function (req, res) {
+    router.get('/data/packages/:contentType/:contentSubtype?', function(req, res) {
         try {
             console.log('Client requests ' + req.params.contentSubtype + ' ' + req.params.contentType + ' packages');
             switch (req.params.contentType) {
                 case 'media':
                     if (isDevelopment) {
                         res.json([
-                            {"type":"media","subtype":"xbox-one","id":"bc76b9f7-02f9-42e3-a9b7-3383b5287f07","name":"Xbox One Refresh","size":24204},
-                            {"type":"media","subtype":"xbox-one","id":"6984e794-7934-4ecb-851a-da141da5a774","name":"Xbox One Update","size":2000268}
+                            {
+                                "type": "media",
+                                "subtype": "xbox-one",
+                                "id": "bc76b9f7-02f9-42e3-a9b7-3383b5287f07",
+                                "name": "Xbox One Refresh",
+                                "size": 24204
+                            },
+                            {
+                                "type": "media",
+                                "subtype": "xbox-one",
+                                "id": "6984e794-7934-4ecb-851a-da141da5a774",
+                                "name": "Xbox One Update",
+                                "size": 2000268
+                            }
                         ]);
                     } else {
                         var packages = [];
@@ -117,17 +118,17 @@ module.exports = function(io, data) {
         }
     });
 
-    router.get('/data/isServiceCenter', function (req, res) {
+    router.get('/data/isServiceCenter', function(req, res) {
         station.getIsServiceCenter((function(data) {
             res.json(data);
         }));
     });
 
-    router.get('/data/getConnectionState', function (req, res) {
+    router.get('/data/getConnectionState', function(req, res) {
         res.json(station.getConnectionState());
     });
 
-    router.post('/event/:name', function (req, res) {
+    router.post('/event/:name', function(req, res) {
         var event = {};
         event.name = req.params.name;
         event.data = req.body;
@@ -142,7 +143,7 @@ module.exports = function(io, data) {
         } else if (event.name === "connection-status") {
             var connectionState = event.data;
             station.setConnectionState(connectionState);
-            if(connectionState.isOnline) {
+            if (connectionState.isOnline) {
                 inventory.resendSessions();
             }
         }
@@ -151,18 +152,15 @@ module.exports = function(io, data) {
         res.json();
     });
 
-    router.post('/system/reboot', function (req, res) {
+    router.post('/system/reboot', function(req, res) {
         console.log('Rebooting...');
         station.reboot();
     });
 
-    router.post('/system/shutdown', function (req, res) {
+    router.post('/system/shutdown', function(req, res) {
         console.log('Shutting down...');
         station.shutdown();
     });
-
-    
-
 
 
     return router;
