@@ -50,7 +50,8 @@ module.exports = function(io, data) {
     });
 
     router.post('/data/inventory/session/update', function(req, res) {
-        inventory.sessionUpdate(req.body.itemNumber, req.body.message, function(err, result) {
+        console.log(req.body);
+        inventory.sessionUpdate(req.body.itemNumber, req.body.message, req.body.details, function(err, result) {
             if (err) {
                 console.log(err);
             }

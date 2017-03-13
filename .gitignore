@@ -9,3 +9,4 @@ dist/
 sn.conf.js
 aws.*
 .history/
+src/app/app.env.js

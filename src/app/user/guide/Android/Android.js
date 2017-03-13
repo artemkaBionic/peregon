@@ -18,7 +18,7 @@
         /*=================Checking for Android Refresh process finished to lock the device===============*/
         $scope.$on('$destroy', function() {
             if (!vm.androidFinished) {
-                lockDevice();
+                vm.finishClosed();
             }
             timeouts.forEach(function(timeout) {
                 $timeout.cancel(timeout);
@@ -81,14 +81,16 @@
 
         function lockDevice() {
             if (vm.item) {
-                inventoryService.lock(vm.item.Serial).then(function(data) {
+                return inventoryService.lock(vm.item.Serial).then(function(data) {
                     if (data.error) {
-                        inventoryService.updateSession(vm.item.InventoryNumber, 'Unable to request device lock.\n' + JSON.stringify(data.error, null, 2));
+                        return inventoryService.updateSession(vm.item.InventoryNumber, 'Unable to request device lock.\n' + JSON.stringify(data.error, null, 2));
                     }
                     else {
-                        inventoryService.updateSession(vm.item.InventoryNumber, 'Device is locked by ' + vm.deviceLockService);
+                        return inventoryService.updateSession(vm.item.InventoryNumber, 'Device is locked by ' + vm.deviceLockService);
                     }
                 });
+            } else {
+                return $q.resolve();
             }
         }
 
@@ -245,24 +247,46 @@
         };
 
         vm.sessionExpired = function() {
-            lockDevice();
-            inventoryService.updateSession(vm.item.InventoryNumber, 'Session expired.');
-            inventoryService.finishSession(vm.item.InventoryNumber, {'complete': false});
+            lockDevice()
+                .then(function() {
+                    return inventoryService.updateSession(vm.item.InventoryNumber, 'Session expired.');
+                })
+                .then(function() {
+                    return inventoryService.finishSession(vm.item.InventoryNumber, {'complete': false});
+                });
             vm.step = vm.steps.sessionExpired;
         };
 
         vm.finishFail = function() {
-            lockDevice();
-            inventoryService.updateSession(vm.item.InventoryNumber, 'Session failed.');
-            inventoryService.finishSession(vm.item.InventoryNumber, {'complete': false});
             vm.step = vm.steps.finishFail;
+            return lockDevice()
+                .then(function() {
+                    return inventoryService.updateSession(vm.item.InventoryNumber, 'Session failed.');
+                })
+                .then(function() {
+                    return inventoryService.finishSession(vm.item.InventoryNumber, {'complete': false});
+                });
         };
 
         vm.finishSuccess = function() {
-            lockDevice();
-            inventoryService.updateSession(vm.item.InventoryNumber, 'Session complete.');
-            inventoryService.finishSession(vm.item.InventoryNumber, {'complete': true});
             vm.step = vm.steps.finishSuccess;
+            return lockDevice()
+                .then(function() {
+                    return inventoryService.updateSession(vm.item.InventoryNumber, 'Session complete.');
+                })
+                .then(function() {
+                    return inventoryService.finishSession(vm.item.InventoryNumber, {'complete': true});
+                });
+        };
+
+        vm.finishClosed = function() {
+            return lockDevice()
+                .then(function() {
+                    return inventoryService.updateSession(vm.item.InventoryNumber, 'User closed refresh session.');
+                })
+                .then(function() {
+                    return inventoryService.finishSession(vm.item.InventoryNumber, {'complete': false});
+                });
         };
 
         vm.finish = function() {
@@ -480,7 +504,7 @@
             });
 
             socketService.on('android-reset', function(data) {
-                inventoryService.updateSession(vm.item.InventoryNumber, 'Android refresh app has initiated a factory reset.');
+                inventoryService.updateSession('Android refresh app has initiated a factory reset.');
                 vm.finish();
             });
         }

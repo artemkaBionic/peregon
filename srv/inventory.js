@@ -33,7 +33,7 @@ exports.unlockAndroid = unlockAndroid;
 
 // Periodically resend unsent sessions
 resendSessions();
-setInterval(function () {
+setInterval(function() {
     resendSessions();
 }, RESEND_SESSIONS_INTERVAL);
 
@@ -46,7 +46,7 @@ function getItem(id, callback) {
         },
         rejectUnauthorized: false,
         json: true
-    }, function (error, response, body) {
+    }, function(error, response, body) {
         if (error) {
             console.error(error);
             callback({error: error, item: null});
@@ -69,7 +69,7 @@ function lockAndroid(imei, callback) {
         body: {'IMEI': imei},
         rejectUnauthorized: false,
         json: true
-    }, function (error, response, body) {
+    }, function(error, response, body) {
         if (error) {
             console.error(error);
             callback({error: error, result: null});
@@ -93,7 +93,7 @@ function unlockAndroid(imei, callback) {
         body: {'IMEI': imei},
         rejectUnauthorized: false,
         json: true
-    }, function (error, response, body) {
+    }, function(error, response, body) {
         if (error) {
             console.error(error);
             callback({error: error, result: null});
@@ -111,7 +111,7 @@ function sessionStart(device, callback) {
     var diagnose_only = false;
     var session_device = changeDeviceFormat(device);
     var station_name = station.getName();
-    station.getServiceTag(function (station_service_tag) {
+    station.getServiceTag(function(station_service_tag) {
         var newSession = {
             "start_time": new Date(),
             "end_time": null,
@@ -130,9 +130,9 @@ function sessionStart(device, callback) {
     });
 }
 
-function sessionUpdate(itemNumber, message, callback) {
+function sessionUpdate(itemNumber, message, details, callback) {
     var session = sessions.get(itemNumber);
-    logSession(session, "Started", message);
+    logSession(session, message, details);
     callback();
 }
 
@@ -142,44 +142,32 @@ function sessionFinish(itemNumber, details, callback) {
     console.log('A client requested to finish an ' + session.device.type + ' refresh of item number ' + itemNumber);
     if (session.device.type === 'XboxOne') {
         if (isDevelopment) {
-            logSession(session, "Started", 'Checking ' + details.device.id + ' for evidence that the refresh completed successfully.');
-            logSession(session, "Started", 'Simulating verifying a refresh in a development environment by waiting 3 seconds.');
+            logSession(session, 'Checking ' + details.device.id + ' for evidence that the refresh completed successfully.');
+            logSession(session, 'Simulating verifying a refresh in a development environment by waiting 3 seconds.');
             console.log('Simulating verifying a refresh in a development environment by waiting 3 seconds.');
-            setTimeout(function () {
-                logSession(session, "Success", 'Refresh completed successfully.');
-                closeSession(session, callback);
+            setTimeout(function() {
+                closeSession(session, true, callback);
             }, 3000);
         } else {
-            logSession(session, "Started", 'Checking ' + details.device.id + ' for evidence that the refresh completed successfully.');
+            logSession(session, 'Checking ' + details.device.id + ' for evidence that the refresh completed successfully.');
             var mountSource = '/dev/' + details.device.id + '1';
             var mountTarget = '/mnt/' + details.device.id + '1';
-            fs.mkdir(mountTarget, function (err) {
+            fs.mkdir(mountTarget, function(err) {
                 if (err && err.code !== 'EEXIST') {
-                    logSession(session, "Started", 'Error creating directory ' + mountTarget);
-                    logSession(session, "Started", err);
+                    logSession(session, 'Error creating directory ' + mountTarget, err);
                 } else {
-                    logSession(session, "Started", 'Attempting to mount ' + mountSource + ' to ' + mountTarget);
+                    logSession(session, 'Attempting to mount ' + mountSource + ' to ' + mountTarget);
                     var mount = childProcess.spawn('mount', [mountSource, mountTarget]);
-                    mount.on('close', function (code) {
+                    mount.on('close', function(code) {
                         var systemUpdateDir = path.join(mountTarget, '$SystemUpdate');
                         if (code !== 0) {
-                            logSession(session, "Started", 'Error, failed to mount ' + mountSource + ' to ' + mountTarget);
-                            logSession(session, "Started", 'mount command failed with error code ' + code);
+                            logSession(session, 'Error, failed to mount ' + mountSource + ' to ' + mountTarget, 'Mount command failed with error code ' + code);
                         } else {
-                            logSession(session, "Started", 'Successfully mounted ' + mountSource + ' to ' + mountTarget);
+                            logSession(session, 'Successfully mounted ' + mountSource + ' to ' + mountTarget);
                             var success = filesExist(systemUpdateDir, ['smcerr.log', 'update.cfg', 'update.log', 'update2.cfg']);
-                            rimraf(path.join(mountTarget, '*'), function (err) {
+                            rimraf(path.join(mountTarget, '*'), function(err) {
                                 childProcess.spawn('umount', [mountTarget]);
-                                if (success) {
-                                    logSession(session, "Success", 'Refresh completed successfully.');
-                                    session.SessionState = session.CurrentState = 'Success';
-                                    closeSession(session, callback);
-                                } else {
-                                    logSession(session, "VerifyRefreshFailed", 'Refresh failed.');
-                                    session.CurrentState = 'VerifyRefreshFailed';
-                                    session.SessionState = 'Fail';
-                                    closeSession(session, callback);
-                                }
+                                closeSession(session, success, callback);
                             });
                         }
                     });
@@ -187,45 +175,37 @@ function sessionFinish(itemNumber, details, callback) {
             });
         }
     } else {
-        if (details.complete) {
-            logSession(session, "Success", 'Refresh completed successfully.');
-            session.SessionState = session.CurrentState = 'Success';
-            closeSession(session, callback);
-        } else {
-            logSession(session, "VerifyRefreshFailed", 'Refresh failed.');
-            session.CurrentState = 'VerifyRefreshFailed';
-            session.SessionState = 'Fail';
-            closeSession(session, callback);
-        }
+        closeSession(session, details.complete, callback);
     }
 }
 
-function logSession(session, status, message) {
-    var logDate = new Date();
-
+function logSession(session, message, details) {
     var logEntry = {
-        "message": message,
-        "details": null,
-        "timestamp": logDate,
+        "timestamp": new Date(),
         "level": "Info",
-        "status": status
+        "message": message,
+        "details": details
     };
 
-    session.LastUpdated = logDate;
     session.logs.push(logEntry);
 }
 
-function closeSession(session, callback) {
-
+function closeSession(session, success, callback) {
     console.log("closing session");
-    console.log(session);
     session.end_time = new Date();
-
+    if (success) {
+        logSession(session, 'Refresh completed successfully.');
+        session.status = 'Success';
+    } else {
+        logSession(session, 'Refresh failed.');
+        session.status = 'Fail';
+    }
+    console.log(session);
     sendSession(session, callback);
 }
 
 function saveSessionFile(session, filename) {
-    fs.writeFile(filename, JSON.stringify(session), function (err) {
+    fs.writeFile(filename, JSON.stringify(session), function(err) {
         if (err) {
             console.error('Unable to write the file ' + filename + '. Cannot save session for resend!', err);
             console.error(session);
@@ -236,7 +216,7 @@ function saveSessionFile(session, filename) {
 
 function saveSessionForResend(session) {
     var sessionFileName = UNSENT_SESSIONS_DIRECTORY + '/' + uuid() + '.json';
-    fs.stat(UNSENT_SESSIONS_DIRECTORY, function (err, stats) {
+    fs.stat(UNSENT_SESSIONS_DIRECTORY, function(err, stats) {
         if (err) {
             if (err.code === "ENOENT") {
                 fs.mkdir(UNSENT_SESSIONS_DIRECTORY, saveSessionFile(session, sessionFileName));
@@ -252,15 +232,15 @@ function saveSessionForResend(session) {
 
 function resendSessions() {
     // Loop through all the files in the unsent sessions directory
-    fs.readdir(UNSENT_SESSIONS_DIRECTORY, function (err, files) {
+    fs.readdir(UNSENT_SESSIONS_DIRECTORY, function(err, files) {
         if (err) {
             if (err.code !== "ENOENT") {
                 console.error("Could not list the unsent sessions directory.", err);
             }
         } else {
-            files.forEach(function (file) {
+            files.forEach(function(file) {
                 file = UNSENT_SESSIONS_DIRECTORY + '/' + file;
-                fs.readFile(file, function (err, data) {
+                fs.readFile(file, function(err, data) {
                     if (err) {
                         console.error("Could not read " + file, err);
                     } else {
@@ -273,10 +253,10 @@ function resendSessions() {
                             body: JSON.parse(data),
                             rejectUnauthorized: false,
                             json: true
-                        }).then(function (body) {
+                        }).then(function(body) {
                             // Delete the file if it was successfully sent
                             fs.unlinkSync(file);
-                        }).catch(function (error) {
+                        }).catch(function(error) {
                             console.log('ERROR: Unable to resend session.');
                             console.log(error);
                         });
@@ -297,10 +277,10 @@ function sendSession(session, callback) {
         body: session,
         rejectUnauthorized: false,
         json: true
-    }).then(function (body) {
+    }).then(function(body) {
         sessions.delete(session.device.item_number);
         callback({success: session.SessionState = 'Success', sent: true});
-    }).catch(function (error) {
+    }).catch(function(error) {
         console.log('ERROR: Unable to send session.');
         console.log(error);
         saveSessionForResend(session);
