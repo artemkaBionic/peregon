@@ -176,7 +176,7 @@
 
             var data = {};
             data.device = vm.selectedDevice;
-            inventoryService.finishSession(data).then(function(response) {
+            inventoryService.finishSession(vm.item.InventoryNumber, data).then(function(response) {
                 if (response.success) {
                     if (response.sent) {
                         vm.step = vm.steps.complete;

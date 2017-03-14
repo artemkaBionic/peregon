@@ -136,22 +136,22 @@ function sessionUpdate(itemNumber, message, details, callback) {
     callback();
 }
 
-function sessionFinish(itemNumber, details, callback) {
+function sessionFinish(itemNumber, data, callback) {
     var session = sessions.get(itemNumber);
 
     console.log('A client requested to finish an ' + session.device.type + ' refresh of item number ' + itemNumber);
     if (session.device.type === 'XboxOne') {
         if (isDevelopment) {
-            logSession(session, 'Checking ' + details.device.id + ' for evidence that the refresh completed successfully.');
+            logSession(session, 'Checking ' + data.device.id + ' for evidence that the refresh completed successfully.');
             logSession(session, 'Simulating verifying a refresh in a development environment by waiting 3 seconds.');
             console.log('Simulating verifying a refresh in a development environment by waiting 3 seconds.');
             setTimeout(function() {
                 closeSession(session, true, callback);
             }, 3000);
         } else {
-            logSession(session, 'Checking ' + details.device.id + ' for evidence that the refresh completed successfully.');
-            var mountSource = '/dev/' + details.device.id + '1';
-            var mountTarget = '/mnt/' + details.device.id + '1';
+            logSession(session, 'Checking ' + data.device.id + ' for evidence that the refresh completed successfully.');
+            var mountSource = '/dev/' + data.device.id + '1';
+            var mountTarget = '/mnt/' + data.device.id + '1';
             fs.mkdir(mountTarget, function(err) {
                 if (err && err.code !== 'EEXIST') {
                     logSession(session, 'Error creating directory ' + mountTarget, err);
@@ -175,7 +175,7 @@ function sessionFinish(itemNumber, details, callback) {
             });
         }
     } else {
-        closeSession(session, details.complete, callback);
+        closeSession(session, data.complete, callback);
     }
 }
 
