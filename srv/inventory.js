@@ -22,6 +22,8 @@ var isDevelopment = process.env.NODE_ENV === 'development';
 var result = null;
 
 
+exports.getSessions = getSessions;
+exports.getSession = getSession;
 exports.sessionStart = sessionStart;
 exports.sessionUpdate = sessionUpdate;
 exports.sessionFinish = sessionFinish;
@@ -107,7 +109,15 @@ function unlockAndroid(imei, callback) {
     console.log('Unlock request has been sent');
 }
 
-function sessionStart(device, callback) {
+function getSessions(filter) {
+    return sessions.getFiltered(filter);
+}
+
+function getSession(item_number) {
+    return sessions.get(item_number);
+}
+
+function sessionStart(item_number, device, callback) {
     var diagnose_only = false;
     var session_device = changeDeviceFormat(device);
     var station_name = station.getName();
@@ -125,14 +135,14 @@ function sessionStart(device, callback) {
             "logs": []
         };
 
-        sessions.set(session_device.item_number, newSession);
+        sessions.set(item_number, newSession);
         callback();
     });
 }
 
-function sessionUpdate(itemNumber, message, details, callback) {
+function sessionUpdate(itemNumber, level, message, details, callback) {
     var session = sessions.get(itemNumber);
-    logSession(session, message, details);
+    logSession(session, level, message, details);
     callback();
 }
 
@@ -142,28 +152,28 @@ function sessionFinish(itemNumber, data, callback) {
     console.log('A client requested to finish an ' + session.device.type + ' refresh of item number ' + itemNumber);
     if (session.device.type === 'XboxOne') {
         if (isDevelopment) {
-            logSession(session, 'Checking ' + data.device.id + ' for evidence that the refresh completed successfully.');
-            logSession(session, 'Simulating verifying a refresh in a development environment by waiting 3 seconds.');
+            logSession(session, 'Info', 'Checking ' + data.device.id + ' for evidence that the refresh completed successfully.');
+            logSession(session, 'Info', 'Simulating verifying a refresh in a development environment by waiting 3 seconds.');
             console.log('Simulating verifying a refresh in a development environment by waiting 3 seconds.');
             setTimeout(function() {
                 closeSession(session, true, callback);
             }, 3000);
         } else {
-            logSession(session, 'Checking ' + data.device.id + ' for evidence that the refresh completed successfully.');
+             logSession(session, 'Info', 'Checking ' + data.device.id + ' for evidence that the refresh completed successfully.');
             var mountSource = '/dev/' + data.device.id + '1';
             var mountTarget = '/mnt/' + data.device.id + '1';
             fs.mkdir(mountTarget, function(err) {
                 if (err && err.code !== 'EEXIST') {
-                    logSession(session, 'Error creating directory ' + mountTarget, err);
+                     logSession(session, 'Error', 'Error creating directory ' + mountTarget, err);
                 } else {
-                    logSession(session, 'Attempting to mount ' + mountSource + ' to ' + mountTarget);
+                     logSession(session, 'Info', 'Attempting to mount ' + mountSource + ' to ' + mountTarget);
                     var mount = childProcess.spawn('mount', [mountSource, mountTarget]);
                     mount.on('close', function(code) {
                         var systemUpdateDir = path.join(mountTarget, '$SystemUpdate');
                         if (code !== 0) {
-                            logSession(session, 'Error, failed to mount ' + mountSource + ' to ' + mountTarget, 'Mount command failed with error code ' + code);
+                             logSession(session, 'Error', 'Error, failed to mount ' + mountSource + ' to ' + mountTarget, 'Mount command failed with error code ' + code);
                         } else {
-                            logSession(session, 'Successfully mounted ' + mountSource + ' to ' + mountTarget);
+                             logSession(session, 'Info', 'Successfully mounted ' + mountSource + ' to ' + mountTarget);
                             var success = filesExist(systemUpdateDir, ['smcerr.log', 'update.cfg', 'update.log', 'update2.cfg']);
                             rimraf(path.join(mountTarget, '*'), function(err) {
                                 childProcess.spawn('umount', [mountTarget]);
@@ -179,10 +189,10 @@ function sessionFinish(itemNumber, data, callback) {
     }
 }
 
-function logSession(session, message, details) {
+function logSession(session, level, message, details) {
     var logEntry = {
         "timestamp": new Date(),
-        "level": "Info",
+        "level": level,
         "message": message,
         "details": details
     };
@@ -194,10 +204,10 @@ function closeSession(session, success, callback) {
     console.log("closing session");
     session.end_time = new Date();
     if (success) {
-        logSession(session, 'Refresh completed successfully.');
+         logSession(session, 'Info', 'Refresh completed successfully.');
         session.status = 'Success';
     } else {
-        logSession(session, 'Refresh failed.');
+         logSession(session, 'Info', 'Refresh failed.');
         session.status = 'Fail';
     }
     console.log(session);

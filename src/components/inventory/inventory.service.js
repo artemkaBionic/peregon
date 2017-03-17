@@ -103,7 +103,7 @@
         };
 
         service.startSession = function(item) {
-            var url = '/data/inventory/session/start';
+            var url = '/data/inventory/sessions/' + item.InventoryNumber + '/start';
             var deferred = $q.defer();
 
             $http.post(url, item).then(function(result) {
@@ -113,12 +113,12 @@
             return deferred.promise;
         };
 
-        service.updateSession = function(itemNumber, message) {
-            var url = '/data/inventory/session/update';
+        service.updateSession = function(itemNumber, level, message, details) {
+            var url = '/data/inventory/sessions/' + itemNumber + '/update';
             var deferred = $q.defer();
 
             console.log(message);
-            $http.post(url, {'message': message, 'itemNumber': itemNumber}).then(function(result) {
+            $http.post(url, {'level': level, 'message': message, 'details': details}).then(function(result) {
                 deferred.resolve(result.data);
             });
 
@@ -126,10 +126,10 @@
         };
 
         service.finishSession = function(itemNumber, details) {
-            var url = '/data/inventory/session/finish';
+            var url = '/data/inventory/sessions/' + itemNumber + '/finish';
             var deferred = $q.defer();
 
-            $http.post(url, {'details': details, 'itemNumber': itemNumber}).then(function(result) {
+            $http.post(url, {'details': details}).then(function(result) {
                 deferred.resolve(result.data);
             });
 

@@ -43,15 +43,22 @@ module.exports = function(io, data) {
         });
     });
 
-    router.post('/data/inventory/session/start', function(req, res) {
-        inventory.sessionStart(req.body, function(result) {
+    router.get('/data/inventory/sessions', function(req, res) {
+        res.json(inventory.getSessions(req.body));
+    });
+
+    router.get('/data/inventory/sessions/:id', function(req, res) {
+        res.json(inventory.getSession(req.params.id));
+    });
+
+    router.post('/data/inventory/sessions/:id/start', function(req, res) {
+        inventory.sessionStart(req.params.id, req.body, function(result) {
             res.json(result);
         });
     });
 
-    router.post('/data/inventory/session/update', function(req, res) {
-        console.log(req.body);
-        inventory.sessionUpdate(req.body.itemNumber, req.body.message, req.body.details, function(err, result) {
+    router.post('/data/inventory/sessions/:id/update', function(req, res) {
+        inventory.sessionUpdate(req.params.id, req.body.level, req.body.message, req.body.details, function(err, result) {
             if (err) {
                 console.log(err);
             }
@@ -59,8 +66,8 @@ module.exports = function(io, data) {
         });
     });
 
-    router.post('/data/inventory/session/finish', function(req, res) {
-        inventory.sessionFinish(req.body.itemNumber, req.body.details, function(result) {
+    router.post('/data/inventory/sessions/:id/finish', function(req, res) {
+        inventory.sessionFinish(req.params.id, req.body.details, function(result) {
             res.json(result);
         });
     });
