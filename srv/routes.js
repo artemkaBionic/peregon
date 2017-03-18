@@ -105,7 +105,7 @@ module.exports = function(io, data) {
                             console.log('Attempting to parse ' + packageFile);
                             try {
                                 var package = JSON.parse(fs.readFileSync(packageFile, 'utf8'));
-                                if (package.type === "media" && ((req.params.contentSubtype === undefined && package.subtype === 'advertisement') || (req.params.contentSubtype !== undefined && package.subtype === req.params.contentSubtype))) {
+                                if (package.type === "media" && ((typeof req.params.contentSubtype === 'undefined' && package.subtype === 'advertisement') || (typeof req.params.contentSubtype !== 'undefined' && package.subtype === req.params.contentSubtype))) {
                                     packages.push(package);
                                 }
                             } catch (e) {

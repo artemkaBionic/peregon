@@ -15,7 +15,7 @@
             var url = '/data/packages/media';
             var deferred = $q.defer();
 
-            if (subtype !== undefined) {
+            if (typeof subtype !== 'undefined') {
                 url = url + '/' + subtype;
             }
 

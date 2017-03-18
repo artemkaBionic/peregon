@@ -83,7 +83,7 @@ io.on( 'connection', function( socket )
                 io.emit('device-apply-progress', {progress: 100, device: data.device});
             }, 3000);
         } else {
-            if (data.media === null || data.media === undefined) {
+            if (typeof data.media === 'undefined' || data.media === null) {
                 console.error('A client requested to apply an undefined media package.');
                 io.emit('device-apply-failed', {message: 'Media package is missing.', device: data.device});
             } else {

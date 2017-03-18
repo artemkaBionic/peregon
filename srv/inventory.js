@@ -142,7 +142,12 @@ function sessionStart(item_number, device, callback) {
 
 function sessionUpdate(itemNumber, level, message, details, callback) {
     var session = sessions.get(itemNumber);
-    logSession(session, level, message, details);
+    if (typeof session === 'undefined') {
+        console.warn('sessionUpdate attempted for a session that is not started.');
+        console.warn('message: ' + message);
+    } else {
+        logSession(session, level, message, details);
+    }
     callback();
 }
 
