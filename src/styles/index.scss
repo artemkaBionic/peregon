@@ -834,6 +834,7 @@ button[disabled] {
 
 button[disabled]:hover {
   cursor: not-allowed;
+  background-color: #999999 !important;
 }
 
 //Removing horizontal scroll

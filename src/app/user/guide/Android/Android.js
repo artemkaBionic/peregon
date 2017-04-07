@@ -283,9 +283,6 @@
             return lockDevice()
                 .then(function() {
                     return inventoryService.updateSession(vm.item.InventoryNumber, 'Info', 'User closed refresh session.');
-                })
-                .then(function() {
-                    return inventoryService.finishSession(vm.item.InventoryNumber, {'complete': false});
                 });
         };
 

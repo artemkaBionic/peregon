@@ -1,2 +1,2 @@
 angular.module("app.env", [])
-    .constant("env", {"baseUrl": ""});
+.constant("env", {"baseUrl":""});
