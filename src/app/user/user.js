@@ -20,6 +20,7 @@
         vm.searchStringSkuWarning = false;
 
         vm.searchStringChange = function() {
+            vm.searchString = vm.searchString.toUpperCase();
             if (vm.searchString !== vm.lastValidSearchString) {
                 vm.searchStringError = false;
                 vm.itemNumberError = false;
@@ -42,7 +43,9 @@
                     }
                 } else {
                     vm.searchString = vm.lastValidSearchString;
-                    vm.searchStringError = true;
+                    if (vm.item === null) {
+                        vm.searchStringError = true;
+                    }
                 }
             }
         };
