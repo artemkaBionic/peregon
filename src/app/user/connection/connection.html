@@ -1,4 +1,5 @@
-<horizontal-ui-sheet horizontal-scroll1="" class="shuffle-animation apc-sheet-full" ng-class="vm.isFinished ? 'modal-online' : 'modal-offline'">
+<horizontal-ui-sheet horizontal-scroll1="" class="shuffle-animation apc-sheet-full"
+                     ng-class="vm.isFinished ? 'modal-online' : 'modal-offline'">
   <div class="modal-header" title="Station is offline.">
     <h2 ng-if="vm.isFinished">Station is online.</h2>
     <h2 ng-if="!vm.isFinished">Station is offline. Please, check the connection:</h2>
@@ -53,7 +54,8 @@
             of the <strong>{{vm.selectedNetworkDevice.displayDescription}}</strong> (see diagram).</p>
         </div>
         <div ng-if="vm.connectionState.displayDescription != null">
-          <div ng-if="vm.connectionState.displayDescription == vm.selectedNetworkDevice.displayDescription && vm.connectionState.port == vm.selectedNetworkDevice.correctPort">
+          <div
+            ng-if="vm.connectionState.displayDescription == vm.selectedNetworkDevice.displayDescription && vm.connectionState.port == vm.selectedNetworkDevice.correctPort">
             <p>Refresh Station is <strong>correctly connected</strong> to:<br/>
               port {{vm.selectedNetworkDevice.correctPort}} of the {{vm.selectedNetworkDevice.displayDescription}}.</p>
             <p>Please contact support to <b>troubleshoot your Internet connection</b>.</p>
@@ -61,7 +63,8 @@
           <div
             ng-if="vm.connectionState.displayDescription != vm.selectedNetworkDevice.displayDescription || vm.connectionState.port != vm.selectedNetworkDevice.correctPort">
             <p>Refresh Station is connected to:<br/>
-              <span ng-show="vm.connectionState.isPortDetectable">port <strong>{{vm.connectionState.port}}</strong> of </span>the <strong>{{vm.connectionState.displayDescription}}</strong>.
+              <span ng-show="vm.connectionState.isPortDetectable">port <strong>{{vm.connectionState.port}}</strong> of </span>the
+              <strong>{{vm.connectionState.displayDescription}}</strong>.
             </p>
             <p>Please connect it to:<br/>port <strong>{{vm.selectedNetworkDevice.correctPort}}</strong> of the
               <strong>{{vm.selectedNetworkDevice.displayDescription}}</strong> (see diagram).</p>
@@ -69,14 +72,15 @@
         </div>
       </div>
       <div class="row modal-contents modal-graphics">
-          <img ng-click="vm.ChangeClass()" class="wizard-image" ng-class="{'wizard-image-big':vm.zoomed,}" ng-src="/assets/images/{{vm.selectedNetworkDevice.wiringImageFile}}">
-          <div>{{vm.selectedNetworkDevice.displayDescription}} wiring diagram</div>
+        <img ng-click="vm.ChangeClass()" class="wizard-image" ng-class="{'wizard-image-big':vm.zoomed,}"
+             ng-src="/assets/images/{{vm.selectedNetworkDevice.wiringImageFile}}">
+        <div>{{vm.selectedNetworkDevice.displayDescription}} wiring diagram</div>
       </div>
     </div>
 
     <div class="anim-modal-step online-enter" id="online" ng-switch-when="complete">
       <div class="row modal-contents">
-        <div class="fa fa-check-circle anim-success-icon"></div>
+        <div class="fa fa-check-circle success-icon"></div>
         <h1>Thank you!</h1>
 
         <h2>The Refresh Station is connected to the Internet.</h2>

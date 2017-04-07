@@ -6,7 +6,8 @@
     <div class="row">
       <ul id="progress-tracker" data-steps="3">
         <li ng-class="{'active': vm.step.number == 1, 'done': vm.step.number > 1}"><span>Select<br>Media</span></li>
-        <li ng-class="{'active': vm.step.number >= 2 && vm.step.number <= 3, 'done': vm.step.number > 3}"><span>Apply<br>Media</span></li>
+        <li ng-class="{'active': vm.step.number >= 2 && vm.step.number <= 3, 'done': vm.step.number > 3}">
+          <span>Apply<br>Media</span></li>
         <li ng-class="{'active': vm.step.number == 4}"><span>Finish</span><i></i></li>
       </ul>
     </div>
@@ -30,7 +31,8 @@
 
       <div class="anim-wizard-step" ng-switch-when="applyMediaInsert">
         <div class="row wizard-contents">
-          <h2>Please insert a {{vm.selectedMediaPackage.size | bytes:0}} or larger USB drive into the Refresh Station.</h2>
+          <h2>Please insert a {{vm.selectedMediaPackage.size | bytes:0}} or larger USB drive into the Refresh
+            Station.</h2>
           <h3><strong>Warning,</strong> this action will erase the disk and cannot be undone.</h3>
         </div>
         <div class="row wizard-graphics">
@@ -52,31 +54,27 @@
       </div>
 
       <div class="anim-wizard-step" ng-switch-when="complete">
-        <div class="row wizard-graphics">
-          <span class="fa fa-check-circle anim-success-icon"></span>
+        <div class="step-header text-align-center">
+          <span class="fa fa-check-circle success-icon"></span>
+          <h2>The USB drive is ready</h2>
+          <h3>It may now be removed from the Refresh Station</h3>
         </div>
-        <div class="row wizard-contents">
-          <h2>The USB drive is ready.</h2>
-          <h3>It may now be removed from the Refresh Station.</h3>
-        </div>
-        <div class="row wizard-navigation">
-          <button class="btn btn-primary btn-rounded pull-right" ui-sref="^" href="#/user/home">
-            Finish &nbsp; <i class="fa fa-caret-right"></i>
+        <div class="row finish-success-button">
+          <button class="btn btn-primary btn-rounded center" ui-sref="^" href="#/user/home">
+            Finish <i class="fa fa-caret-right"></i>
           </button>
         </div>
       </div>
 
       <div class="anim-wizard-step" ng-switch-when="failed">
-        <div class="row wizard-graphics">
-          <span class="fa fa-exclamation-triangle anim-warning-icon"></span>
+        <div class="step-header text-align-center">
+          <span class="fa fa-exclamation warning-icon"></span>
+          <h2>Applying media to USB drive failed</h2>
+          <h3>Please try again.<br/> If error persists, contact support.</h3>
         </div>
-        <div class="row wizard-contents">
-          <h2>Applying media to USB drive has failed.</h2>
-          <h3>Please try again. If error persists, contact support.</h3>
-        </div>
-        <div class="row wizard-navigation">
-          <button class="btn btn-primary btn-rounded pull-right" ng-click="vm.applyMediaStart()">
-            <i class="fa fa-repeat"></i> &nbsp; Retry
+        <div class="row nav-btn">
+          <button class="btn btn-primary btn-rounded center" ng-click="vm.applyMediaStart()">
+            <i class="fa fa-repeat"></i> Retry
           </button>
         </div>
       </div>

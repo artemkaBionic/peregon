@@ -1,17 +1,22 @@
 <horizontal-ui-sheet class="apc-sheet-full">
   <header class="guide-header">
     <div class="row header-row">
-      <div class="col-sm-6 header-col">
+      <div class="col-sm-7 header-col">
         <div class="header-middle-col">
-          <span class="logo-hover"><i class="fa fa-home fa-home-header"></i>
-          <img ng-click="vm.refreshEnd()" class="guide-logo" src="/assets/images/Logo.png"></span>
-          <span class="home-header">Refresh Guide</span>
+          <div class="home-link" ng-click="vm.refreshEnd()">
+            <div class="home-button">
+              <i class="fa fa-home home-button-icon"></i>
+              <span class="home-button-text">Home</span>
+            </div>
+            <img class="guide-logo" src="/assets/images/Logo.png">
+          </div>
+          <div class="home-header">Windows Refresh</div>
         </div>
       </div>
-      <div class="col-sm-6 header-col">
+      <div class="col-sm-5 header-col">
         <div class="header-middle-col-right">
-          <img class="header-item-icon" src="/assets/images/windows_logo.png">
-          <span class="home-header-right">{{vm.item.Manufacturer}} {{vm.item.Model}}</span>
+          <i class="fa fa-windows header-item-icon"></i>
+          <div class="home-header-right">{{vm.item.Description}}</div>
         </div>
       </div>
     </div>
@@ -20,7 +25,16 @@
     <iframe class="content-frame" ng-src="{{vm.guideUrl}}"></iframe>
   </div>
   <div horizontal-ui-sheet-content ng-if="!vm.isPackageReady">
-    <p>The files for this device have not finished downloading.</p>
-    <p>The download should be complete within a couple days. If not, please contact the National Support Center.</p>
+    <div class="step-header text-align-center">
+      <i class="fa fa-ban warning-icon"></i>
+      <h2>Missing Files</h2>
+      <h3>The files for this device have not finished downloading.</h3>
+      <h3>The download should be complete within a couple days. If not, please contact the National Support Center.</h3>
+    </div>
+    <div class="row nav-btn">
+      <button class="btn btn-primary btn-rounded center" ng-click="vm.refreshEnd()">
+        <strong>Finish </Strong><i class="fa fa-caret-right"></i>
+      </button>
+    </div>
   </div>
 </horizontal-ui-sheet>

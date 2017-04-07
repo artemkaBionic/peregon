@@ -1,17 +1,22 @@
 <horizontal-ui-sheet class="apc-sheet-full guide-android">
   <header class="guide-header">
     <div class="row header-row">
-      <div class="col-sm-6 col-xs-12 header-col">
+      <div class="col-sm-7 header-col">
         <div class="header-middle-col">
-          <span class="logo-hover"><i class="fa fa-home fa-home-header"></i>
-          <img ng-click="vm.refreshEnd()" class="guide-logo" src="/assets/images/Logo.png"></span>
-          <span class="home-header">Refresh Guide</span>
+          <div class="home-link" ng-click="vm.refreshEnd()">
+            <div class="home-button">
+              <i class="fa fa-home home-button-icon"></i>
+              <span class="home-button-text">Home</span>
+            </div>
+            <img class="guide-logo" src="/assets/images/Logo.png">
+          </div>
+          <div class="home-header">Android Refresh</div>
         </div>
       </div>
-      <div class="col-sm-6 col-xs-12 small-land-guide-item-info header-col">
+      <div class="col-sm-5 header-col">
         <div class="header-middle-col-right">
-          <img class="header-item-icon" src="/assets/images/android-icon.png">
-          <span class="home-header-right">{{vm.item.Manufacturer}} {{vm.item.Model}}</span>
+          <i class="fa fa-android header-item-icon"></i>
+          <div class="home-header-right">{{vm.item.Description}}</div>
         </div>
       </div>
     </div>
@@ -79,7 +84,8 @@
                 <div class="inspection-question">
                   <span>Touch screen and buttons work</span>
                   <input type="checkbox" id="checkmark3" ng-model="vm.ButtonsGood">
-                  <label for="checkmark3" class="check-box" ng-click="vm.ButtonsGood = !vm.ButtonsGood; $event.stopPropagation()"></label>
+                  <label for="checkmark3" class="check-box"
+                         ng-click="vm.ButtonsGood = !vm.ButtonsGood; $event.stopPropagation()"></label>
                 </div>
               </div>
               <div class="col-md-2">
@@ -89,7 +95,7 @@
           </div>
           <div class="row nav-btn">
             <button class="btn btn-primary btn-rounded center" type="submit">
-              <strong>Next</strong> <i class="fa fa-caret-right"></i>
+              Next <i class="fa fa-caret-right"></i>
             </button>
           </div>
         </form>
@@ -141,7 +147,8 @@
               <div class="col-md-8 col-xs-10 inspection-tap" ng-class="vm.Wifi ? 'inspection-tap-checked' : ''"
                    ng-click="vm.Wifi = !vm.Wifi">
                 <div class="inspection-question">
-                  <span ng-if="vm.deviceLockService === 'siperlock'">Restart the device and connect to WiFi</span><span ng-if="vm.deviceLockService !== 'siperlock'">Connect to WiFi</span>
+                  <span ng-if="vm.deviceLockService === 'siperlock'">Restart the device and connect to WiFi</span><span
+                  ng-if="vm.deviceLockService !== 'siperlock'">Connect to WiFi</span>
                   <input type="checkbox" id="checkmark4" ng-model="vm.Wifi">
                   <label for="checkmark4" class="check-box"></label>
                 </div>
@@ -191,7 +198,8 @@
                 <div class="inspection-question">
                   <span>Enable USB Debugging</span>
                   <input type="checkbox" id="checkmark7" ng-model="vm.UsbDebug">
-                  <label for="checkmark7" class="check-box" ng-click="vm.UsbDebug = !vm.UsbDebug; $event.stopPropagation()"></label>
+                  <label for="checkmark7" class="check-box"
+                         ng-click="vm.UsbDebug = !vm.UsbDebug; $event.stopPropagation()"></label>
                 </div>
               </div>
               <div class="col-md-2 col-xs-2 inspection-ask">
@@ -201,8 +209,9 @@
 
           </div>
           <div class="row nav-btn">
-            <button ng-disabled="!(vm.NotLocked && vm.Wifi && vm.UsbDebug)" class="btn btn-primary btn-rounded center" type="submit">
-              <strong>Next</strong> <i class="fa fa-caret-right"></i>
+            <button ng-disabled="!(vm.NotLocked && vm.Wifi && vm.UsbDebug)" class="btn btn-primary btn-rounded center"
+                    type="submit">
+              Next <i class="fa fa-caret-right"></i>
             </button>
           </div>
         </form>
@@ -219,10 +228,11 @@
           <h3>Choose <strong>Yes</strong> or <strong>OK</strong> on the device</h3>
         </div>
         <div ng-show="vm.buttonBackShow" class="row nav-btn">
-          <h3 class="text-align-center automated-anim"><strong>Something went wrong.<br/>Go back and check everything out</strong></h3>
+          <h3 class="text-align-center automated-anim"><strong>Something went wrong.<br/>Go back and check everything
+            out</strong></h3>
           <button ng-click="vm.preparationOne()"
                   class="btn btn-primary btn-rounded center" type="submit">
-            <i class="fa fa-caret-left"></i> <strong>Back</strong>
+            <i class="fa fa-caret-left"></i> Back
           </button>
         </div>
       </div>
@@ -242,18 +252,19 @@
       <div class="anim-wizard-step" ng-switch-when="diagnosticOne">
         <div ng-hide="vm.AppNotStarted" class="step-header-diagnostic">
           <h2 class="text-align-center">
-            <span class="fa fa-check check-green fa-2x"></span>
+            <i class="fa fa-check check-green medium-icon"></i>
             Android device connected successfully</h2>
           <div class="row">
           </div>
         </div>
-        <div ng-hide="vm.AppNotStarted" class="row"><h3 class="text-align-center automated-anim">Performing automatic diagnostics...</h3>
+        <div ng-hide="vm.AppNotStarted" class="row"><h3 class="text-align-center automated-anim">Performing automatic
+          diagnostics...</h3>
         </div>
         <div ng-hide="vm.AppNotStarted" class="row">
           <div class="center circle-bar">
             <orbicular progression="vm.autoPassed" total="vm.autoSize" counterclockwise>
               <div ng-click="vm.circleCheck()">
-                <i class="fa fa-cog fa-spin fa-4x"></i>
+                <i class="fa fa-cog fa-spin large-icon"></i>
               </div>
             </orbicular>
           </div>
@@ -267,12 +278,12 @@
 
       <div class="anim-wizard-step" ng-switch-when="diagnosticTwo">
         <div ng-hide="vm.manualShowLastAction" class="step-header-diagnostic">
-          <h2 class="text-align-center"><span class="fa fa-check check-green fa-2x"></span>
+          <h2 class="text-align-center"><i class="fa fa-check check-green medium-icon"></i>
             Automatic diagnostics complete</h2>
         </div>
         <div ng-show="vm.manualShowLastAction" class="row android-manual-complete">
           <h2 class="text-align-center">
-            <span class="fa fa-check check-green fa-2x"></span>
+            <i class="fa fa-check check-green medium-icon"></i>
             Diagnostics complete
           </h2>
         </div>
@@ -286,13 +297,14 @@
               <div class="center circle-bar">
                 <orbicular progression="vm.manualPassed" total="vm.manualSize" counterclockwise>
                   <div ng-click="vm.manualInspection()">
-                    <i class="fa fa-cog fa-spin fa-4x"></i>
+                    <i class="fa fa-cog fa-spin large-icon"></i>
                   </div>
                 </orbicular>
               </div>
             </div>
             <div ng-hide="vm.manualShowLastAction" class="col-xl-12 col-lg-12 col-md-6 col-sm-6 col-xs-12">
-              <h3 class="text-align-center automated-anim-medium automated-anim">Manual Test <strong>{{vm.manualPassed}}</strong> of <strong>{{vm.manualSize}}</strong>
+              <h3 class="text-align-center automated-anim-medium automated-anim">Manual Test
+                <strong>{{vm.manualPassed}}</strong> of <strong>{{vm.manualSize}}</strong>
               </h3>
             </div>
           </div>
@@ -305,40 +317,41 @@
 
       <div class="anim-wizard-step" ng-switch-when="finishSuccess">
         <div class="step-header text-align-center">
-          <h2><span class="fa fa-check-circle diagnostic-ok"></span>
-            You have successfully refreshed the Android device</h2>
+          <i class="fa fa-check-circle success-icon"></i>
+          <h2>Success</h2>
+          <h3>You have successfully refreshed the Android device</h3>
         </div>
         <div class="row finish-success-button">
           <button class="btn btn-primary btn-rounded center" ng-click="vm.refreshEnd()">
-            <strong>Finish </Strong><i class="fa fa-caret-right"></i>
+            Finish <i class="fa fa-caret-right"></i>
           </button>
         </div>
       </div>
 
       <div class="anim-wizard-step android-finish-failed" ng-switch-when="finishFail">
-        <h3 class="step-header text-align-center"><strong>Ship device to Aaron's Service Center for repair</strong></h3>
-        <div class="step-header text-align-center"><span class="fa fa-5x fa-ban"></span><br/>
-          <h2 ng-show="vm.Broken">
-            Device needs to be repaired</h2>
-          <h2 ng-show="vm.TestsFault">
-            The following tests failed:</h2>
-          <h4 class="failed-tests" ng-show="vm.TestsFault" ng-repeat="testName in vm.failedTests">
-            {{testName}}
-          </h4>
-          <h2 ng-show="vm.AndroidDisconnected">
-            Android Device has been Disconnected</h2>
+        <div class="step-header text-align-center">
+          <i class="fa fa-ban warning-icon"></i>
+          <h2 ng-show="vm.Broken || vm.TestsFault">Device needs to be repaired</h2>
+          <h3 class="step-header text-align-center" ng-show="vm.Broken || vm.TestsFault">Ship it to Aaron's Service
+            Center for repair</h3>
+          <h2 ng-show="vm.TestsFault">The following tests failed:</h2>
+          <h3 class="failed-tests" ng-show="vm.TestsFault" ng-repeat="testName in vm.failedTests">{{testName}}</h3>
+          <h2 ng-show="vm.AndroidDisconnected">Android Device has been disconnected</h2>
         </div>
         <div class="row nav-btn">
           <button class="btn btn-primary btn-rounded center" ng-click="vm.refreshEnd()">
-            <strong>Finish </Strong><i class="fa fa-caret-right"></i>
+            Finish <i class="fa fa-caret-right"></i>
           </button>
         </div>
       </div>
 
       <div class="anim-wizard-step" ng-switch-when="sessionExpired">
         <div class="step-header">
-          <h2 class="text-align-center"><span class="fa fa-5x fa-clock-o"></span></h2>
-          <h3 class="text-align-center">For security reasons your session expired<span ng-if="vm.deviceLockService === 'siperlock'">&nbsp;and siperLOCK has been locked</span><span ng-if="vm.deviceLockService === 'wsa'">&nbsp;and WSA has been locked</span></h3>
+          <i class="fa fa-clock-o warning-icon"></i>
+          <h2 class="text-align-center">Session Expired</h2>
+          <h3 class="text-align-center">For security reasons your session expired<span
+            ng-if="vm.deviceLockService === 'siperlock'">&nbsp;and siperLOCK has been locked</span><span
+            ng-if="vm.deviceLockService === 'wsa'">&nbsp;and WSA has been locked</span></h3>
         </div>
         <div class="row nav-btn">
           <div class="col-md-6 col-sm-6">

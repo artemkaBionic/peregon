@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html data-ng-app="app" ng-strict-di>
 <head>
-  <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+  <meta charset="utf-8"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1"/>
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no"/>
   <title data-ng-bind="title">Aaron's Portal</title>
   <style>
     /* This helps the ng-show/ng-hide animations start at the right place. */
     /* Since Angular has this but needs to load, this gives us the class early. */
     .ng-hide {
-      display: none!important;
+      display: none !important;
     }
 
     .loading-container {
@@ -22,7 +23,7 @@
       color: #FFF;
 
       position: absolute;
-      top:0;
+      top: 0;
       bottom: 0;
       left: 0;
       right: 0;
@@ -114,14 +115,15 @@
 <script src="app/user/media/package/package.js"></script>
 <script src="app/user/guide/XboxOne/XboxOne.js"></script>
 <script src="app/user/guide/Windows/Windows.js"></script>
+<script src="app/user/guide/Mac/Mac.js"></script>
 <script src="app/user/guide/Android/Guide-modal.js"></script>
 <script src="app/user/guide/Android/Android.js"></script>
 <script src="components/core/core.module.js"></script>
 <script src="components/event/events/deviceaddEvent.service.js"></script>
 <script src="app/user/shutdown/shutdown.js"></script>
 <script src="app/user/media/media.js"></script>
-<script src="app/user/connection/connection.js"></script>
 <script src="app/user/guide/unsupported.js"></script>
+<script src="app/user/connection/connection.js"></script>
 <script src="components/station/station.module.js"></script>
 <script src="components/station/station.service.js"></script>
 <script src="components/socket/socket.module.js"></script>

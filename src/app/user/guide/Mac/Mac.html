@@ -1,0 +1,80 @@
+<horizontal-ui-sheet class="apc-sheet-full">
+  <header class="guide-header">
+    <div class="row header-row">
+      <div class="col-sm-7 header-col">
+        <div class="header-middle-col">
+          <div class="home-link" ng-click="vm.refreshEnd()">
+            <div class="home-button">
+              <i class="fa fa-home home-button-icon"></i>
+              <span class="home-button-text">Home</span>
+            </div>
+            <img class="guide-logo" src="/assets/images/Logo.png">
+          </div>
+          <div class="home-header">Mac Refresh</div>
+        </div>
+      </div>
+      <div class="col-sm-5 header-col">
+        <div class="header-middle-col-right">
+          <i class="fa fa-apple header-item-icon"></i>
+          <div class="home-header-right">{{vm.item.Description}}</div>
+        </div>
+      </div>
+    </div>
+  </header>
+  <div horizontal-ui-sheet-content>
+    <div ng-switch="vm.step.name" class="row wizard">
+
+      <div id="first" ng-switch-when="start">
+        <form name="inspection-form" class="content-finish" novalidate ng-submit="vm.finish()">
+          <div class="inspect-mode">
+            <div class="row">
+              <div class="col-md-2">
+              </div>
+              <div class="col-md-8 inspection-tap" ng-class="vm.success ? 'inspection-tap-checked' : ''"
+                   ng-click="vm.success = !vm.success">
+                <div class="inspection-question">
+                  <span>Device is in good condition and refresh is complete</span>
+                  <input type="checkbox" id="checkmark-complete" ng-model="vm.success">
+                  <label for="checkmark-complete" class="check-box"></label>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <button class="btn btn-primary btn-rounded center" type="submit">
+                  Finish <i class="fa fa-caret-right"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+        <iframe class="content-frame content-frame-with-finish" ng-src="{{vm.guideUrl}}"></iframe>
+      </div>
+
+      <div class="anim-wizard-step" ng-switch-when="finishSuccess">
+        <div class="step-header text-align-center">
+          <i class="fa fa-check-circle success-icon"></i>
+          <h2>Success</h2>
+          <h3>You have successfully refreshed the Mac</h3>
+        </div>
+        <div class="row finish-success-button">
+          <button class="btn btn-primary btn-rounded center" ng-click="vm.refreshEnd()">
+            Finish <i class="fa fa-caret-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="android-finish-failed" ng-switch-when="finishFail">
+        <div class="step-header text-align-center">
+          <i class="fa fa-ban warning-icon"></i>
+          <h2>Mac needs to be repaired</h2>
+          <h3>Ship it to Aaron's Service Center for repair</h3>
+        </div>
+        <div class="row nav-btn">
+          <button class="btn btn-primary btn-rounded center" ng-click="vm.refreshEnd()">
+            Finish <i class="fa fa-caret-right"></i>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</horizontal-ui-sheet>

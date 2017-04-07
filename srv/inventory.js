@@ -164,21 +164,21 @@ function sessionFinish(itemNumber, data, callback) {
                 closeSession(session, true, callback);
             }, 3000);
         } else {
-             logSession(session, 'Info', 'Checking ' + data.device.id + ' for evidence that the refresh completed successfully.');
+            logSession(session, 'Info', 'Checking ' + data.device.id + ' for evidence that the refresh completed successfully.');
             var mountSource = '/dev/' + data.device.id + '1';
             var mountTarget = '/mnt/' + data.device.id + '1';
             fs.mkdir(mountTarget, function(err) {
                 if (err && err.code !== 'EEXIST') {
-                     logSession(session, 'Error', 'Error creating directory ' + mountTarget, err);
+                    logSession(session, 'Error', 'Error creating directory ' + mountTarget, err);
                 } else {
-                     logSession(session, 'Info', 'Attempting to mount ' + mountSource + ' to ' + mountTarget);
+                    logSession(session, 'Info', 'Attempting to mount ' + mountSource + ' to ' + mountTarget);
                     var mount = childProcess.spawn('mount', [mountSource, mountTarget]);
                     mount.on('close', function(code) {
                         var systemUpdateDir = path.join(mountTarget, '$SystemUpdate');
                         if (code !== 0) {
-                             logSession(session, 'Error', 'Error, failed to mount ' + mountSource + ' to ' + mountTarget, 'Mount command failed with error code ' + code);
+                            logSession(session, 'Error', 'Error, failed to mount ' + mountSource + ' to ' + mountTarget, 'Mount command failed with error code ' + code);
                         } else {
-                             logSession(session, 'Info', 'Successfully mounted ' + mountSource + ' to ' + mountTarget);
+                            logSession(session, 'Info', 'Successfully mounted ' + mountSource + ' to ' + mountTarget);
                             var success = filesExist(systemUpdateDir, ['smcerr.log', 'update.cfg', 'update.log', 'update2.cfg']);
                             rimraf(path.join(mountTarget, '*'), function(err) {
                                 childProcess.spawn('umount', [mountTarget]);
@@ -195,6 +195,9 @@ function sessionFinish(itemNumber, data, callback) {
 }
 
 function logSession(session, level, message, details) {
+    if (typeof details === 'undefined')
+        details = '';
+
     var logEntry = {
         "timestamp": new Date(),
         "level": level,
@@ -209,10 +212,10 @@ function closeSession(session, success, callback) {
     console.log("closing session");
     session.end_time = new Date();
     if (success) {
-         logSession(session, 'Info', 'Refresh completed successfully.');
+        logSession(session, 'Info', 'Refresh completed successfully.');
         session.status = 'Success';
     } else {
-         logSession(session, 'Info', 'Refresh failed.');
+        logSession(session, 'Info', 'Refresh failed.');
         session.status = 'Fail';
     }
     console.log(session);

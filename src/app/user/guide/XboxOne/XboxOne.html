@@ -1,17 +1,22 @@
 <horizontal-ui-sheet class="apc-sheet-full guide xbox-one">
   <header class="guide-header">
     <div class="row header-row">
-      <div class="col-sm-6 header-col">
+      <div class="col-sm-7 header-col">
         <div class="header-middle-col">
-          <span class="logo-hover"><i class="fa fa-home fa-home-header"></i>
-          <img ng-click="vm.refreshEnd()" class="guide-logo" src="/assets/images/Logo.png"></span>
-          <span class="home-header">Refresh Guide</span>
+          <div class="home-link" ng-click="vm.refreshEnd()">
+            <div class="home-button">
+              <i class="fa fa-home home-button-icon"></i>
+              <span class="home-button-text">Home</span>
+            </div>
+            <img class="guide-logo" src="/assets/images/Logo.png">
+          </div>
+          <div class="home-header">Xbox One Refresh</div>
         </div>
       </div>
-      <div class="col-sm-6 col-xs-12 small-land-guide-item-info header-col">
+      <div class="col-sm-5 header-col">
         <div class="header-middle-col-right">
-          <img class="header-item-icon" src="/assets/images/xbox.png">
-          <span class="home-header-right">{{vm.item.Description}}</span>
+          <img class="header-item-icon" src="/assets/images/xbox-logo.png">
+          <div class="home-header-right">{{vm.item.Description}}</div>
         </div>
       </div>
     </div>
@@ -19,8 +24,10 @@
   <div horizontal-ui-sheet-content>
     <div class="row">
       <ul id="progress-tracker" data-steps="3">
-        <li ng-class="{'active': vm.step.number >= 1 && vm.step.number <= 4, 'done': vm.step.number > 4}"><span>Prepare<br>Refresh</span></li>
-        <li ng-class="{'active': vm.step.number >= 5 && vm.step.number <= 6, 'done': vm.step.number > 6}"><span>Refresh<br>Xbox</span></li>
+        <li ng-class="{'active': vm.step.number >= 1 && vm.step.number <= 4, 'done': vm.step.number > 4}">
+          <span>Prepare<br>Refresh</span></li>
+        <li ng-class="{'active': vm.step.number >= 5 && vm.step.number <= 6, 'done': vm.step.number > 6}">
+          <span>Refresh<br>Xbox</span></li>
         <li ng-class="{'active': vm.step.number == 7}"><span>Finish</span><i></i></li>
       </ul>
     </div>
@@ -51,7 +58,7 @@
 
       <div class="anim-wizard-step" ng-switch-when="prepareRefreshUsbComplete">
         <div class="row wizard-graphics">
-          <span class="fa fa-check-circle anim-success-icon"></span>
+          <i class="fa fa-check-circle success-icon"></i>
         </div>
         <div class="row wizard-contents">
           <h2>The USB drive is ready.</h2>
@@ -76,7 +83,9 @@
               <li>Press and hold the <b>BIND</b> and <b>EJECT</b> buttons while turning it on.</li>
               <li>Listen for two "power-up" tones a couple of seconds apart.</li>
               <li>Release the <b>BIND</b> and <b>EJECT</b> buttons.</li>
-              <li>Wait a few seconds for the Xbox button light to turn off, then unplug the Xbox and remove the USB drive.</li>
+              <li>Wait a few seconds for the Xbox button light to turn off, then unplug the Xbox and remove the USB
+                drive.
+              </li>
             </ol>
           </div>
         </div>
@@ -98,31 +107,28 @@
       </div>
 
       <div class="anim-wizard-step" ng-switch-when="complete">
-        <div class="row wizard-graphics">
-          <span class="fa fa-check-circle anim-success-icon"></span>
+        <div class="step-header text-align-center">
+          <i class="fa fa-check-circle success-icon"></i>
+          <h2>Success</h2>
+          <h3>You have successfully refreshed the Xbox</h3>
         </div>
-        <div class="row wizard-contents">
-          <h2>You have successfully refreshed the Xbox.</h2>
-        </div>
-        <div class="row">
+        <div class="row finish-success-button">
           <button class="btn btn-primary btn-rounded center" ui-sref="^" href="#/user/home">
-            Finish &nbsp; <i class="fa fa-caret-right"></i>
+            Finish <i class="fa fa-caret-right"></i>
           </button>
         </div>
       </div>
 
       <div class="anim-wizard-step" ng-switch-when="failed">
-        <div class="row wizard-graphics">
-          <span class="fa fa-exclamation-triangle anim-warning-icon"></span>
-        </div>
-        <div class="row wizard-contents">
-          <h2>The Xbox refresh failed.</h2>
+        <div class="step-header text-align-center">
+          <i class="fa fa-exclamation warning-icon"></i>
+          <h2>The Xbox refresh failed</h2>
           <h3>{{vm.errorMessage}}</h3>
           <h3>Please try again.<br/> If error persists, contact support.</h3>
         </div>
-        <div class="row todo-button">
+        <div class="row nav-btn">
           <button class="btn btn-primary btn-rounded center" ng-click="vm.retry()">
-            <i class="fa fa-repeat"></i> &nbsp; Retry
+            <i class="fa fa-repeat"></i> Retry
           </button>
         </div>
       </div>
