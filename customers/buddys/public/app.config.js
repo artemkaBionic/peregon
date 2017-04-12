@@ -7,7 +7,6 @@
         name: 'Buddys',
         appTitle: 'Buddys Portal',
         version: '0.0.1',
-        packageIndex: '/assets/package-index.json',
         guidesPath: '/assets/guides',
         guidesIndexFile: 'index.html',
         guides: [
