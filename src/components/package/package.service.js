@@ -27,15 +27,11 @@
         };
 
         service.isPackageReady = function(sku) {
+            var url = '/data/package/' + sku;
             var deferred = $q.defer();
 
-            $http.get(config.packageIndex).then(function(result) {
-                for (var i = 0, len = result.data.length; i < len; ++i) {
-                    if (result.data[i].SKU === sku) {
-                        deferred.resolve(true);
-                    }
-                }
-                deferred.resolve(false);
+            $http.get(url).then(function(result) {
+                deferred.resolve(result.data.isDownloaded);
             });
 
             return deferred.promise;

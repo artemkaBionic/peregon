@@ -7,7 +7,6 @@
         name: 'Aarons',
         appTitle: 'Aarons Portal',
         version: '1.0.1',
-        packageIndex: '/assets/package-index.json',
         guidesPath: '/assets/guides',
         guidesIndexFile: 'index.html',
         partialSkuRegEx: /^73(\d{0,2}|\d{2}\w{0,5})$/, // "73" followed by two digits followed by three digits or letters

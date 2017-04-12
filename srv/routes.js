@@ -127,9 +127,15 @@ module.exports = function(io, data) {
     });
 
     router.get('/data/isServiceCenter', function(req, res) {
-        station.getIsServiceCenter((function(data) {
+        station.getIsServiceCenter(function(data) {
             res.json(data);
-        }));
+        });
+    });
+
+    router.get('/data/package/:sku', function(req, res) {
+        station.getPackage(req.params.sku, function(data) {
+            res.json(data);
+        })
     });
 
     router.get('/data/getConnectionState', function(req, res) {
