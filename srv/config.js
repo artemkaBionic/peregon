@@ -4,7 +4,8 @@
 var config = {};
 
 config.mediaPackagePath = '/srv/media';
-config.packagPackagePath = '/srv/packages'
+config.packagPackagePath = '/srv/packages';
+config.kioskDataPath = '/var/lib/kiosk';
 config.apiHost = 'api.ar.appchord.com';
 config.apiPort = 443;
 config.apiAuthorization = 'Basic YXBwY2hvcmQuYWFyb25zLmFwaTplfjEjOUwkN0t6Zlt9MEo=';

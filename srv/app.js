@@ -1,5 +1,5 @@
 var express = require('express');
-var socket_io = require( "socket.io" );
+var socket_io = require("socket.io");
 var path = require('path');
 var fs = require('fs');
 var rimraf = require('rimraf');
@@ -15,8 +15,8 @@ var station = require('./station');
 var app = express();
 
 // Socket.io
-var io           = socket_io();
-app.io           = io;
+var io = socket_io();
+app.io = io;
 
 // Common data
 var isDevelopment = process.env.NODE_ENV === 'development';
@@ -24,6 +24,17 @@ var data = {};
 data.devices = {};
 
 var routes = require('./routes')(io, data);
+
+// Create data directory
+fs.stat(config.kioskDataPath, function(err, stats) {
+    if (err) {
+        if (err.code === "ENOENT") {
+            fs.mkdir(config.kioskDataPath);
+        } else {
+            console.error('Unable to check the existence of ' + config.kioskDataPath, err);
+        }
+    }
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -33,7 +44,7 @@ app.set('view engine', 'jade');
 //app.use(favicon(__dirname + '../src/assets/images/favicon.ico'));
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({extended: false}));
 //app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '/public')));
 
@@ -41,39 +52,38 @@ app.use('/', routes);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
+    var err = new Error('Not Found');
+    err.status = 404;
+    next(err);
 });
 
 // error handlers
 // development error handler
 // will print stacktrace
 if (isDevelopment) {
-  app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('error', {
-      message: err.message,
-      error: err
+    app.use(function(err, req, res, next) {
+        res.status(err.status || 500);
+        res.render('error', {
+            message: err.message,
+            error: err
+        });
     });
-  });
 }
 
 // production error handler
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
     console.log(err);
-  res.status(err.status || 500);
-  res.render('error', {
-    message: err.message,
-    error: {}
-  });
+    res.status(err.status || 500);
+    res.render('error', {
+        message: err.message,
+        error: {}
+    });
 });
 
 // socket.io events
-io.on( 'connection', function( socket )
-{
-    console.log( 'A client connected' );
+io.on('connection', function(socket) {
+    console.log('A client connected');
     socket.on('device-apply', function(data) {
         if (isDevelopment) {
             console.log('A client requested to apply media to device.');

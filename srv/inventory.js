@@ -13,7 +13,7 @@ var uuid = require('uuid/v1');
 var station = require('./station');
 const sessions = require('./sessionCache');
 
-const UNSENT_SESSIONS_DIRECTORY = './unsentSessions';
+const UNSENT_SESSIONS_DIRECTORY = config.kioskDataPath + '/unsentSessions';
 const INVENTORY_LOOKUP_URL = 'https://' + config.apiHost + '/api/inventorylookup/';
 const API_URL = 'https://api2.basechord.com';
 const RESEND_SESSIONS_INTERVAL = 900000; // 15 minutes
