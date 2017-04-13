@@ -26,13 +26,9 @@ data.devices = {};
 var routes = require('./routes')(io, data);
 
 // Create data directory
-fs.stat(config.kioskDataPath, function(err, stats) {
-    if (err) {
-        if (err.code === "ENOENT") {
-            fs.mkdir(config.kioskDataPath);
-        } else {
-            console.error('Unable to check the existence of ' + config.kioskDataPath, err);
-        }
+fs.mkdir(config.kioskDataPath, function(err) {
+    if (err && err.code !== 'EEXIST') {
+        console.error('Failed to create directory ' + config.kioskDataPath, err);
     }
 });
 

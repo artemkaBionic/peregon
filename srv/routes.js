@@ -31,14 +31,14 @@ module.exports = function(io, data) {
         });
     });
 
-    router.get('/data/inventory/lock/:imei', function(req, res) {
-        inventory.lockAndroid(req.params.imei, function(result) {
+    router.get('/data/inventory/lock/:id', function(req, res) {
+        inventory.lockDevice(req.params.id, function(result) {
             res.json(result);
         });
     });
 
-    router.get('/data/inventory/unlock/:imei', function(req, res) {
-        inventory.unlockAndroid(req.params.imei, function(result) {
+    router.get('/data/inventory/unlock/:id', function(req, res) {
+        inventory.unlockDevice(req.params.id, function(result) {
             res.json(result);
         });
     });

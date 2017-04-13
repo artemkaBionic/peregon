@@ -29,8 +29,8 @@ exports.sessionUpdate = sessionUpdate;
 exports.sessionFinish = sessionFinish;
 exports.resendSessions = resendSessions;
 exports.getItem = getItem;
-exports.lockAndroid = lockAndroid;
-exports.unlockAndroid = unlockAndroid;
+exports.lockDevice = lockDevice;
+exports.unlockDevice = unlockDevice;
 
 
 // Periodically resend unsent sessions
@@ -61,63 +61,15 @@ function getItem(id, callback) {
     });
 }
 
-function lockAndroid(imei, callback) {
-    request({
-        method: 'POST',
-        url: API_URL + '/unlockapi/lock',
-        headers: {
-            'Authorization': config.api2Authorization
-        },
-        body: {'IMEI': imei},
-        rejectUnauthorized: false,
-        json: true
-    }, function(error, response, body) {
-        if (error) {
-            console.error(error);
-            callback({error: error, result: null});
-        }
-        else {
-            console.log('Server returned: ');
-            console.log(body);
-            callback({error: null, result: body});
-        }
-    });
-    console.log('Lock request has been sent');
-}
-
-function unlockAndroid(imei, callback) {
-    request({
-        method: 'POST',
-        url: API_URL + '/unlockapi/unlock',
-        headers: {
-            'Authorization': config.api2Authorization
-        },
-        body: {'IMEI': imei},
-        rejectUnauthorized: false,
-        json: true
-    }, function(error, response, body) {
-        if (error) {
-            console.error(error);
-            callback({error: error, result: null});
-        }
-        else {
-            console.log('Server returned: ');
-            console.log(body);
-            callback({error: null, result: body});
-        }
-    });
-    console.log('Unlock request has been sent');
-}
-
 function getSessions(filter) {
     return sessions.getFiltered(filter);
 }
 
-function getSession(item_number) {
-    return sessions.get(item_number);
+function getSession(itemNumber) {
+    return sessions.get(itemNumber);
 }
 
-function sessionStart(item_number, device, callback) {
+function sessionStart(itemNumber, device, callback) {
     var diagnose_only = false;
     var session_device = changeDeviceFormat(device);
     var station_name = station.getName();
@@ -135,9 +87,61 @@ function sessionStart(item_number, device, callback) {
             "logs": []
         };
 
-        sessions.set(item_number, newSession);
+        sessions.set(itemNumber, newSession);
         callback();
     });
+}
+
+function unlockDevice(itemNumber, callback) {
+    var session = sessions.get(itemNumber);
+
+    request({
+        method: 'POST',
+        url: API_URL + '/unlockapi/unlock',
+        headers: {
+            'Authorization': config.api2Authorization
+        },
+        body: {'IMEI': session.device.serial_number},
+        rejectUnauthorized: false,
+        json: true
+    }, function(error, response, body) {
+        if (error) {
+            console.error(error);
+            logSession(session, 'Error', 'Unable to request device unlock.', JSON.stringify(data.error, null, 2));
+            callback({error: error, result: null});
+        }
+        else {
+            logSession(session, 'Info', 'Device is unlocked by ' + body.service);
+            callback({error: null, result: body});
+        }
+    });
+    console.log('Unlock request has been sent');
+}
+
+function lockDevice(itemNumber, callback) {
+    var session = sessions.get(itemNumber);
+
+    request({
+        method: 'POST',
+        url: API_URL + '/unlockapi/lock',
+        headers: {
+            'Authorization': config.api2Authorization
+        },
+        body: {'IMEI': session.device.serial_number},
+        rejectUnauthorized: false,
+        json: true
+    }, function(error, response, body) {
+        if (error) {
+            console.error(error);
+            logSession(session, 'Error', 'Unable to request device lock.', JSON.stringify(error, null, 2));
+            callback({error: error, result: null});
+        }
+        else {
+            logSession(session, 'Info', 'Device is locked by ' + body.service);
+            callback({error: null, result: body});
+        }
+    });
+    console.log('Lock request has been sent');
 }
 
 function sessionUpdate(itemNumber, level, message, details, callback) {
@@ -219,32 +223,71 @@ function closeSession(session, success, callback) {
         session.status = 'Fail';
     }
     console.log(session);
-    sendSession(session, callback);
-}
 
-function saveSessionFile(session, filename) {
-    fs.writeFile(filename, JSON.stringify(session), function(err) {
-        if (err) {
-            console.error('Unable to write the file ' + filename + '. Cannot save session for resend!', err);
-            console.error(session);
-        }
-        sessions.delete(session.device.item_number);
-    })
-}
-
-function saveSessionForResend(session) {
-    var sessionFileName = UNSENT_SESSIONS_DIRECTORY + '/' + uuid() + '.json';
-    fs.stat(UNSENT_SESSIONS_DIRECTORY, function(err, stats) {
-        if (err) {
-            if (err.code === "ENOENT") {
-                fs.mkdir(UNSENT_SESSIONS_DIRECTORY, saveSessionFile(session, sessionFileName));
-            } else {
-                console.error('Unable to check the existence of ' + UNSENT_SESSIONS_DIRECTORY + '. Cannot save session for resend!', err);
-                console.error(session);
-            }
+    fs.mkdir(UNSENT_SESSIONS_DIRECTORY, function(err) {
+        if (err && err.code !== 'EEXIST') {
+            console.error('Failed to create directory ' + UNSENT_SESSIONS_DIRECTORY, err);
         } else {
-            saveSessionFile(session, sessionFileName);
+            var file = UNSENT_SESSIONS_DIRECTORY + '/' + uuid() + '.json';
+            var content = {
+                session: session,
+                state: {
+                    deviceLocked: false
+                }
+            };
+            fs.writeFile(file, JSON.stringify(content), function(err) {
+                if (err) {
+                    console.error('Unable to write the file ' + file + '. Cannot save session for resend!', err);
+                    console.error(session);
+                }
+                sessions.delete(session.device.item_number);
+                sendSession(content, file);
+            });
         }
+    });
+}
+
+function timeoutExpired(startTime) {
+    var timeoutTime = startTime + config.deviceUnlockTimeout;
+    console.log(startTime);
+    console.log(timeoutTime);
+    console.log(new Date());
+    return timeoutTime > new Date();
+}
+
+function lockDeviceAndSendSession(content, file) {
+    if (!content.state.deviceLocked && !timeoutExpired(content.session.start_time)) {
+        lockDevice(content.session.item_number, function(data) {
+            if (data.error === null) {
+                content.state.deviceLocked = true;
+                fs.writeFile(file, JSON.stringify(content), function(err) {
+                    sendSession(content, file);
+                });
+            } else {
+                sendSession(content, file);
+            }
+        });
+    } else {
+        sendSession(content, file);
+    }
+}
+
+function sendSession(content, file) {
+    return request({
+        method: 'POST',
+        url: API_URL + '/session',
+        headers: {
+            'Authorization': config.api2Authorization
+        },
+        body: content.session,
+        rejectUnauthorized: false,
+        json: true
+    }).then(function(body) {
+        // Delete the file if it was successfully sent
+        fs.unlinkSync(file);
+    }).catch(function(error) {
+        console.log('ERROR: Unable to send session.');
+        console.log(error);
     });
 }
 
@@ -258,51 +301,15 @@ function resendSessions() {
         } else {
             files.forEach(function(file) {
                 file = UNSENT_SESSIONS_DIRECTORY + '/' + file;
-                fs.readFile(file, function(err, data) {
+                fs.readFile(file, function(err, content) {
                     if (err) {
                         console.error("Could not read " + file, err);
                     } else {
-                        return request({
-                            method: 'POST',
-                            url: API_URL + '/session',
-                            headers: {
-                                'Authorization': config.api2Authorization
-                            },
-                            body: JSON.parse(data),
-                            rejectUnauthorized: false,
-                            json: true
-                        }).then(function(body) {
-                            // Delete the file if it was successfully sent
-                            fs.unlinkSync(file);
-                        }).catch(function(error) {
-                            console.log('ERROR: Unable to resend session.');
-                            console.log(error);
-                        });
+                        sendSession(JSON.parse(content), file);
                     }
                 });
             });
         }
-    });
-}
-
-function sendSession(session, callback) {
-    return request({
-        method: 'POST',
-        url: API_URL + '/session',
-        headers: {
-            'Authorization': config.api2Authorization
-        },
-        body: session,
-        rejectUnauthorized: false,
-        json: true
-    }).then(function(body) {
-        sessions.delete(session.device.item_number);
-        callback({success: session.SessionState = 'Success', sent: true});
-    }).catch(function(error) {
-        console.log('ERROR: Unable to send session.');
-        console.log(error);
-        saveSessionForResend(session);
-        callback({success: session.SessionState = 'Success', sent: false});
     });
 }
 

@@ -80,8 +80,8 @@
             return deferred.promise;
         };
 
-        service.lock = function(imei) {
-            var url = '/data/inventory/lock/' + imei;
+        service.lock = function(itemNumber) {
+            var url = '/data/inventory/lock/' + itemNumber;
             var deferred = $q.defer();
 
             $http.get(url).then(function(result) {
@@ -91,8 +91,8 @@
             return deferred.promise;
         };
 
-        service.unlock = function(imei) {
-            var url = '/data/inventory/unlock/' + imei;
+        service.unlock = function(itemNumber) {
+            var url = '/data/inventory/unlock/' + itemNumber;
             var deferred = $q.defer();
 
             $http.get(url).then(function(result) {

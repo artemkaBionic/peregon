@@ -5,9 +5,9 @@
         .module('app.user')
         .controller('GuideControllerAndroid', GuideControllerAndroid);
 
-    GuideControllerAndroid.$inject = ['$q', '$scope', 'socketService', '$state', 'popupLauncher', 'toastr', '$timeout', 'inventoryService', 'item', 'eventService'];
+    GuideControllerAndroid.$inject = ['$q', '$scope', 'config', 'socketService', '$state', 'popupLauncher', 'toastr', '$timeout', 'inventoryService', 'item', 'eventService'];
 
-    function GuideControllerAndroid($q, $scope, socketService, $state, popupLauncher, toastr, $timeout, inventoryService, item, eventService) {
+    function GuideControllerAndroid($q, $scope, config, socketService, $state, popupLauncher, toastr, $timeout, inventoryService, item, eventService) {
 
         /*jshint validthis: true */
         var vm = this;
@@ -56,24 +56,19 @@
                 toastr.clear(eventService.connectionNotification);
             }
 
-            timeouts.push($timeout(vm.sessionExpired, 3600000)); //Session expires after an hour after the start
-            var queries = [inventoryService.startSession(item), unlockDevice()];
-            $q.all(queries);
+            timeouts.push($timeout(vm.sessionExpired, config.deviceUnlockTimeout)); //Session expires after an hour after the start
+            inventoryService.startSession(item).then(unlockDevice());
         };
 
         function unlockDevice() {
             if (vm.item) {
-                inventoryService.unlock(vm.item.Serial).then(function(data) {
-                    if (data.error) {
-                        inventoryService.updateSession(vm.item.InventoryNumber, 'Error', 'Unable to request device unlock.', JSON.stringify(data.error, null, 2));
-                    }
-                    else {
+                inventoryService.unlock(vm.item.InventoryNumber).then(function(data) {
+                    if (!data.error) {
                         vm.deviceLockService = data.result.service;
                         vm.deviceLockServiceUnlocked = true;
                         if (vm.step === vm.steps.waitForUnlock) {
                             vm.step = vm.steps.preparationOne;
                         }
-                        inventoryService.updateSession(vm.item.InventoryNumber, 'Info', 'Device is unlocked by ' + vm.deviceLockService);
                     }
                 });
             }
@@ -81,16 +76,7 @@
 
         function lockDevice() {
             if (vm.item) {
-                return inventoryService.lock(vm.item.Serial).then(function(data) {
-                    if (data.error) {
-                        return inventoryService.updateSession(vm.item.InventoryNumber, 'Error', 'Unable to request device lock.', JSON.stringify(data.error, null, 2));
-                    }
-                    else {
-                        return inventoryService.updateSession(vm.item.InventoryNumber, 'Info', 'Device is locked by ' + vm.deviceLockService);
-                    }
-                });
-            } else {
-                return $q.resolve();
+                inventoryService.lock(vm.item.InventoryNumber);
             }
         }
 
@@ -247,43 +233,26 @@
         };
 
         vm.sessionExpired = function() {
-            lockDevice()
-                .then(function() {
-                    return inventoryService.updateSession(vm.item.InventoryNumber, 'Info', 'Session expired.');
-                })
-                .then(function() {
-                    return inventoryService.finishSession(vm.item.InventoryNumber, {'complete': false});
-                });
+            inventoryService.updateSession(vm.item.InventoryNumber, 'Info', 'Session expired.');
+            lockDevice();
             vm.step = vm.steps.sessionExpired;
         };
 
         vm.finishFail = function() {
             vm.step = vm.steps.finishFail;
-            return lockDevice()
-                .then(function() {
-                    return inventoryService.updateSession(vm.item.InventoryNumber, 'Info', 'Session failed.');
-                })
-                .then(function() {
-                    return inventoryService.finishSession(vm.item.InventoryNumber, {'complete': false});
-                });
+            inventoryService.updateSession(vm.item.InventoryNumber, 'Info', 'Session failed.')
+                .then(inventoryService.finishSession(vm.item.InventoryNumber, {'complete': false}));
         };
 
         vm.finishSuccess = function() {
             vm.step = vm.steps.finishSuccess;
-            return lockDevice()
-                .then(function() {
-                    return inventoryService.updateSession(vm.item.InventoryNumber, 'Info', 'Session complete.');
-                })
-                .then(function() {
-                    return inventoryService.finishSession(vm.item.InventoryNumber, {'complete': true});
-                });
+            inventoryService.updateSession(vm.item.InventoryNumber, 'Info', 'Session complete.')
+                .then(inventoryService.finishSession(vm.item.InventoryNumber, {'complete': true}));
         };
 
         vm.finishClosed = function() {
-            return lockDevice()
-                .then(function() {
-                    return inventoryService.updateSession(vm.item.InventoryNumber, 'Info', 'User closed refresh session.');
-                });
+            inventoryService.updateSession(vm.item.InventoryNumber, 'Info', 'User closed refresh session.');
+            lockDevice();
         };
 
         vm.finish = function() {
@@ -291,8 +260,7 @@
             vm.androidFinished = true;
             if (vm.TestsFault || vm.Broken || vm.AndroidDisconnected) {
                 vm.finishFail();
-            }
-            else {
+            } else {
                 vm.finishSuccess();
             }
         };
@@ -341,17 +309,14 @@
                 // Exterior Check
                 vm.Broken = true;
                 vm.finish();
-            }
-            else if (!vm.PowerGood) {
+            } else if (!vm.PowerGood) {
                 // Check the Battery
                 vm.startTwo();
-            }
-            else if (!vm.ButtonsGood) {
+            } else if (!vm.ButtonsGood) {
                 // Screen & Buttons
                 vm.Broken = true;
                 vm.finish();
-            }
-            else {
+            } else {
                 //All Good, Continue to the next step
                 waitForUnlock();
             }
@@ -444,8 +409,7 @@
                 });//Toast Pop-Up notification parameters
                 if (vm.androidFinished) {
                     return;
-                }
-                else {
+                } else {
                     waitForAppStart();
                 }
             });
