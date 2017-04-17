@@ -31,9 +31,14 @@
                         vm.item = null;
                         inventoryService.getItem(vm.searchString).then(function(item) {
                             vm.item = item;
+                            vm.itemNumberError = false;
                             // enable keypad submit button
                             $('.bc-keypad__key-button--submit').addClass('bc-keypad-submit-enabled');
-                        }, vm.checkItem);
+                        }, function() {
+                            if (vm.item === null) { // If vm.item is populated then a successful call to getItem was completed before this failure was returned.
+                                vm.itemNumberError = true;
+                            }
+                        });
                     } else {
                         // disable keypad submit button
                         if ($('.bc-keypad__key-button--submit').hasClass('bc-keypad-submit-enabled')) {
@@ -50,10 +55,6 @@
             }
         };
         $scope.$watch('vm.searchString', vm.searchStringChange);
-
-        vm.checkItem = function() {
-            vm.itemNumberError = true;
-        };
 
         vm.showGuide = function() {
             if (vm.item !== null) {

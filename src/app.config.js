@@ -10,7 +10,7 @@
         guidesPath: '/assets/guides',
         guidesIndexFile: 'index.html',
         partialSkuRegEx: /^73(\d{0,2}|\d{2}\w{0,5})$/, // "73" followed by two digits followed by three digits or letters
-        itemNumberRegEx: /^\d{10}$|^SALO$/, // Numeric only 10 digits or the word SALO
+        itemNumberRegEx: /^\d{7,10}$|^SALO$/, // Numeric only 10 digits or the word SALO
         partialItemNumberRegEx: /^\d{0,10}$|^SALO$|^SAL$|^SA$|^S$/, // Numeric only up to 10 digits or the word SALO
         deviceUnlockTimeout: 3600000,
         networkDevices: [
