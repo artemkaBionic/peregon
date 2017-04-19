@@ -176,14 +176,9 @@
 
             var data = {};
             data.device = vm.selectedDevice;
-            inventoryService.finishSession(vm.item.InventoryNumber, data).then(function(response) {
-                if (response.success) {
-                    if (response.sent) {
-                        vm.step = vm.steps.complete;
-                    } else {
-                        vm.errorMessage = 'Refresh session was not reported correctly.';
-                        vm.step = vm.steps.failed;
-                    }
+            inventoryService.finishSession(vm.item.InventoryNumber, data).then(function(success) {
+                if (success) {
+                    vm.step = vm.steps.complete;
                 } else {
                     vm.errorMessage = 'Factory reset did not complete correctly.';
                     vm.step = vm.steps.failed;
