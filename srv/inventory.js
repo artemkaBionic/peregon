@@ -223,6 +223,7 @@ function closeSession(session, success, callback) {
         session.status = 'Fail';
     }
     console.log(session);
+    callback(success);
 
     fs.mkdir(UNSENT_SESSIONS_DIRECTORY, function(err) {
         if (err && err.code !== 'EEXIST') {
