@@ -23,7 +23,9 @@
 
             if (!connectionState.isOnline) {
                 vm.InternetConnection = false;
-            } else {vm.InternetConnection = true;}
+            } else {
+                vm.InternetConnection = true;
+            }
         };
 
         activate();
@@ -34,12 +36,12 @@
             });
         }
 
-        function getUser(){
+        function getUser() {
             var user = {name: 'admin'};
             return $q.when(user)
                 .then(assignData);
 
-            function assignData(data){
+            function assignData(data) {
                 vm.currentUser = data;
             }
         }

@@ -37,6 +37,12 @@ module.exports = function(io, data) {
         });
     });
 
+    router.get('/data/inventory/unlockForService/:imei', function(req, res) {
+        inventory.unlockForService(req.params.imei, function(result) {
+            res.json(result);
+        });
+    });
+
     router.get('/data/inventory/unlock/:id', function(req, res) {
         inventory.unlockDevice(req.params.id, function(result) {
             res.json(result);

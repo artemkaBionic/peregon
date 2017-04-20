@@ -91,6 +91,17 @@
             return deferred.promise;
         };
 
+        service.unlockForService = function(imei) {
+            var url = '/data/inventory/unlockForService/' + imei;
+            var deferred = $q.defer();
+
+            $http.get(url).then(function(result) {
+                deferred.resolve(result.data);
+            });
+
+            return deferred.promise;
+        };
+
         service.unlock = function(itemNumber) {
             var url = '/data/inventory/unlock/' + itemNumber;
             var deferred = $q.defer();

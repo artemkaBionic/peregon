@@ -30,6 +30,7 @@ exports.sessionFinish = sessionFinish;
 exports.resendSessions = resendSessions;
 exports.getItem = getItem;
 exports.lockDevice = lockDevice;
+exports.unlockForService = unlockForService;
 exports.unlockDevice = unlockDevice;
 
 
@@ -90,6 +91,29 @@ function sessionStart(itemNumber, device, callback) {
         sessions.set(itemNumber, newSession);
         callback();
     });
+}
+
+function unlockForService(imei, callback) {
+    console.log('Unlocking imei ' + imei + ' for service...');
+    request({
+        method: 'POST',
+        url: API_URL + '/unlockapi/unlock',
+        headers: {
+            'Authorization': config.api2Authorization
+        },
+        body: {'IMEI': imei, 'unlocked_for_service': true},
+        rejectUnauthorized: false,
+        json: true
+    }, function(error, response, body) {
+        if (error) {
+            console.error(error);
+            callback({error: error, result: null});
+        }
+        else {
+            callback({error: null, result: body});
+        }
+    });
+    console.log('Unlock request has been sent');
 }
 
 function unlockDevice(itemNumber, callback) {

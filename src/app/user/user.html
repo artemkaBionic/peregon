@@ -97,6 +97,9 @@
       <div class="row">
         <div class="home-buttons col-sm-12 col-xs-12 text-center">
           <button ng-disabled="vm.item === null" type="submit" class="btn-primary btn-rounded">Start</button>
+          <button ng-show="vm.isServiceCenter && vm.item.Type === 'Android'" type="button"
+                  class="btn-primary btn-rounded" ng-click="vm.unlockForService()">Unlock for Service
+          </button>
         </div>
       </div>
 

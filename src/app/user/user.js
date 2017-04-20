@@ -5,9 +5,9 @@
         .module('app.user')
         .controller('UserController', UserController);
 
-    UserController.$inject = ['$q', '$state', 'config', 'inventoryService', 'socketService', '$scope'];
+    UserController.$inject = ['$q', '$state', 'config', 'stationService', 'inventoryService', 'socketService', '$scope', 'toastr'];
 
-    function UserController($q, $state, config, inventoryService, socketService, $scope) {
+    function UserController($q, $state, config, stationService, inventoryService, socketService, $scope, toastr) {
         /*jshint validthis: true */
         var vm = this;
         vm.ready = false;
@@ -18,6 +18,7 @@
         vm.itemNumberError = false;
         vm.searchStringError = false;
         vm.searchStringSkuWarning = false;
+        vm.isServiceCenter = false;
 
         vm.searchStringChange = function() {
             vm.searchString = vm.searchString.toUpperCase();
@@ -66,6 +67,27 @@
             }
         };
 
+        vm.unlockForService = function() {
+            if (vm.item) {
+                inventoryService.unlockForService(vm.item.Serial).then(function(data) {
+                    if (data.error) {
+                        toastr.error('Failed to unlock device. Please try again. If the problem continues, contact support.', 'Device NOT Unlocked', {
+                            'tapToDismiss': true,
+                            'timeOut': 10000,
+                            'closeButton': true
+                        });
+                    } else {
+                        toastr.info('Device is unlocked by ' + data.result.service, 'Device Unlocked', {
+                            'tapToDismiss': true,
+                            'timeOut': 3000,
+                            'closeButton': true
+                        });
+                        vm.item = null;
+                    }
+                });
+            }
+        };
+
         //=========== Start Working on catching the Android Connect before ItemNumber entered==========
         socketService.on('app-start', function(data) {
             // if (!eventService.AndroidGuideInProcess) {
@@ -83,13 +105,12 @@
         //=========== End Working on catching the Android Connect before ItemNumber entered==========
         activate();
         function activate() {
-            var queries = [loadData()];
+            var queries = [stationService.isServiceCenter().then(function(isServiceCenter) {
+                vm.isServiceCenter = isServiceCenter;
+            })];
             return $q.all(queries).then(function() {
                 vm.ready = true;
             });
-        }
-
-        function loadData() {
         }
     }
 })();
