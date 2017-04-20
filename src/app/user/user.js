@@ -83,6 +83,7 @@
                             'closeButton': true
                         });
                         vm.item = null;
+                        vm.searchString = '';
                     }
                 });
             }
