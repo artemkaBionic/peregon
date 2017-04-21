@@ -3,4 +3,4 @@
 cd srv/
 npm version patch
 cd ..
-git add package.json
+git add srv/package.json
