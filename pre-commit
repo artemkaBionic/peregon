@@ -1,0 +1,4 @@
+#!/bin/sh
+# This hook increments kiosk version
+cd srv/ 
+npm version patch

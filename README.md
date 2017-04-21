@@ -4,6 +4,9 @@ Aarons Portal
 
 ## Usage
 
+Copy pre-commit file to AaronsPortal .git/hooks/ folder
+I will patch kiosk version after each commit.
+
 ### Create your project
 
 Install the required tools: `gulp`, `bower`

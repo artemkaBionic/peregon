@@ -1,9 +1,8 @@
 {
   "name": "kiosk",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "private": true,
   "scripts": {
-
     "start": "node ./bin/www",
     "test": "./node_modules/mocha/bin/mocha tests/*"
   },
