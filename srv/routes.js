@@ -4,6 +4,7 @@ var path = require('path');
 var config = require('./config');
 var inventory = require('./inventory.js');
 var station = require('./station.js');
+var usb = require('./usb.js');
 
 module.exports = function(io, data) {
 // Express Router
@@ -181,6 +182,14 @@ module.exports = function(io, data) {
         console.log('Shutting down...');
         station.shutdown();
     });
+
+    router.post('/prepareusb', function(req, res) {
+        console.log('ceating usb');
+        res.send("OK");
+        usb.prepareUSB(req.body);
+
+});
+
 
 
     return router;
