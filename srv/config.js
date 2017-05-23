@@ -13,10 +13,11 @@ config.api2Authorization = 'Basic YWFyb25zOllXRnliMjV6T2s1NU5UTjJjRlpU';
 config.deviceUnlockTimeout = 3600000;
 
 //config.winContent = '/usr/share/tftpd/winpe/default/*';
-config.winContent = '/home/artem/WinPe/*';
+config.winContent = '/home/artem/usb/WinPe/*';
 
-config.macContent = '/home/artem/mac_hfs.img';
-config.xboxContent = '/';
+config.macContent = '/home/artem/usb/mac/MacRefresh.img';
+//config.xboxContent = '/srv/media/bc76b9f7-02f9-42e3-a9b7-3383b5287f07/*';
+config.xboxContent = '/home/artem/usb/xbox/*';
 
 config.winVersionFile = '/home/artem/usb/WinPe/.version';
 config.xboxVersionFile = '/home/artem/usb/xbox/.version';

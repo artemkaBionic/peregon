@@ -16,7 +16,7 @@ function getWinpeVersion(winVersionFile) {
         console.log(err);
     }
 
-};
+}
 
 function getXboxVersion(xboxVersionFile) {
 
@@ -27,7 +27,7 @@ function getXboxVersion(xboxVersionFile) {
         console.log(err);
     }
 
-};
+}
 
 function getMacVersion(macVersionFile) {
 
@@ -38,7 +38,7 @@ function getMacVersion(macVersionFile) {
         console.log(err);
     }
 
-};
+}
 
 exports.getCurrentVersions = function () {
     try {
@@ -70,15 +70,21 @@ exports.createVersionsFile = function (device) {
             "xbox": currentXboxVersion,
             "mac": currentMacVersion
         };
-        var json = JSON.stringify(version);
-        shell.mkdir('/mnt/'+ statusMountFolder);
+        console.log(versions);
+        var json = JSON.stringify(versions);
+       // shell.mkdir(statusMountFolder);
         shell.exec('mount /dev/' + device +'4 ' + statusMountFolder);
         fs.writeFileSync(statusMountFolder + '/versions.json', json);
         shell.exec('umount ' + statusMountFolder);
         shell.exec('rm -rf ' + statusMountFolder);
     }
     catch (err) {
+        console.log(err);
         return;
+    }
+    finally {
+        shell.exec('umount ' + statusMountFolder);
+        shell.exec('rm -rf ' + statusMountFolder);
     }
 };
 
@@ -88,6 +94,7 @@ exports.getUsbVersion = function (usbVersionsFile) {
         return JSON.parse(fs.readFileSync(usbVersionsFile, 'utf8'));
     }
     catch (err) {
+        console.log(err);
         return;
     }
 };

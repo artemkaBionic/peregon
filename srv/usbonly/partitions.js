@@ -30,9 +30,9 @@ exports.createXboxPartition = function(device) {
 
 exports.createWinPartition = function(device) {
     try {
-        shell.exec('parted --script /dev/'+ device + ' mkpart primary fat32 101M 22700M');
+        shell.exec('parted --script /dev/'+ device + ' mkpart primary fat32 101M 2024M');
         shell.exec('mkfs.vfat -F32 -n "WinRefresh" /dev/' + device + '2');
-        shell.exec('parted --script /dev/' + 'set 2 boot on');
+        shell.exec('parted --script /dev/' + device + ' set 2 boot on');
     }
     catch (err) {
         return;
@@ -42,7 +42,7 @@ exports.createWinPartition = function(device) {
 
 exports.createMacPartition = function(device) {
     try {
-        shell.exec('parted --script /dev/'+ device + ' mkpart primary hfs+ 22701M 30700M');
+        shell.exec('parted --script /dev/'+ device + ' mkpart primary hfs+ 2025M 10000M');
         shell.exec('mkfs.hfsplus -v "MacRefresh" /dev/'+ device +'3');
     }
     catch (err) {
@@ -53,7 +53,7 @@ exports.createMacPartition = function(device) {
 
 exports.createStatusPartition = function (device) {
     try {
-        shell.exec('parted --script /dev/'+ device + ' mkpart primary fat32 30701M 100%');
+        shell.exec('parted --script /dev/'+ device + ' mkpart primary fat32 10001M 100%');
         shell.exec('mkfs.vfat -F32 -n "Status" /dev/' + device + '4');
     }
     catch (err) {
