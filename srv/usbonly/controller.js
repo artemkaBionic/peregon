@@ -23,53 +23,60 @@ exports.prepareUSB = function (io, data) {
         console.log(statusMountFolder + '/versions.json');
         var usbVersions = versions.getUsbVersion(statusMountFolder + '/versions.json');
         var currentVersions = versions.getCurrentVersions();
+        io.emit('usb-progress', {progress: 30});
         console.log(usbVersions);
         console.log(currentVersions);
 
         if (usbVersions.winpe !== currentVersions.winpe) {
             content.copyWinFiles(device, config.winContent);
             versions.createVersionsFile(device);
+
         }
         else if (usbVersions.xbox !== currentVersions.xbox) {
             console.log('copy new xbox files');
             content.copyXboxFiles(device, config.xboxContent);
             versions.createVersionsFile(device);
+
         }
         else if (usbVersions.mac !== currentVersions.mac) {
             content.copyMacFiles(device, config.macContent);
             versions.createVersionsFile(device);
+
         }
+        io.emit('usb-progress', {progress: 80});
+
         shell.exec('umount ' + statusMountFolder);
+        io.emit('usb-progress', {progress: 100});
 
 
     }
     catch (err) {
 
-        partitions.initMBR(device);
+      //  partitions.initMBR(device);
         console.log('Kiosk: MBR initialized');
         io.emit('usb-progress', {progress: 5});
-        partitions.createXboxPartition(device);
+      //  partitions.createXboxPartition(device);
         console.log('Kiosk: XBOX partition was created');
         io.emit('usb-progress', {progress: 5});
-        partitions.createWinPartition(device);
+      //  partitions.createWinPartition(device);
         console.log('Kiosk: Win partition was created');
         io.emit('usb-progress', {progress: 5});
-        partitions.createMacPartition(device);
+      //  partitions.createMacPartition(device);
         console.log('Kiosk: Mac partition was created');
         io.emit('usb-progress', {progress: 5});
-        partitions.createStatusPartition(device);
+       // partitions.createStatusPartition(device);
         console.log('Kiosk: Status partition was created');
         io.emit('usb-progress', {progress: 5});
-        content.copyXboxFiles(device, config.xboxContent);
+       // content.copyXboxFiles(device, config.xboxContent);
         console.log('Kiosk: XBOX files was copied');
         io.emit('usb-progress', {progress: 10});
-        content.copyWinFiles(device, config.winContent);
+      //  content.copyWinFiles(device, config.winContent);
         console.log('Kiosk: Win files was copied');
         io.emit('usb-progress', {progress: 30});
-        content.copyMacFiles(device, config.macContent);
+      //  content.copyMacFiles(device, config.macContent);
         console.log('Kiosk: Mac files was copied');
         io.emit('usb-progress', {progress: 30});
-        versions.createVersionsFile(device);
+     //   versions.createVersionsFile(device);
         console.log('Kiosk: Versions file was created');
         io.emit('usb-progress', {progress: 5});
     }
@@ -77,7 +84,7 @@ exports.prepareUSB = function (io, data) {
         io.emit('usb-complete');
         console.log('here');
 
-        shell.exec('rm -rf ' + statusMountFolder);
+     //   shell.exec('rm -rf ' + statusMountFolder);
     }
 
 

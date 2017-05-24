@@ -69,7 +69,7 @@ exports.createVersionsFile = function (device) {
             "xbox": currentXboxVersion,
             "mac": currentMacVersion
         };
-        console.log(versions);
+       // console.log(versions);
         var json = JSON.stringify(versions);
        // shell.mkdir(statusMountFolder);
         shell.exec('mount /dev/' + device +'4 ' + statusMountFolder);
