@@ -33,8 +33,8 @@ exports.copyWinFiles = function(device, winContent) {
         console.log('cp -Lr ' + winContent + ' ' + winMountFolder);
         shell.exec('cp -Lr ' + winContent + ' ' + winMountFolder);
         shell.exec('mv ' + winMountFolder + '/EFI/Microsoft/Boot/BCD-USB ' + winMountFolder + '/EFI/Microsoft/Boot/BCD');
-        shell.exec('umount ' + winMountFolder );
-        shell.exec('rm -rf ' + winMountFolder );
+
+
     }
     catch (err) {
         console.log(err);
@@ -50,6 +50,7 @@ exports.copyWinFiles = function(device, winContent) {
 
 
 exports.copyMacFiles = function(device, macContent) {
+    console.log('copy mac files started');
     try {
         console.log('OSX upload started');
         shell.exec('dd bs=4M if=' + macContent + ' of=/dev/'+ device + '3 && sync');

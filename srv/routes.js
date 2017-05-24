@@ -186,7 +186,7 @@ module.exports = function(io, data) {
     router.post('/prepareusb', function(req, res) {
         console.log('ceating usb');
         res.send("OK");
-        controller.prepareUSB(req.body);
+        controller.prepareUSB(io, req.body);
 
 });
 

@@ -64,7 +64,6 @@ exports.createVersionsFile = function (device) {
         var currentWinVersion = getWinpeVersion(config.winVersionFile);
         var currentXboxVersion = getXboxVersion(config.xboxVersionFile);
         var currentMacVersion = getMacVersion(config.macVersionFile);
-
         var versions = {
             "winpe": currentWinVersion,
             "xbox": currentXboxVersion,
@@ -75,8 +74,6 @@ exports.createVersionsFile = function (device) {
        // shell.mkdir(statusMountFolder);
         shell.exec('mount /dev/' + device +'4 ' + statusMountFolder);
         fs.writeFileSync(statusMountFolder + '/versions.json', json);
-        shell.exec('umount ' + statusMountFolder);
-        shell.exec('rm -rf ' + statusMountFolder);
     }
     catch (err) {
         console.log(err);
