@@ -5,9 +5,9 @@
         .module('app.user')
         .controller('GuideControllerMac', GuideControllerMac);
 
-    GuideControllerMac.$inject = ['$q', '$scope', 'config', 'item', 'inventoryService', '$state'];
+    GuideControllerMac.$inject = ['$q', '$scope', 'config', 'item', 'inventoryService', '$state', '$timeout'];
 
-    function GuideControllerMac($q, $scope, config, item, inventoryService, $state) {
+    function GuideControllerMac($q, $scope, config, item, inventoryService, $state, $timeout) {
         /*jshint validthis: true */
         var vm = this;
         vm.item = item;
@@ -16,44 +16,77 @@
         vm.ready = false;
         vm.success = false;
         vm.finished = false;
-
+        //vm.nextStep = nextStep;
+        //vm.previousStep = previousStep;
         vm.steps = {
-            start: {
-                name: 'start',
+            prepare: {
+                name: 'prepareUSBdrive',
                 number: 1,
-                title: 'Refresh Device'
+                title: 'Prepare USB drive'
             },
-            finishSuccess: {
-                name: 'finishSuccess',
+            refresh: {
+                name: 'refreshMac',
                 number: 2,
-                title: 'Successfully refurbished'
+                title: 'Refresh MAC'
             },
-            finishFail: {
-                name: 'finishFail',
+            finish: {
+                name: 'checkStatus',
                 number: 3,
-                title: 'Refresh failed.'
+                title: 'Check status.'
             }
         };
-
+        vm.substeps = {
+            insertUsbToStation: {
+                name: 'insertUsbToStation',
+                number: 1,
+                title: 'Insert USB To Station'
+            },
+            usbLoading: {
+                name: 'usbLoading',
+                number: 2,
+                title: 'Insert USB To Station'
+            }
+        };
         $scope.$on('$destroy', function() {
             if (!vm.finished) {
                 vm.finishClosed();
             }
         });
-
+        vm.step = vm.steps.prepare;
         activate();
         vm.refreshEnd = function() {
             $state.go('root.user');
         };
         function activate() {
-            vm.step = vm.steps.start;
-
+            vm.step = vm.steps.prepare;
+            vm.substep = vm.substeps.insertUsbToStation;
             var queries = [inventoryService.startSession(item)];
             $q.all(queries).then(function() {
                 vm.ready = true;
             });
         }
-
+        vm.count = 0;
+        vm.percentageComplete = 0;
+        for (var i = 0; i < 4; i++) {
+            vm.count += 1;
+            vm.percentageComplete = vm.count / 4 * 100;
+        }
+        vm.nextSubstep = function() {
+            vm.substep.number++;
+        };
+        vm.previousSubstep = function() {
+            vm.substep.number--;
+        };
+        vm.nextStep = function() {
+            vm.step.number++;
+        };
+        vm.previousStep = function() {
+            vm.step.number--;
+        };
+        vm.retry = function() {
+            vm.step.number = 1;
+            vm.substep.number = 1;
+        };
         vm.finishFail = function() {
             vm.step = vm.steps.finishFail;
             return inventoryService.updateSession(vm.item.InventoryNumber, 'Info', 'Session failed.')
