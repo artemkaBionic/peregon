@@ -5,9 +5,9 @@
         .module('app.user')
         .controller('GuideControllerMac', GuideControllerMac);
 
-    GuideControllerMac.$inject = ['popupLauncher', 'toastr', '$timeout', '$http', '$scope', '$q', 'item', 'config','deviceService', 'packageService', 'socketService', 'eventService', 'inventoryService', '$state'];
+    GuideControllerMac.$inject = ['toastr', '$timeout', '$http', '$q', 'item', 'config', 'socketService', 'eventService', 'inventoryService', '$state'];
 
-    function GuideControllerMac(popupLauncher, toastr, $timeout, $http, $scope, $q, item, config, deviceService, packageService, socketService, eventService, inventoryService, $state) {
+    function GuideControllerMac(toastr, $timeout, $http, $q, item, config, socketService, eventService, inventoryService, $state) {
         /*jshint validthis: true */
         var vm = this;
         vm.item = item;
@@ -21,21 +21,7 @@
         vm.PowerGood = false;
         vm.ExternalGood = false;
         vm.ButtonsGood = false;
-        var usbDeviceMinSize = 4000;
-        var acc = document.getElementsByClassName("accordion");
-        var i;
-
-        for (i = 0; i < acc.length; i++) {
-            acc[i].onclick = function() {
-                this.classList.toggle("active");
-                var panel = this.nextElementSibling;
-                if (panel.style.maxHeight){
-                    panel.style.maxHeight = null;
-                } else {
-                    panel.style.maxHeight = panel.scrollHeight + "px";
-                }
-            }
-        }
+        var usbDeviceMinSize = 4000000000;
         vm.steps = {
             prepare: {
                 name: 'prepareUSBdrive',
@@ -132,40 +118,36 @@
         vm.startResultLast = function() {
             $timeout(vm.startResult, 500);
         };
-        vm.addUSB = function() {
-            var url = 'http://localhost:3000/event/device-add';
-            var headers = {'content-type': 'application/json'};
-
-            $http({
-                url: url,
-                method: 'POST',
-                headers: headers,
-                data: {'id':'sdc', 'type': 'USB', 'manufacturer':'Generic', 'serial':'C5168175', 'size':'1982464'}
-            }).then(function(response){
-                //success
-            },function(resonse){
-                //error
-            })
-        };
-        vm.removeUsb = function() {
-            var url = 'http://localhost:3000/event/device-remove';
-            var headers = {'content-type': 'application/json'};
-
-            $http({
-                url: url,
-                method: 'POST',
-                headers: headers,
-                data: {'id':'sdc', 'type': 'USB', 'manufacturer':'Generic', 'serial':'C5168175', 'size':'1982464'}
-            }).then(function(response){
-                //success
-            },function(resonse){
-                //error
-            })
-        };
+        // vm.addUSB = function() {
+        //     var url = 'http://localhost:3000/event/device-add';
+        //     var headers = {'content-type': 'application/json'};
+        //
+        //     $http({
+        //         url: url,
+        //         method: 'POST',
+        //         headers: headers,
+        //         data: {'id':'sdc', 'type': 'USB', 'manufacturer':'Generic', 'serial':'C5168175', 'size':'4444444444444444'}
+        //     }).then(function(response){
+        //         //success
+        //     },function(resonse){
+        //         //error
+        //     })
+        // };
+        // vm.removeUsb = function() {
+        //     var url = 'http://localhost:3000/event/device-remove';
+        //     var headers = {'content-type': 'application/json'};
+        //     $http({
+        //         url: url,
+        //         method: 'POST',
+        //         headers: headers,
+        //         data: {'id':'sdc', 'type': 'USB', 'manufacturer':'Generic', 'serial':'C5168175', 'size':'44444444444444444'}
+        //     }).then(function(response){
+        //         //success
+        //     });
+        // };
         vm.checkCondition = function() {
             vm.step = vm.steps.prepare;
             vm.substep = vm.substeps.checkCondition;
-            //waitForUsbAdd(usbDeviceMinSize, prepareRefreshUsbApply);
         };
 
         vm.finishFailed = function() {
@@ -174,35 +156,30 @@
         };
         function prepareRefreshUsbApply(data) {
             vm.substep = vm.substeps.usbLoading;
-            vm.responseStatus = '';
-            console.log(data);
             $http({
                 url: 'http://localhost:3000/prepareusb',
                 method: 'POST',
                 headers: {'content-type': 'application/json'},
                 data: data
             }).then(function(response){
-                vm.responseStatus = response.status;
-            });
-            $scope.$watch('vm.responseStatus', function () {
-                if (vm.responseStatus = 200) {
-                    socketService.on('usb-progress', function(data) {
-                        vm.percentageComplete += data.progress;
-                        if (vm.percentageComplete = 100) {
-                            console.log(data.progress);
-                            $timeout(function () {
-                                prepareRefreshUsbComplete();
-                            }, 2000);
-                        }
-                    });
-                } else {
+                if (response.status !== 200) {
                     vm.step = vm.steps.prepare;
                     vm.substep = vm.substeps.usbLoadFailed;
                 }
             });
-
+            socketService.on('usb-progress', function(data) {
+                console.log(data);
+                vm.percentageComplete += data.progress;
+                if (vm.percentageComplete = 100) {
+                    console.log(data.progress);
+                    $timeout(function() {
+                        prepareRefreshUsbComplete();
+                    }, 2000);
+                }
+            });
         }
         function waitForUsbAdd(minSize, callback) {
+            console.log(vm.selectedDevice);
             if (vm.selectedDevice === null) {
                 socketService.once('device-add', function(data) {
                     if (data.size >= minSize) {
@@ -218,7 +195,7 @@
                     }
                 });
             } else {
-                callback();
+                callback(vm.selectedDevice);
             }
         }
 
@@ -231,10 +208,21 @@
             waitForUsbAdd(usbDeviceMinSize, verifyRefreshStart);
         }
 
-        function verifyRefreshStart() {
-            vm.step = vm.steps.finish;
-            vm.substep = vm.substeps.refreshSuccess;
-
+        function verifyRefreshStart(data) {
+            $http({
+                url: 'http://localhost:3000/readsession',
+                method: 'POST',
+                headers: {'content-type': 'application/json'},
+                data: data
+            }).then(function(response){
+                if (response.status = 200) {
+                    vm.step = vm.steps.finish;
+                    vm.substep = vm.substeps.refreshSuccess;
+                } else {
+                    vm.step = vm.steps.finish;
+                    vm.substep = vm.substeps.rerfeshFailed;
+                }
+            });
         }
         function waitForUsbRemove(callback) {
             socketService.once('device-remove', function(data) {
