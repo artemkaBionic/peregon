@@ -14,7 +14,7 @@ exports.copyXboxFiles = function(device, xboxContent) {
     }
     catch (err) {
 
-        return;
+        throw new Error;
     }
     finally {
         shell.exec('umount /mnt/' + xboxMountFolder);
@@ -38,7 +38,7 @@ exports.copyWinFiles = function(device, winContent) {
     }
     catch (err) {
         console.log(err);
-        return;
+        throw new Error;
     }
     finally {
         shell.exec('umount ' + winMountFolder );
@@ -58,7 +58,7 @@ exports.copyMacFiles = function(device, macContent) {
     }
     catch (err) {
         console.log(err);
-        return;
+        throw new Error;
     }
 
 };

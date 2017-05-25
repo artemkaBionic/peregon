@@ -9,7 +9,7 @@ exports.initMBR = function(device) {
         shell.mkdir('parted --script /dev/' + device + ' mklabel msdos');
     }
     catch (err) {
-        return;
+        throw new Error;
     }
 
 };
@@ -21,7 +21,7 @@ exports.createXboxPartition = function(device) {
         shell.exec('mkfs.ntfs -f -L "XboxRefresh" /dev/'+ device + '1');
     }
     catch (err) {
-        return;
+        throw new Error;
     }
 
 
@@ -35,7 +35,7 @@ exports.createWinPartition = function(device) {
         shell.exec('parted --script /dev/' + device + ' set 2 boot on');
     }
     catch (err) {
-        return;
+        throw new Error;
     }
 
 };
@@ -46,7 +46,7 @@ exports.createMacPartition = function(device) {
         shell.exec('mkfs.hfsplus -v "MacRefresh" /dev/'+ device +'3');
     }
     catch (err) {
-        return;
+        throw new Error;
     }
 
 };
@@ -57,7 +57,7 @@ exports.createStatusPartition = function (device) {
         shell.exec('mkfs.vfat -F32 -n "Status" /dev/' + device + '4');
     }
     catch (err) {
-        return;
+        throw new Error;
     }
 
 };

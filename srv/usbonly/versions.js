@@ -14,6 +14,7 @@ function getWinpeVersion(winVersionFile) {
     }
     catch (err) {
         console.log(err);
+        throw new Error;
     }
 
 }
@@ -25,6 +26,7 @@ function getXboxVersion(xboxVersionFile) {
     }
     catch (err) {
         console.log(err);
+        throw new Error;
     }
 
 }
@@ -36,6 +38,7 @@ function getMacVersion(macVersionFile) {
     }
     catch (err) {
         console.log(err);
+        throw new Error;
     }
 
 }
@@ -52,7 +55,7 @@ exports.getCurrentVersions = function () {
         };
     }
     catch (err) {
-        return;
+        throw new Error;
     }
 
 };
@@ -77,7 +80,7 @@ exports.createVersionsFile = function (device) {
     }
     catch (err) {
         console.log(err);
-        return;
+        throw new Error;
     }
     finally {
         shell.exec('umount ' + statusMountFolder);
@@ -92,6 +95,6 @@ exports.getUsbVersion = function (usbVersionsFile) {
     }
     catch (err) {
         console.log(err);
-        return;
+        throw new Error;
     }
 };
