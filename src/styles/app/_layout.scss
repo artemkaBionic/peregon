@@ -175,3 +175,20 @@ a, .btn{
 
   margin: auto;
 }
+h3.accordion{
+  margin: 0;
+}
+.accordion a{
+  padding: 10px;
+  background: #ddd;
+  color: #333;
+  text-decoration: none;
+  font-weight: bold;
+  display: block;
+  margin-bottom: 1px;
+}
+.accordion-content{
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin: 1px 0;
+}

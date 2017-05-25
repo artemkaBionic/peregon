@@ -1277,7 +1277,11 @@ button[disabled]:hover {
   border-radius: 7px;
 
 }
+.check-condition {
+  padding: 20px 30px;
+  border-radius: 7px;
 
+}
 .inspection-ask {
   padding: 2vh 3vh;
   border: 3px solid transparent;
@@ -1321,6 +1325,31 @@ button[disabled]:hover {
 }
 
 .inspection-question label {
+  position: absolute;
+  font-size: 30px;
+  top: 50%;
+  transform: translateY(-50%);
+  -webkit-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  right: 30px;
+}
+
+.check-condition-question {
+  margin: 5vh auto;
+}
+
+.check-condition-question span {
+  position: absolute;
+  padding-left: 20%;
+  max-width: 60vw;
+  font-size: 3.5vh;
+  top: 50%;
+  transform: translateY(-50%);
+  -webkit-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+}
+
+.check-condition-question label {
   position: absolute;
   font-size: 30px;
   top: 50%;
@@ -2882,3 +2911,47 @@ orbicular i {
 
 /*============End Some settings for for FullHd Screen ============ */
 /*============================End Responsive====================*/
+
+// LOADING DOTS
+.one {
+  opacity: 0;
+  -webkit-animation: dot 1.3s infinite;
+  -webkit-animation-delay: 0.0s;
+  animation: dot 1.3s infinite;
+  animation-delay: 0.0s;
+}
+
+.two {
+  opacity: 0;
+  -webkit-animation: dot 1.3s infinite;
+  -webkit-animation-delay: 0.2s;
+  animation: dot 1.3s infinite;
+  animation-delay: 0.2s;
+}
+
+.three {
+  opacity: 0;
+  -webkit-animation: dot 1.3s infinite;
+  -webkit-animation-delay: 0.3s;
+  animation: dot 1.3s infinite;
+  animation-delay: 0.3s;
+}
+
+@-webkit-keyframes dot {
+  0% { opacity: 0; }
+  50% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes dot {
+  0% { opacity: 0; }
+  50% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+
+@-webkit-keyframes ellipsis {
+  to {
+    width: 1.25em;
+  }
+}

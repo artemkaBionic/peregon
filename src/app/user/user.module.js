@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    var module = angular.module('app.user', ['ui.router']);
+    var module = angular.module('app.user', ['ui.router', 'ui.bootstrap']);
     var config = module.config(appConfig);
     config.run(onStateChange);
 
