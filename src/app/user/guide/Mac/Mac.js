@@ -21,7 +21,7 @@
         vm.PowerGood = false;
         vm.ExternalGood = false;
         vm.ButtonsGood = false;
-        var usbDeviceMinSize = 4000000000;
+        var usbDeviceMinSize = 30000000000;
         vm.steps = {
             prepare: {
                 name: 'prepareUSBdrive',
@@ -100,59 +100,16 @@
                 vm.checkCondition();
             });
         }
-        vm.startResult = function() {
-            if (!vm.ExternalGood) {
-                // Exterior Check
-                vm.finishFailed();
-            } else if (!vm.PowerGood) {
-                // Check the Battery
-                vm.finishFailed();
-            } else if (!vm.ButtonsGood) {
-                // Screen & Buttons
-                vm.finishFailed();
-            } else {
-                //All Good, Continue to the next step
-                vm.prepareRefreshUsbStart();
-            }
-        };
-        vm.startResultLast = function() {
-            $timeout(vm.startResult, 500);
-        };
-        // vm.addUSB = function() {
-        //     var url = 'http://localhost:3000/event/device-add';
-        //     var headers = {'content-type': 'application/json'};
-        //
-        //     $http({
-        //         url: url,
-        //         method: 'POST',
-        //         headers: headers,
-        //         data: {'id':'sdc', 'type': 'USB', 'manufacturer':'Generic', 'serial':'C5168175', 'size':'4444444444444444'}
-        //     }).then(function(response){
-        //         //success
-        //     },function(resonse){
-        //         //error
-        //     })
-        // };
-        // vm.removeUsb = function() {
-        //     var url = 'http://localhost:3000/event/device-remove';
-        //     var headers = {'content-type': 'application/json'};
-        //     $http({
-        //         url: url,
-        //         method: 'POST',
-        //         headers: headers,
-        //         data: {'id':'sdc', 'type': 'USB', 'manufacturer':'Generic', 'serial':'C5168175', 'size':'44444444444444444'}
-        //     }).then(function(response){
-        //         //success
-        //     });
-        // };
         vm.checkCondition = function() {
             vm.step = vm.steps.prepare;
             vm.substep = vm.substeps.checkCondition;
         };
 
         vm.finishFailed = function() {
-            vm.step = vm.steps.prepare;
-            vm.substep = vm.substeps.deviceBroken;
+            $timeout(function() {
+                vm.step = vm.steps.prepare;
+                vm.substep = vm.substeps.deviceBroken;
+            }, 500);
         };
         function prepareRefreshUsbApply(data) {
             vm.substep = vm.substeps.usbLoading;
@@ -170,11 +127,11 @@
             socketService.on('usb-progress', function(data) {
                 console.log(data);
                 vm.percentageComplete += data.progress;
-                if (vm.percentageComplete = 100) {
+                if (vm.percentageComplete === 100) {
                     console.log(data.progress);
                     $timeout(function() {
                         prepareRefreshUsbComplete();
-                    }, 2000);
+                    }, 500);
                 }
             });
         }
@@ -215,12 +172,16 @@
                 headers: {'content-type': 'application/json'},
                 data: data
             }).then(function(response){
-                if (response.status = 200) {
-                    vm.step = vm.steps.finish;
-                    vm.substep = vm.substeps.refreshSuccess;
+                if (response.status === 200) {
+                    $timeout(function() {
+                        vm.step = vm.steps.finish;
+                        vm.substep = vm.substeps.refreshSuccess;
+                    }, 500);
                 } else {
-                    vm.step = vm.steps.finish;
-                    vm.substep = vm.substeps.rerfeshFailed;
+                    $timeout(function() {
+                        vm.step = vm.steps.finish;
+                        vm.substep = vm.substeps.rerfeshFailed;
+                    }, 500);
                 }
             });
         }

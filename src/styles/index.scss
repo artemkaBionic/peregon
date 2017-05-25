@@ -2955,3 +2955,93 @@ orbicular i {
     width: 1.25em;
   }
 }
+@media only screen and (max-width: 700px) {
+  .instruction-list {
+    font-size: 15pt;
+    font-weight: 300;
+    margin-left: 15%;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    li {
+      margin-bottom: 10px;
+    }
+  }
+  .instruction-buttons {
+    margin-left: 15.5%;
+  }
+  .instruction-header {
+    margin-left: 15.5%;
+  }
+}
+@media only screen and (min-width: 700px) {
+  .instruction-list {
+    font-size: 20pt;
+    font-weight: 300;
+    margin-left: 25%;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    li {
+      margin-bottom: 10px;
+    }
+  }
+  .instruction-buttons {
+    margin-left: 25.5%;
+  }
+  .instruction-header {
+    margin-left: 25.5%;
+  }
+}
+//@media only screen and (min-width: 1200px) {
+//  .instruction-list {
+//    font-size: 20pt;
+//    font-weight: 300;
+//    margin-left: 25%;
+//    margin-top: 20px;
+//    margin-bottom: 30px;
+//    li {
+//      margin-bottom: 10px;
+//    }
+//  }
+//  .instruction-buttons {
+//    margin-left: 25.5%;
+//  }
+//  .instruction-header {
+//    margin-left: 25.5%;
+//  }
+//}
+@media only screen and (min-width: 1200px) {
+  .instruction-list {
+    font-size: 20pt;
+    font-weight: 300;
+    margin-left: 33.5%;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    li {
+      margin-bottom: 10px;
+    }
+  }
+  .instruction-buttons {
+    margin-left: 34%;
+  }
+  .instruction-header {
+    margin-left: 34%;
+  }
+}
+@media only screen and (min-width: 1600px) {
+  .instruction-list {
+    font-size: 20pt;
+    font-weight: 300;
+    margin-left: 35.5%;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    li {
+      margin-bottom: 10px;
+    }
+  }
+  .instruction-buttons {
+     margin-left: 36%;
+   }
+  .instruction-header {
+    margin-left: 36%;
+  }
+}

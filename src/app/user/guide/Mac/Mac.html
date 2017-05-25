@@ -22,16 +22,10 @@
     </div>
   </header>
   <div horizontal-ui-sheet-content>
-    <!--<button ng-click="vm.nextStep()">Next step</button>
-    <button ng-click="vm.previousStep()">Previous step</button>
-    <button ng-click="vm.nextSubstep()">Next substep</button>
-    <button ng-click="vm.previousSubstep()">Previous substep</button>
-    <button ng-click="vm.addUSB()">Add usb</button>
-    <button ng-click="vm.removeUsb()">Remove usb</button>-->
     <div class="row">
       <ul id="progress-tracker" data-steps="3">
         <li ng-class="{'active': vm.step.number === 1}">
-          <span>Prepare refresh</span></li>
+          <span>Prepare Mac refresh</span></li>
         <li ng-class="{'active': vm.step.number === 2}">
           <span>Refresh Mac</span></li>
         <li ng-class="{'active': vm.step.number === 3}">
@@ -43,61 +37,28 @@
       <div id="first" ng-switch-when="prepareUSBdrive">
         <div ng-switch="vm.substep.name" class="row wizard">
           <div id="zeroSubstate" ng-switch-when="checkCondition">
-            <div class="text-center">
-              <h2>Check Mac condition</h2>
+            <div class="instruction-header">
+              <h2>Before refresh Mac make sure that:</h2>
             </div>
-            <form name="inspection-form" novalidate ng-submit="vm.startResult()">
-              <div class="inspect-mode">
-
-                <div class="row">
-                  <div class="col-md-2">
-                  </div>
-                  <div class="col-md-8 inspection-tap" ng-class="vm.ExternalGood ? 'inspection-tap-checked' : ''"
-                       ng-click="vm.ExternalGood = !vm.ExternalGood">
-                    <div class="inspection-question">
-                      <span>Screen and casing are in good condition</span>
-                      <input type="checkbox" id="checkmark2" ng-model="vm.ExternalGood">
-                      <label for="checkmark2" class="check-box"></label>
-                    </div>
-                  </div>
-                  <div class="col-md-2">
-                  </div>
-                </div>
-
-                <div class="row">
-                  <div class="col-md-2">
-                  </div>
-                  <div class="col-md-8 inspection-tap" ng-class="vm.PowerGood ? 'inspection-tap-checked' : ''"
-                       ng-click="vm.PowerGood = !vm.PowerGood">
-                    <div class="inspection-question">
-                      <span>Device turns on</span>
-                      <input type="checkbox" id="checkmark1" ng-model="vm.PowerGood">
-                      <label for="checkmark1" class="check-box"></label>
-                    </div>
-                  </div>
-                  <div class="col-md-2">
-                  </div>
-                </div>
-
-                <div class="row">
-                  <div class="col-md-2">
-                  </div>
-                  <div class="col-md-8 inspection-tap" ng-class="vm.ButtonsGood ? 'inspection-tap-checked' : ''"
-                       ng-click="vm.ButtonsGood = !vm.ButtonsGood;">
-                    <div class="inspection-question">
-                      <span>Keyboard and multi-touch panel are working</span>
-                      <input type="checkbox" id="checkmark3" ng-model="vm.ButtonsGood">
-                      <label for="checkmark3" class="check-box"
-                             ng-click="vm.ButtonsGood = !vm.ButtonsGood; $event.stopPropagation()"></label>
-                    </div>
-                  </div>
-                  <div class="col-md-2">
-                  </div>
-                </div>
-              </div>
-              <div class="row nav-btn">
-                <button class="btn btn-primary btn-rounded center" type="submit">
-                  Next <i class="fa fa-caret-right"></i>
+            <div class="row">
+              <ul class="instruction-list">
+                <li>
+                  Mac turns on;
+                </li>
+                <li>
+                  Screen and casing are in good condition;
+                </li>
+                <li>
+                  Keyboard and multi-touch are working;
+                </li>
+              </ul>
+            </div>
+              <div class="row instruction-buttons">
+                <button style="margin-right: 25px" class="btn btn-success btn-rounded" type="submit" ng-click="vm.prepareRefreshUsbStart()">
+                  Mac in good condition
+                </button>
+                <button class="btn btn-danger btn-rounded" type="submit" ng-click="vm.finishFailed();">
+                  Mac in bad condition
                 </button>
               </div>
             </form>
