@@ -185,20 +185,17 @@ module.exports = function(io, data) {
 
     router.post('/prepareusb', function(req, res) {
         console.log('creating usb');
-        controller.prepareUSB(io, req.body);
-        res.json();
-
-});
-    router.post('/readsession', function(req, res) {
-        console.log('reading session');
- //       var result = controller.readSession(io, req.body);
- //       console.log(result);
-        res.json();
-
-
-
+        controller.prepareUSB(io, req.body, function(result) {
+            res.json(result);
+        });
     });
 
+    router.post('/readsession', function(req, res) {
+        console.log('reading session');
+        controller.readSession(io, req.body, function(result) {
+            res.json(result);
+        });
+    });
 
 
     return router;

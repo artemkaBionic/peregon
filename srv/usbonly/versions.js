@@ -8,93 +8,48 @@ shell.config.fatal = true;
 
 
 function getWinpeVersion(winVersionFile) {
-
-    try {
-        return fs.readFileSync(winVersionFile, 'utf8').trim();
-    }
-    catch (err) {
-        console.log(err);
-        throw new Error;
-    }
-
+    return fs.readFileSync(winVersionFile, 'utf8').trim();
 }
 
 function getXboxVersion(xboxVersionFile) {
-
-    try {
-        return fs.readFileSync(xboxVersionFile, 'utf8').trim();
-    }
-    catch (err) {
-        console.log(err);
-        throw new Error;
-    }
-
+    return fs.readFileSync(xboxVersionFile, 'utf8').trim();
 }
 
 function getMacVersion(macVersionFile) {
-
-    try {
-        return fs.readFileSync(macVersionFile, 'utf8').trim();
-    }
-    catch (err) {
-        console.log(err);
-        throw new Error;
-    }
-
+    return fs.readFileSync(macVersionFile, 'utf8').trim();
 }
 
-exports.getCurrentVersions = function () {
-    try {
-        var currentWinVersion = getWinpeVersion(config.winVersionFile);
-        var currentXboxVersion = getXboxVersion(config.xboxVersionFile);
-        var currentMacVersion = getMacVersion(config.macVersionFile);
-        return {
-            "winpe": currentWinVersion,
-            "xbox": currentXboxVersion,
-            "mac": currentMacVersion
-        };
-    }
-    catch (err) {
-        throw new Error;
-    }
-
+exports.getCurrentVersions = function() {
+    var currentWinVersion = getWinpeVersion(config.winVersionFile);
+    var currentXboxVersion = getXboxVersion(config.xboxVersionFile);
+    var currentMacVersion = getMacVersion(config.macVersionFile);
+    return {
+        "winpe": currentWinVersion,
+        "xbox": currentXboxVersion,
+        "mac": currentMacVersion
+    };
 };
 
-
-exports.createVersionsFile = function (device) {
+exports.createVersionsFile = function(device) {
     var statusMountFolder = '/mnt/' + device + '4';
-    try {
-        var currentWinVersion = getWinpeVersion(config.winVersionFile);
-        var currentXboxVersion = getXboxVersion(config.xboxVersionFile);
-        var currentMacVersion = getMacVersion(config.macVersionFile);
-        var versions = {
-            "winpe": currentWinVersion,
-            "xbox": currentXboxVersion,
-            "mac": currentMacVersion
-        };
-       // console.log(versions);
-        var json = JSON.stringify(versions);
-       // shell.mkdir(statusMountFolder);
-        shell.exec('mount /dev/' + device +'4 ' + statusMountFolder);
-        fs.writeFileSync(statusMountFolder + '/versions.json', json);
-    }
-    catch (err) {
-        console.log(err);
-        throw new Error;
-    }
-    finally {
-        shell.exec('umount ' + statusMountFolder);
-        shell.exec('rm -rf ' + statusMountFolder);
-    }
+    var currentWinVersion = getWinpeVersion(config.winVersionFile);
+    var currentXboxVersion = getXboxVersion(config.xboxVersionFile);
+    var currentMacVersion = getMacVersion(config.macVersionFile);
+    var versions = {
+        "winpe": currentWinVersion,
+        "xbox": currentXboxVersion,
+        "mac": currentMacVersion
+    };
+    // console.log(versions);
+    var json = JSON.stringify(versions);
+    // shell.mkdir(statusMountFolder);
+    shell.exec('mount /dev/' + device + '4 ' + statusMountFolder);
+    fs.writeFileSync(statusMountFolder + '/versions.json', json);
+    shell.exec('umount ' + statusMountFolder);
+    shell.exec('rm -rf ' + statusMountFolder);
 };
 
 
-exports.getUsbVersion = function (usbVersionsFile) {
-    try {
-        return JSON.parse(fs.readFileSync(usbVersionsFile, 'utf8'));
-    }
-    catch (err) {
-        console.log(err);
-        throw new Error;
-    }
+exports.getUsbVersion = function(usbVersionsFile) {
+    return JSON.parse(fs.readFileSync(usbVersionsFile, 'utf8'));
 };
