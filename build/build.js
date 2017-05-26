@@ -200,6 +200,7 @@ gulp.task('mics', function () {
 gulp.task('copySrv', function () {
     gulp.src([
         './srv/bin/**/*',
+        './srv/usbonly/**/*',
         './srv/views/**/*',
         './srv/*.js',
         './srv/*.json'

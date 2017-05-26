@@ -10,10 +10,8 @@ var versions = require('./versions');
 
 exports.prepareUSB = function (io, data) {
     var device = data.id;
-    var device = 'sdb';
     var statusMountFolder = '/mnt/' + device + '4';
     try {
-
         shell.mkdir(statusMountFolder);
         shell.exec('mount /dev/'+ device + '4 ' + statusMountFolder);
         console.log('USB flash drive was used before');
@@ -49,32 +47,31 @@ exports.prepareUSB = function (io, data) {
 
     }
     catch (err) {
-
-       // partitions.initMBR(device);
+        partitions.initMBR(device);
         console.log('Kiosk: MBR initialized');
         io.emit('usb-progress', {progress: 5});
-      //  partitions.createXboxPartition(device);
+        partitions.createXboxPartition(device);
         console.log('Kiosk: XBOX partition was created');
         io.emit('usb-progress', {progress: 5});
-     //   partitions.createWinPartition(device);
+        partitions.createWinPartition(device);
         console.log('Kiosk: Win partition was created');
         io.emit('usb-progress', {progress: 5});
-     //   partitions.createMacPartition(device);
+        partitions.createMacPartition(device);
         console.log('Kiosk: Mac partition was created');
         io.emit('usb-progress', {progress: 5});
-     //   partitions.createStatusPartition(device);
+        partitions.createStatusPartition(device);
         console.log('Kiosk: Status partition was created');
         io.emit('usb-progress', {progress: 5});
-     //   content.copyXboxFiles(device, config.xboxContent);
+        content.copyXboxFiles(device, config.xboxContent);
         console.log('Kiosk: XBOX files was copied');
         io.emit('usb-progress', {progress: 10});
-     //   content.copyWinFiles(device, config.winContent);
+        content.copyWinFiles(device, config.winContent);
         console.log('Kiosk: Win files was copied');
         io.emit('usb-progress', {progress: 30});
-     //   content.copyMacFiles(device, config.macContent);
+        content.copyMacFiles(device, config.macContent);
         console.log('Kiosk: Mac files was copied');
         io.emit('usb-progress', {progress: 30});
-      //  versions.createVersionsFile(device);
+        versions.createVersionsFile(device);
         console.log('Kiosk: Versions file was created');
         io.emit('usb-progress', {progress: 5});
     }
@@ -90,10 +87,9 @@ exports.prepareUSB = function (io, data) {
 
 
 exports.readSession = function (io, data) {
-   // var device = data.id;
+    var device = data.id;
     var statusMountFolder = '/mnt/' + device + '4';
     var usbSessionFile = statusMountFolder + '/session.json';
-    var device = 'sdb';
 
     try {
         shell.mkdir(statusMountFolder);

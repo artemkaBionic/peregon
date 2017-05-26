@@ -114,7 +114,7 @@
         function prepareRefreshUsbApply(data) {
             vm.substep = vm.substeps.usbLoading;
             $http({
-                url: 'http://localhost:3000/prepareusb',
+                url: '/prepareusb',
                 method: 'POST',
                 headers: {'content-type': 'application/json'},
                 data: data
@@ -167,7 +167,7 @@
 
         function verifyRefreshStart(data) {
             $http({
-                url: 'http://localhost:3000/readsession',
+                url: '/readsession',
                 method: 'POST',
                 headers: {'content-type': 'application/json'},
                 data: data

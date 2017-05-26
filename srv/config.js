@@ -12,19 +12,12 @@ config.apiAuthorization = 'Basic YXBwY2hvcmQuYWFyb25zLmFwaTplfjEjOUwkN0t6Zlt9MEo
 config.api2Authorization = 'Basic YWFyb25zOllXRnliMjV6T2s1NU5UTjJjRlpU';
 config.deviceUnlockTimeout = 3600000;
 
-//config.winContent = '/usr/share/tftpd/winpe/default/*';
-config.winContent = '/home/artem/usb/WinPe/*';
+config.winContent = '/usr/share/tftpd/winpe/default/*';
+config.macContent = '/home/acadmin/MacRefresh.img';
+config.xboxContent = '/srv/media/bc76b9f7-02f9-42e3-a9b7-3383b5287f07/*';
 
-config.macContent = '/home/artem/usb/mac/MacRefresh.img';
-//config.xboxContent = '/srv/media/bc76b9f7-02f9-42e3-a9b7-3383b5287f07/*';
-config.xboxContent = '/home/artem/usb/xbox/*';
-
-config.winVersionFile = '/home/artem/usb/WinPe/.version';
-config.xboxVersionFile = '/home/artem/usb/xbox/.version';
-config.macVersionFile = '/home/artem/usb/mac/.version';
-
-
-
-
+config.winVersionFile = '/usr/share/tftpd/winpe/default/.version';
+config.xboxVersionFile = '/srv/media/bc76b9f7-02f9-42e3-a9b7-3383b5287f07/.version';
+config.macVersionFile = '/home/acadmin/MacRefresh.version';
 
 module.exports = config;
