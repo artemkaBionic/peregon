@@ -1,33 +1,33 @@
 'use strict';
 var shell = require('shelljs');
-shell.config.fatal = true;
+var versions = require('./versions');
 
+function copyXboxFiles(device) {
+    console.log('Copy Xbox files');
+    shell.exec('cp -Lr ' + config.xboxContent + ' /mnt/' + device + config.usbXboxPartition);
+}
 
-exports.copyXboxFiles = function(device, xboxContent) {
-    var xboxMountFolder = '/mnt/' + device + '1';
-    shell.mkdir(xboxMountFolder);
-    shell.exec('mount /dev/' + device + '1' + ' ' + xboxMountFolder);
-    shell.exec('cp -Lr ' + xboxContent + ' ' + xboxMountFolder);
-    shell.exec('umount ' + xboxMountFolder);
-    shell.exec('rm -rf ' + xboxMountFolder);
-};
+function copyWinPeFiles(device) {
+    console.log('Copy Windows files');
+    shell.exec('cp -Lr ' + config.winPeContent + ' /mnt/' + device + config.usbWindowsPartition);
+}
 
-exports.copyWinFiles = function(device, winContent) {
-    var winMountFolder = '/mnt/' + device + '2';
-    console.log(winMountFolder);
-    shell.mkdir(winMountFolder);
-    shell.exec('mount /dev/' + device + '2 ' + winMountFolder);
-    console.log('cp -Lr ' + winContent + ' ' + winMountFolder);
-    shell.exec('cp -Lr ' + winContent + ' ' + winMountFolder);
-    shell.exec('mv ' + winMountFolder + '/EFI/Microsoft/Boot/BCD-USB ' + winMountFolder + '/EFI/Microsoft/Boot/BCD');
-    shell.exec('umount ' + winMountFolder);
-    shell.exec('rm -rf ' + winMountFolder);
-};
+function copyMacFiles(device) {
+    console.log('Copy Mac files');
+    shell.exec('dd bs=4M if=' + config.macContent + ' of=/dev/' + device + config.usbMacPartition + ' && sync');
+}
 
+exports.updateContent = function(device) {
+    var currentVersions = versions.getCurrentVersions();
+    var usbVersions = versions.getUsbVersions(device);
 
-exports.copyMacFiles = function(device, macContent) {
-    console.log('copy mac files started');
-    console.log('Mac upload started');
-    shell.exec('dd bs=4M if=' + macContent + ' of=/dev/' + device + '3 && sync');
-    console.log('Mac upload finished');
+    if (usbVersions.xbox !== currentVersions.xbox)
+        copyXboxFiles(device);
+    if (usbVersions.winpe !== currentVersions.winpe)
+        copyWinPeFiles(device);
+    if (usbVersions.mac !== currentVersions.mac)
+        copyMacFiles(device, config.macContent);
+
+    console.log('Device ' + device + ' content update is complete.');
+    versions.createVersionsFile(device);
 };

@@ -183,14 +183,14 @@ module.exports = function(io, data) {
         station.shutdown();
     });
 
-    router.post('/prepareusb', function(req, res) {
+    router.post('/prepareUsb', function(req, res) {
         console.log('creating usb');
-        controller.prepareUSB(io, req.body, function(result) {
+        controller.prepareUsb(io, req.body, function(result) {
             res.json(result);
         });
     });
 
-    router.post('/readsession', function(req, res) {
+    router.post('/readSession', function(req, res) {
         console.log('reading session');
         controller.readSession(io, req.body, function(result) {
             res.json(result);
