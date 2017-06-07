@@ -5,9 +5,9 @@
         .module('app.user')
         .controller('GuideControllerMac', GuideControllerMac);
 
-    GuideControllerMac.$inject = ['toastr', '$timeout', '$http', '$q', 'item', 'config', 'socketService', 'eventService', 'inventoryService', '$state'];
+    GuideControllerMac.$inject = ['toastr', '$timeout', '$http', '$q', 'item', 'config', 'socketService', 'eventService', 'inventoryService', '$state', 'deviceService'];
 
-    function GuideControllerMac(toastr, $timeout, $http, $q, item, config, socketService, eventService, inventoryService, $state) {
+    function GuideControllerMac(toastr, $timeout, $http, $q, item, config, socketService, eventService, inventoryService, $state, deviceService) {
         /*jshint validthis: true */
         var vm = this;
         vm.item = item;
@@ -81,6 +81,7 @@
                 title: 'USB Load Failed'
             }
         };
+
         vm.step = vm.steps.prepare;
         activate();
         vm.prepareRefreshUsbStart = function() {
@@ -94,17 +95,29 @@
         function activate() {
             var queries = [
                 inventoryService.startSession(item),
+                loadDevices(),
                 eventService.DisableDeviceNotification()
             ];
             $q.all(queries).then(function() {
                 vm.checkCondition();
             });
         }
+        function loadDevices() {
+            return deviceService.getDevices().then(function(devices) {
+                if (vm.selectedDevice === null && devices.length > 0) {
+                    for (var i = devices.length - 1; i >= 0; --i) {
+                        if (devices[i].size >= usbDeviceMinSize) {
+                            vm.selectedDevice = devices[i];
+                            break;
+                        }
+                    }
+                }
+            });
+        }
         vm.checkCondition = function() {
             vm.step = vm.steps.prepare;
             vm.substep = vm.substeps.checkCondition;
         };
-
         vm.finishFailed = function() {
             $timeout(function() {
                 vm.step = vm.steps.prepare;
@@ -136,7 +149,6 @@
             });
         }
         function waitForUsbAdd(minSize, callback) {
-            console.log(vm.selectedDevice);
             if (vm.selectedDevice === null) {
                 socketService.once('device-add', function(data) {
                     if (data.size >= minSize) {
@@ -166,6 +178,7 @@
         }
 
         function verifyRefreshStart(data) {
+            console.log('feas');
             $http({
                 url: '/readSession',
                 method: 'POST',
