@@ -131,29 +131,28 @@
                 method: 'POST',
                 headers: {'content-type': 'application/json'},
                 data: data
-            }).then(function(response){
-                if (response.status !== 200) {
+            }).then(function(response) {
+                if (response.status === 200) {
+                    prepareRefreshUsbComplete();
+                } else {
                     vm.step = vm.steps.prepare;
                     vm.substep = vm.substeps.usbLoadFailed;
                 }
             });
             socketService.on('usb-progress', function(data) {
-                console.log(data);
                 vm.percentageComplete += data.progress;
                 if (vm.percentageComplete === 100) {
                     console.log(data.progress);
-                    $timeout(function() {
-                        prepareRefreshUsbComplete();
-                    }, 500);
                 }
             });
         }
+
         function waitForUsbAdd(minSize, callback) {
             if (vm.selectedDevice === null) {
                 socketService.once('device-add', function(data) {
                     if (data.size >= minSize) {
                         vm.selectedDevice = data;
-                        callback(vm.selectedDevice);
+                        callback({usb: vm.selectedDevice, item: vm.item});
                         toastr.info('Follow further instructions on screen', 'USB Drive Connected', {
                             'tapToDismiss': true,
                             'timeOut': 3000,
@@ -164,7 +163,7 @@
                     }
                 });
             } else {
-                callback(vm.selectedDevice);
+                callback({usb: vm.selectedDevice, item: vm.item});
             }
         }
 
@@ -178,32 +177,35 @@
         }
 
         function verifyRefreshStart(data) {
-            console.log('feas');
             $http({
                 url: '/readSession',
                 method: 'POST',
                 headers: {'content-type': 'application/json'},
                 data: data
-            }).then(function(response){
+            }).then(function(response) {
                 if (response.status === 200) {
-                    $timeout(function() {
+                    var refreshSuccess = response.data;
+                    if (refreshSuccess) {
                         vm.step = vm.steps.finish;
                         vm.substep = vm.substeps.refreshSuccess;
-                    }, 500);
-                } else {
-                    $timeout(function() {
+                    } else {
                         vm.step = vm.steps.finish;
                         vm.substep = vm.substeps.rerfeshFailed;
-                    }, 500);
+                    }
+                } else {
+                    //ToDo: Report internal error
+                    vm.step = vm.steps.finish;
+                    vm.substep = vm.substeps.rerfeshFailed;
                 }
             });
         }
+
         function waitForUsbRemove(callback) {
             socketService.once('device-remove', function(data) {
                 if (data.id === vm.selectedDevice.id) {
                     vm.selectedDevice = null;
                     callback();
-                    toastr.error('Follow further instructions on screen', 'USB Drive Removed', {
+                    toastr.info('Follow further instructions on screen', 'USB Drive Removed', {
                         'tapToDismiss': true,
                         'timeOut': 3000,
                         'closeButton': true
@@ -213,6 +215,7 @@
                 }
             });
         }
+
         vm.retry = function() {
             vm.step = vm.steps.prepare;
             vm.substep = vm.substeps.checkCondition;

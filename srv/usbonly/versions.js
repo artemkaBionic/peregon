@@ -1,6 +1,7 @@
 /**
  * Created by artem on 23.05.17.
  */
+var config = require('../config');
 var fs = require('fs');
 var shell = require('shelljs');
 

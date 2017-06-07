@@ -184,17 +184,23 @@ module.exports = function(io, data) {
     });
 
     router.post('/prepareUsb', function(req, res) {
-        console.log('creating usb');
-        controller.prepareUsb(io, req.body, function(result) {
-            res.json(result);
+        controller.prepareUsb(io, req.body, function(isUsbPrepared) {
+            if (isUsbPrepared) {
+                res.status(200).send();
+            } else {
+                res.status(500).send();
+            }
         });
     });
 
     router.post('/readSession', function(req, res) {
-        console.log('reading session');
-        controller.readSession(io, req.body, function(result) {
-            res.json(result);
-        });
+        try {
+            controller.readSession(io, req.body, function(isSessionComplete) {
+                res.status(200).json(isSessionComplete);
+            });
+        } catch (err) {
+            res.status(500).send();
+        }
     });
 
 
