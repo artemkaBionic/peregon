@@ -1,0 +1,159 @@
+<horizontal-ui-sheet class="apc-sheet-full">
+  <header class="guide-header">
+    <div class="row header-row">
+      <div class="col-sm-7 header-col">
+        <div class="header-middle-col">
+          <div class="home-link" ng-click="vm.refreshEnd()">
+            <div class="home-button">
+              <i class="fa fa-home home-button-icon"></i>
+              <span class="home-button-text">Home</span>
+            </div>
+            <img class="guide-logo" src="/assets/images/Logo.png">
+          </div>
+          <div class="home-header">Windows Usb Refresh</div>
+        </div>
+      </div>
+      <div class="col-sm-5 header-col">
+        <div class="header-middle-col-right">
+          <i class="fa fa-windows header-item-icon"></i>
+          <div class="home-header-right">{{vm.item.Description}}</div>
+        </div>
+      </div>
+    </div>
+  </header>
+    <div horizontal-ui-sheet-content>
+      <!--<button ng-click="vm.nextStep()">Next step</button>
+    <button ng-click="vm.previousStep()">Previous step</button>
+    <button ng-click="vm.nextSubstep()">Next substep</button>
+    <button ng-click="vm.previousSubstep()">Previous substep</button>-->
+    <!--<button ng-click="vm.addUSB()">Add usb</button>-->
+    <!--<button ng-click="vm.removeUsb()">Remove usb</button>-->
+      <div class="row">
+        <ul id="progress-tracker" data-steps="3">
+          <li ng-class="{'active': vm.step.number === 1}">
+            <span>Prepare Windows laptop refresh</span></li>
+          <li ng-class="{'active': vm.step.number === 2}">
+            <span>Refresh Windows laptop</span></li>
+          <li ng-class="{'active': vm.step.number === 3}">
+            <span>Check refresh status</span><i></i>
+          </li>
+        </ul>
+      </div>
+
+      <div ng-switch="vm.step.name" class="row wizard ">
+        <div id="first" ng-switch-when="prepareUSBdrive">
+          <div ng-switch="vm.substep.name" class="row wizard">
+            <div id="zeroSubstate" ng-switch-when="checkCondition">
+              <div class="instruction-header">
+                <h2>Before laptop refresh make sure that:</h2>
+              </div>
+              <div class="row">
+                <ul class="instruction-list">
+                  <li>
+                    Laptop turns on;
+                  </li>
+                  <li>
+                    Screen and casing are in good condition;
+                  </li>
+                  <li>
+                    Keyboard works;
+                  </li>
+                </ul>
+              </div>
+              <div class="row instruction-buttons">
+                <button style="margin-right: 25px" class="btn btn-success btn-rounded" type="submit" ng-click="vm.prepareRefreshUsbStart()">
+                  Laptop in good condition
+                </button>
+                <button class="btn btn-danger btn-rounded" type="submit" ng-click="vm.finishFailed();">
+                  Laptop in bad condition
+                </button>
+              </div>
+            </div>
+            <div id="firstSubstate" ng-switch-when="insertUsbToStation">
+              <!--<div class="row">-->
+                <!--<button ng-click="vm.showGuide()">Show Guide</button>-->
+              <!--</div>-->
+              <div class="row wizard-contents text-center">
+                <h3>Please insert a 32GB or larger USB drive into the Refresh Station.
+                </h3>
+              </div>
+              <div class="row wizard-graphics">
+                <img src="/assets/images/InsertUsbDrive.png" class="wizard-image center">
+              </div>
+
+            </div>
+            <div id="secondSubstate" ng-switch-when="usbLoading">
+              <div class="row wizard-contents text-center">
+                <h2>Windows is loading into USB drive...</h2>
+              </div>
+              <div class="row wizard-contents text-center">
+                <div class="center circle-bar">
+                  <orbicular progression="vm.percentageComplete" total="100">{{vm.data.counter}}</orbicular>
+                </div>
+                <div>
+                  Percentage complete: {{vm.percentageComplete}} %
+                </div>
+              </div>
+            </div>
+            <div id="thirdSubstate" ng-switch-when="deviceBroken">
+              <div class="text-align-center">
+                <i class="fa fa-ban warning-icon"></i>
+                <h2>Device needs to be repaired</h2>
+                <h3 class="text-align-center">Ship it to Aaron's Service
+                  Center for repair</h3>
+              </div>
+              <div class="row nav-btn">
+                <button class="btn btn-primary btn-rounded center" ng-click="vm.refreshEnd()">
+                  Finish <i class="fa fa-caret-right"></i>
+                </button>
+              </div>
+            </div>
+            <div id="fourthSubstate" ng-switch-when="usbLoadFailed">
+              <div class="text-align-center">
+                <i class="fa fa-ban warning-icon"></i>
+                <h2>USB load failed</h2>
+                <h3 class="text-align-center">Please click restart button if you want to restart refresh process</h3>
+              </div>
+              <div class="text-center" ng-click="vm.retry()">
+                <button style="margin-top: 1%" class="btn-primary btn-rounded">Retry</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <div id="second" ng-switch-when="refreshLaptop">
+          <form name="inspection-form" class="content-finish" novalidate>
+            <div class="inspect-mode">
+              <div class="row text-center">
+                <span style="font-size: 20px; font-weight: 400;margin-left: -3%" >Insert USB drive back to refresh station after going through steps to complete refresh.
+                  <span style="margin-left: -1.5mm">
+                    <span class="two">.</span><span class="three">.</span>
+                  </span>
+                </span>
+              </div>
+            </div>
+          </form>
+          <windows-usb-guide data-item="vm.item"></windows-usb-guide>
+        </div>
+        <div id="third" ng-switch-when="checkStatus">
+          <div ng-switch="vm.substep.name" class="row wizard">
+            <div id="fifthSubstate" ng-switch-when="refreshSuccess">
+              <div class="text-center" style="margin-top: 5%">
+                <i style="color:forestgreen" class="fa fa-check-circle fa-5x" aria-hidden="true"></i>
+                <h2 style="margin-top: 2%">Windows had been refreshed successfully.</h2>
+                <button style="margin-top: 1%" class="btn-primary btn-rounded" ng-click="vm.refreshEnd()">Finish</button>
+              </div>
+            </div>
+            <div id="sixthSubstate" ng-switch-when="rerfeshFailed">
+              <div class="text-center" style="margin-top: 5%">
+                <i style="color: darkred" class="fa fa-minus-circle fa-5x" aria-hidden="true"></i>
+                <h2 style="margin-top: 2%">Windows refresh failed.</h2>
+                <h4 style="margin-top: 2%">Push retry button if you want to restart refreshing process.</h4>
+                <button style="margin-top: 1%" class="btn-primary btn-rounded" ng-click="vm.retry()">Retry</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</horizontal-ui-sheet>

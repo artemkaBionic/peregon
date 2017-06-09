@@ -2955,7 +2955,7 @@ orbicular i {
     width: 1.25em;
   }
 }
-@media only screen and (max-width: 700px) {
+@media only screen and (max-width: 550px) {
   .instruction-list {
     font-size: 15pt;
     font-weight: 300;
@@ -2972,6 +2972,78 @@ orbicular i {
   .instruction-header {
     margin-left: 15.5%;
   }
+  .instruction-row{
+    margin-top: 20px;
+    margin-left: 10%;
+    font-weight: 500;
+    font-size: 12px;
+    color: black;
+  }
+  .instruction-image{
+    width:200px;
+    height:130px;
+    border: 1px solid #dcdcdc;
+    padding: 6px;
+    box-shadow: 0 0 3px rgba(0,0,0,0.1);
+  }
+  .guide-caption{
+    font-size: 20px;
+  }
+  .modal-content-guide {
+    width: 350px;
+  }
+  .modal {
+    height: calc(100vh - 195px)!important;
+  }
+  #relative{
+    height: calc(100vh - 195px)!important;
+  }
+}
+@media only screen and (min-width: 550px) {
+  .instruction-list {
+    font-size: 15pt;
+    font-weight: 300;
+    margin-left: 15%;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    li {
+      margin-bottom: 10px;
+    }
+  }
+  .instruction-buttons {
+    margin-left: 15.5%;
+  }
+  .instruction-header {
+    margin-left: 15.5%;
+  }
+  .instruction-row{
+    margin-top: 20px;
+    margin-left: 10%;
+    font-weight: 500;
+    font-size: 12px;
+    color: black;
+  }
+  .instruction-image{
+    width:200px;
+    height:130px;
+    border: 1px solid #dcdcdc;
+    padding: 6px;
+    box-shadow: 0 0 3px rgba(0,0,0,0.1);
+  }
+  .guide-caption{
+    font-size: 20px;
+  }
+  /* Modal Content (image) */
+  .modal-content-guide {
+    width: 400px;
+  }
+  .modal {
+    height: calc(100vh - 195px)!important;
+  }
+  #relative{
+    height: calc(100vh - 195px)!important;
+  }
+
 }
 @media only screen and (min-width: 700px) {
   .instruction-list {
@@ -2990,25 +3062,32 @@ orbicular i {
   .instruction-header {
     margin-left: 25.5%;
   }
+  .instruction-row{
+    margin-top: 20px;
+    margin-left: 15%;
+    font-weight: 500;
+    font-size: 18px;
+    color: black;
+  }
+  .instruction-image{
+    width:300px;
+    height:200px;
+    border: 1px solid #dcdcdc;
+    padding: 6px;
+    box-shadow: 0 0 3px rgba(0,0,0,0.1);
+  }
+  /* Modal Content (image) */
+  .modal-content-guide {
+    width: 450px;
+  }
+  .modal {
+    height: calc(100vh - 195px)!important;
+  }
+  #relative{
+    height: calc(100vh - 195px)!important;
+  }
 }
-//@media only screen and (min-width: 1200px) {
-//  .instruction-list {
-//    font-size: 20pt;
-//    font-weight: 300;
-//    margin-left: 25%;
-//    margin-top: 20px;
-//    margin-bottom: 30px;
-//    li {
-//      margin-bottom: 10px;
-//    }
-//  }
-//  .instruction-buttons {
-//    margin-left: 25.5%;
-//  }
-//  .instruction-header {
-//    margin-left: 25.5%;
-//  }
-//}
+
 @media only screen and (min-width: 1200px) {
   .instruction-list {
     font-size: 20pt;
@@ -3025,6 +3104,31 @@ orbicular i {
   }
   .instruction-header {
     margin-left: 34%;
+  }
+  .instruction-row{
+    margin-top: 20px;
+    margin-left: 25%;
+    font-weight: 500;
+    font-size: 18px;
+    color: black;
+  }
+  .instruction-image{
+    width:300px;
+    height:200px;
+    border: 1px solid #dcdcdc;
+    padding: 6px;
+    box-shadow: 0 0 3px rgba(0,0,0,0.1);
+  }
+
+  /* Modal Content (image) */
+  .modal-content-guide {
+    width: 500px;
+  }
+  .modal {
+    height: calc(100vh - 195px)!important;
+  }
+  #relative{
+    height: calc(100vh - 195px)!important;
   }
 }
 @media only screen and (min-width: 1600px) {
@@ -3044,4 +3148,97 @@ orbicular i {
   .instruction-header {
     margin-left: 36%;
   }
+  .instruction-row{
+    margin-top: 20px;
+    margin-left: 25%;
+    font-weight: 500;
+    font-size: 18px;
+    color: black;
+  }
+  .instruction-image{
+    width:400px;
+    height:300px;
+    border: 1px solid #dcdcdc;
+    padding: 6px;
+    box-shadow: 0 0 3px rgba(0,0,0,0.1);
+  }
+  /* Modal Content (image) */
+  .modal-content-guide {
+    width: 700px;
+  }
+}
+
+.block {
+  text-align: center;
+}
+
+.block:before {
+  content: '\200B';
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
+}
+
+.centered {
+  display: inline-block;
+  vertical-align: middle;
+}
+#myImg {
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+#myImg:hover {opacity: 0.2;}
+
+/* The Modal (background) */
+.modal {
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.7); /* Black w/ opacity */
+  height: calc(100vh - 286px);
+}
+#relative{
+  position:relative;
+  height: calc(100vh - 286px);
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+#relative > #myModal{
+  position:absolute;
+  white-space: nowrap;
+}
+
+/* Caption of Modal Image */
+#caption {
+  margin: auto;
+  display: block;
+  width: 80%;
+  max-width: 700px;
+  text-align: center;
+  color: #ccc;
+  padding: 10px 0;
+  height: 150px;
+}
+
+/* Add Animation */
+.modal-content-guide{
+  -webkit-animation-name: zoom;
+  -webkit-animation-duration: 0.6s;
+  animation-name: zoom;
+  animation-duration: 0.6s;
+}
+
+@-webkit-keyframes zoom {
+  from {-webkit-transform:scale(0)}
+  to {-webkit-transform:scale(1)}
+}
+
+@keyframes zoom {
+  from {transform:scale(0)}
+  to {transform:scale(1)}
+}
+
+.instruction-image:hover{
+  cursor: pointer;
 }

@@ -1,0 +1,53 @@
+<div id="relative" class="">
+  <h1 class="guide-caption text-center">Follow this steps to refresh laptop:</h1>
+  <!--HP Guide-->
+  <div ng-show="vm.hp">
+    <div class="row instruction-row" >
+      <div class="col-xs-4">
+        <ul>
+          <li>Power on the computer and repeatedly press the F9 key.</li>
+        </ul>
+      </div>
+      <div class="col-xs-4 text-center">
+        <img class="instruction-image" ng-click="vm.openModal('../../../../../assets/images/Keyboard_F9.png')" src="../../../../../assets/images/Keyboard_F9.png">
+      </div>
+    </div>
+    <div class="row instruction-row">
+      <div class="col-xs-4">
+        <ul>
+          <li>When the boot menu appears, select "USB Hard Drive (UEFI)" and press Enter. When the Refresh Environment has loaded, follow the instructions to start the refresh.</li>
+        </ul>
+      </div>
+      <div class="col-xs-4 text-center">
+        <img class="instruction-image" ng-click="vm.openModal('../../../../../assets/images/bootHP.jpg')" src="../../../../../assets/images/bootHP.jpg">
+      </div>
+    </div>
+  </div>
+  <!--DELL Guide-->
+  <div ng-show="vm.dell">
+    <div class="row instruction-row" >
+      <div class="col-xs-4">
+        <ul>
+          <li>Power on the computer and repeatedly press the F12 key.</li>
+        </ul>
+      </div>
+      <div class="col-xs-4 text-center">
+        <img class="instruction-image" ng-click="vm.openModal('../../../../../assets/images/Keyboard_F12.jpg')" src="../../../../../assets/images/Keyboard_F12.jpg">
+      </div>
+    </div>
+    <div class="row instruction-row">
+      <div class="col-xs-4">
+        <ul>
+          <li>When the boot menu appears, select "USB1 - UEFI OS" and press Enter. When the Refresh Environment has loaded, follow the instructions to start the refresh.</li>
+        </ul>
+      </div>
+      <div class="col-xs-4 text-center">
+        <img class="instruction-image" ng-click="vm.openModal('../../../../../assets/images/bootDell.jpg')" src="../../../../../assets/images/bootDell.jpg">
+      </div>
+    </div>
+  </div>
+  <!-- The Modal -->
+  <div id="myModal" class="modal absolute block">
+    <img class="modal-content-guide centered" id="img01">
+  </div>
+</div>
