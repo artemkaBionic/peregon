@@ -3005,7 +3005,7 @@ orbicular i {
   }
   @media screen and ( min-height: 600px ){
     /* The Modal (background) */
-    .modal {
+    .modal-instruction {
       height: calc(100vh - 190px) !important;
     }
     #relative{
@@ -3015,7 +3015,7 @@ orbicular i {
 
   @media screen and ( min-height: 730px ){
     /* The Modal (background) */
-    .modal {
+    .modal-instruction {
       height: calc(100vh - 208px) !important;
     }
     #relative{
@@ -3024,7 +3024,7 @@ orbicular i {
   }
   @media screen and ( min-height: 930px ){
     /* The Modal (background) */
-    .modal {
+    .modal-instruction {
       height: calc(100vh - 245px) !important;
     }
     #relative{
@@ -3033,7 +3033,7 @@ orbicular i {
   }
   @media screen and ( min-height: 1100px ){
     /* The Modal (background) */
-    .modal {
+    .modal-instruction {
       height: calc(100vh - 260px) !important;
     }
     #relative{
@@ -3083,43 +3083,43 @@ orbicular i {
   .modal-content-guide {
     width: 400px;
   }
-  @media screen and ( min-height: 600px ){
-    /* The Modal (background) */
-    .modal {
-      height: calc(100vh - 190px) !important;
+    @media screen and ( min-height: 600px ){
+      /* The Modal (background) */
+      .modal-instruction {
+        height: calc(100vh - 190px) !important;
+      }
+      #relative{
+        height: calc(100vh - 190px)!important;
+      }
     }
-    #relative{
-      height: calc(100vh - 190px)!important;
-    }
-  }
 
-  @media screen and ( min-height: 730px ){
-    /* The Modal (background) */
-    .modal {
-      height: calc(100vh - 208px) !important;
+    @media screen and ( min-height: 730px ){
+      /* The Modal (background) */
+      .modal-instruction {
+        height: calc(100vh - 208px) !important;
+      }
+      #relative{
+        height: calc(100vh - 208px)!important;
+      }
     }
-    #relative{
-      height: calc(100vh - 208px)!important;
+    @media screen and ( min-height: 930px ){
+      /* The Modal (background) */
+      .modal-instruction {
+        height: calc(100vh - 245px) !important;
+      }
+      #relative{
+        height: calc(100vh - 245px)!important;
+      }
     }
-  }
-  @media screen and ( min-height: 930px ){
-    /* The Modal (background) */
-    .modal {
-      height: calc(100vh - 245px) !important;
+    @media screen and ( min-height: 1100px ){
+      /* The Modal (background) */
+      .modal-instruction {
+        height: calc(100vh - 260px) !important;
+      }
+      #relative{
+        height: calc(100vh - 260px)!important;
+      }
     }
-    #relative{
-      height: calc(100vh - 245px)!important;
-    }
-  }
-  @media screen and ( min-height: 1100px ){
-    /* The Modal (background) */
-    .modal {
-      height: calc(100vh - 260px) !important;
-    }
-    #relative{
-      height: calc(100vh - 260px)!important;
-    }
-  }
 
 }
 @media only screen and (min-width: 700px) {
@@ -3163,7 +3163,7 @@ orbicular i {
   }
   @media screen and ( min-height: 600px ){
     /* The Modal (background) */
-    .modal {
+    .modal-instruction {
       height: calc(100vh - 190px) !important;
     }
     #relative{
@@ -3173,7 +3173,7 @@ orbicular i {
 
   @media screen and ( min-height: 730px ){
     /* The Modal (background) */
-    .modal {
+    .modal-instruction {
       height: calc(100vh - 208px) !important;
     }
     #relative{
@@ -3182,7 +3182,7 @@ orbicular i {
   }
   @media screen and ( min-height: 930px ){
     /* The Modal (background) */
-    .modal {
+    .modal-instruction {
       height: calc(100vh - 245px) !important;
     }
     #relative{
@@ -3191,7 +3191,7 @@ orbicular i {
   }
   @media screen and ( min-height: 1100px ){
     /* The Modal (background) */
-    .modal {
+    .modal-instruction {
       height: calc(100vh - 260px) !important;
     }
     #relative{
@@ -3240,7 +3240,7 @@ orbicular i {
   }
   @media screen and ( min-height: 600px ){
     /* The Modal (background) */
-    .modal {
+    .modal-instruction {
       height: calc(100vh - 190px) !important;
     }
     #relative{
@@ -3250,7 +3250,7 @@ orbicular i {
 
   @media screen and ( min-height: 730px ){
     /* The Modal (background) */
-    .modal {
+    .modal-instruction {
       height: calc(100vh - 208px) !important;
     }
     #relative{
@@ -3259,7 +3259,7 @@ orbicular i {
   }
   @media screen and ( min-height: 930px ){
     /* The Modal (background) */
-    .modal {
+    .modal-instruction {
       height: calc(100vh - 245px) !important;
     }
     #relative{
@@ -3268,7 +3268,7 @@ orbicular i {
   }
   @media screen and ( min-height: 1100px ){
     /* The Modal (background) */
-    .modal {
+    .modal-instruction {
       height: calc(100vh - 260px) !important;
     }
     #relative{
@@ -3317,7 +3317,7 @@ orbicular i {
 
   @media screen and ( min-height: 600px ){
     /* The Modal (background) */
-    .modal {
+    .modal-instruction {
       height: calc(100vh - 190px) !important;
     }
     #relative{
@@ -3327,7 +3327,7 @@ orbicular i {
 
   @media screen and ( min-height: 730px ){
     /* The Modal (background) */
-    .modal {
+    .modal-instruction {
       height: calc(100vh - 208px) !important;
     }
     #relative{
@@ -3336,7 +3336,7 @@ orbicular i {
   }
   @media screen and ( min-height: 930px ){
     /* The Modal (background) */
-    .modal {
+    .modal-instruction {
       height: calc(100vh - 245px) !important;
     }
     #relative{
@@ -3345,7 +3345,7 @@ orbicular i {
   }
   @media screen and ( min-height: 1100px ){
     /* The Modal (background) */
-    .modal {
+    .modal-instruction {
       height: calc(100vh - 260px) !important;
     }
     #relative{
@@ -3354,9 +3354,19 @@ orbicular i {
   }
 }
 
-.modal {
+.modal-instruction {
   background-color: rgb(0,0,0); /* Fallback color */
   background-color: rgba(0,0,0,0.7); /* Black w/ opacity */
+  display: none;
+  overflow: hidden;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1050;
+  -webkit-overflow-scrolling: touch;
+  outline: 0;
 }
 .block {
   text-align: center;
