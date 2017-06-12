@@ -2957,9 +2957,9 @@ orbicular i {
 }
 @media only screen and (max-width: 550px) {
   .instruction-list {
-    font-size: 15pt;
+    font-size: 12pt;
     font-weight: 300;
-    margin-left: 15%;
+    margin-left: 12%;
     margin-top: 20px;
     margin-bottom: 30px;
     li {
@@ -2968,9 +2968,17 @@ orbicular i {
   }
   .instruction-buttons {
     margin-left: 15.5%;
+    .instruction-btn{
+      font-size: 10px;
+      padding:0;
+      height: 40px;
+    }
   }
   .instruction-header {
     margin-left: 15.5%;
+    h2{
+      font-size: 20px;
+    }
   }
   .instruction-row{
     margin-top: 20px;
@@ -2979,24 +2987,58 @@ orbicular i {
     font-size: 12px;
     color: black;
   }
-  .instruction-image{
+  .instruction-img-border{
     width:200px;
-    height:130px;
     border: 1px solid #dcdcdc;
     padding: 6px;
     box-shadow: 0 0 3px rgba(0,0,0,0.1);
   }
+  .instruction-img {
+    max-width: 100%;
+    max-height: 100%;
+  }
   .guide-caption{
-    font-size: 20px;
+    font-size: 14px;
   }
   .modal-content-guide {
     width: 350px;
   }
-  .modal {
-    height: calc(100vh - 195px)!important;
+  @media screen and ( min-height: 600px ){
+    /* The Modal (background) */
+    .modal {
+      height: calc(100vh - 190px) !important;
+    }
+    #relative{
+      height: calc(100vh - 190px)!important;
+    }
   }
-  #relative{
-    height: calc(100vh - 195px)!important;
+
+  @media screen and ( min-height: 730px ){
+    /* The Modal (background) */
+    .modal {
+      height: calc(100vh - 208px) !important;
+    }
+    #relative{
+      height: calc(100vh - 208px)!important;
+    }
+  }
+  @media screen and ( min-height: 930px ){
+    /* The Modal (background) */
+    .modal {
+      height: calc(100vh - 245px) !important;
+    }
+    #relative{
+      height: calc(100vh - 245px)!important;
+    }
+  }
+  @media screen and ( min-height: 1100px ){
+    /* The Modal (background) */
+    .modal {
+      height: calc(100vh - 260px) !important;
+    }
+    #relative{
+      height: calc(100vh - 260px)!important;
+    }
   }
 }
 @media only screen and (min-width: 550px) {
@@ -3015,6 +3057,7 @@ orbicular i {
   }
   .instruction-header {
     margin-left: 15.5%;
+    font-size: 20px;
   }
   .instruction-row{
     margin-top: 20px;
@@ -3023,25 +3066,59 @@ orbicular i {
     font-size: 12px;
     color: black;
   }
-  .instruction-image{
+  .instruction-img-border{
     width:200px;
-    height:130px;
     border: 1px solid #dcdcdc;
     padding: 6px;
     box-shadow: 0 0 3px rgba(0,0,0,0.1);
   }
+  .instruction-img {
+    max-width: 100%;
+    max-height: 100%;
+  }
   .guide-caption{
-    font-size: 20px;
+    font-size: 18px;
   }
   /* Modal Content (image) */
   .modal-content-guide {
     width: 400px;
   }
-  .modal {
-    height: calc(100vh - 195px)!important;
+  @media screen and ( min-height: 600px ){
+    /* The Modal (background) */
+    .modal {
+      height: calc(100vh - 190px) !important;
+    }
+    #relative{
+      height: calc(100vh - 190px)!important;
+    }
   }
-  #relative{
-    height: calc(100vh - 195px)!important;
+
+  @media screen and ( min-height: 730px ){
+    /* The Modal (background) */
+    .modal {
+      height: calc(100vh - 208px) !important;
+    }
+    #relative{
+      height: calc(100vh - 208px)!important;
+    }
+  }
+  @media screen and ( min-height: 930px ){
+    /* The Modal (background) */
+    .modal {
+      height: calc(100vh - 245px) !important;
+    }
+    #relative{
+      height: calc(100vh - 245px)!important;
+    }
+  }
+  @media screen and ( min-height: 1100px ){
+    /* The Modal (background) */
+    .modal {
+      height: calc(100vh - 260px) !important;
+    }
+    #relative{
+      height: calc(100vh - 260px)!important;
+    }
   }
 
 }
@@ -3061,6 +3138,7 @@ orbicular i {
   }
   .instruction-header {
     margin-left: 25.5%;
+
   }
   .instruction-row{
     margin-top: 20px;
@@ -3069,22 +3147,56 @@ orbicular i {
     font-size: 18px;
     color: black;
   }
-  .instruction-image{
+  .instruction-img-border{
     width:300px;
-    height:200px;
     border: 1px solid #dcdcdc;
     padding: 6px;
     box-shadow: 0 0 3px rgba(0,0,0,0.1);
   }
+  .instruction-img {
+    max-width: 100%;
+    max-height: 100%;
+  }
   /* Modal Content (image) */
   .modal-content-guide {
-    width: 450px;
+    width: 500px;
   }
-  .modal {
-    height: calc(100vh - 195px)!important;
+  @media screen and ( min-height: 600px ){
+    /* The Modal (background) */
+    .modal {
+      height: calc(100vh - 190px) !important;
+    }
+    #relative{
+      height: calc(100vh - 190px)!important;
+    }
   }
-  #relative{
-    height: calc(100vh - 195px)!important;
+
+  @media screen and ( min-height: 730px ){
+    /* The Modal (background) */
+    .modal {
+      height: calc(100vh - 208px) !important;
+    }
+    #relative{
+      height: calc(100vh - 208px)!important;
+    }
+  }
+  @media screen and ( min-height: 930px ){
+    /* The Modal (background) */
+    .modal {
+      height: calc(100vh - 245px) !important;
+    }
+    #relative{
+      height: calc(100vh - 245px)!important;
+    }
+  }
+  @media screen and ( min-height: 1100px ){
+    /* The Modal (background) */
+    .modal {
+      height: calc(100vh - 260px) !important;
+    }
+    #relative{
+      height: calc(100vh - 260px)!important;
+    }
   }
 }
 
@@ -3092,7 +3204,7 @@ orbicular i {
   .instruction-list {
     font-size: 20pt;
     font-weight: 300;
-    margin-left: 33.5%;
+    margin-left: 30.5%;
     margin-top: 20px;
     margin-bottom: 30px;
     li {
@@ -3100,10 +3212,10 @@ orbicular i {
     }
   }
   .instruction-buttons {
-    margin-left: 34%;
+    margin-left: 31.5%;
   }
   .instruction-header {
-    margin-left: 34%;
+    margin-left: 31.5%;
   }
   .instruction-row{
     margin-top: 20px;
@@ -3112,23 +3224,56 @@ orbicular i {
     font-size: 18px;
     color: black;
   }
-  .instruction-image{
+  .instruction-img-border{
     width:300px;
-    height:200px;
     border: 1px solid #dcdcdc;
     padding: 6px;
     box-shadow: 0 0 3px rgba(0,0,0,0.1);
   }
-
+  .instruction-img {
+    max-width: 100%;
+    max-height: 100%;
+  }
   /* Modal Content (image) */
   .modal-content-guide {
-    width: 500px;
+    width: 600px;
   }
-  .modal {
-    height: calc(100vh - 195px)!important;
+  @media screen and ( min-height: 600px ){
+    /* The Modal (background) */
+    .modal {
+      height: calc(100vh - 190px) !important;
+    }
+    #relative{
+      height: calc(100vh - 190px)!important;
+    }
   }
-  #relative{
-    height: calc(100vh - 195px)!important;
+
+  @media screen and ( min-height: 730px ){
+    /* The Modal (background) */
+    .modal {
+      height: calc(100vh - 208px) !important;
+    }
+    #relative{
+      height: calc(100vh - 208px)!important;
+    }
+  }
+  @media screen and ( min-height: 930px ){
+    /* The Modal (background) */
+    .modal {
+      height: calc(100vh - 245px) !important;
+    }
+    #relative{
+      height: calc(100vh - 245px)!important;
+    }
+  }
+  @media screen and ( min-height: 1100px ){
+    /* The Modal (background) */
+    .modal {
+      height: calc(100vh - 260px) !important;
+    }
+    #relative{
+      height: calc(100vh - 260px)!important;
+    }
   }
 }
 @media only screen and (min-width: 1600px) {
@@ -3155,19 +3300,64 @@ orbicular i {
     font-size: 18px;
     color: black;
   }
-  .instruction-image{
-    width:400px;
-    height:300px;
+  .instruction-img-border{
+    width:450px;
     border: 1px solid #dcdcdc;
     padding: 6px;
     box-shadow: 0 0 3px rgba(0,0,0,0.1);
+  }
+  .instruction-img {
+    max-width: 100%;
+    max-height: 100%;
   }
   /* Modal Content (image) */
   .modal-content-guide {
     width: 700px;
   }
+
+  @media screen and ( min-height: 600px ){
+    /* The Modal (background) */
+    .modal {
+      height: calc(100vh - 190px) !important;
+    }
+    #relative{
+      height: calc(100vh - 190px)!important;
+    }
+  }
+
+  @media screen and ( min-height: 730px ){
+    /* The Modal (background) */
+    .modal {
+      height: calc(100vh - 208px) !important;
+    }
+    #relative{
+      height: calc(100vh - 208px)!important;
+    }
+  }
+  @media screen and ( min-height: 930px ){
+    /* The Modal (background) */
+    .modal {
+      height: calc(100vh - 245px) !important;
+    }
+    #relative{
+      height: calc(100vh - 245px)!important;
+    }
+  }
+  @media screen and ( min-height: 1100px ){
+    /* The Modal (background) */
+    .modal {
+      height: calc(100vh - 260px) !important;
+    }
+    #relative{
+      height: calc(100vh - 260px)!important;
+    }
+  }
 }
 
+.modal {
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.7); /* Black w/ opacity */
+}
 .block {
   text-align: center;
 }
@@ -3191,15 +3381,9 @@ orbicular i {
 
 #myImg:hover {opacity: 0.2;}
 
-/* The Modal (background) */
-.modal {
-  background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0,0,0,0.7); /* Black w/ opacity */
-  height: calc(100vh - 286px);
-}
+
 #relative{
   position:relative;
-  height: calc(100vh - 286px);
   overflow-x: hidden;
   overflow-y: auto;
 }
@@ -3239,6 +3423,6 @@ orbicular i {
   to {transform:scale(1)}
 }
 
-.instruction-image:hover{
+.instruction-img:hover{
   cursor: pointer;
 }

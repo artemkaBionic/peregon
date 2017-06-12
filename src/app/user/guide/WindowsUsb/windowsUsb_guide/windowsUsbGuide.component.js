@@ -19,7 +19,6 @@
     function windowsUsbGuideController() {
         var vm = this;
         vm.test = 'test';
-        console.log(vm.item);
         var modal = document.getElementById('myModal');
         var modalImg = document.getElementById('img01');
         vm.hp = false;

@@ -13,7 +13,6 @@
         vm.item = item;
         vm.selectedDevice = null;
         vm.step = null;
-        vm.guideUrl = config.guidesPath + '/Mac/' + config.guidesIndexFile;
         vm.ready = false;
         vm.success = false;
         vm.finished = false;
@@ -118,9 +117,9 @@
         vm.refreshEnd = function() {
             $state.go('root.user');
         };
-        // vm.showGuide = function() {
-        //     vm.step = vm.steps.refresh;
-        // };
+        vm.showGuide = function() {
+            vm.step = vm.steps.refresh;
+        };
         function activate() {
             var queries = [
                 inventoryService.startSession(item),
@@ -144,7 +143,6 @@
             });
         }
         vm.checkCondition = function() {
-            console.log('here');
             vm.step = vm.steps.prepare;
             vm.substep = vm.substeps.checkCondition;
         };

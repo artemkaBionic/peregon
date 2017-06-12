@@ -61,18 +61,18 @@
                 </ul>
               </div>
               <div class="row instruction-buttons">
-                <button style="margin-right: 25px" class="btn btn-success btn-rounded" type="submit" ng-click="vm.prepareRefreshUsbStart()">
+                <button style="margin-right: 25px" class="instruction-btn btn btn-success btn-rounded" type="submit" ng-click="vm.prepareRefreshUsbStart()">
                   Laptop in good condition
                 </button>
-                <button class="btn btn-danger btn-rounded" type="submit" ng-click="vm.finishFailed();">
+                <button class="instruction-btn btn btn-danger btn-rounded" type="submit" ng-click="vm.finishFailed();">
                   Laptop in bad condition
                 </button>
               </div>
             </div>
             <div id="firstSubstate" ng-switch-when="insertUsbToStation">
-              <!--<div class="row">-->
-                <!--<button ng-click="vm.showGuide()">Show Guide</button>-->
-              <!--</div>-->
+              <div class="row">
+                <button ng-click="vm.showGuide()">Show Guide</button>
+              </div>
               <div class="row wizard-contents text-center">
                 <h3>Please insert a 32GB or larger USB drive into the Refresh Station.
                 </h3>

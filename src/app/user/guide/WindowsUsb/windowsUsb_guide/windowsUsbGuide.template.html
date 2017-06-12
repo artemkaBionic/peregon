@@ -1,5 +1,5 @@
 <div id="relative" class="">
-  <h1 class="guide-caption text-center">Follow this steps to refresh laptop:</h1>
+  <h1 class="guide-caption text-center" style="color:black">Follow this steps to refresh laptop:</h1>
   <!--HP Guide-->
   <div ng-show="vm.hp">
     <div class="row instruction-row" >
@@ -9,17 +9,21 @@
         </ul>
       </div>
       <div class="col-xs-4 text-center">
-        <img class="instruction-image" ng-click="vm.openModal('../../../../../assets/images/Keyboard_F9.png')" src="../../../../../assets/images/Keyboard_F9.png">
+        <div class="instruction-img-border">
+          <img class="instruction-img" ng-click="vm.openModal('../../../../../assets/images/Keyboard_F9.jpg')" src="../../../../../assets/images/Keyboard_F9.jpg">
+        </div>
       </div>
     </div>
     <div class="row instruction-row">
       <div class="col-xs-4">
         <ul>
-          <li>When the boot menu appears, select "USB Hard Drive (UEFI)" and press Enter. When the Refresh Environment has loaded, follow the instructions to start the refresh.</li>
+          <li>When the boot menu appears, select "USB Hard Drive (UEFI)" and press Enter. Then follow instructions.</li>
         </ul>
       </div>
       <div class="col-xs-4 text-center">
-        <img class="instruction-image" ng-click="vm.openModal('../../../../../assets/images/bootHP.jpg')" src="../../../../../assets/images/bootHP.jpg">
+        <div class="instruction-img-border">
+          <img class="instruction-img" ng-click="vm.openModal('../../../../../assets/images/bootHP.jpg')" src="../../../../../assets/images/bootHP.jpg">
+        </div>
       </div>
     </div>
   </div>
@@ -32,17 +36,21 @@
         </ul>
       </div>
       <div class="col-xs-4 text-center">
-        <img class="instruction-image" ng-click="vm.openModal('../../../../../assets/images/Keyboard_F12.jpg')" src="../../../../../assets/images/Keyboard_F12.jpg">
+        <div class="instruction-img-border">
+          <img class="instruction-img" ng-click="vm.openModal('../../../../../assets/images/Keyboard_F12.jpg')" src="../../../../../assets/images/Keyboard_F12.jpg">
+        </div>
       </div>
     </div>
     <div class="row instruction-row">
       <div class="col-xs-4">
         <ul>
-          <li>When the boot menu appears, select "USB1 - UEFI OS" and press Enter. When the Refresh Environment has loaded, follow the instructions to start the refresh.</li>
+          <li>When the boot menu appears, select "USB1 - UEFI OS" and press Enter. Then follow instructions.</li>
         </ul>
       </div>
       <div class="col-xs-4 text-center">
-        <img class="instruction-image" ng-click="vm.openModal('../../../../../assets/images/bootDell.jpg')" src="../../../../../assets/images/bootDell.jpg">
+        <div class="instruction-img-border">
+          <img class="instruction-img" ng-click="vm.openModal('../../../../../assets/images/bootDell.jpg')" src="../../../../../assets/images/bootDell.jpg">
+        </div>
       </div>
     </div>
   </div>
