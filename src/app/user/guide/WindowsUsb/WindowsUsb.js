@@ -117,9 +117,9 @@
         vm.refreshEnd = function() {
             $state.go('root.user');
         };
-        vm.showGuide = function() {
-            vm.step = vm.steps.refresh;
-        };
+        // vm.showGuide = function() {
+        //     vm.step = vm.steps.refresh;
+        // };
         function activate() {
             var queries = [
                 inventoryService.startSession(item),
