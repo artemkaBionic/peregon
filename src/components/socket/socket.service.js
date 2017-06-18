@@ -25,7 +25,7 @@
         };
 
         service.on = function(eventName, callback) {
-            service.socket.on(eventName, function() {
+            return service.socket.on(eventName, function() {
                 var args = arguments;
                 $rootScope.$apply(function() {
                     callback.apply(service.socket, args);
@@ -42,9 +42,7 @@
             });
         };
 
-        service.removeAllListeners = function(eventName) {
-            service.socket.removeAllListeners(eventName);
-        };
+        service.off = service.socket.off;
 
         return service;
     }

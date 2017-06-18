@@ -3,45 +3,70 @@
  */
 var config = require('../config');
 var fs = require('fs');
-var shell = require('shelljs');
 
 
 function getCurrentVersion(versionFile) {
-    return fs.readFileSync(versionFile, 'utf8').trim();
+    return new Promise(function(resolve, reject) {
+        fs.readFile(versionFile, 'utf8', function (err, data) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(data.trim());
+            }
+        });
+    });
 }
 
-exports.getCurrentVersions = function() {
-    var currentWinPeVersion = getCurrentVersion(config.winPeVersionFile);
-    var currentXboxVersion = getCurrentVersion(config.xboxVersionFile);
-    var currentMacVersion = getCurrentVersion(config.macVersionFile);
-    return {
-        "winpe": currentWinPeVersion,
-        "xbox": currentXboxVersion,
-        "mac": currentMacVersion
-    };
+exports.getCurrentVersions = function(callback) {
+    var promises = [];
+    promises.push(getCurrentVersion(config.winPeVersionFile));
+    promises.push(getCurrentVersion(config.windowsVersionFile));
+    promises.push(getCurrentVersion(config.xboxVersionFile));
+    promises.push(getCurrentVersion(config.macVersionFile));
+    Promise.all(promises).then(function(values) {
+        callback(null, {
+            "winpe": values[0],
+            "windows": values[1],
+            "xbox": values[2],
+            "mac": values[3]
+        });
+    }, function(err) {
+        callback(err, null);
+    });
 };
 
-exports.createVersionsFile = function(device) {
+exports.createVersionsFile = function(device, callback) {
     var usbVersionsFile = '/mnt/' + device + config.usbStatusPartition + '/versions.json';
-    var currentWinPeVersion = getCurrentVersion(config.winPeVersionFile);
-    var currentXboxVersion = getCurrentVersion(config.xboxVersionFile);
-    var currentMacVersion = getCurrentVersion(config.macVersionFile);
-    var versions = {
-        "winpe": currentWinPeVersion,
-        "xbox": currentXboxVersion,
-        "mac": currentMacVersion
-    };
-    var json = JSON.stringify(versions);
-    fs.writeFileSync(usbVersionsFile, json);
+    exports.getCurrentVersions(function(err, currentVersions) {
+        if (err) {
+            callback(err);
+        } else {
+            try {
+                var json = JSON.stringify(currentVersions);
+                fs.writeFile(usbVersionsFile, json, callback);
+            } catch (err) {
+                callback(err);
+            }
+        }
+    });
 };
 
-
-exports.getUsbVersions = function(device) {
+exports.getUsbVersions = function(device, callback) {
     var usbVersionsFile = '/mnt/' + device + config.usbStatusPartition + '/versions.json';
-    try {
-        return JSON.parse(fs.readFileSync(usbVersionsFile, 'utf8'));
-    }
-    catch (err) {
-        return null;
-    }
+    fs.readFile(usbVersionsFile, 'utf8', function(err, data) {
+        if (err) {
+            if (err.code === 'ENOENT') {
+                callback(null, null);
+            } else {
+                callback(err, null);
+            }
+        } else {
+            try {
+                var json = JSON.parse(data);
+                callback(null, json);
+            } catch (err) {
+                callback(err, null);
+            }
+        }
+    });
 };

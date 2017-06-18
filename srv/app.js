@@ -21,10 +21,8 @@ app.io = io;
 
 // Common data
 var isDevelopment = process.env.NODE_ENV === 'development';
-var data = {};
-data.devices = {};
 
-var routes = require('./routes')(io, data);
+var routes = require('./routes')(io);
 
 // Create data directory
 fs.mkdir(config.kioskDataPath, function(err) {
