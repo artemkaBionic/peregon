@@ -5,86 +5,253 @@
         .module('app.user')
         .controller('GuideControllerMac', GuideControllerMac);
 
-    GuideControllerMac.$inject = ['$q', '$scope', 'config', 'item', 'inventoryService', '$state'];
+    GuideControllerMac.$inject = ['$timeout', '$http', '$q', 'item', 'config', 'socketService', 'eventService', 'inventoryService', '$state', 'deviceService'];
 
-    function GuideControllerMac($q, $scope, config, item, inventoryService, $state) {
+    function GuideControllerMac($timeout, $http, $q, item, config, socketService, eventService, inventoryService, $state, deviceService) {
         /*jshint validthis: true */
         var vm = this;
         vm.item = item;
+        vm.selectedDevice = null;
         vm.step = null;
         vm.guideUrl = config.guidesPath + '/Mac/' + config.guidesIndexFile;
         vm.ready = false;
         vm.success = false;
         vm.finished = false;
+        vm.percentageComplete = 0;
+        vm.PowerGood = false;
+        vm.ExternalGood = false;
+        vm.ButtonsGood = false;
+        var usbDeviceMinSize = 30000000000;
 
         vm.steps = {
-            start: {
-                name: 'start',
+            prepare: {
+                name: 'prepareUSBdrive',
                 number: 1,
-                title: 'Refresh Device'
+                title: 'Prepare USB drive'
             },
-            finishSuccess: {
-                name: 'finishSuccess',
+            refresh: {
+                name: 'refreshMac',
                 number: 2,
-                title: 'Successfully refurbished'
+                title: 'Refresh MAC'
             },
-            finishFail: {
-                name: 'finishFail',
+            finish: {
+                name: 'checkStatus',
                 number: 3,
-                title: 'Refresh failed.'
+                title: 'Check status.'
+            }
+        };
+        vm.substeps = {
+            checkCondition: {
+                name: 'checkCondition',
+                number: 0,
+                title: 'Check Condition'
+            },
+            insertUsbToStation: {
+                name: 'insertUsbToStation',
+                number: 1,
+                title: 'Insert USB To Station'
+            },
+            usbLoading: {
+                name: 'usbLoading',
+                number: 2,
+                title: 'Insert USB To Station'
+            },
+            usbFailed: {
+                name: 'usbFailed',
+                number: 3,
+                title: 'USB Failed'
+            },
+            refreshSuccess: {
+                name: 'refreshSuccess',
+                number: 4,
+                title: 'Refresh Success'
+            },
+            rerfeshFailed: {
+                name: 'rerfeshFailed',
+                number: 5,
+                title: 'Refresh Failed'
+            },
+            deviceBroken: {
+                name: 'deviceBroken',
+                number: 6,
+                title: 'Device Broken'
+            },
+            usbLoadFailed: {
+                name: 'usbLoadFailed',
+                number: 7,
+                title: 'USB Load Failed'
             }
         };
 
-        $scope.$on('$destroy', function() {
-            if (!vm.finished) {
-                vm.finishClosed();
-            }
-        });
-
+        vm.step = vm.steps.prepare;
         activate();
+        vm.prepareRefreshUsbStart = function() {
+            inventoryService.updateSession(vm.item.InventoryNumber, 'Info', 'Device inspection complete.', 'Mac is in good condition.');
+            if (vm.selectedDevice === null) {
+                vm.step = vm.steps.prepare;
+                vm.substep = vm.substeps.insertUsbToStation;
+                waitForUsbAdd(prepareRefreshUsbApply);
+            } else {
+                prepareRefreshUsbApply({usb: vm.selectedDevice, item: vm.item});
+            }
+        };
         vm.refreshEnd = function() {
             $state.go('root.user');
         };
         function activate() {
-            vm.step = vm.steps.start;
-
-            var queries = [inventoryService.startSession(item)];
+            var queries = [
+                inventoryService.startSession(item),
+                loadDevices(),
+                eventService.DisableDeviceNotification()
+            ];
             $q.all(queries).then(function() {
-                vm.ready = true;
+                vm.checkCondition();
             });
         }
 
-        vm.finishFail = function() {
-            vm.step = vm.steps.finishFail;
-            return inventoryService.updateSession(vm.item.InventoryNumber, 'Info', 'Session failed.')
-                .then(function() {
-                    return inventoryService.finishSession(vm.item.InventoryNumber, {'complete': false});
-                });
-        };
+        function loadDevices() {
+            return deviceService.getDevices().then(function(devices) {
+                console.log('devices: ' + devices.length);
+                console.log(devices);
+                if (vm.selectedDevice === null && devices !== null && devices.length > 0) {
+                    for (var i = devices.length - 1; i >= 0; --i) {
+                        console.log('checking device:');
+                        console.log(devices[i]);
+                        if (devices[i].size >= usbDeviceMinSize) {
+                            console.log('found device:');
+                            console.log(devices[i]);
+                            vm.selectedDevice = devices[i];
+                            break;
+                        }
+                    }
+                }
+            });
+        }
 
-        vm.finishSuccess = function() {
-            vm.step = vm.steps.finishSuccess;
-            return inventoryService.updateSession(vm.item.InventoryNumber, 'Info', 'Session complete.')
-                .then(function() {
-                    return inventoryService.finishSession(vm.item.InventoryNumber, {'complete': true});
-                });
-        };
-
-        vm.finishClosed = function() {
-            return inventoryService.updateSession(vm.item.InventoryNumber, 'Info', 'User closed refresh session.')
-                .then(function() {
-                    return inventoryService.finishSession(vm.item.InventoryNumber, {'complete': false});
-                });
-        };
-
-        vm.finish = function() {
-            vm.finished = true;
-            if (vm.success) {
-                vm.finishSuccess();
+        function deviceAdd(data) {
+            if (vm.selectedDevice === null && data.size >= usbDeviceMinSize) {
+                vm.selectedDevice = data;
             }
-            else {
-                vm.finishFail();
+        }
+        socketService.on('device-add', deviceAdd);
+
+        function deviceRemove(data) {
+            if (vm.selectedDevice !== null && vm.selectedDevice.id === data.id) {
+                vm.selectedDevice = null;
             }
+        }
+        socketService.on('device-remove', deviceRemove);
+
+        vm.checkCondition = function() {
+            vm.step = vm.steps.prepare;
+            vm.substep = vm.substeps.checkCondition;
+        };
+        vm.finishFailed = function() {
+            inventoryService.updateSession(vm.item.InventoryNumber, 'Info', 'Session failed.')
+                .then(inventoryService.finishSession(vm.item.InventoryNumber, {'complete': false}));
+            $timeout(function() {
+                vm.step = vm.steps.prepare;
+                vm.substep = vm.substeps.deviceBroken;
+            }, 500);
+        };
+
+        function usbProgress(data) {
+            vm.percentageComplete = data.progress;
+        }
+
+        function prepareRefreshUsbApply(data) {
+            vm.percentageComplete = 0;
+            vm.step = vm.steps.prepare;
+            vm.substep = vm.substeps.usbLoading;
+            $http({
+                url: '/prepareUsb',
+                method: 'POST',
+                headers: {'content-type': 'application/json'},
+                data: data
+            });
+            socketService.on('usb-progress', usbProgress);
+            socketService.once('usb-complete', function(data) {
+                socketService.off('usb-progress', usbProgress);
+                if (data.err) {
+                    vm.step = vm.steps.prepare;
+                    vm.substep = vm.substeps.usbLoadFailed;
+                } else {
+                    vm.percentageComplete = 100;
+                    $timeout(prepareRefreshUsbComplete, 500);
+                }
+            });
+        }
+
+        function waitForUsbAdd(callback) {
+            socketService.off('device-add', deviceAdd);
+            if (vm.selectedDevice === null) {
+                socketService.once('device-add', function(data) {
+                    if (data.size >= usbDeviceMinSize) {
+                        vm.selectedDevice = data;
+                        callback({usb: vm.selectedDevice, item: vm.item});
+                    } else {
+                        waitForUsbAdd(callback);
+                    }
+                });
+            } else {
+                callback({usb: vm.selectedDevice, item: vm.item});
+            }
+        }
+
+        function prepareRefreshUsbComplete() {
+            vm.step = vm.steps.refresh;
+            waitForUsbRemove(macRefreshStart);
+        }
+
+        function macRefreshStart() {
+            waitForUsbAdd(verifyRefreshStart);
+        }
+
+        function verifyRefreshStart(data) {
+            $http({
+                url: '/readSession',
+                method: 'POST',
+                headers: {'content-type': 'application/json'},
+                data: data
+            }).then(function(response) {
+                if (response.status === 200) {
+                    var refreshSuccess = response.data;
+                    if (refreshSuccess) {
+                        inventoryService.updateSession(vm.item.InventoryNumber, 'Info', 'Session complete.')
+                            .then(inventoryService.finishSession(vm.item.InventoryNumber, {'complete': true}));
+                        vm.step = vm.steps.finish;
+                        vm.substep = vm.substeps.refreshSuccess;
+                    } else {
+                        inventoryService.updateSession(vm.item.InventoryNumber, 'Info', 'Session failed.')
+                            .then(inventoryService.finishSession(vm.item.InventoryNumber, {'complete': false}));
+                        vm.step = vm.steps.finish;
+                        vm.substep = vm.substeps.rerfeshFailed;
+                    }
+                } else {
+                    //ToDo: Report internal error
+                    inventoryService.updateSession(vm.item.InventoryNumber, 'Info', 'Session failed.')
+                        .then(inventoryService.finishSession(vm.item.InventoryNumber, {'complete': false}));
+                    vm.step = vm.steps.finish;
+                    vm.substep = vm.substeps.rerfeshFailed;
+                }
+            });
+        }
+
+        function waitForUsbRemove(callback) {
+            socketService.off('device-remove', deviceRemove);
+            socketService.once('device-remove', function(data) {
+                if (vm.selectedDevice === null || vm.selectedDevice.id === data.id) {
+                    vm.selectedDevice = null;
+                    callback();
+                } else {
+                    waitForUsbRemove(callback);
+                }
+            });
+        }
+
+        vm.retry = function() {
+            inventoryService.startSession(item);
+            vm.prepareRefreshUsbStart();
         };
     }
 })();

@@ -4,6 +4,7 @@ var path = require('path');
 var config = require('./config');
 var inventory = require('./inventory.js');
 var station = require('./station.js');
+var controller = require('./usbonly/controller');
 
 module.exports = function(io, data) {
 // Express Router
@@ -18,11 +19,15 @@ module.exports = function(io, data) {
     }
 
     router.get('/data/devices', function(req, res) {
-        res.json(data.devices);
+        station.getUsbDrives(function(err, devices) {
+            res.json(devices);
+        });
     });
 
     router.get('/data/devices/:id', function(req, res) {
-        res.json(data.devices[req.params.id]);
+        station.getUsbDrive(req.params.id, function(err, device) {
+            res.json(device);
+        });
     });
 
     router.get('/data/inventory/:id', function(req, res) {
@@ -156,11 +161,7 @@ module.exports = function(io, data) {
         console.log(event.name + ' event has been reported.');
         console.log(event.data);
 
-        if (event.name === "device-add") {
-            data.devices[event.data.id] = event.data;
-        } else if (event.name === "device-remove") {
-            delete data.devices[event.data.id];
-        } else if (event.name === "connection-status") {
+        if (event.name === "connection-status") {
             var connectionState = event.data;
             station.setConnectionState(connectionState);
             if (connectionState.isOnline) {
@@ -180,6 +181,21 @@ module.exports = function(io, data) {
     router.post('/system/shutdown', function(req, res) {
         console.log('Shutting down...');
         station.shutdown();
+    });
+
+    router.post('/prepareUsb', function(req, res) {
+        controller.prepareUsb(io, req.body);
+        res.status(200).send();
+    });
+
+    router.post('/readSession', function(req, res) {
+        controller.readSession(io, req.body, function(err, isSessionComplete) {
+            if (err) {
+                res.status(500).json(null);
+            } else {
+                res.status(200).json(isSessionComplete);
+            }
+        });
     });
 
 

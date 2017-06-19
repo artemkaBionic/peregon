@@ -1,7 +1,8 @@
+var config = require('./config');
 var fs = require('fs');
 var os = require('os');
 var childProcess = require('child_process');
-var exec = require('child_process').exec;
+var shell = require('shelljs');
 
 var isDevelopment = process.env.NODE_ENV === 'development';
 var connectionState = null;
@@ -15,10 +16,9 @@ exports.getServiceTag = function(callback) {
             service_tag = '2UA3340ZS6'; // Lab Station
             callback(service_tag);
         } else {
-            exec('dmidecode -s system-serial-number', function(error, stdout, stderr) {
-                if (error) {
-                    console.log(error);
-                    console.log(stderr);
+            shell.exec('dmidecode -s system-serial-number', function(code, stdout, stderr) {
+                if (code !== 0) {
+                    console.error(stderr);
                 } else {
                     service_tag = stdout.substr(0, stdout.indexOf("\n")); // First line
                 }
@@ -39,6 +39,64 @@ exports.getName = function() {
         }
     }
     return name;
+};
+
+exports.getUsbDrives = function(callback) {
+    var devices = [];
+    fs.readdir('/sys/block/', function(err, files) {
+        if (err) {
+            callback(err, null);
+        } else {
+            files.filter(function(file) {
+                return file.match(config.usbDeviceIdRegEx);
+            });
+            var promises = files.map(function(file) {
+                return new Promise(function(resolve, reject) {
+                    exports.getUsbDrive(file, function(err, device) {
+                        if (device !== null) {
+                            devices.push(device);
+                        }
+                        resolve();
+                    });
+                });
+            });
+            Promise.all(promises).then(function() {
+                callback(null, devices);
+            });
+        }
+    });
+};
+
+exports.getUsbDrive = function(id, callback) {
+    console.log('Getting USB drive information for ' + id);
+    shell.exec('udevadm info --query=property --path=/sys/block/' + id, {silent: true}, function(code, stdout, stderr) {
+        if (code !== 0) {
+            callback(stderr, null);
+        } else {
+            var deviceInfo = stdout.trim().split(os.EOL);
+            var device = {
+                id: id,
+                type: null
+            };
+            deviceInfo.forEach(function(element) {
+                if (element === 'ID_BUS=usb') {
+                    device.type = 'USB';
+                }
+            });
+            if (device.type === null) {
+                callback(null, null);
+            } else {
+                shell.exec('blockdev --getsize64 /dev/' + id, function(code, stdout, stderr) {
+                    if (code !== 0) {
+                        callback(stderr, null);
+                    } else {
+                        device.size = stdout;
+                        callback(null, device);
+                    }
+                });
+            }
+        }
+    });
 };
 
 exports.setConnectionState = function(state) {

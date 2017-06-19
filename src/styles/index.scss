@@ -1277,7 +1277,11 @@ button[disabled]:hover {
   border-radius: 7px;
 
 }
+.check-condition {
+  padding: 20px 30px;
+  border-radius: 7px;
 
+}
 .inspection-ask {
   padding: 2vh 3vh;
   border: 3px solid transparent;
@@ -1321,6 +1325,31 @@ button[disabled]:hover {
 }
 
 .inspection-question label {
+  position: absolute;
+  font-size: 30px;
+  top: 50%;
+  transform: translateY(-50%);
+  -webkit-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  right: 30px;
+}
+
+.check-condition-question {
+  margin: 5vh auto;
+}
+
+.check-condition-question span {
+  position: absolute;
+  padding-left: 20%;
+  max-width: 60vw;
+  font-size: 3.5vh;
+  top: 50%;
+  transform: translateY(-50%);
+  -webkit-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+}
+
+.check-condition-question label {
   position: absolute;
   font-size: 30px;
   top: 50%;
@@ -2882,3 +2911,528 @@ orbicular i {
 
 /*============End Some settings for for FullHd Screen ============ */
 /*============================End Responsive====================*/
+
+// LOADING DOTS
+.one {
+  opacity: 0;
+  -webkit-animation: dot 1.3s infinite;
+  -webkit-animation-delay: 0.0s;
+  animation: dot 1.3s infinite;
+  animation-delay: 0.0s;
+}
+
+.two {
+  opacity: 0;
+  -webkit-animation: dot 1.3s infinite;
+  -webkit-animation-delay: 0.2s;
+  animation: dot 1.3s infinite;
+  animation-delay: 0.2s;
+}
+
+.three {
+  opacity: 0;
+  -webkit-animation: dot 1.3s infinite;
+  -webkit-animation-delay: 0.3s;
+  animation: dot 1.3s infinite;
+  animation-delay: 0.3s;
+}
+
+@-webkit-keyframes dot {
+  0% { opacity: 0; }
+  50% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes dot {
+  0% { opacity: 0; }
+  50% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+
+@-webkit-keyframes ellipsis {
+  to {
+    width: 1.25em;
+  }
+}
+@media only screen and (max-width: 550px) {
+  .instruction-list {
+    font-size: 12pt;
+    font-weight: 300;
+    margin-left: 12%;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    li {
+      margin-bottom: 10px;
+    }
+  }
+  .instruction-buttons {
+    margin-left: 15.5%;
+    .instruction-btn{
+      font-size: 10px;
+      padding:0;
+      height: 40px;
+    }
+  }
+  .instruction-header {
+    margin-left: 15.5%;
+    h2{
+      font-size: 20px;
+    }
+  }
+  .instruction-row{
+    margin-top: 20px;
+    margin-left: 10%;
+    font-weight: 500;
+    font-size: 12px;
+    color: black;
+  }
+  .instruction-img-border{
+    width:200px;
+    border: 1px solid #dcdcdc;
+    padding: 6px;
+    box-shadow: 0 0 3px rgba(0,0,0,0.1);
+  }
+  .instruction-img {
+    max-width: 100%;
+    max-height: 100%;
+  }
+  .guide-caption{
+    font-size: 14px;
+  }
+  .modal-content-guide {
+    width: 350px;
+  }
+  @media screen and ( min-height: 600px ){
+    /* The Modal (background) */
+    .modal-instruction {
+      height: calc(100vh - 190px) !important;
+    }
+    #relative{
+      height: calc(100vh - 190px)!important;
+    }
+  }
+
+  @media screen and ( min-height: 730px ){
+    /* The Modal (background) */
+    .modal-instruction {
+      height: calc(100vh - 208px) !important;
+    }
+    #relative{
+      height: calc(100vh - 208px)!important;
+    }
+  }
+  @media screen and ( min-height: 930px ){
+    /* The Modal (background) */
+    .modal-instruction {
+      height: calc(100vh - 245px) !important;
+    }
+    #relative{
+      height: calc(100vh - 245px)!important;
+    }
+  }
+  @media screen and ( min-height: 1100px ){
+    /* The Modal (background) */
+    .modal-instruction {
+      height: calc(100vh - 260px) !important;
+    }
+    #relative{
+      height: calc(100vh - 260px)!important;
+    }
+  }
+}
+@media only screen and (min-width: 550px) {
+  .instruction-list {
+    font-size: 15pt;
+    font-weight: 300;
+    margin-left: 15%;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    li {
+      margin-bottom: 10px;
+    }
+  }
+  .instruction-buttons {
+    margin-left: 15.5%;
+  }
+  .instruction-header {
+    margin-left: 15.5%;
+    font-size: 20px;
+  }
+  .instruction-row{
+    margin-top: 20px;
+    margin-left: 10%;
+    font-weight: 500;
+    font-size: 12px;
+    color: black;
+  }
+  .instruction-img-border{
+    width:200px;
+    border: 1px solid #dcdcdc;
+    padding: 6px;
+    box-shadow: 0 0 3px rgba(0,0,0,0.1);
+  }
+  .instruction-img {
+    max-width: 100%;
+    max-height: 100%;
+  }
+  .guide-caption{
+    font-size: 18px;
+  }
+  /* Modal Content (image) */
+  .modal-content-guide {
+    width: 400px;
+  }
+    @media screen and ( min-height: 600px ){
+      /* The Modal (background) */
+      .modal-instruction {
+        height: calc(100vh - 190px) !important;
+      }
+      #relative{
+        height: calc(100vh - 190px)!important;
+      }
+    }
+
+    @media screen and ( min-height: 730px ){
+      /* The Modal (background) */
+      .modal-instruction {
+        height: calc(100vh - 208px) !important;
+      }
+      #relative{
+        height: calc(100vh - 208px)!important;
+      }
+    }
+    @media screen and ( min-height: 930px ){
+      /* The Modal (background) */
+      .modal-instruction {
+        height: calc(100vh - 245px) !important;
+      }
+      #relative{
+        height: calc(100vh - 245px)!important;
+      }
+    }
+    @media screen and ( min-height: 1100px ){
+      /* The Modal (background) */
+      .modal-instruction {
+        height: calc(100vh - 260px) !important;
+      }
+      #relative{
+        height: calc(100vh - 260px)!important;
+      }
+    }
+
+}
+@media only screen and (min-width: 700px) {
+  .instruction-list {
+    font-size: 20pt;
+    font-weight: 300;
+    margin-left: 25%;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    li {
+      margin-bottom: 10px;
+    }
+  }
+  .instruction-buttons {
+    margin-left: 25.5%;
+  }
+  .instruction-header {
+    margin-left: 25.5%;
+
+  }
+  .instruction-row{
+    margin-top: 20px;
+    margin-left: 15%;
+    font-weight: 500;
+    font-size: 18px;
+    color: black;
+  }
+  .instruction-img-border{
+    width:300px;
+    border: 1px solid #dcdcdc;
+    padding: 6px;
+    box-shadow: 0 0 3px rgba(0,0,0,0.1);
+  }
+  .instruction-img {
+    max-width: 100%;
+    max-height: 100%;
+  }
+  /* Modal Content (image) */
+  .modal-content-guide {
+    width: 500px;
+  }
+  @media screen and ( min-height: 600px ){
+    /* The Modal (background) */
+    .modal-instruction {
+      height: calc(100vh - 190px) !important;
+    }
+    #relative{
+      height: calc(100vh - 190px)!important;
+    }
+  }
+
+  @media screen and ( min-height: 730px ){
+    /* The Modal (background) */
+    .modal-instruction {
+      height: calc(100vh - 208px) !important;
+    }
+    #relative{
+      height: calc(100vh - 208px)!important;
+    }
+  }
+  @media screen and ( min-height: 930px ){
+    /* The Modal (background) */
+    .modal-instruction {
+      height: calc(100vh - 245px) !important;
+    }
+    #relative{
+      height: calc(100vh - 245px)!important;
+    }
+  }
+  @media screen and ( min-height: 1100px ){
+    /* The Modal (background) */
+    .modal-instruction {
+      height: calc(100vh - 260px) !important;
+    }
+    #relative{
+      height: calc(100vh - 260px)!important;
+    }
+  }
+}
+
+@media only screen and (min-width: 1200px) {
+  .instruction-list {
+    font-size: 20pt;
+    font-weight: 300;
+    margin-left: 30.5%;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    li {
+      margin-bottom: 10px;
+    }
+  }
+  .instruction-buttons {
+    margin-left: 31.5%;
+  }
+  .instruction-header {
+    margin-left: 31.5%;
+  }
+  .instruction-row{
+    margin-top: 20px;
+    margin-left: 25%;
+    font-weight: 500;
+    font-size: 18px;
+    color: black;
+  }
+  .instruction-img-border{
+    width:300px;
+    border: 1px solid #dcdcdc;
+    padding: 6px;
+    box-shadow: 0 0 3px rgba(0,0,0,0.1);
+  }
+  .instruction-img {
+    max-width: 100%;
+    max-height: 100%;
+  }
+  /* Modal Content (image) */
+  .modal-content-guide {
+    width: 600px;
+  }
+  @media screen and ( min-height: 600px ){
+    /* The Modal (background) */
+    .modal-instruction {
+      height: calc(100vh - 190px) !important;
+    }
+    #relative{
+      height: calc(100vh - 190px)!important;
+    }
+  }
+
+  @media screen and ( min-height: 730px ){
+    /* The Modal (background) */
+    .modal-instruction {
+      height: calc(100vh - 208px) !important;
+    }
+    #relative{
+      height: calc(100vh - 208px)!important;
+    }
+  }
+  @media screen and ( min-height: 930px ){
+    /* The Modal (background) */
+    .modal-instruction {
+      height: calc(100vh - 245px) !important;
+    }
+    #relative{
+      height: calc(100vh - 245px)!important;
+    }
+  }
+  @media screen and ( min-height: 1100px ){
+    /* The Modal (background) */
+    .modal-instruction {
+      height: calc(100vh - 260px) !important;
+    }
+    #relative{
+      height: calc(100vh - 260px)!important;
+    }
+  }
+}
+@media only screen and (min-width: 1600px) {
+  .instruction-list {
+    font-size: 20pt;
+    font-weight: 300;
+    margin-left: 35.5%;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    li {
+      margin-bottom: 10px;
+    }
+  }
+  .instruction-buttons {
+     margin-left: 36%;
+   }
+  .instruction-header {
+    margin-left: 36%;
+  }
+  .instruction-row{
+    margin-top: 20px;
+    margin-left: 25%;
+    font-weight: 500;
+    font-size: 18px;
+    color: black;
+  }
+  .instruction-img-border{
+    width:450px;
+    border: 1px solid #dcdcdc;
+    padding: 6px;
+    box-shadow: 0 0 3px rgba(0,0,0,0.1);
+  }
+  .instruction-img {
+    max-width: 100%;
+    max-height: 100%;
+  }
+  /* Modal Content (image) */
+  .modal-content-guide {
+    width: 700px;
+  }
+
+  @media screen and ( min-height: 600px ){
+    /* The Modal (background) */
+    .modal-instruction {
+      height: calc(100vh - 190px) !important;
+    }
+    #relative{
+      height: calc(100vh - 190px)!important;
+    }
+  }
+
+  @media screen and ( min-height: 730px ){
+    /* The Modal (background) */
+    .modal-instruction {
+      height: calc(100vh - 208px) !important;
+    }
+    #relative{
+      height: calc(100vh - 208px)!important;
+    }
+  }
+  @media screen and ( min-height: 930px ){
+    /* The Modal (background) */
+    .modal-instruction {
+      height: calc(100vh - 245px) !important;
+    }
+    #relative{
+      height: calc(100vh - 245px)!important;
+    }
+  }
+  @media screen and ( min-height: 1100px ){
+    /* The Modal (background) */
+    .modal-instruction {
+      height: calc(100vh - 260px) !important;
+    }
+    #relative{
+      height: calc(100vh - 260px)!important;
+    }
+  }
+}
+
+.modal-instruction {
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.7); /* Black w/ opacity */
+  display: none;
+  overflow: hidden;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1050;
+  -webkit-overflow-scrolling: touch;
+  outline: 0;
+}
+.block {
+  text-align: center;
+}
+
+.block:before {
+  content: '\200B';
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
+}
+
+.centered {
+  display: inline-block;
+  vertical-align: middle;
+}
+#myImg {
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+#myImg:hover {opacity: 0.2;}
+
+
+#relative{
+  position:relative;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+#relative > #myModal{
+  position:absolute;
+  white-space: nowrap;
+}
+
+/* Caption of Modal Image */
+#caption {
+  margin: auto;
+  display: block;
+  width: 80%;
+  max-width: 700px;
+  text-align: center;
+  color: #ccc;
+  padding: 10px 0;
+  height: 150px;
+}
+
+/* Add Animation */
+.modal-content-guide{
+  -webkit-animation-name: zoom;
+  -webkit-animation-duration: 0.6s;
+  animation-name: zoom;
+  animation-duration: 0.6s;
+}
+
+@-webkit-keyframes zoom {
+  from {-webkit-transform:scale(0)}
+  to {-webkit-transform:scale(1)}
+}
+
+@keyframes zoom {
+  from {transform:scale(0)}
+  to {transform:scale(1)}
+}
+
+.instruction-img:hover{
+  cursor: pointer;
+}
