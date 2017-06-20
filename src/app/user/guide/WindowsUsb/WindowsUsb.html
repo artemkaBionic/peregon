@@ -44,28 +44,44 @@
         <div id="first" ng-switch-when="prepareUSBdrive">
           <div ng-switch="vm.substep.name" class="row wizard">
             <div id="zeroSubstate" ng-switch-when="checkCondition">
-              <div class="instruction-header">
-                <h2>Before laptop refresh make sure that:</h2>
+              <div class="text-center">
+
               </div>
-              <div class="row">
-                <ul class="instruction-list">
-                  <li>
-                    Laptop turns on;
-                  </li>
-                  <li>
-                    Screen and casing are in good condition;
-                  </li>
-                  <li>
-                    Keyboard works;
-                  </li>
-                </ul>
+              <div style="text-align: center">
+                <h2>Make sure that:</h2>
+                <div class="instruction-list-container" style="margin: 0 auto; text-align: left">
+                  <ul class="instruction-list">
+                    <li>
+                      Laptop turns on;
+                    </li>
+                    <li>
+                      Screen and casing are in good condition;
+                    </li>
+                    <li>
+                      Keyboard works;
+                    </li>
+                  </ul>
+                </div>
               </div>
-              <div class="row instruction-buttons">
-                <button style="margin-right: 25px" class="instruction-btn btn btn-success btn-rounded" type="submit" ng-click="vm.prepareRefreshUsbStart()">
-                  Laptop in good condition
+              <!--<div class="row">-->
+                <!--<ul class="instruction-list">-->
+                  <!--<li>-->
+                    <!--Laptop turns on;-->
+                  <!--</li>-->
+                  <!--<li>-->
+                    <!--Screen and casing are in good condition;-->
+                  <!--</li>-->
+                  <!--<li>-->
+                    <!--Keyboard works;-->
+                  <!--</li>-->
+                <!--</ul>-->
+              <!--</div>-->
+              <div class="row text-center">
+                <button style="margin-right: 25px;margin-top:5px" class="instruction-btn btn btn-success btn-rounded" type="submit" ng-click="vm.prepareRefreshUsbStart()">
+                  Laptop is in good condition
                 </button>
-                <button class="instruction-btn btn btn-danger btn-rounded" type="submit" ng-click="vm.finishFailed();">
-                  Laptop in bad condition
+                <button style="margin-top:5px" class="instruction-btn btn btn-danger btn-rounded" type="submit" ng-click="vm.finishFailed();">
+                  Laptop in bad condition or faulty
                 </button>
               </div>
             </div>
@@ -74,8 +90,8 @@
                 <!--<button ng-click="vm.showGuide()">Show Guide</button>-->
               <!--</div>-->
               <div class="row wizard-contents text-center">
-                <h3>Please insert a 32GB or larger USB drive into the Refresh Station.
-                </h3>
+                <h3>Please insert a 32GB or larger USB drive into the Refresh Station</h3>
+                <h4>Warning: If the USB drive has not been initialized as a "Refresh Drive", it's contents will be erased</h4>
               </div>
               <div class="row wizard-graphics">
                 <img src="/assets/images/InsertUsbDrive.png" class="wizard-image center">
@@ -84,14 +100,15 @@
             </div>
             <div id="secondSubstate" ng-switch-when="usbLoading">
               <div class="row wizard-contents text-center">
-                <h2>Windows is loading into USB drive...</h2>
+                <h2>Prepearing USB drive for Windows refresh</h2>
+                <h3>This may take up to 15 minutes...</h3>
               </div>
               <div class="row wizard-contents text-center">
                 <div class="center circle-bar">
                   <orbicular progression="vm.percentageComplete" total="100">{{vm.data.counter}}</orbicular>
                 </div>
                 <div>
-                  Percentage complete: {{vm.percentageComplete}} %
+                  <p>{{vm.percentageComplete}}% complete</p>
                 </div>
               </div>
             </div>
@@ -111,8 +128,8 @@
             <div id="fourthSubstate" ng-switch-when="usbLoadFailed">
               <div class="text-align-center">
                 <i class="fa fa-ban warning-icon"></i>
-                <h2>USB load failed</h2>
-                <h3 class="text-align-center">Please click restart button if you want to restart refresh process</h3>
+                <h2>Failed to prepare USB drive</h2>
+                <h3 class="text-align-center">If you get this error after trying again, contact support for assistance.</h3>
               </div>
               <div class="text-center" ng-click="vm.retry()">
                 <button style="margin-top: 1%" class="btn-primary btn-rounded">Retry</button>
@@ -125,7 +142,7 @@
           <form name="inspection-form" class="content-finish" novalidate>
             <div class="inspect-mode">
               <div class="row text-center">
-                <span style="font-size: 20px; font-weight: 400;margin-left: -3%" >Insert USB drive back to refresh station after going through steps to complete refresh.
+                <span style="font-size: 20px; font-weight: 400;margin-left: -3%" >When refresh is complete, reinsert USB drive to continue.
                   <span style="margin-left: -1.5mm">
                     <span class="two">.</span><span class="three">.</span>
                   </span>
@@ -148,7 +165,7 @@
               <div class="text-center" style="margin-top: 5%">
                 <i style="color: darkred" class="fa fa-minus-circle fa-5x" aria-hidden="true"></i>
                 <h2 style="margin-top: 2%">Windows refresh failed.</h2>
-                <h4 style="margin-top: 2%">Push retry button if you want to restart refreshing process.</h4>
+                <h4 style="margin-top: 2%">If you get this error after trying again, contact support for assistance.</h4>
                 <button style="margin-top: 1%" class="btn-primary btn-rounded" ng-click="vm.retry()">Retry</button>
               </div>
             </div>

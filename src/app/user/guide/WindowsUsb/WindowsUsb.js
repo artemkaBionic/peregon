@@ -110,9 +110,14 @@
         vm.step = vm.steps.prepare;
         activate();
         vm.prepareRefreshUsbStart = function() {
-            vm.step = vm.steps.prepare;
-            vm.substep = vm.substeps.insertUsbToStation;
-            waitForUsbAdd(usbDeviceMinSize, prepareRefreshUsbApply);
+            inventoryService.updateSession(vm.item.InventoryNumber, 'Info', 'Device inspection complete.', 'Mac is in good condition.');
+            if (vm.selectedDevice === null) {
+                vm.step = vm.steps.prepare;
+                vm.substep = vm.substeps.insertUsbToStation;
+                waitForUsbAdd(prepareRefreshUsbApply);
+            } else {
+                prepareRefreshUsbApply({usb: vm.selectedDevice, item: vm.item});
+            }
         };
         vm.refreshEnd = function() {
             $state.go('root.user');
@@ -132,45 +137,68 @@
         }
         function loadDevices() {
             return deviceService.getDevices().then(function(devices) {
-                if (vm.selectedDevice === null && devices.length > 0) {
-                    for (var i = devices.length - 1; i >= 0; --i) {
-                        if (devices[i].size >= usbDeviceMinSize) {
-                            vm.selectedDevice = devices[i];
-                            break;
+                if (devices !== null) {
+                    if (vm.selectedDevice === null && devices.length > 0) {
+                        for (var i = devices.length - 1; i >= 0; --i) {
+                            if (devices[i].size >= usbDeviceMinSize) {
+                                vm.selectedDevice = devices[i];
+                                break;
+                            }
                         }
                     }
                 }
             });
         }
+
+        function deviceAdd(data) {
+            if (vm.selectedDevice === null && data.size >= usbDeviceMinSize) {
+                vm.selectedDevice = data;
+            }
+        }
+        socketService.on('device-add', deviceAdd);
+
+        function deviceRemove(data) {
+            if (vm.selectedDevice !== null && vm.selectedDevice.id === data.id) {
+                vm.selectedDevice = null;
+            }
+        }
+        socketService.on('device-remove', deviceRemove);
+
         vm.checkCondition = function() {
             vm.step = vm.steps.prepare;
             vm.substep = vm.substeps.checkCondition;
         };
         vm.finishFailed = function() {
+            // inventoryService.updateSession(vm.item.InventoryNumber, 'Info', 'Session failed.')
+            //     .then(inventoryService.finishSession(vm.item.InventoryNumber, {'complete': false}));
             $timeout(function() {
                 vm.step = vm.steps.prepare;
                 vm.substep = vm.substeps.deviceBroken;
             }, 500);
         };
+        function usbProgress(data) {
+            vm.percentageComplete = data.progress;
+        }
+
         function prepareRefreshUsbApply(data) {
+            vm.percentageComplete = 0;
+            vm.step = vm.steps.prepare;
             vm.substep = vm.substeps.usbLoading;
             $http({
                 url: '/prepareUsb',
                 method: 'POST',
                 headers: {'content-type': 'application/json'},
                 data: data
-            }).then(function(response) {
-                if (response.status === 200) {
-                    prepareRefreshUsbComplete();
-                } else {
+            });
+            socketService.on('usb-progress', usbProgress);
+            socketService.once('usb-complete', function(data) {
+                socketService.off('usb-progress', usbProgress);
+                if (data.err) {
                     vm.step = vm.steps.prepare;
                     vm.substep = vm.substeps.usbLoadFailed;
-                }
-            });
-            socketService.on('usb-progress', function(data) {
-                vm.percentageComplete += data.progress;
-                if (vm.percentageComplete === 100) {
-                    console.log(data.progress);
+                } else {
+                    vm.percentageComplete = 100;
+                    $timeout(prepareRefreshUsbComplete, 500);
                 }
             });
         }
@@ -197,10 +225,10 @@
 
         function prepareRefreshUsbComplete() {
             vm.step = vm.steps.refresh;
-            waitForUsbRemove(macRefreshStart);
+            waitForUsbRemove(windowsRefreshStart);
         }
 
-        function macRefreshStart() {
+        function windowsRefreshStart() {
             waitForUsbAdd(usbDeviceMinSize, verifyRefreshStart);
         }
 
@@ -214,14 +242,20 @@
                 if (response.status === 200) {
                     var refreshSuccess = response.data;
                     if (refreshSuccess) {
+                        inventoryService.updateSession(vm.item.InventoryNumber, 'Info', 'Session complete.')
+                            .then(inventoryService.finishSession(vm.item.InventoryNumber, {'complete': true}));
                         vm.step = vm.steps.finish;
                         vm.substep = vm.substeps.refreshSuccess;
                     } else {
+                        inventoryService.updateSession(vm.item.InventoryNumber, 'Info', 'Session failed.')
+                            .then(inventoryService.finishSession(vm.item.InventoryNumber, {'complete': false}));
                         vm.step = vm.steps.finish;
                         vm.substep = vm.substeps.rerfeshFailed;
                     }
                 } else {
                     //ToDo: Report internal error
+                    inventoryService.updateSession(vm.item.InventoryNumber, 'Info', 'Session failed.')
+                        .then(inventoryService.finishSession(vm.item.InventoryNumber, {'complete': false}));
                     vm.step = vm.steps.finish;
                     vm.substep = vm.substeps.rerfeshFailed;
                 }
@@ -245,11 +279,8 @@
         }
 
         vm.retry = function() {
-            vm.step = vm.steps.prepare;
-            vm.substep = vm.substeps.checkCondition;
-            vm.PowerGood = false;
-            vm.ExternalGood = false;
-            vm.ButtonsGood = false;
+            inventoryService.startSession(item);
+            vm.prepareRefreshUsbStart();
         };
     }
 })();
