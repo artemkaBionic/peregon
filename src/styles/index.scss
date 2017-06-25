@@ -2966,6 +2966,9 @@ orbicular i {
       margin-bottom: 10px;
     }
   }
+  .instruction-list-container{
+    width: 350px !important;
+  }
   .instruction-buttons {
     margin-left: 15.5%;
     .instruction-btn{
@@ -3045,7 +3048,6 @@ orbicular i {
   .instruction-list {
     font-size: 15pt;
     font-weight: 300;
-    margin-left: 15%;
     margin-top: 20px;
     margin-bottom: 30px;
     li {
@@ -3126,7 +3128,6 @@ orbicular i {
   .instruction-list {
     font-size: 20pt;
     font-weight: 300;
-    margin-left: 25%;
     margin-top: 20px;
     margin-bottom: 30px;
     li {
@@ -3204,7 +3205,6 @@ orbicular i {
   .instruction-list {
     font-size: 20pt;
     font-weight: 300;
-    margin-left: 30.5%;
     margin-top: 20px;
     margin-bottom: 30px;
     li {
@@ -3280,9 +3280,9 @@ orbicular i {
   .instruction-list {
     font-size: 20pt;
     font-weight: 300;
-    margin-left: 35.5%;
-    margin-top: 20px;
-    margin-bottom: 30px;
+    width:600px;
+    margin: 0 auto;
+    text-align: left
     li {
       margin-bottom: 10px;
     }
@@ -3435,4 +3435,7 @@ orbicular i {
 
 .instruction-img:hover{
   cursor: pointer;
+}
+.instruction-list-container{
+  width: 600px;
 }
