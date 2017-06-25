@@ -8,7 +8,7 @@ var fs = require('fs');
 exports.prepareUsb = function(io, data) {
     console.log('prepareUsb');
     var device = data.usb.id;
-    var refreshType = data.item.Type;
+    var item = data.item;
 
     partitions.updatePartitions(device, function(err) {
         if (err) {
@@ -18,7 +18,7 @@ exports.prepareUsb = function(io, data) {
                 io.emit('usb-complete', {err: err});
             });
         } else {
-            content.updateContent(io, device, refreshType, function(err) {
+            content.updateContent(io, device, item, function(err) {
                 if (err) {
                     console.log('Error updating content');
                     console.log(err);

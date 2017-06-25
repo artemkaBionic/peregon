@@ -119,17 +119,32 @@ function applyMacImage(device, macImageSize, totalSize, callback) {
     });
 }
 
-function finishApplyContent(device, refreshType, callback) {
+function createItemFile(device, item, callback) {
+    var usbItemFile = '/mnt/' + device + config.usbStatusPartition + '/item.json';
+    try {
+        var json = JSON.stringify(item);
+        fs.writeFile(usbItemFile, json, callback);
+    } catch (err) {
+        callback(err);
+    }
+}
+
+function finishApplyContent(device, item, callback) {
     console.log('Device ' + device + ' content update is complete.');
     versions.createVersionsFile(device, function(err) {
         if (err) {
             console.error(err);
         }
-        exports.prepareRefreshType(device, refreshType, callback);
+        createItemFile(device, item, function(err) {
+            if (err) {
+                console.error(err);
+            }
+            exports.prepareRefreshType(device, item.Type, callback);
+        });
     });
 }
 
-function copyFilesAndApplyImages(device, contentTemp, copyFilesSize, macImageSize, refreshType, applyMac, callback) {
+function copyFilesAndApplyImages(device, contentTemp, copyFilesSize, macImageSize, item, applyMac, callback) {
     var totalSize = macImageSize + copyFilesSize;
     timeStarted = Date.now();
     totalProgress = 0;
@@ -146,11 +161,11 @@ function copyFilesAndApplyImages(device, contentTemp, copyFilesSize, macImageSiz
                             if (err) {
                                 callback(err);
                             } else {
-                                finishApplyContent(device, refreshType, callback);
+                                finishApplyContent(device, item, callback);
                             }
                         })
                     } else {
-                        finishApplyContent(device, refreshType, callback);
+                        finishApplyContent(device, item, callback);
                     }
                 }
             });
@@ -201,7 +216,7 @@ exports.prepareRefreshType = function(device, refreshType, callback) {
     }
 };
 
-exports.updateContent = function(socket_io, device, refreshType, callback) {
+exports.updateContent = function(socket_io, device, item, callback) {
     console.log('Updating content on ' + device);
     io = socket_io;
 
@@ -242,17 +257,16 @@ exports.updateContent = function(socket_io, device, refreshType, callback) {
                                                 callback(new Error(stderr));
                                             } else {
                                                 var macImageSize = parseInt(stdout.trim().split(os.EOL));
-                                                copyFilesAndApplyImages(device, contentTemp, copyFilesSize, macImageSize, refreshType, true, callback);
+                                                copyFilesAndApplyImages(device, contentTemp, copyFilesSize, macImageSize, item, true, callback);
                                             }
                                         });
                                     } else {
-                                        copyFilesAndApplyImages(device, contentTemp, copyFilesSize, 0, refreshType, false, callback);
+                                        copyFilesAndApplyImages(device, contentTemp, copyFilesSize, 0, item, false, callback);
                                     }
                                 }
                             });
                         }
                     });
-
                 }
             })
         }
@@ -268,6 +282,7 @@ exports.clearStatus = function(device) {
         '/mnt/' + device + config.usbXboxPartition + '/$SystemUpdate/update2.cfg']);
     //Remove Windows and Mac Refresh status files
     shell.rm([
+        '/mnt/' + device + config.usbStatusPartition + '/item.json',
         '/mnt/' + device + config.usbStatusPartition + '/refresh.log',
         '/mnt/' + device + config.usbStatusPartition + '/session.json',
         '/mnt/' + device + config.usbStatusPartition + '/system-info.txt']);
