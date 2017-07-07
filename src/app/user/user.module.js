@@ -57,9 +57,15 @@
 
         guideTemplate.$inject = ['$templateCache', '$http', 'item'];
         function guideTemplate($templateCache, $http, item) {
+            console.log(item.SubType);
             var templateUrl = 'app/user/guide/unsupported.html';
             if (item.Type !== null) {
-                templateUrl = 'app/user/guide/' + item.Type + '/' + item.Type + '.html';
+                if (item.Type === 'Manual') {
+                    templateUrl = 'app/user/guide/' + item.Type + '/' + item.SubType + '.html';
+                    console.log(templateUrl);
+                } else{
+                    templateUrl = 'app/user/guide/' + item.Type + '/' + item.Type + '.html';
+                }
             }
             var templateContent = $templateCache.get(templateUrl);
             if (!templateContent) {

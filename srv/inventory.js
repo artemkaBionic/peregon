@@ -16,6 +16,7 @@ const sessions = require('./sessionCache');
 const UNSENT_SESSIONS_DIRECTORY = config.kioskDataPath + '/unsentSessions';
 const INVENTORY_LOOKUP_URL = 'https://' + config.apiHost + '/api/inventorylookup/';
 const API_URL = 'https://api2.basechord.com';
+const API_URL2 = 'http://localhost:3000';
 const RESEND_SESSIONS_INTERVAL = 900000; // 15 minutes
 
 var isDevelopment = process.env.NODE_ENV === 'development';
@@ -42,22 +43,36 @@ setInterval(function() {
 
 
 function getItem(id, callback) {
+    // request({
+    //     url: INVENTORY_LOOKUP_URL + id,
+    //     headers: {
+    //         'Authorization': config.apiAuthorization
+    //     },
+    //     rejectUnauthorized: false,
+    //     json: true
+    // }, function(error, response, body) {
+    //     if (error) {
+    //         console.error(error);
+    //         callback({error: error, item: null});
+    //     }
+    //     else {
+    //         console.log('Server returned: ');
+    //         console.log(body);
+    //         callback({error: null, item: body});
+    //     }
+    // });
     request({
-        url: INVENTORY_LOOKUP_URL + id,
-        headers: {
-            'Authorization': config.apiAuthorization
-        },
-        rejectUnauthorized: false,
-        json: true
-    }, function(error, response, body) {
+        uri: API_URL2 + '/aarons/inventorylookup' + id,
+        method: "GET"
+    }, function(error, response) {
         if (error) {
             console.error(error);
             callback({error: error, item: null});
         }
         else {
             console.log('Server returned: ');
-            console.log(body);
-            callback({error: null, item: body});
+            console.log(response.body);
+            callback({error: null, item: JSON.parse(response.body)});
         }
     });
 }
