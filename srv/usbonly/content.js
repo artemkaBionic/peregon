@@ -234,13 +234,17 @@ exports.updateContent = function(socket_io, device, item, callback) {
                     console.log(usbVersions);
                     // Prepare files to copy
                     var contentTemp = path.join(os.tmpdir(), 'tmp', uuid());
-                    shell.mkdir('-p', [path.join(contentTemp, device + config.usbXboxPartition), path.join(contentTemp, device + config.usbWindowsPartition, 'Packages')]);
+                    shell.mkdir('-p', [path.join(contentTemp, device + config.usbXboxPartition),
+                        path.join(contentTemp, device + config.usbWindowsPartition, 'default'),
+                        path.join(contentTemp, device + config.usbWindowsPartition, 'packages')]);
                     // Prepare Xbox Files
                     var command = 'ln -s ' + config.xboxContent + ' ' + path.join(contentTemp, device + config.usbXboxPartition);
-                    // Prepare WinPE Files
+                    // Prepare WinPE Boot Files
                     command += ' && ln -s ' + config.winPeContent + ' ' + path.join(contentTemp, device + config.usbWindowsPartition);
+                    // Prepare WinPE Refresh App
+                    command += ' && ln -s ' + config.winPeAppContent + ' ' + path.join(contentTemp, device + config.usbWindowsPartition, 'default');
                     // Prepare Windows Files
-                    command += ' && ln -s ' + config.windowsContent + ' ' + path.join(contentTemp, device + config.usbWindowsPartition, 'Packages');
+                    command += ' && ln -s ' + config.windowsContent + ' ' + path.join(contentTemp, device + config.usbWindowsPartition, 'packages');
                     shell.exec(command, function(code, stdout, stderr) {
                         if (code !== 0) {
                             callback(new Error(stderr));

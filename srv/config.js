@@ -14,11 +14,13 @@ config.deviceUnlockTimeout = 3600000;
 config.usbDeviceIdRegEx = /^sd[c-z]$/;
 
 config.winPeContent = '/usr/share/tftpd/winpe/default/*';
+config.winPeAppContent = '/srv/packages/default/*';
 config.windowsContent = '/srv/packages/97fc1b7c-049f-4933-88e5-cb19362e3360';
 config.macContent = '/srv/mac/default/MacRefresh.img';
 config.xboxContent = '/srv/media/bc76b9f7-02f9-42e3-a9b7-3383b5287f07/*';
 
 config.winPeVersionFile = '/usr/share/tftpd/winpe/default/.version';
+config.winPeAppVersionFile = '/srv/packages/default/.version';
 config.windowsVersionFile = '/srv/packages/97fc1b7c-049f-4933-88e5-cb19362e3360/.version';
 config.xboxVersionFile = '/srv/media/bc76b9f7-02f9-42e3-a9b7-3383b5287f07/.version';
 config.macVersionFile = '/srv/mac/default/.version';

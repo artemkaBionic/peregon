@@ -20,15 +20,17 @@ function getCurrentVersion(versionFile) {
 exports.getCurrentVersions = function(callback) {
     var promises = [];
     promises.push(getCurrentVersion(config.winPeVersionFile));
+    promises.push(getCurrentVersion(config.winPeAppVersionFile));
     promises.push(getCurrentVersion(config.windowsVersionFile));
     promises.push(getCurrentVersion(config.xboxVersionFile));
     promises.push(getCurrentVersion(config.macVersionFile));
     Promise.all(promises).then(function(values) {
         callback(null, {
             "winpe": values[0],
-            "windows": values[1],
-            "xbox": values[2],
-            "mac": values[3]
+            "winpe-app": values[1],
+            "windows": values[2],
+            "xbox": values[3],
+            "mac": values[4]
         });
     }, function(err) {
         callback(err, null);
