@@ -111,8 +111,6 @@
 
         function loadDevices() {
             return deviceService.getDevices().then(function(devices) {
-                console.log('devices: ' + devices.length);
-                console.log(devices);
                 if (vm.selectedDevice === null && devices !== null && devices.length > 0) {
                     for (var i = devices.length - 1; i >= 0; --i) {
                         console.log('checking device:');

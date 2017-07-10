@@ -22,18 +22,12 @@
     </div>
   </header>
     <div horizontal-ui-sheet-content>
-      <!--<button ng-click="vm.nextStep()">Next step</button>
-    <button ng-click="vm.previousStep()">Previous step</button>
-    <button ng-click="vm.nextSubstep()">Next substep</button>
-    <button ng-click="vm.previousSubstep()">Previous substep</button>-->
-    <!--<button ng-click="vm.addUSB()">Add usb</button>-->
-    <!--<button ng-click="vm.removeUsb()">Remove usb</button>-->
       <div class="row">
         <ul id="progress-tracker" data-steps="3">
           <li ng-class="{'active': vm.step.number === 1}">
             <span>Prepare Windows laptop refresh</span></li>
           <li ng-class="{'active': vm.step.number === 2}">
-            <span>Refresh Windows laptop</span></li>
+            <span>Refresh the Windows laptop</span></li>
           <li ng-class="{'active': vm.step.number === 3}">
             <span>Check refresh status</span><i></i>
           </li>
@@ -90,8 +84,8 @@
                 <!--<button ng-click="vm.showGuide()">Show Guide</button>-->
               <!--</div>-->
               <div class="row wizard-contents text-center">
-                <h3>Please insert a 32GB or larger USB drive into the Refresh Station</h3>
-                <h4>Warning: If the USB drive has not been initialized as a "Refresh Drive", it's contents will be erased</h4>
+                <h3>Insert a 32GB or larger USB drive</h3>
+                <h4>Warning: If the USB drive has not been initialized as a "Refresh Drive", it's contents will be erased!</h4>
               </div>
               <div class="row wizard-graphics">
                 <img src="/assets/images/InsertUsbDrive.png" class="wizard-image center">
@@ -100,7 +94,7 @@
             </div>
             <div id="secondSubstate" ng-switch-when="usbLoading">
               <div class="row wizard-contents text-center">
-                <h2>Prepearing USB drive for Windows refresh</h2>
+                <h2>Preparing USB drive for Windows refresh</h2>
                 <h3>This may take up to 15 minutes...</h3>
               </div>
               <div class="row wizard-contents text-center">
@@ -115,7 +109,7 @@
             <div id="thirdSubstate" ng-switch-when="deviceBroken">
               <div class="text-align-center">
                 <i class="fa fa-ban warning-icon"></i>
-                <h2>Device needs to be repaired</h2>
+                <h2>Windows laptop needs to be repaired</h2>
                 <h3 class="text-align-center">Ship it to Aaron's Service
                   Center for repair</h3>
               </div>
@@ -131,15 +125,15 @@
                 <h2>Failed to prepare USB drive</h2>
                 <h3 class="text-align-center">If you get this error after trying again, contact support for assistance.</h3>
               </div>
-              <div class="text-center" ng-click="vm.retry()">
-                <button style="margin-top: 1%" class="btn-primary btn-rounded">Retry</button>
+              <div class="text-center">
+                <button style="margin-top: 1%" class="btn-primary btn-rounded" ng-click="vm.retry()">Retry</button>
               </div>
             </div>
 
           </div>
         </div>
         <div id="second" ng-switch-when="refreshLaptop">
-          <form name="inspection-form" class="content-finish" novalidate>
+          <form name="inspection-form" class="content-finish" novalidate ng-submit="vm.finish()">
             <div class="inspect-mode">
               <div class="row text-center">
                 <span style="font-size: 20px; font-weight: 400;margin-left: -3%" >When refresh is complete, reinsert USB drive to continue.
@@ -157,7 +151,8 @@
             <div id="fifthSubstate" ng-switch-when="refreshSuccess">
               <div class="text-center" style="margin-top: 5%">
                 <i style="color:forestgreen" class="fa fa-check-circle fa-5x" aria-hidden="true"></i>
-                <h2 style="margin-top: 2%">Windows had been refreshed successfully.</h2>
+              <h2>Success</h2>
+			  <h3>You have successfully refreshed the Windows laptop</h3>
                 <button style="margin-top: 1%" class="btn-primary btn-rounded" ng-click="vm.refreshEnd()">Finish</button>
               </div>
             </div>

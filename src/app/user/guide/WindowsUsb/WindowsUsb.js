@@ -5,9 +5,9 @@
         .module('app.user')
         .controller('GuideControllerWindowsUsb', GuideControllerWindowsUsb);
 
-    GuideControllerWindowsUsb.$inject = ['toastr', '$timeout', '$http', '$q', 'item', 'config', 'socketService', 'eventService', 'inventoryService', '$state', 'deviceService'];
+    GuideControllerWindowsUsb.$inject = ['$timeout', '$http', '$q', 'item', 'config', 'socketService', 'eventService', 'inventoryService', '$state', 'deviceService'];
 
-    function GuideControllerWindowsUsb(toastr, $timeout, $http, $q, item, config, socketService, eventService, inventoryService, $state, deviceService) {
+    function GuideControllerWindowsUsb($timeout, $http, $q, item, config, socketService, eventService, inventoryService, $state, deviceService) {
         /*jshint validthis: true */
         var vm = this;
         vm.item = item;
@@ -21,6 +21,7 @@
         vm.ExternalGood = false;
         vm.ButtonsGood = false;
         var usbDeviceMinSize = 30000000000;
+
         vm.steps = {
             prepare: {
                 name: 'prepareUSBdrive',
@@ -80,33 +81,7 @@
                 title: 'USB Load Failed'
             }
         };
-        // vm.addUSB = function() {
-        //     var url = 'http://localhost:3000/event/device-add';
-        //     var headers = {'content-type': 'application/json'};
-        //
-        //     $http({
-        //         url: url,
-        //         method: 'POST',
-        //         headers: headers,
-        //         data: {'id':'sdc', 'type': 'USB', 'manufacturer':'Generic', 'serial':'C5168175', 'size':'4444444444444444'}
-        //     }).then(function(response){
-        //         //success
-        //     },function(resonse){
-        //         //error
-        //     })
-        // };
-        // vm.removeUsb = function() {
-        //     var url = 'http://localhost:3000/event/device-remove';
-        //     var headers = {'content-type': 'application/json'};
-        //     $http({
-        //         url: url,
-        //         method: 'POST',
-        //         headers: headers,
-        //         data: {'id':'sdc', 'type': 'USB', 'manufacturer':'Generic', 'serial':'C5168175', 'size':'44444444444444444'}
-        //     }).then(function(response){
-        //         //success
-        //     });
-        // };
+
         vm.step = vm.steps.prepare;
         activate();
         vm.prepareRefreshUsbStart = function() {
@@ -122,9 +97,6 @@
         vm.refreshEnd = function() {
             $state.go('root.user');
         };
-        // vm.showGuide = function() {
-        //     vm.step = vm.steps.refresh;
-        // };
         function activate() {
             var queries = [
                 inventoryService.startSession(item),
@@ -135,15 +107,18 @@
                 vm.checkCondition();
             });
         }
+
         function loadDevices() {
             return deviceService.getDevices().then(function(devices) {
-                if (devices !== null) {
-                    if (vm.selectedDevice === null && devices.length > 0) {
-                        for (var i = devices.length - 1; i >= 0; --i) {
-                            if (devices[i].size >= usbDeviceMinSize) {
-                                vm.selectedDevice = devices[i];
-                                break;
-                            }
+                if (vm.selectedDevice === null && devices !== null && devices.length > 0) {
+                    for (var i = devices.length - 1; i >= 0; --i) {
+                        console.log('checking device:');
+                        console.log(devices[i]);
+                        if (devices[i].size >= usbDeviceMinSize) {
+                            console.log('found device:');
+                            console.log(devices[i]);
+                            vm.selectedDevice = devices[i];
+                            break;
                         }
                     }
                 }
@@ -169,13 +144,14 @@
             vm.substep = vm.substeps.checkCondition;
         };
         vm.finishFailed = function() {
-            // inventoryService.updateSession(vm.item.InventoryNumber, 'Info', 'Session failed.')
-            //     .then(inventoryService.finishSession(vm.item.InventoryNumber, {'complete': false}));
+            inventoryService.updateSession(vm.item.InventoryNumber, 'Info', 'Session failed.')
+                .then(inventoryService.finishSession(vm.item.InventoryNumber, {'complete': false}));
             $timeout(function() {
                 vm.step = vm.steps.prepare;
                 vm.substep = vm.substeps.deviceBroken;
             }, 500);
         };
+
         function usbProgress(data) {
             vm.percentageComplete = data.progress;
         }
@@ -203,19 +179,15 @@
             });
         }
 
-        function waitForUsbAdd(minSize, callback) {
+        function waitForUsbAdd(callback) {
+            socketService.off('device-add', deviceAdd);
             if (vm.selectedDevice === null) {
                 socketService.once('device-add', function(data) {
-                    if (data.size >= minSize) {
+                    if (data.size >= usbDeviceMinSize) {
                         vm.selectedDevice = data;
                         callback({usb: vm.selectedDevice, item: vm.item});
-                        toastr.info('Follow further instructions on screen', 'USB Drive Connected', {
-                            'tapToDismiss': true,
-                            'timeOut': 3000,
-                            'closeButton': true
-                        });
                     } else {
-                        waitForUsbAdd(minSize, callback);
+                        waitForUsbAdd(callback);
                     }
                 });
             } else {
@@ -229,7 +201,7 @@
         }
 
         function windowsRefreshStart() {
-            waitForUsbAdd(usbDeviceMinSize, verifyRefreshStart);
+            waitForUsbAdd(verifyRefreshStart);
         }
 
         function verifyRefreshStart(data) {
@@ -263,15 +235,11 @@
         }
 
         function waitForUsbRemove(callback) {
+            socketService.off('device-remove', deviceRemove);
             socketService.once('device-remove', function(data) {
-                if (data.id === vm.selectedDevice.id) {
+                if (vm.selectedDevice === null || vm.selectedDevice.id === data.id) {
                     vm.selectedDevice = null;
                     callback();
-                    toastr.info('Follow further instructions on screen', 'USB Drive Removed', {
-                        'tapToDismiss': true,
-                        'timeOut': 3000,
-                        'closeButton': true
-                    });
                 } else {
                     waitForUsbRemove(callback);
                 }
