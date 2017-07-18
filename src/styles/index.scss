@@ -308,6 +308,9 @@ figcaption {
   position: relative;
   margin: 0 1px;
 }
+#progress-tracker[data-steps="2"] li {
+  width: 49%;
+}
 
 #progress-tracker li span {
   height: 32px;
@@ -388,16 +391,41 @@ figcaption {
   border: 0;
   border-radius: 16px;
   height: 90vh;
+
 }
 
 .modal-lg {
   height: 90vh;
   width: 75vw;
 }
-
+.modal-xs {
+  width: 35vw;
+  .modal-content {
+    border: 0;
+    border-radius: 16px;
+    height: 500px!important;
+    position: fixed !important;
+    z-index: 999 !important;
+    top: 25% !important;
+    margin-left: -60px !important;
+    margin-top: -100px !important;
+  }
+}
+.modal-xxs {
+  width: 35vw;
+  .modal-content {
+    border: 0;
+    border-radius: 16px;
+    height: 250px !important;
+    position: fixed !important;
+    z-index: 999 !important;
+    top: 50% !important;
+    margin-left: -60px  !important;
+    margin-top: -100px !important;
+  }
+}
 .modal-dialog {
   position: absolute;
-
   top: 0;
   right: 0;
   bottom: 0;
@@ -1952,7 +1980,6 @@ orbicular i {
   #progress-tracker[data-steps="3"] li {
     width: 31%;
   }
-
   .connection-select-device {
     display: none;
   }
@@ -2990,6 +3017,13 @@ orbicular i {
     font-size: 12px;
     color: black;
   }
+  .instruction-last{
+    margin-top: 10px;
+    margin-left: 10%;
+    font-weight: 500;
+    font-size: 12px;
+    color: black;
+  }
   .instruction-img-border{
     width:200px;
     border: 1px solid #dcdcdc;
@@ -3006,7 +3040,7 @@ orbicular i {
   .modal-content-guide {
     width: 350px;
   }
-  @media screen and ( min-height: 600px ){
+  @media screen and ( min-height: 300px ){
     /* The Modal (background) */
     .modal-instruction {
       height: calc(100vh - 190px) !important;
@@ -3068,6 +3102,13 @@ orbicular i {
     font-size: 12px;
     color: black;
   }
+  .instruction-last{
+    margin-top: 10px;
+    margin-left: 10%;
+    font-weight: 500;
+    font-size: 12px;
+    color: black;
+  }
   .instruction-img-border{
     width:200px;
     border: 1px solid #dcdcdc;
@@ -3085,7 +3126,7 @@ orbicular i {
   .modal-content-guide {
     width: 400px;
   }
-    @media screen and ( min-height: 600px ){
+    @media screen and ( min-height: 300px ){
       /* The Modal (background) */
       .modal-instruction {
         height: calc(100vh - 190px) !important;
@@ -3126,7 +3167,7 @@ orbicular i {
 }
 @media only screen and (min-width: 700px) {
   .instruction-list {
-    font-size: 20pt;
+    font-size: 17pt;
     font-weight: 300;
     margin-top: 20px;
     margin-bottom: 30px;
@@ -3148,6 +3189,13 @@ orbicular i {
     font-size: 18px;
     color: black;
   }
+  .instruction-last{
+    margin-top: 10px;
+    margin-left: 15%;
+    font-weight: 500;
+    font-size: 18px;
+    color: black;
+  }
   .instruction-img-border{
     width:300px;
     border: 1px solid #dcdcdc;
@@ -3162,7 +3210,7 @@ orbicular i {
   .modal-content-guide {
     width: 500px;
   }
-  @media screen and ( min-height: 600px ){
+  @media screen and ( min-height: 300px ){
     /* The Modal (background) */
     .modal-instruction {
       height: calc(100vh - 190px) !important;
@@ -3203,7 +3251,7 @@ orbicular i {
 
 @media only screen and (min-width: 1200px) {
   .instruction-list {
-    font-size: 20pt;
+    font-size: 17pt;
     font-weight: 300;
     margin-top: 20px;
     margin-bottom: 30px;
@@ -3219,7 +3267,14 @@ orbicular i {
   }
   .instruction-row{
     margin-top: 20px;
-    margin-left: 25%;
+    margin-left: 28%;
+    font-weight: 500;
+    font-size: 18px;
+    color: black;
+  }
+  .instruction-last{
+    margin-top: 10px;
+    margin-left: 28%;
     font-weight: 500;
     font-size: 18px;
     color: black;
@@ -3238,13 +3293,13 @@ orbicular i {
   .modal-content-guide {
     width: 600px;
   }
-  @media screen and ( min-height: 600px ){
+  @media screen and ( min-height: 300px ){
     /* The Modal (background) */
     .modal-instruction {
-      height: calc(100vh - 190px) !important;
+      height: calc(100vh - 195px) !important;
     }
     #relative{
-      height: calc(100vh - 190px)!important;
+      height: calc(100vh - 195px)!important;
     }
   }
 
@@ -3282,7 +3337,7 @@ orbicular i {
     font-weight: 300;
     width:600px;
     margin: 0 auto;
-    text-align: left
+    text-align: left;
     li {
       margin-bottom: 10px;
     }
@@ -3295,6 +3350,13 @@ orbicular i {
   }
   .instruction-row{
     margin-top: 20px;
+    margin-left: 25%;
+    font-weight: 500;
+    font-size: 18px;
+    color: black;
+  }
+  .instruction-last{
+    margin-top: 10px;
     margin-left: 25%;
     font-weight: 500;
     font-size: 18px;
@@ -3315,7 +3377,7 @@ orbicular i {
     width: 700px;
   }
 
-  @media screen and ( min-height: 600px ){
+  @media screen and ( min-height: 300px ){
     /* The Modal (background) */
     .modal-instruction {
       height: calc(100vh - 190px) !important;
@@ -3396,8 +3458,36 @@ orbicular i {
   position:relative;
   overflow-x: hidden;
   overflow-y: auto;
+  b{
+    font-weight: 400;
+  }
+  .instruction-list{
+    margin-top: 0px !important;
+    margin-bottom: 0px!important;
+  }
+  a {
+    color:blue;
+  }
 }
-
+#guide-no-images-sm{
+  height: calc(100vh - 135px)!important;
+  position:relative;
+  overflow-x: hidden;
+  overflow-y: auto;
+  b{
+    font-weight: 400;
+  }
+  .instruction-list{
+    margin-top: 0px !important;
+    margin-bottom: 0px!important;
+  }
+}
+#lastStepNoImage{
+  background-color: #e8eaed;
+}
+#checkButtons{
+  margin-top: -20px;
+}
 #relative > #myModal{
   position:absolute;
   white-space: nowrap;
@@ -3438,4 +3528,36 @@ orbicular i {
 }
 .instruction-list-container{
   width: 600px;
+}
+.instruction-list-container-lg{
+  width:700px;
+}
+.medium-bold{
+  font-weight: 400;
+}
+.lg-line-height {
+  line-height: 200%;
+}
+.myDiv {
+  overflow-y: scroll; height:100px;
+  background: yellow;
+}
+.manual-modal-content{
+  position: relative;
+  min-height: 100%;
+}
+.manual-modal-footer {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 100px;
+  width: 100%;
+  overflow:hidden;
+}
+.imageManualModal{
+  width: 36.5vw;
+  margin:20px 15px 10px 15px;
+}
+.modalTextManual{
+  margin:20px 30px 20px 30px;
 }

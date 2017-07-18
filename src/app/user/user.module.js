@@ -62,8 +62,7 @@
             if (item.Type !== null) {
                 if (item.Type === 'Manual') {
                     templateUrl = 'app/user/guide/' + item.Type + '/' + item.SubType + '.html';
-                    console.log(templateUrl);
-                } else{
+                } else {
                     templateUrl = 'app/user/guide/' + item.Type + '/' + item.Type + '.html';
                 }
             }

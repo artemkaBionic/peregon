@@ -111,7 +111,7 @@
 
         function loadDevices() {
             return deviceService.getDevices().then(function(devices) {
-                console.log('devices: ' + devices.length);
+                //console.log('devices: ' + devices.length);
                 console.log(devices);
                 if (vm.selectedDevice === null && devices !== null && devices.length > 0) {
                     for (var i = devices.length - 1; i >= 0; --i) {
@@ -127,7 +127,9 @@
                 }
             });
         }
-
+        vm.test = function(){
+            vm.step = vm.steps.refresh;
+        };
         function deviceAdd(data) {
             if (vm.selectedDevice === null && data.size >= usbDeviceMinSize) {
                 vm.selectedDevice = data;

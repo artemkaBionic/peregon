@@ -63,6 +63,9 @@ function getItem(id, callback) {
     // });
     request({
         uri: API_URL2 + '/aarons/inventorylookup' + id,
+        headers: {
+            'Authorization': config.api2Authorization
+        },
         method: "GET"
     }, function(error, response) {
         if (error) {
