@@ -61,12 +61,13 @@ function getItem(id, callback) {
     //         callback({error: null, item: body});
     //     }
     // });
+
     request({
-        uri: API_URL2 + '/aarons/inventorylookup' + id,
+        rejectUnauthorized: false,
+        uri: API_URL + '/aarons/inventorylookup' + id,
         headers: {
             'Authorization': config.api2Authorization
-        },
-        method: "GET"
+        }
     }, function(error, response) {
         if (error) {
             console.error(error);
