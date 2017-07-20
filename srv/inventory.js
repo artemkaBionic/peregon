@@ -76,7 +76,12 @@ function getItem(id, callback) {
         else {
             console.log('Server returned: ');
             console.log(response.body);
-            callback({error: null, item: JSON.parse(response.body)});
+            if (!JSON.parse(response.body).message){
+                callback({error: null, item: JSON.parse(response.body)});
+            } else {
+                callback({error: null, item: null});
+            }
+
         }
     });
 }
