@@ -14,7 +14,7 @@ var decoder = new StringDecoder('utf8');
 // The Windows package contains an unused image file (install.wim) and inefficient driver collections.
 // We need to remove and replace these large files.
 // In the meantime, we use the --exclude parameter to make sure we don't copy them to the USB drive
-var rsyncParameters = '--recursive --copy-links --times --modify-window=1 --delete-before --no-inc-recursive --exclude=Packages/97fc1b7c-049f-4933-88e5-cb19362e3360/Images/install.wim --exclude=Packages/97fc1b7c-049f-4933-88e5-cb19362e3360/Drivers/HP-* --exclude=Packages/97fc1b7c-049f-4933-88e5-cb19362e3360/Drivers/Hewlett-Packard-* --exclude=Packages/97fc1b7c-049f-4933-88e5-cb19362e3360/Drivers/Dell-*';
+var rsyncParameters = '--recursive --copy-links --times --modify-window=1 --delete-before --no-inc-recursive --exclude=packages/97fc1b7c-049f-4933-88e5-cb19362e3360/Images/install.wim --exclude=packages/97fc1b7c-049f-4933-88e5-cb19362e3360/Drivers/HP-* --exclude=packages/97fc1b7c-049f-4933-88e5-cb19362e3360/Drivers/Hewlett-Packard-* --exclude=packages/97fc1b7c-049f-4933-88e5-cb19362e3360/Drivers/Dell-*';
 
 var io = null;
 var timeStarted = null;
