@@ -125,9 +125,9 @@
                 }
             });
         }
-        vm.test = function(){
-            vm.step = vm.steps.refresh;
-        };
+        // vm.test = function(){
+        //     vm.step = vm.steps.refresh;
+        // };
         function deviceAdd(data) {
             if (vm.selectedDevice === null && data.size >= usbDeviceMinSize) {
                 vm.selectedDevice = data;
