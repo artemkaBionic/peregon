@@ -16,6 +16,7 @@ const sessions = require('./sessionCache');
 const UNSENT_SESSIONS_DIRECTORY = config.kioskDataPath + '/unsentSessions';
 const INVENTORY_LOOKUP_URL = 'https://' + config.apiHost + '/api/inventorylookup/';
 const API_URL = 'https://api2.basechord.com';
+//const API_URL2 = 'http://localhost:3000';
 const RESEND_SESSIONS_INTERVAL = 900000; // 15 minutes
 
 var isDevelopment = process.env.NODE_ENV === 'development';
@@ -39,9 +40,9 @@ resendSessions();
 setInterval(function() {
     resendSessions();
 }, RESEND_SESSIONS_INTERVAL);
-
-
-function getItem(id, callback) {
+// Reverse lookup to Azure in case if not found in our Mongo DB
+function getItemFromAzure(id, callback){
+    console.log('Getting item from azure with Item Id: ' + id);
     request({
         url: INVENTORY_LOOKUP_URL + id,
         headers: {
@@ -55,9 +56,35 @@ function getItem(id, callback) {
             callback({error: error, item: null});
         }
         else {
-            console.log('Server returned: ');
+            console.log('Azure server returned: ');
             console.log(body);
             callback({error: null, item: body});
+        }
+    });
+}
+// Item lookup from our Mongo DB
+function getItem(id, callback) {
+    request({
+        rejectUnauthorized: false,
+        uri: API_URL + '/aarons/inventorylookup' + id,
+        headers: {
+            'Authorization': config.api2Authorization
+        }
+    }, function(error, response) {
+        if (error) {
+            console.error(error);
+            callback({error: error, item: null});
+        }
+        else {
+            console.log('NodeJS server returned: ');
+            console.log(response.body);
+            if (!JSON.parse(response.body).message){
+                callback({error: null, item: JSON.parse(response.body)});
+            } else {
+                console.log('Calling reverse lookup from Azure with Id: ' + id);
+                getItemFromAzure(id, callback);
+            }
+
         }
     });
 }

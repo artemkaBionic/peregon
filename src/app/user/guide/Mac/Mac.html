@@ -22,6 +22,8 @@
     </div>
   </header>
   <div horizontal-ui-sheet-content>
+
+    <button ng-click="vm.test()">test</button>
     <div class="row">
       <ul id="progress-tracker" data-steps="3">
         <li ng-class="{'active': vm.step.number === 1}">
@@ -37,28 +39,27 @@
       <div id="first" ng-switch-when="prepareUSBdrive">
         <div ng-switch="vm.substep.name" class="row wizard">
           <div id="zeroSubstate" ng-switch-when="checkCondition">
-            <div class="instruction-header">
+            <div style="text-align: center">
               <h2>Make sure that:</h2>
+              <div class="instruction-list-container" style="margin: 0 auto; text-align: left">
+                <ul class="instruction-list">
+                  <li>
+                    Mac turns on;
+                  </li>
+                  <li>
+                    Screen and casing are in good condition;
+                  </li>
+                  <li>
+                    Keyboard and touchpad are working;
+                  </li>
+                </ul>
+              </div>
             </div>
-            <div class="row">
-              <ul class="instruction-list">
-                <li>
-                  Mac turns on
-                </li>
-                <li>
-                  Screen and casing are in good condition
-                </li>
-                <li>
-                  Keyboard and touchpad are working
-                </li>
-              </ul>
-            </div>
-            <div class="row instruction-buttons">
-              <button style="margin-right: 25px" class="btn btn-success btn-rounded" type="submit"
-                      ng-click="vm.prepareRefreshUsbStart()">
+            <div class="row text-center">
+              <button style="margin-right: 25px;margin-top:5px" class="instruction-btn btn btn-success btn-rounded" type="submit" ng-click="vm.prepareRefreshUsbStart()">
                 Mac is in good condition
               </button>
-              <button class="btn btn-danger btn-rounded" type="submit" ng-click="vm.finishFailed();">
+              <button style="margin-top:5px" class="instruction-btn btn btn-danger btn-rounded" type="submit" ng-click="vm.finishFailed();">
                 Mac is in poor condition or faulty
               </button>
             </div>

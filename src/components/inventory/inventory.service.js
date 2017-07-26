@@ -19,15 +19,16 @@
         function isValidItem(item) {
             return item && item.Sku;
         }
-
+        var canceller = $q.defer();
         service.getItem = function(id) {
             var url = '/data/inventory/' + id;
-            var deferred = $q.defer();
+            canceller.resolve(null);
+            canceller = $q.defer();
 
             if (isValidItem(service.items[id])) {
-                deferred.resolve(service.items[id]);
+                canceller.resolve(service.items[id]);
             } else {
-                $http.get(url).then(function(result) {
+                $http.get(url, {timeout: canceller.promise}).then(function(result) {
                     if (result.data.error) {
                         stationService.getConnectionState().then(function(connectionState) {
                             if (connectionState.isOnline) {
@@ -57,12 +58,13 @@
                     }
 
                     else if (isValidItem(result.data.item)) {
+                        console.log('valid item');
                         service.items[id] = result.data.item;
-                        deferred.resolve(result.data.item);
+                        canceller.resolve(result.data.item);
                     }
 
                     else {
-                        deferred.reject();
+                        canceller.reject();
                         service.ErrorToast = true;
                         // toastr.clear(service.ErrorToast);
                         // service.ErrorToast = toastr.error('Please try again','Item not found', {
@@ -77,7 +79,7 @@
                 });
             }
 
-            return deferred.promise;
+            return canceller.promise;
         };
 
         service.lock = function(itemNumber) {

@@ -1,0 +1,170 @@
+<horizontal-ui-sheet class="apc-sheet-full">
+  <header class="guide-header">
+    <div class="row header-row">
+      <div class="col-sm-7 header-col">
+        <div class="header-middle-col">
+          <div class="home-link" ng-click="vm.refreshEnd()">
+            <div class="home-button">
+              <i class="fa fa-home home-button-icon"></i>
+              <span class="home-button-text">Home</span>
+            </div>
+            <img class="guide-logo" src="/assets/images/Logo.png">
+          </div>
+          <div class="home-header">Apple device refresh</div>
+        </div>
+      </div>
+      <div class="col-sm-5 header-col">
+        <div class="header-middle-col-right">
+          <!--<i class="fa fa-apple header-item-icon"></i>-->
+          <div class="home-header-right">{{vm.item.Description}}</div>
+        </div>
+      </div>
+    </div>
+  </header>
+  <div horizontal-ui-sheet-content>
+    <div class="row">
+      <ul id="progress-tracker" data-steps="2">
+        <li ng-class="{'active': vm.step.number === 1}">
+          <span>Preparation</span></li>
+        <li ng-class="{'active': vm.step.number === 2}">
+          <span>Refresh Instruction</span></li>
+        </li>
+      </ul>
+    </div>
+    <form name="inspection-form" class="content-finish" novalidate ng-show="vm.substep.name === 'instruction'">
+      <div class="inspect-mode">
+        <div class="row text-center">
+          <span style="font-size: 20px; font-weight: 400;margin-left: -3%" data-toggle="tooltip">Is refresh successful?
+            <i ng-click="vm.openHelpModal('xxs','If after going through steps device rebooted with factory settings then refresh was successful.','')" class="fa fa-question-circle" aria-hidden="true"></i>
+            <button ng-click="vm.refreshSuccess()" style="border-radius: 10%" class="btn btn-success btn-sm">Yes</button>
+            <button ng-click="vm.refreshFailed();" style="border-radius: 10%" class="btn btn-danger btn-sm">No</button>
+          </span>
+        </div>
+      </div>
+    </form>
+    <div id="relative"  ng-show="vm.substep.name === 'instruction'">
+      <h2 style="text-align: center; color:black;padding-bottom: 15px">Follow this steps to refresh Apple device:</h2>
+      <div class="instruction-list-container-lg " style="margin: 0 auto; text-align: left;font-size:12px">
+        <div class="instruction-list">
+          <p>1. Open <b>iTunes</b> on your Mac or PC;</p>
+          <p class="lg-line-height">
+          <p>2. Connect your <b>iPhone, iPad, or iPod</b> to your computer with the cable that came with your device;</p>
+          <div class="row">
+            <div class="col-xs-7">
+              <p>3. In the Summary panel, click <b>Restore Apple device</b>;</p>
+            </div>
+            <div class="col-xs-5 text-center">
+              <div class="instruction-img-border" style="margin-top: 10px">
+                <img class="instruction-img" ng-click="vm.openModal('https://support.apple.com/library/content/dam/edam/applecare/images/en_US/mac_apps/itunes/macos-itunes12-5-device-summary-restore.jpg')" src="https://support.apple.com/library/content/dam/edam/applecare/images/en_US/mac_apps/itunes/macos-itunes12-5-device-summary-restore.jpg">
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-7">
+              <p>4. Click <b>Restore</b> again to confirm;</p>
+            </div>
+            <div class="col-xs-5 text-center">
+              <div class="instruction-img-border" style="margin-top: 10px" >
+                <img class="instruction-img" ng-click="vm.openModal('https://support.apple.com/library/content/dam/edam/applecare/images/en_US/mac_apps/itunes/macos-itunes12-5-confirm-factory-restore.jpg')" src="https://support.apple.com/library/content/dam/edam/applecare/images/en_US/mac_apps/itunes/macos-itunes12-5-confirm-factory-restore.jpg">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <br>
+      <div id="lastStep">
+        <div class="instruction-list-container-lg " style="margin: 0 auto; text-align: left;">
+          <div class="instruction-list" style="margin-bottom: 20px!important;">
+            <p class="lg-line-height">
+              5. After a restore, the iOS device restarts. You should then see <b>Slide to set up</b>. Follow the steps in the
+              iOS Setup Assistant.
+            </p>
+          </div>
+        </div>
+        <div id="checkButtons" class="row text-center">
+          <h2 style="text-align: center; color:black;padding-bottom: 5px">Is refresh successful?</h2>
+          <button style="margin-right: 25px;margin-top:5px" class="instruction-btn btn btn-success btn-rounded" type="submit" ng-click="vm.refreshSuccess()">
+            Refresh successful
+          </button>
+          <button style="margin-top:5px" class="instruction-btn btn btn-danger btn-rounded" type="submit" ng-click="vm.refreshFailed();">
+            Refresh failed
+          </button>
+        </div>
+        <br>
+      </div>
+      <!-- The Modal -->
+      <div id="myModal" class="modal-instruction absolute block" ng-click="vm.close()">
+        <img class="modal-content-guide centered" id="img01">
+      </div>
+    </div>
+    <div ng-switch="vm.step.name" class="row wizard ">
+      <div id="first" ng-switch-when="prepare">
+        <div ng-switch="vm.substep.name" class="row wizard">
+          <div ng-switch-when="checkCondition">
+            <div style="text-align: center">
+              <h2>Inspect the device and make sure that:</h2>
+              <div class="instruction-list-container" style="margin: 0 auto; text-align: left">
+                <ul class="instruction-list">
+                  <li>
+                    Device turns on;
+                  </li>
+                  <li>
+                    Screen and casing are in good condition;
+                  </li>
+                  <li>
+                    Touchscreen and buttons are working;
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div  class="row text-center">
+              <button style="margin-right: 25px;margin-top:5px" class="instruction-btn btn btn-success btn-rounded" type="submit" ng-click="vm.deviceGood()">
+                Device is in good condition
+              </button>
+              <button style="margin-top:5px" class="instruction-btn btn btn-danger btn-rounded" type="submit" ng-click="vm.deviceBad();">
+                Device is in poor condition or faulty
+              </button>
+            </div>
+          </div>
+          <div ng-switch-when="deviceBroken">
+            <div class="text-align-center">
+              <i class="fa fa-ban warning-icon"></i>
+              <h2>Device needs to be repaired</h2>
+              <h3 class="text-align-center">Ship it to Aaron's Service
+                Center for repair</h3>
+            </div>
+            <div class="row nav-btn">
+              <button class="btn btn-primary btn-rounded center" ng-click="vm.refreshEnd()">
+                Finish <i class="fa fa-caret-right"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div ng-switch-when="refresh">
+        <div ng-switch="vm.substep.name" class="row wizard">
+          <div id="fifthSubstate" ng-switch-when="refreshSuccess">
+            <div class="text-center" style="margin-top: 5%">
+              <i style="color:forestgreen" class="fa fa-check-circle fa-5x" aria-hidden="true"></i>
+              <h2>Success</h2>
+              <h3>You have successfully refreshed Apple device.</h3>
+              <button style="margin-top: 1%" class="btn-primary btn-rounded" ng-click="vm.refreshEnd()">Finish</button>
+            </div>
+          </div>
+          <div id="sixthSubstate" ng-switch-when="rerfeshFailed">
+            <div class="text-center" style="margin-top: 5%">
+              <i style="color: darkred" class="fa fa-minus-circle fa-5x" aria-hidden="true"></i>
+              <h2 style="margin-top: 2%">Apple device refresh failed.</h2>
+              <h4 style="margin-top: 2%">Ship device to Aaron's service center or retry going through steps.</h4>
+              <button style="margin-top: 1%" class="btn-primary btn-rounded" ng-click="vm.retry()">Retry</button>
+              <button style="margin-top: 1%" class="btn-danger btn-rounded" ng-click="vm.refreshEnd()">Finish</button>
+            </div>
+          </div>
+          <div ng-switch-when="instruction">
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</horizontal-ui-sheet>
