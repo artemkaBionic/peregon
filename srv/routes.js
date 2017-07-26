@@ -5,7 +5,10 @@ var config = require('./config');
 var inventory = require('./inventory.js');
 var station = require('./station.js');
 var controller = require('./usbonly/controller');
-
+var simultaneous = require('./simultaneous/simultaneous');
+var adb = require('adbkit');
+var Promise = require('bluebird');
+var client = adb.createClient();
 module.exports = function(io, data) {
 // Express Router
     var router = express.Router();
@@ -197,7 +200,12 @@ module.exports = function(io, data) {
             }
         });
     });
-
+    router.post('/trackDevices', function(req, res) {
+        simultaneous.deviceBridge(io).then(function(response){
+            res.status(200).send();
+            //console.log('App installed for device: ' + response);
+        });
+    });
 
     return router;
 };
