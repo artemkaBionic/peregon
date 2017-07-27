@@ -5,35 +5,28 @@
         .module('app.user')
         .controller('SimultaneousController', SimultaneousController);
 
-    SimultaneousController.$inject = ['socketService', '$http'];
+    SimultaneousController.$inject = ['socketService', '$http', 'inventoryService'];
 
-    function SimultaneousController(socketService, $http) {
+    function SimultaneousController(socketService, $http, inventoryService) {
         var vm = this;
         vm.items = [];
-        activate();
-        socketService.on('device-added', function(data) {
-            console.log('device added:' + JSON.stringify(data));
+        socketService.on('android-add', function() {
+          //  console.log('device added:' + JSON.stringify(data));
+           // inventoryService.updateSession(vm.item.InventoryNumber, 'Info', 'Android device connected.');
             vm.item = {};
-            vm.item.deviceId = data.device;
+            //vm.item.deviceId = data.device;
             vm.item.status = 'Device added';
             vm.item.date = new Date();
             vm.items.push(vm.item);
             console.log(vm.items);
         });
-        socketService.on('app-installed', function(data) {
+        socketService.on('app-installed', function() {
             for (var i = 0;i < vm.items.length; i++){
-                if (vm.items[i].deviceId === data.device){
+                //if (vm.items[i].deviceId === data.device){
                     vm.items[i].status = 'Refresh App installed';
-                }
+              //  }
             }
         });
-        function activate() {
-            $http({
-                url: '/trackDevices',
-                method: 'POST'
-            }).then(function(response) {
-                console.log(response);
-            });
-        }
+
     }
 })();
