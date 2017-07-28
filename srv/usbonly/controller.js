@@ -46,6 +46,9 @@ exports.readSession = function(io, data, callback) {
                 }
             } else {
                 try {
+                    // Remove non-printable characters
+                    data = data.replace(/[^\x20-\x7E]+/g, '');
+
                     var usbSession = JSON.parse(data);
                     console.log('Refresh Session details:');
                     console.log(usbSession);

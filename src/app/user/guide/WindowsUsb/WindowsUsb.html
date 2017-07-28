@@ -46,43 +46,27 @@
                 <div class="instruction-list-container" style="margin: 0 auto; text-align: left">
                   <ul class="instruction-list">
                     <li>
-                      Laptop turns on;
+                      Laptop turns on
                     </li>
                     <li>
-                      Screen and casing are in good condition;
+                      Screen and casing are in good condition
                     </li>
                     <li>
-                      Keyboard works;
+                      Keyboard works
                     </li>
                   </ul>
                 </div>
               </div>
-              <!--<div class="row">-->
-                <!--<ul class="instruction-list">-->
-                  <!--<li>-->
-                    <!--Laptop turns on;-->
-                  <!--</li>-->
-                  <!--<li>-->
-                    <!--Screen and casing are in good condition;-->
-                  <!--</li>-->
-                  <!--<li>-->
-                    <!--Keyboard works;-->
-                  <!--</li>-->
-                <!--</ul>-->
-              <!--</div>-->
               <div class="row text-center">
                 <button style="margin-right: 25px;margin-top:5px" class="instruction-btn btn btn-success btn-rounded" type="submit" ng-click="vm.prepareRefreshUsbStart()">
                   Laptop is in good condition
                 </button>
                 <button style="margin-top:5px" class="instruction-btn btn btn-danger btn-rounded" type="submit" ng-click="vm.finishFailed();">
-                  Laptop is in bad condition or faulty
+                  Laptop is in poor condition or faulty
                 </button>
               </div>
             </div>
             <div id="firstSubstate" ng-switch-when="insertUsbToStation">
-              <!--<div class="row">-->
-                <!--<button ng-click="vm.showGuide()">Show Guide</button>-->
-              <!--</div>-->
               <div class="row wizard-contents text-center">
                 <h3>Insert a 32GB or larger USB drive</h3>
                 <h4>Warning: If the USB drive has not been initialized as a "Refresh Drive", it's contents will be erased!</h4>
@@ -95,7 +79,7 @@
             <div id="secondSubstate" ng-switch-when="usbLoading">
               <div class="row wizard-contents text-center">
                 <h2>Preparing USB drive for Windows refresh</h2>
-                <h3>This may take up to 30 minutes...</h3>
+                <h3>This may take up to 15 minutes...</h3>
               </div>
               <div class="row wizard-contents text-center">
                 <div class="center circle-bar">
@@ -110,8 +94,7 @@
               <div class="text-align-center">
                 <i class="fa fa-ban warning-icon"></i>
                 <h2>Windows laptop needs to be repaired</h2>
-                <h3 class="text-align-center">Ship it to Aaron's Service
-                  Center for repair</h3>
+                <h3 class="text-align-center">Ship it to Aaron's Service Center for repair</h3>
               </div>
               <div class="row nav-btn">
                 <button class="btn btn-primary btn-rounded center" ng-click="vm.refreshEnd()">
@@ -151,8 +134,8 @@
             <div id="fifthSubstate" ng-switch-when="refreshSuccess">
               <div class="text-center" style="margin-top: 5%">
                 <i style="color:forestgreen" class="fa fa-check-circle fa-5x" aria-hidden="true"></i>
-              <h2>Success</h2>
-			  <h3>You have successfully refreshed the Windows laptop</h3>
+                <h2>Success</h2>
+                <h3>You have successfully refreshed the Windows laptop</h3>
                 <button style="margin-top: 1%" class="btn-primary btn-rounded" ng-click="vm.refreshEnd()">Finish</button>
               </div>
             </div>
