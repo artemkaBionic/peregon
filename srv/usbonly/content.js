@@ -51,7 +51,9 @@ function copyFiles(contentTemp, copyFilesSize, totalSize, callback) {
     var sentProgress = 0;
     var progressRatio = copyFilesSize / totalSize;
 
-    var rsync = spawn('script', ['-c', 'rsync ' + rsyncParameters + ' --info=progress2 ' + path.join(contentTemp, '*') + ' /mnt/']);
+    var rsyncCommand = 'rsync ' + rsyncParameters + ' --info=progress2 ' + path.join(contentTemp, '*') + ' /mnt/';
+    console.log('Running command "' + rsyncCommand + '"');
+    var rsync = spawn('script', ['-c', rsyncCommand]);
 
     rsync.stdout.on('data', function(data) {
         var message = decoder.write(data);
@@ -87,7 +89,9 @@ function applyMacImage(device, macImageSize, totalSize, callback) {
     var sentProgress = 0;
     var progressRatio = macImageSize / totalSize;
 
-    var dd = spawn('script', ['-c', 'dd bs=4M if=' + config.macContent + ' | pv --numeric --size ' + macImageSize + ' | dd bs=4M of=/dev/' + device + config.usbMacPartition]);
+    var ddCommand = 'dd bs=4M if=' + config.macContent + ' | pv --numeric --size ' + macImageSize + ' | dd bs=4M of=/dev/' + device + config.usbMacPartition;
+    console.log('Running command "' + ddCommand + '"');
+    var dd = spawn('script', ['-c', ddCommand]);
 
     dd.stdout.on('data', function(data) {
         var message = decoder.write(data);
