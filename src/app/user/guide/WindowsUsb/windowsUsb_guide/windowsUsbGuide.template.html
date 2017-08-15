@@ -1,7 +1,19 @@
 <div id="relative" class="">
-  <h1 class="guide-caption text-center" style="color:black">Follow this steps to refresh laptop:</h1>
+  <h1 class="guide-caption text-center" style="color:black">Follow these steps to refresh the laptop:</h1>
   <!--HP Guide-->
   <div ng-show="vm.hp">
+    <div class="row instruction-row" >
+      <div class="col-xs-4">
+        <ul>
+          <li>Insert USB drive into the laptop. Preferably, use the SuperSpeed (SS) USB 3.0 port.</li>
+        </ul>
+      </div>
+      <div class="col-xs-4 text-center">
+        <div class="instruction-img-border">
+          <img class="instruction-img" ng-click="vm.openModal('../../../../../assets/images/usb3Port.jpg')" src="../../../../../assets/images/usb3Port.jpg">
+        </div>
+      </div>
+    </div>
     <div class="row instruction-row" >
       <div class="col-xs-4">
         <ul>
@@ -17,7 +29,7 @@
     <div class="row instruction-row">
       <div class="col-xs-4">
         <ul>
-          <li>When the boot menu appears, select "USB Hard Drive (UEFI)" and press Enter. Then follow instructions.</li>
+          <li>When the boot menu appears, select "USB Hard Drive (UEFI)" and press Enter.</li>
         </ul>
       </div>
       <div class="col-xs-4 text-center">
@@ -26,9 +38,29 @@
         </div>
       </div>
     </div>
+    <div class="row instruction-row">
+      <div class="col-xs-4">
+        <ul>
+          <li>When the Refresh Environment has loaded, follow the instructions to start the refresh.</li>
+          <li>After the refresh is finished, click the OK button to turn off the computer.</li>
+        </ul>
+      </div>
+    </div>
   </div>
   <!--DELL Guide-->
   <div ng-show="vm.dell">
+    <div class="row instruction-row" >
+      <div class="col-xs-4">
+        <ul>
+          <li>Insert USB drive into the laptop. Preferably, use the SuperSpeed (SS) USB 3.0 port.</li>
+        </ul>
+      </div>
+      <div class="col-xs-4 text-center">
+        <div class="instruction-img-border">
+          <img class="instruction-img" ng-click="vm.openModal('../../../../../assets/images/usb3Port.jpg')" src="../../../../../assets/images/usb3Port.jpg">
+        </div>
+      </div>
+    </div>
     <div class="row instruction-row" >
       <div class="col-xs-4">
         <ul>
@@ -44,13 +76,21 @@
     <div class="row instruction-row">
       <div class="col-xs-4">
         <ul>
-          <li>When the boot menu appears, select "USB1 - UEFI OS" and press Enter. Then follow instructions.</li>
+          <li>When the boot menu appears, select "USB1 - UEFI OS" and press Enter.</li>
         </ul>
       </div>
       <div class="col-xs-4 text-center">
         <div class="instruction-img-border">
           <img class="instruction-img" ng-click="vm.openModal('../../../../../assets/images/bootDell.jpg')" src="../../../../../assets/images/bootDell.jpg">
         </div>
+      </div>
+    </div>
+    <div class="row instruction-row">
+      <div class="col-xs-4">
+        <ul>
+          <li>When the Refresh Environment has loaded, follow the instructions to start the refresh.</li>
+          <li>After the refresh is finished, click the OK button to turn off the computer.</li>
+        </ul>
       </div>
     </div>
   </div>
