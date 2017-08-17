@@ -63,9 +63,9 @@ function getItem(id, callback) {
     });
 }
 
-function getSerialLookup(serial, callback) {
+function getSerialLookup(imei, callback) {
     request({
-        url: SERIAL_LOOKUP_URL + serial,
+        url: SERIAL_LOOKUP_URL + imei,
         headers: {
             'Authorization': config.apiAuthorization
         },
