@@ -111,8 +111,9 @@ function deviceBridge(io) {
          aaronsLogcat.stdout.on('data', function (data) {
               console.log(decoder.write(data));
               if (decoder.write(data).includes('AppStartedCommand')) {
-                  var appStartedData = JSON.parse(decoder.write(data).match(/\{([\S\s]*)}/)[0]);
-                  imei = appStartedData.data.imei;
+                  var appStartedData = decoder.write(data).substring(decoder.write(data).indexOf("{"));
+                  var appStartedDataJson = JSON.parse(appStartedData);
+                  imei = appStartedDataJson.data.imei;
                   getSerialLookup(imei).then(function(res) {
                       startSession(res.item);
                   }).catch(function(err) {
