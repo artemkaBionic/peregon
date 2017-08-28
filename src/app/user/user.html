@@ -1,5 +1,5 @@
 <section  horizontal-ui-sheet class="gray-light-bg apc-sheet-full">
-    <div class="content-full-height-scroll" buffered-scroll="increaseLimit();" ng-init="limit=7;">
+    <div class="content-full-height-scroll" buffered-scroll="vm.increaseLimit();">
       <header class="front-general" user-header></header>
       <div id="Header-anchor"></div>
       <form ng-submit="vm.showGuide()" style="height: 165px">
@@ -123,7 +123,7 @@
             <div id="background"><br/></div>
           </div>
           <ul class="list-group">
-            <li class="list-group-item simultaneous-item" ng-repeat="session in vm.dummySessions | inputFilter:vm.filterParam | orderBy:vm.sortType:vm.sortReverse | limitTo:limit track by $index">
+            <li class="list-group-item simultaneous-item" ng-repeat="session in vm.sessions | inputFilter:vm.filterParam | orderBy:vm.sortType:vm.sortReverse | limitTo:limit track by $index">
               <div class="row">
                 <div class="col-xs-7 ">
                   <div class="row">

@@ -12,7 +12,7 @@ var decoder = new StringDecoder('utf8');
 var inventory = require('../inventory');
 exports.deviceBridge = deviceBridge;
 function deviceBridge(io) {
-
+    var devices = [];
     console.log('Device bridge started');
     client.trackDevices()
         .then(function (tracker) {
@@ -28,6 +28,10 @@ function deviceBridge(io) {
             });
             tracker.on('remove', function(device) {
                 console.log('Device %s was unplugged', device.id);
+                var index = devices.indexOf(device.id);
+                if (index > -1) {
+                    devices.splice(index, 1);
+                }
                 io.emit('android-remove',{});
             });
         })
@@ -75,7 +79,7 @@ function deviceBridge(io) {
                     io.emit('app-installed', {device: serial});
                     // clear logcat before start the app
                     clearLogcat(serial).then(function(serialNo){
-                        startApp(serialNo)
+                        checkDeviceProgress(serialNo)
                     }).catch(function(err) {
                         console.log('Something went wrong while clearing logcat for device: ' + serial + ' Error:' + err.stack)
                     });
@@ -84,12 +88,27 @@ function deviceBridge(io) {
                })
         });
     }
-    function startApp(serial, inventoryNumber) {
+
+    function checkDeviceProgress(serial) {
+        console.log(devices.length + ' devices in process');
+        if(devices.length === 0){
+            console.log('Launching refresh app on device:' + serial);
+            devices.push(serial);
+            console.log(devices);
+            startApp(serial);
+        } else if(devices.indexOf(serial) === -1){
+            console.log('Launching refresh app on device:' + serial);
+            devices.push(serial);
+            console.log(devices);
+            startApp(serial);
+        }
+    }
+    function startApp(serial) {
         return client.shell(serial, 'am start -n com.basechord.aarons.androidrefresh.basechord/com.basechord.aarons.androidrefresh.basechord.app.MainActivity -a android.intent.action.MAIN -c android.intent.category.LAUNCHER')
             .then(adb.util.readAll)
             .then(function (output) {
                 console.log('[%s] %s', serial, output.toString().trim());
-                readLogcat(serial, inventoryNumber);
+                readLogcat(serial);
             }).catch(function(err) {
                 console.error('Something went wrong while launching the app on device: ' + serial + ' Error:' + err.stack)
             });
@@ -132,8 +151,6 @@ function deviceBridge(io) {
                           startSession(res.item);
                           io.emit('app-start', appStartedDataJson);
                       }).catch(function (err) {
-                          startSession(dummyItem);
-                          io.emit('app-start', appStartedDataJson);
                           console.log('Failed to get serial number because of: ' + err);
                       });
 
@@ -142,14 +159,13 @@ function deviceBridge(io) {
                       getSerialLookup(imei).then(function (res) {
                           if (passedTests.length === (appStartedDataJson.data.auto + appStartedDataJson.data.manual)) {
                               finishSession(res.item.InventoryNumber, {'complete': true});
-                              io.emit('android-reset', {'status': 'Refresh Successful', 'itemNumber': res.item.InventoryNumber});
+                              io.emit('android-reset', {'status': 'Refresh Successful', 'imei': res.item.Serial});
                           } else {
                               finishSession(res.item.InventoryNumber, {'complete': false});
-                              io.emit('android-reset', {'status': 'Refresh Failed', 'itemNumber': res.item.InventoryNumber});
+                              io.emit('android-reset', {'status': 'Refresh Failed', 'imei': res.item.Serial});
                           }
                           console.log(sessions.get(res.item.InventoryNumber));
                       }).catch(function (err) {
-                          //finishSession(dummyItem, {'complete': false});
                           console.log('Failed to get serial number because of: ' + err);
                       });
 
@@ -167,12 +183,10 @@ function deviceBridge(io) {
                           getSerialLookup(imei).then(function (res) {
                               updateSession(res.item.InventoryNumber, 'Info', message, testResultJson.data);
                           }).catch(function (err) {
-                              //updateSession(dummyItem, 'Info', message, testResultJson.data);
                               console.log('Failed to get serial number because of: ' + err);
                           });
 
                           io.emit("android-test", testResultJson);
-
                       }
                   }
               }
