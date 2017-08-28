@@ -17,6 +17,22 @@ $open-sans-path: '../bower_components/open-sans/fonts';
 @import 'app/decorations';
 $header-height: 13vh;
 
+//.apc-container {
+//  min-height: unset !important;
+//  height: unset !important;
+//  overflow-x: scroll;
+//  white-space: nowrap;
+//
+//  &:after {
+//    display: inline-block;
+//    //    width: 70vw;
+//    width: 0;
+//    content: ' ';
+//    height: 1px;
+//    vertical-align: top;
+//  }
+//}
+
 .content-finish .inspect-mode {
   margin-top: 0;
   margin-bottom: 0;
@@ -64,22 +80,23 @@ $header-height: 13vh;
 
 .text-input {
   position: relative;
-  margin: 14px 8vh;
+  //margin: 14px 8vh;
 }
 
 .text-input input {
   text-indent: 43px;
-  height: 76px;
+  height: 50px;
   line-height: normal;
   font-size: 3vh;
   margin-top: 2px;
   color: #414141;
   border-radius: 4px;
+  width: 300px;
 }
 
 .text-input .fa {
   position: absolute;
-  top: 27px;
+  top: 14px;
   left: 16px;
   font-size: 28px;
   text-align: center;
@@ -868,7 +885,53 @@ button[disabled]:hover {
   height: 300px;
   position: relative;
 }
+.content-full-height-scroll{
+  overflow-x: hidden;
+  overflow-y: auto;
+  height: 100vh;
+}
+.simultaneous-info {
+  border-top: 2px solid rgba(168, 150, 194, 0.7);
+  position: relative;
+  margin: 10px 10px 10px 10px;
+}
+.simultaneous-header{
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.simultaneous-item{
+  margin-bottom:5px;
+ // height: 60px;
+}
+.simultaneous-input{
+  border-radius:4px;
+}
+.simultaneous-table-header{
+  padding: 10px;
+}
+.simultaneous-sort-button {
+  background-color: transparent;
+  border:none;
+  font-size: 18px;
+  font-weight: bold;
 
+}
+.simultaneous-sorting-btn{
+  color:black;
+  text-decoration: none;
+  cursor: pointer;
+}
+.simultaneous-sorting-btn:hover{
+  color:black;
+  text-decoration: none;
+  cursor: pointer;
+}
+.item-error-row{
+  margin-top: 10px;
+}
+.btn-test{
+  border-radius: 4px;
+}
 .item-details {
   font-size: 2em;
   position: absolute;
@@ -885,6 +948,7 @@ button[disabled]:hover {
 .item-button {
   border: none;
   background: inherit;
+  font-size: 15pt;
 }
 
 .item-button:hover {
@@ -1130,6 +1194,7 @@ button[disabled]:hover {
 }
 
 .item-button-error {
+  font-size: 15pt;
   border: none;
   background: inherit;
   color: darkred;
@@ -1809,7 +1874,7 @@ orbicular i {
 }
 
 .guide-logo-small {
-  width: 15vh;
+  width: 25vh;
   position: absolute;
   top: 0;
   bottom: 0;

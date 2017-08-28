@@ -12,7 +12,7 @@ var decoder = new StringDecoder('utf8');
 var inventory = require('../inventory');
 exports.deviceBridge = deviceBridge;
 function deviceBridge(io) {
-    console.log(inventory.getSessions('Android'));
+
     console.log('Device bridge started');
     client.trackDevices()
         .then(function (tracker) {
@@ -49,7 +49,7 @@ function deviceBridge(io) {
     function startSession(item){
         inventory.sessionStart(item.InventoryNumber, item, function(){
             console.log('Session for device with inventory number:' + item.InventoryNumber + ' had started');
-        })
+        });
     }
     function updateSession(inventoryNumber, level, message, details){
         inventory.sessionUpdate(inventoryNumber, level, message, details, function(err) {
@@ -105,64 +105,76 @@ function deviceBridge(io) {
             resolve(serial);
         })
     }
+    function IsJsonString(str) {
+        try {
+            JSON.parse(str);
+        } catch (e) {
+            return false;
+        }
+        return true;
+    }
     function readLogcat(serial) {
          console.log('Reading logcat for device: ' + serial);
          var aaronsLogcat = spawn('adb', ['-s' ,serial ,'logcat' , '-s', 'Aarons_Result']);
          var passedTests = [];
          var imei = '';
          var appStartedDataJson = '';
+         var dummyItem = {"Sku":"7393TS5","InventoryNumber":"1302762807","StoreCode":"AC01","Model":"Galaxy S5 5.1\"","Manufacturer":"Samsung","Serial":"352570063169276"};
          aaronsLogcat.stdout.on('data', function (data) {
-              if (decoder.write(data).includes('AppStartedCommand')) {
+             //console.log(decoder.write(data));
+              if(IsJsonString(decoder.write(data).substring(decoder.write(data).indexOf("{")))) {
+                  if (decoder.write(data).includes('AppStartedCommand')) {
 
-                  appStartedDataJson = JSON.parse(decoder.write(data).substring(decoder.write(data).indexOf("{")));
-                  imei = appStartedDataJson.data.imei;
+                      appStartedDataJson = JSON.parse(decoder.write(data).substring(decoder.write(data).indexOf("{")));
+                      imei = appStartedDataJson.data.imei;
 
-                  getSerialLookup(imei).then(function(res) {
-                      startSession(res.item);
-                  }).catch(function(err) {
-                      console.log('Failed to get serial number because of: ' + err);
-                  });
+                      getSerialLookup(imei).then(function (res) {
+                          startSession(res.item);
+                          io.emit('app-start', appStartedDataJson);
+                      }).catch(function (err) {
+                          startSession(dummyItem);
+                          io.emit('app-start', appStartedDataJson);
+                          console.log('Failed to get serial number because of: ' + err);
+                      });
 
-                  io.emit('app-start', appStartedDataJson);
+                  } else if (decoder.write(data).includes('VipeStarted')) {
 
+                      getSerialLookup(imei).then(function (res) {
+                          if (passedTests.length === (appStartedDataJson.data.auto + appStartedDataJson.data.manual)) {
+                              finishSession(res.item.InventoryNumber, {'complete': true});
+                              io.emit('android-reset', {'status': 'Refresh Successful', 'itemNumber': res.item.InventoryNumber});
+                          } else {
+                              finishSession(res.item.InventoryNumber, {'complete': false});
+                              io.emit('android-reset', {'status': 'Refresh Failed', 'itemNumber': res.item.InventoryNumber});
+                          }
+                          console.log(sessions.get(res.item.InventoryNumber));
+                      }).catch(function (err) {
+                          //finishSession(dummyItem, {'complete': false});
+                          console.log('Failed to get serial number because of: ' + err);
+                      });
 
-              } else if (decoder.write(data).includes('VipeStarted')) {
+                  } else {
+                      if (!decoder.write(data).includes('beginning')) {
+                          var testResultJson = '';
+                          testResultJson = JSON.parse(decoder.write(data).substring(decoder.write(data).indexOf("{")));
 
-                  getSerialLookup(imei).then(function(res) {
-                      if(passedTests.length === (appStartedDataJson.data.auto + appStartedDataJson.data.manual)){
-                          finishSession(res.item.InventoryNumber, {'complete': true});
-                      } else{
-                          finishSession(res.item.InventoryNumber, {'complete': false});
+                          if (testResultJson.passed === true) {
+                              passedTests.push(testResultJson);
+                          }
+
+                          var message = testResultJson.commandName + ' ' + (testResultJson.passed ? 'passed' : 'failed') + '\n';
+
+                          getSerialLookup(imei).then(function (res) {
+                              updateSession(res.item.InventoryNumber, 'Info', message, testResultJson.data);
+                          }).catch(function (err) {
+                              //updateSession(dummyItem, 'Info', message, testResultJson.data);
+                              console.log('Failed to get serial number because of: ' + err);
+                          });
+
+                          io.emit("android-test", testResultJson);
+
                       }
-                      console.log(sessions.get(res.item.InventoryNumber));
-                  }).catch(function(err) {
-                      console.log('Failed to get serial number because of: ' + err);
-                  });
-
-                  io.emit('android-reset', {});
-
-
-              } else {
-                    if (!decoder.write(data).includes('beginning')) {
-
-                        var testResult = decoder.write(data).substring(decoder.write(data).indexOf("{"));
-                        var testResultJson = JSON.parse(testResult);
-
-                        if (testResultJson.passed === true){
-                            passedTests.push(testResultJson);
-                        }
-
-                        var message = testResultJson.commandName + ' ' + (testResultJson.passed ? 'passed' : 'failed') + '\n';
-
-                        getSerialLookup(imei).then(function(res) {
-                            updateSession(res.item.InventoryNumber,'Info', message, testResultJson.data);
-                        }).catch(function(err) {
-                            console.log('Failed to get serial number because of: ' + err);
-                        });
-
-                        io.emit("android-test", testResultJson);
-
-                    }
+                  }
               }
          });
 

@@ -12,6 +12,7 @@ SessionCache.prototype.set = function(key, session) {
 
 SessionCache.prototype.getFiltered = function(filter) {
     var filteredSessions = {};
+    //console.log(this._sessions);
     for (var key in this._sessions) {
         if (filter.device_type && filter.device_type === this._sessions[key].device.type) {
             filteredSessions[key] = this._sessions[key];
@@ -19,12 +20,15 @@ SessionCache.prototype.getFiltered = function(filter) {
     }
     return filteredSessions;
 };
-
+SessionCache.prototype.getAllSessions = function(){
+    return this._sessions;
+};
 SessionCache.prototype.get = function(key) {
     return this._sessions[key];
 };
 
 SessionCache.prototype.delete = function(key) {
+    //console.log('deleting session key');
     delete this._sessions[key];
 };
 

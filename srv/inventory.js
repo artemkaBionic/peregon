@@ -34,7 +34,7 @@ exports.lockDevice = lockDevice;
 exports.unlockForService = unlockForService;
 exports.unlockDevice = unlockDevice;
 exports.getSerialLookup = getSerialLookup;
-
+exports.getAllSessions = getAllSessions;
 // Periodically resend unsent sessions
 resendSessions();
 setInterval(function() {
@@ -57,6 +57,8 @@ function getItem(id, callback) {
         }
         else {
             console.log('Server returned: ');
+            console.log('this function is called');
+
             console.log(body);
             callback({error: null, item: body});
         }
@@ -87,7 +89,10 @@ function getSerialLookup(imei, callback) {
 function getSessions(filter) {
     return sessions.getFiltered(filter);
 }
-
+function getAllSessions(){
+    console.log('calling get all sessions**********');
+    return sessions.getAllSessions();
+}
 function getSession(itemNumber) {
     return sessions.get(itemNumber);
 }
@@ -268,7 +273,7 @@ function closeSession(session, success, callback) {
         logSession(session, 'Info', 'Refresh failed.');
         session.status = 'Fail';
     }
-    console.log(session);
+   // console.log(session);
     callback(success);
 
     fs.mkdir(UNSENT_SESSIONS_DIRECTORY, function(err) {
@@ -287,7 +292,7 @@ function closeSession(session, success, callback) {
                     console.error('Unable to write the file ' + file + '. Cannot save session for resend!', err);
                     console.error(session);
                 }
-                sessions.delete(session.device.item_number);
+                //sessions.delete(session.device.item_number);
                 sendSession(content, file);
             });
         }

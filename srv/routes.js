@@ -32,6 +32,7 @@ module.exports = function(io, data) {
     });
 
     router.get('/data/inventory/:id', function(req, res) {
+        console.log('request for get item was sent');
         inventory.getItem(req.params.id, function(item) {
             res.json(item);
         });
@@ -58,7 +59,9 @@ module.exports = function(io, data) {
     router.get('/data/inventory/sessions', function(req, res) {
         res.json(inventory.getSessions(req.body));
     });
-
+    router.get('/data/getAllSessions', function(req, res) {
+        res.json(inventory.getAllSessions());
+    });
     router.get('/data/inventory/sessions/:id', function(req, res) {
         res.json(inventory.getSession(req.params.id));
     });
