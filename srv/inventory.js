@@ -90,7 +90,6 @@ function getSessions(filter) {
     return sessions.getFiltered(filter);
 }
 function getAllSessions(){
-    console.log('calling get all sessions**********');
     return sessions.getAllSessions();
 }
 function getSession(itemNumber) {

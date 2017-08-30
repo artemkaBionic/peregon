@@ -80,9 +80,9 @@
               </div>
             </div>
             <div id="firstSubstate" ng-switch-when="insertUsbToStation">
-              <!--<div class="row">-->
-                <!--<button ng-click="vm.showGuide()">Show Guide</button>-->
-              <!--</div>-->
+              <div class="row">
+                <button ng-click="vm.showGuide()">Show Guide</button>
+              </div>
               <div class="row wizard-contents text-center">
                 <h3>Insert a 32GB or larger USB drive</h3>
                 <h4>Warning: If the USB drive has not been initialized as a "Refresh Drive", it's contents will be erased!</h4>
@@ -136,10 +136,10 @@
           <form name="inspection-form" class="content-finish" novalidate ng-submit="vm.finish()">
             <div class="inspect-mode">
               <div class="row text-center">
-                <span style="font-size: 20px; font-weight: 400;margin-left: -3%" >When refresh is complete, reinsert USB drive to continue.
-                  <span style="margin-left: -1.5mm">
-                    <span class="two">.</span><span class="three">.</span>
-                  </span>
+                <span style="font-size: 20px; font-weight: 400;margin-left: -3%" >Don't forget to reinsert USB-drive back to station once refresh was completed.
+                  <!--<span style="margin-left: -1.5mm">-->
+                    <!--<span class="two">.</span><span class="three">.</span>-->
+                  <!--</span>-->
                 </span>
               </div>
             </div>
@@ -152,7 +152,7 @@
               <div class="text-center" style="margin-top: 5%">
                 <i style="color:forestgreen" class="fa fa-check-circle fa-5x" aria-hidden="true"></i>
               <h2>Success</h2>
-			  <h3>You have successfully refreshed the Windows laptop</h3>
+			        <h3>You have successfully refreshed the Windows laptop</h3>
                 <button style="margin-top: 1%" class="btn-primary btn-rounded" ng-click="vm.refreshEnd()">Finish</button>
               </div>
             </div>

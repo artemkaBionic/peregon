@@ -12,6 +12,7 @@ var decoder = new StringDecoder('utf8');
 var inventory = require('../inventory');
 exports.deviceBridge = deviceBridge;
 function deviceBridge(io) {
+    sessions.get('0000000000');
     var devices = [];
     console.log('Device bridge started');
     client.trackDevices()
@@ -88,7 +89,15 @@ function deviceBridge(io) {
                })
         });
     }
-
+    function isSessionStarted(inventoryNumber){
+        console.log('check if session already started for '+ inventoryNumber);
+        //console.log();
+        if (sessions.get(inventoryNumber) !== undefined) {
+            return true;
+        } else {
+            return false;
+        }
+    }
     function checkDeviceProgress(serial) {
         console.log(devices.length + ' devices in process');
         if(devices.length === 0){
@@ -148,13 +157,18 @@ function deviceBridge(io) {
                       imei = appStartedDataJson.data.imei;
 
                       getSerialLookup(imei).then(function (res) {
-                          startSession(res.item);
+                          if( !isSessionStarted(res.item.InventoryNumber) ){
+                              startSession(res.item);
+                          } else {
+                              console.log('Session was started on client side for device ' + res.item.InventoryNumber);
+                          }
                           io.emit('app-start', appStartedDataJson);
                       }).catch(function (err) {
                           console.log('Failed to get serial number because of: ' + err);
                       });
 
-                  } else if (decoder.write(data).includes('VipeStarted')) {
+                  }
+                  else if (decoder.write(data).includes('VipeStarted')) {
 
                       getSerialLookup(imei).then(function (res) {
                           if (passedTests.length === (appStartedDataJson.data.auto + appStartedDataJson.data.manual)) {

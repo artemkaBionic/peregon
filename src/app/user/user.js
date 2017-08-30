@@ -36,6 +36,7 @@
              });
         });
         vm.increaseLimit = function() {
+            console.log('reached bottom');
             if (vm.limit <  vm.sessions.length) {
                 vm.limit += 20;
             }

@@ -12,7 +12,7 @@ var config = require('./config');
 var station = require('./station');
 //var controller = require('./usbonly')
 var simultaneous = require('./simultaneous/simultaneous');
-
+var simultaneousUSB = require('./simultaneous/simultaneous-usb');
 // Express
 var app = express();
 
@@ -20,6 +20,7 @@ var app = express();
 var io = socket_io();
 app.io = io;
 simultaneous.deviceBridge(io);
+//simultaneousUSB.usbBridge();
 // Common data
 var isDevelopment = process.env.NODE_ENV === 'development';
 

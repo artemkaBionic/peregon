@@ -178,7 +178,9 @@
                 }
             });
         }
-
+        // vm.showGuide = function () {
+        //     vm.step = vm.steps.refresh;
+        // };
         function waitForUsbAdd(callback) {
             socketService.off('device-add', deviceAdd);
             if (vm.selectedDevice === null) {

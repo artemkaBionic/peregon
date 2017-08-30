@@ -3,28 +3,25 @@
       <header class="front-general" user-header></header>
       <div id="Header-anchor"></div>
       <form ng-submit="vm.showGuide()" style="height: 165px">
-        <div class="row">
-          <div class="row enterItemNumber">
-            <div class="col-lg-4 col-md-3 col-sm-3">
-            </div>
-            <div class="col-xs-6">
-              <div class="text-input">
-                <span class="fa fa-barcode"></span>
-                <input style="display:unset!important;" maxlength="10" autofocus ng-focus="vm.item === null;" class="form-control item-number-input"
-                       placeholder="Enter Item Number" type="text" ng-model="vm.searchString">
-                <span>
-                  <button style="margin-top: -30px" ng-disabled="vm.item === null" type="submit" class="btn-primary btn-rounded">Start</button>
-                </span>
-                <span>
-                  <button style="margin-top: -30px" ng-show="vm.isServiceCenter && vm.item.Type === 'Android'" type="button"
-                          class="btn-primary btn-rounded" ng-click="vm.unlockForService()">Unlock for Service</button>
-                </span>
+
+      <div class="row">
+        <div id="item-container">
+          <div id="item-centered">
+            <div id="item-background">
+              <div class="inner-addon left-addon">
+                <i class="icon fa fa-barcode" style="font-size: 28pt"></i>
+                <input type="text" maxlength="10" style="font-size: 17pt" autofocus ng-focus="vm.item === null;"class="form-control item-number-input" placeholder="Enter Item Number" type="text" ng-model="vm.searchString"/>
               </div>
-            </div>
-            <div class="col-lg-4 col-md-3 col-sm-3">
+              <div class="item-buttons">
+                <button ng-disabled="vm.item === null" type="submit" class="btn-primary btn-rounded">Start</button>
+              </div>
+              <div class="item-buttons" ng-show="vm.isServiceCenter && vm.item.Type === 'Android'">
+                <button  type="button" class="btn-primary btn-rounded" ng-click="vm.unlockForService()">Unlock for Service</button>
+              </div>
             </div>
           </div>
         </div>
+      </div>
       <div class="row text-center item-error-row">
           <div  ng-hide="vm.item === null">
             <button class="item-button" type="submit"><strong>{{'SKU: '+vm.item.Sku}}</strong><br/>{{vm.item.Description}}
@@ -123,7 +120,7 @@
             <div id="background"><br/></div>
           </div>
           <ul class="list-group">
-            <li class="list-group-item simultaneous-item" ng-repeat="session in vm.sessions | inputFilter:vm.filterParam | orderBy:vm.sortType:vm.sortReverse | limitTo:limit track by $index">
+            <li class="list-group-item simultaneous-item" ng-repeat="session in vm.sessions | inputFilter:vm.filterParam | orderBy:vm.sortType:vm.sortReverse | limitTo:vm.limit track by $index">
               <div class="row">
                 <div class="col-xs-7 ">
                   <div class="row">

@@ -909,6 +909,54 @@ button[disabled]:hover {
 .simultaneous-table-header{
   padding: 10px;
 }
+.item-number-input {
+  text-indent: 43px;
+  height: 50px;
+  line-height: normal;
+  font-size: 3vh;
+  margin-top: 2px;
+  color: #414141;
+  border-radius: 4px;
+  width: 300px;
+}
+.item-buttons{
+  float: left;
+  margin-left: 5px;
+  margin-top: 3px;
+}
+#item-container
+{
+  margin-top: 30px;
+  text-align: center;
+}
+#item-centered
+{
+  display: inline-block;
+}
+#item-background
+{
+  text-align: left;
+}
+.inner-addon {
+  float: left;
+  position: relative;
+}
+
+/* style glyph */
+.inner-addon .icon {
+  position: absolute;
+  padding: 10px;
+  pointer-events: none;
+}
+
+/* align glyph */
+.left-addon .icon  { left:  0px;}
+.right-addon .icon { right: 0px;}
+
+/* add padding  */
+.left-addon input  { padding-left:  10px; }
+.right-addon input { padding-right: 30px; }
+
 .simultaneous-sort-button {
   background-color: transparent;
   border:none;

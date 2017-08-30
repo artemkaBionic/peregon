@@ -9,6 +9,7 @@
                          scrollHeight = element[0].scrollHeight,
                          offsetHeight = element[0].offsetHeight;
                      if ((scrollTop + 1) >= (scrollHeight - offsetHeight)) {
+                         console.log('here');
                          $scope.$apply(function() {
                              handler($scope);
                          });
