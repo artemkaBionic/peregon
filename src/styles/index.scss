@@ -17,22 +17,6 @@ $open-sans-path: '../bower_components/open-sans/fonts';
 @import 'app/decorations';
 $header-height: 13vh;
 
-//.apc-container {
-//  min-height: unset !important;
-//  height: unset !important;
-//  overflow-x: scroll;
-//  white-space: nowrap;
-//
-//  &:after {
-//    display: inline-block;
-//    //    width: 70vw;
-//    width: 0;
-//    content: ' ';
-//    height: 1px;
-//    vertical-align: top;
-//  }
-//}
-
 .content-finish .inspect-mode {
   margin-top: 0;
   margin-bottom: 0;
@@ -2023,7 +2007,13 @@ orbicular i {
   .hidden-md-down {
     display: none;
   }
-
+  .home-header-title {
+    font-size:12pt;
+  }
+  .station-online {
+    height: 28.4px;
+    width: 28.4px;
+  }
   .front-keypad {
     display: block;
   }
