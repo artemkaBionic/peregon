@@ -12,7 +12,6 @@ var decoder = new StringDecoder('utf8');
 var inventory = require('../inventory');
 exports.deviceBridge = deviceBridge;
 function deviceBridge(io) {
-    sessions.get('0000000000');
     var devices = [];
     console.log('Device bridge started');
     client.trackDevices()
