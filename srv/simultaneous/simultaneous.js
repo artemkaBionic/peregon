@@ -14,6 +14,7 @@ exports.deviceBridge = deviceBridge;
 function deviceBridge(io) {
     var devices = [];
     console.log('Device bridge started');
+    var session_date = '';
     client.trackDevices()
         .then(function (tracker) {
             tracker.on('add', function (device) {
@@ -50,22 +51,22 @@ function deviceBridge(io) {
             });
         })
     }
-    function startSession(item){
-        inventory.sessionStart(item.InventoryNumber, item, function(){
-            console.log('Session for device with inventory number:' + item.InventoryNumber + ' had started');
+    function startSession(sessionDate, item){
+        inventory.sessionStart(sessionDate, item, function(){
+            console.log('Session with date stamp:' + sessionDate + ' had started');
         });
     }
-    function updateSession(inventoryNumber, level, message, details){
-        inventory.sessionUpdate(inventoryNumber, level, message, details, function(err) {
+    function updateSession(sessionDate, level, message, details){
+        inventory.sessionUpdate(sessionDate, level, message, details, function(err) {
             if (err) {
                 console.log(err);
             } else {
-                console.log('Session for device with inventory number:' + inventoryNumber + ' was updated');
+                console.log('Session with date stamp:' + sessionDate + ' was updated');
             }
         });
     }
-    function finishSession(inventoryNumber, details){
-        inventory.sessionFinish(inventoryNumber, details, function(result) {
+    function finishSession(sessionDate, details){
+        inventory.sessionFinish(sessionDate, details, function(result) {
             console.log('Session is finished ' + result);
         });
     }
@@ -88,26 +89,15 @@ function deviceBridge(io) {
                })
         });
     }
-    function isSessionStarted(inventoryNumber){
-        console.log('check if session already started for '+ inventoryNumber);
-        //console.log();
-        if (sessions.get(inventoryNumber) !== undefined) {
-            return true;
-        } else {
-            return false;
-        }
-    }
     function checkDeviceProgress(serial) {
         console.log(devices.length + ' devices in process');
         if(devices.length === 0){
             console.log('Launching refresh app on device:' + serial);
             devices.push(serial);
-            console.log(devices);
             startApp(serial);
         } else if(devices.indexOf(serial) === -1){
             console.log('Launching refresh app on device:' + serial);
             devices.push(serial);
-            console.log(devices);
             startApp(serial);
         }
     }
@@ -146,58 +136,52 @@ function deviceBridge(io) {
          var passedTests = [];
          var imei = '';
          var appStartedDataJson = '';
-         var dummyItem = {"Sku":"7393TS5","InventoryNumber":"1302762807","StoreCode":"AC01","Model":"Galaxy S5 5.1\"","Manufacturer":"Samsung","Serial":"352570063169276"};
+         var sessionDate = new Date();
          aaronsLogcat.stdout.on('data', function (data) {
-             //console.log(decoder.write(data));
               if(IsJsonString(decoder.write(data).substring(decoder.write(data).indexOf("{")))) {
+                  // check if app started
                   if (decoder.write(data).includes('AppStartedCommand')) {
-
                       appStartedDataJson = JSON.parse(decoder.write(data).substring(decoder.write(data).indexOf("{")));
                       imei = appStartedDataJson.data.imei;
-
                       getSerialLookup(imei).then(function (res) {
-                          if( !isSessionStarted(res.item.InventoryNumber) ){
-                              startSession(res.item);
-                          } else {
-                              console.log('Session was started on client side for device ' + res.item.InventoryNumber);
-                          }
+                          startSession(sessionDate, res.item);
+                          console.log(sessions.get(sessionDate));
+                          //updateSession(sessionDate, 'Info', 'Android refresh app has started.');
                           io.emit('app-start', appStartedDataJson);
+                      }).catch(function (err) {
+                          console.log('Failed to get serial number because of: ' + err);
+                      });
+                  }
+                  // check if vipe started
+                  else if (decoder.write(data).includes('VipeStarted')) {
+                      getSerialLookup(imei).then(function (res) {
+                          // if passed tests array length = to number of all tests then session was successful
+                          if (passedTests.length === (appStartedDataJson.data.auto + appStartedDataJson.data.manual)) {
+                              updateSession(sessionDate, 'Info', 'Android refresh app has initiated a factory reset.');
+                              finishSession(sessionDate, {'complete': true});
+                              io.emit('android-reset', {'status': 'Refresh Successful', 'imei': res.item.Serial});
+                          } else {
+                              finishSession(sessionDate, {'complete': false});
+                              io.emit('android-reset', {'status': 'Refresh Failed', 'imei': res.item.Serial});
+                          }
+                          console.log(sessions.get(sessionDate));
                       }).catch(function (err) {
                           console.log('Failed to get serial number because of: ' + err);
                       });
 
                   }
-                  else if (decoder.write(data).includes('VipeStarted')) {
-
-                      getSerialLookup(imei).then(function (res) {
-                          if (passedTests.length === (appStartedDataJson.data.auto + appStartedDataJson.data.manual)) {
-                              finishSession(res.item.InventoryNumber, {'complete': true});
-                              io.emit('android-reset', {'status': 'Refresh Successful', 'imei': res.item.Serial});
-                          } else {
-                              finishSession(res.item.InventoryNumber, {'complete': false});
-                              io.emit('android-reset', {'status': 'Refresh Failed', 'imei': res.item.Serial});
-                          }
-                          console.log(sessions.get(res.item.InventoryNumber));
-                      }).catch(function (err) {
-                          console.log('Failed to get serial number because of: ' + err);
-                      });
-
-                  } else {
+                  // tests progress
+                  else {
                       if (!decoder.write(data).includes('beginning')) {
-                          var testResultJson = '';
-                          testResultJson = JSON.parse(decoder.write(data).substring(decoder.write(data).indexOf("{")));
-
+                          //var testResultJson = '';
+                          var testResultJson = JSON.parse(decoder.write(data).substring(decoder.write(data).indexOf("{")));
+                          // add passed tests to array of passed tests
                           if (testResultJson.passed === true) {
                               passedTests.push(testResultJson);
                           }
 
                           var message = testResultJson.commandName + ' ' + (testResultJson.passed ? 'passed' : 'failed') + '\n';
-
-                          getSerialLookup(imei).then(function (res) {
-                              updateSession(res.item.InventoryNumber, 'Info', message, testResultJson.data);
-                          }).catch(function (err) {
-                              console.log('Failed to get serial number because of: ' + err);
-                          });
+                          updateSession(sessionDate, 'Info', message, testResultJson.data);
 
                           io.emit("android-test", testResultJson);
                       }

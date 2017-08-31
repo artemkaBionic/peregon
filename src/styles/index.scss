@@ -3146,8 +3146,30 @@ orbicular i {
       height: calc(100vh - 260px)!important;
     }
   }
+  .simultaneous-table-header span {
+    font-size: 10px !important;
+  }
+  .simultaneous-table-header {
+    font-size: 10px !important;
+  }
+  .simultaneous-item{
+    font-size: 10px !important;
+  }
+  .inner-addon {
+    float: unset;
+  }
+  .item-buttons {
+    float: unset;
+  }
+  .simultaneous-sort-button{
+    font-size: 14px !important;
+  }
+  .guide-logo-small {
+    width: 15vh;
+  }
 }
 @media only screen and (min-width: 550px) {
+
   .instruction-list {
     font-size: 15pt;
     font-weight: 300;
@@ -3225,9 +3247,17 @@ orbicular i {
         height: calc(100vh - 260px)!important;
       }
     }
-
 }
 @media only screen and (min-width: 700px) {
+  .simultaneous-table-header span{
+      font-size: 12px !important;
+  }
+  .simultaneous-table-header {
+    font-size: 12px !important;
+  }
+  .simultaneous-item{
+    font-size: 12px !important;
+  }
   .instruction-list {
     font-size: 20pt;
     font-weight: 300;
@@ -3302,9 +3332,19 @@ orbicular i {
       height: calc(100vh - 260px)!important;
     }
   }
+
 }
 
 @media only screen and (min-width: 1200px) {
+  .simultaneous-table-header span{
+    font-size: unset !important;
+  }
+  .simultaneous-table-header {
+    font-size: unset !important;
+  }
+  .simultaneous-item{
+    font-size: unset !important;
+  }
   .instruction-list {
     font-size: 20pt;
     font-weight: 300;
@@ -3385,7 +3425,7 @@ orbicular i {
     font-weight: 300;
     width:600px;
     margin: 0 auto;
-    text-align: left
+    text-align: left;
     li {
       margin-bottom: 10px;
     }

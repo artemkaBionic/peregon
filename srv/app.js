@@ -20,7 +20,6 @@ var app = express();
 var io = socket_io();
 app.io = io;
 simultaneous.deviceBridge(io);
-//simultaneousUSB.usbBridge();
 // Common data
 var isDevelopment = process.env.NODE_ENV === 'development';
 

@@ -22,9 +22,12 @@
         vm.sessionType = 'All Sessions';
         vm.sessions = [];
         vm.sortType = 'start_time';
-        vm.sortReverse = false;
+        vm.sortReverse = true;
         vm.numberToDisplay = 8;
-        vm.limit = 20;
+        vm.limit = 10;
+        $scope.$on('$locationChangeSuccess', function(next, current) {
+            getSessions();
+        });
         $scope.$watch('vm.textToFilter',function(newTextToFilter){
              $scope.$watch('vm.sessionType', function(newDropdown, oldDropdown){
                  var dropDownChoice = newDropdown ? newDropdown : oldDropdown;
@@ -35,10 +38,16 @@
                  }
              });
         });
+
         vm.increaseLimit = function() {
-            console.log('reached bottom');
-            if (vm.limit <  vm.sessions.length) {
-                vm.limit += 20;
+            vm.sessionsLength = 0;
+            for (var key in vm.sessions) {
+                if (vm.sessions.hasOwnProperty(key)) {
+                    vm.sessionsLength++;
+                }
+            }
+            if (vm.limit <  vm.sessionsLength) {
+                vm.limit += 10;
             }
         };
         var container = angular.element(document.querySelector('.content-full-height-scroll'));
@@ -194,7 +203,6 @@
             $http.get('/data/getAllSessions/')
                 .then(function(response) {
                     vm.sessions =  response.data;
-                    console.log(response.data);
                 });
         }
         function toast(deviceid){

@@ -144,28 +144,31 @@ function unlockForService(imei, callback) {
 
 function unlockDevice(itemNumber, callback) {
     var session = sessions.get(itemNumber);
-
-    request({
-        method: 'POST',
-        url: API_URL + '/unlockapi/unlock',
-        headers: {
-            'Authorization': config.api2Authorization
-        },
-        body: {'IMEI': session.device.serial_number},
-        rejectUnauthorized: false,
-        json: true
-    }, function(error, response, body) {
-        if (error) {
-            console.error(error);
-            logSession(session, 'Error', 'Unable to request device unlock.', JSON.stringify(data.error, null, 2));
-            callback({error: error, result: null});
-        }
-        else {
-            logSession(session, 'Info', 'Device is unlocked by ' + body.service);
-            callback({error: null, result: body});
-        }
+    getItem(itemNumber, function(res) {
+        var imei = res.item.Serial;
+        console.log(imei);
+        request({
+            method: 'POST',
+            url: API_URL + '/unlockapi/unlock',
+            headers: {
+                'Authorization': config.api2Authorization
+            },
+            body: {'IMEI': imei},
+            rejectUnauthorized: false,
+            json: true
+        }, function(error, response, body) {
+            if (error) {
+                console.error(error);
+                //logSession(session, 'Error', 'Unable to request device unlock.', JSON.stringify(data.error, null, 2));
+                callback({error: error, result: null});
+            }
+            else {
+               // logSession(session, 'Info', 'Device is unlocked by ' + body.service);
+                callback({error: null, result: body});
+            }
+        });
+        console.log('Unlock request has been sent');
     });
-    console.log('Unlock request has been sent');
 }
 
 function lockDevice(itemNumber, callback) {
@@ -183,11 +186,12 @@ function lockDevice(itemNumber, callback) {
     }, function(error, response, body) {
         if (error) {
             console.error(error);
-            logSession(session, 'Error', 'Unable to request device lock.', JSON.stringify(error, null, 2));
+           // logSession(session, 'Error', 'Unable to request device lock.', JSON.stringify(error, null, 2));
+
             callback({error: error, result: null});
         }
         else {
-            logSession(session, 'Info', 'Device is locked by ' + body.service);
+           // logSession(session, 'Info', 'Device is locked by ' + body.service);
             callback({error: null, result: body});
         }
     });
@@ -207,7 +211,7 @@ function sessionUpdate(itemNumber, level, message, details, callback) {
 
 function sessionFinish(itemNumber, data, callback) {
     var session = sessions.get(itemNumber);
-
+    console.log(session);
     console.log('A client requested to finish an ' + session.device.type + ' refresh of item number ' + itemNumber);
     if (session.device.type === 'XboxOne') {
         if (isDevelopment) {
