@@ -173,29 +173,32 @@ function unlockDevice(itemNumber, callback) {
 
 function lockDevice(itemNumber, callback) {
     var session = sessions.get(itemNumber);
+    getItem(itemNumber, function(res) {
+        var imei = res.item.Serial;
+        request({
+            method: 'POST',
+            url: API_URL + '/unlockapi/lock',
+            headers: {
+                'Authorization': config.api2Authorization
+            },
+            body: {'IMEI': imei},
+            rejectUnauthorized: false,
+            json: true
+        }, function(error, response, body) {
+            if (error) {
+                console.error(error);
+                // logSession(session, 'Error', 'Unable to request device lock.', JSON.stringify(error, null, 2));
 
-    request({
-        method: 'POST',
-        url: API_URL + '/unlockapi/lock',
-        headers: {
-            'Authorization': config.api2Authorization
-        },
-        body: {'IMEI': session.device.serial_number},
-        rejectUnauthorized: false,
-        json: true
-    }, function(error, response, body) {
-        if (error) {
-            console.error(error);
-           // logSession(session, 'Error', 'Unable to request device lock.', JSON.stringify(error, null, 2));
-
-            callback({error: error, result: null});
-        }
-        else {
-           // logSession(session, 'Info', 'Device is locked by ' + body.service);
-            callback({error: null, result: body});
-        }
+                callback({error: error, result: null});
+            }
+            else {
+                // logSession(session, 'Info', 'Device is locked by ' + body.service);
+                callback({error: null, result: body});
+            }
+        });
+        console.log('Lock request has been sent');
     });
-    console.log('Lock request has been sent');
+
 }
 
 function sessionUpdate(itemNumber, level, message, details, callback) {
