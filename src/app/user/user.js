@@ -26,7 +26,7 @@
         vm.numberToDisplay = 8;
         vm.limit = 10;
         $scope.$on('$viewContentLoaded', function() {
-            $timeout( function(){
+            $timeout(function(){
                 getSessions();
             }, 2000);
         });
