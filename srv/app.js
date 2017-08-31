@@ -12,7 +12,6 @@ var config = require('./config');
 var station = require('./station');
 //var controller = require('./usbonly')
 var simultaneous = require('./simultaneous/simultaneous');
-var simultaneousUSB = require('./simultaneous/simultaneous-usb');
 // Express
 var app = express();
 
