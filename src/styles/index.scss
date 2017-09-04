@@ -64,22 +64,23 @@ $header-height: 13vh;
 
 .text-input {
   position: relative;
-  margin: 14px 8vh;
+  //margin: 14px 8vh;
 }
 
 .text-input input {
   text-indent: 43px;
-  height: 76px;
+  height: 50px;
   line-height: normal;
   font-size: 3vh;
   margin-top: 2px;
   color: #414141;
   border-radius: 4px;
+  width: 300px;
 }
 
 .text-input .fa {
   position: absolute;
-  top: 27px;
+  top: 14px;
   left: 16px;
   font-size: 28px;
   text-align: center;
@@ -896,7 +897,101 @@ button[disabled]:hover {
   height: 300px;
   position: relative;
 }
+.content-full-height-scroll{
+  overflow-x: hidden;
+  overflow-y: auto;
+  height: 100vh;
+}
+.simultaneous-info {
+  border-top: 2px solid rgba(168, 150, 194, 0.7);
+  position: relative;
+  margin: 10px 10px 10px 10px;
+}
+.simultaneous-header{
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.simultaneous-item{
+  margin-bottom:5px;
+ // height: 60px;
+}
+.simultaneous-input{
+  border-radius:4px;
+}
+.simultaneous-table-header{
+  padding: 10px;
+}
+.item-number-input {
+  text-indent: 43px;
+  height: 50px;
+  line-height: normal;
+  font-size: 3vh;
+  margin-top: 2px;
+  color: #414141;
+  border-radius: 4px;
+  width: 300px;
+}
+.item-buttons{
+  float: left;
+  margin-left: 5px;
+  margin-top: 3px;
+}
+#item-container
+{
+  margin-top: 30px;
+  text-align: center;
+}
+#item-centered
+{
+  display: inline-block;
+}
+#item-background
+{
+  text-align: left;
+}
+.inner-addon {
+  float: left;
+  position: relative;
+}
 
+/* style glyph */
+.inner-addon .icon {
+  position: absolute;
+  padding: 10px;
+  pointer-events: none;
+}
+
+/* align glyph */
+.left-addon .icon  { left:  0px;}
+.right-addon .icon { right: 0px;}
+
+/* add padding  */
+.left-addon input  { padding-left:  10px; }
+.right-addon input { padding-right: 30px; }
+
+.simultaneous-sort-button {
+  background-color: transparent;
+  border:none;
+  font-size: 18px;
+  font-weight: bold;
+
+}
+.simultaneous-sorting-btn{
+  color:black;
+  text-decoration: none;
+  cursor: pointer;
+}
+.simultaneous-sorting-btn:hover{
+  color:black;
+  text-decoration: none;
+  cursor: pointer;
+}
+.item-error-row{
+  margin-top: 10px;
+}
+.btn-test{
+  border-radius: 4px;
+}
 .item-details {
   font-size: 2em;
   position: absolute;
@@ -913,6 +1008,7 @@ button[disabled]:hover {
 .item-button {
   border: none;
   background: inherit;
+  font-size: 15pt;
 }
 
 .item-button:hover {
@@ -1158,6 +1254,7 @@ button[disabled]:hover {
 }
 
 .item-button-error {
+  font-size: 15pt;
   border: none;
   background: inherit;
   color: darkred;
@@ -1837,7 +1934,7 @@ orbicular i {
 }
 
 .guide-logo-small {
-  width: 15vh;
+  width: 25vh;
   position: absolute;
   top: 0;
   bottom: 0;
@@ -1938,7 +2035,13 @@ orbicular i {
   .hidden-md-down {
     display: none;
   }
-
+  .home-header-title {
+    font-size:12pt;
+  }
+  .station-online {
+    height: 28.4px;
+    width: 28.4px;
+  }
   .front-keypad {
     display: block;
   }
@@ -3077,8 +3180,30 @@ orbicular i {
       height: calc(100vh - 260px)!important;
     }
   }
+  .simultaneous-table-header span {
+    font-size: 10px !important;
+  }
+  .simultaneous-table-header {
+    font-size: 10px !important;
+  }
+  .simultaneous-item{
+    font-size: 10px !important;
+  }
+  .inner-addon {
+    float: unset;
+  }
+  .item-buttons {
+    float: unset;
+  }
+  .simultaneous-sort-button{
+    font-size: 14px !important;
+  }
+  .guide-logo-small {
+    width: 15vh;
+  }
 }
 @media only screen and (min-width: 550px) {
+
   .instruction-list {
     font-size: 15pt;
     font-weight: 300;
@@ -3163,9 +3288,17 @@ orbicular i {
         height: calc(100vh - 260px)!important;
       }
     }
-
 }
 @media only screen and (min-width: 700px) {
+  .simultaneous-table-header span{
+      font-size: 12px !important;
+  }
+  .simultaneous-table-header {
+    font-size: 12px !important;
+  }
+  .simultaneous-item{
+    font-size: 12px !important;
+  }
   .instruction-list {
     font-size: 17pt;
     font-weight: 300;
@@ -3247,9 +3380,19 @@ orbicular i {
       height: calc(100vh - 260px)!important;
     }
   }
+
 }
 
 @media only screen and (min-width: 1200px) {
+  .simultaneous-table-header span{
+    font-size: unset !important;
+  }
+  .simultaneous-table-header {
+    font-size: unset !important;
+  }
+  .simultaneous-item{
+    font-size: unset !important;
+  }
   .instruction-list {
     font-size: 17pt;
     font-weight: 300;
@@ -3558,6 +3701,21 @@ orbicular i {
   width: 36.5vw;
   margin:20px 15px 10px 15px;
 }
-.modalTextManual{
-  margin:20px 30px 20px 30px;
+.modalTextManual {
+  margin: 20px 30px 20px 30px;
+}
+.clickable-item {
+  cursor: pointer;
+}
+.clickable-item:hover{
+  box-shadow: 0 0 3px #888888!important;
+}
+.button-in-progress{
+  color: orange;
+}
+.button-failed{
+  color:red;
+}
+.button-successful{
+  color:#6cab1c;
 }

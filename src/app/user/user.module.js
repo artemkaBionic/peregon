@@ -33,6 +33,12 @@
                 controller: 'MediaController',
                 controllerAs: 'vm'
             })
+            .state('root.simultaneous', {
+                url: '/simultaneous/',
+                templateUrl: 'app/user/simultaneous/simultaneous.template.html',
+                controller: 'SimultaneousController',
+                controllerAs: 'vm'
+            })
             .state('root.media.package', {
                 url: '/media/package/',
                 params: {

@@ -11,14 +11,14 @@ var childProcess = require('child_process');
 var config = require('./config');
 var station = require('./station');
 //var controller = require('./usbonly')
-
+var simultaneous = require('./simultaneous/simultaneous');
 // Express
 var app = express();
 
 // Socket.io
 var io = socket_io();
 app.io = io;
-
+simultaneous.deviceBridge(io);
 // Common data
 var isDevelopment = process.env.NODE_ENV === 'development';
 

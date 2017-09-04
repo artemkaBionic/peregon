@@ -15,13 +15,13 @@ const sessions = require('./sessionCache');
 
 const UNSENT_SESSIONS_DIRECTORY = config.kioskDataPath + '/unsentSessions';
 const INVENTORY_LOOKUP_URL = 'https://' + config.apiHost + '/api/inventorylookup/';
+const SERIAL_LOOKUP_URL = 'https://' + config.apiHost + '/api/seriallookup/';
 const API_URL = 'https://api2.basechord.com';
 //const API_URL2 = 'http://localhost:3000';
 const RESEND_SESSIONS_INTERVAL = 900000; // 15 minutes
 
 var isDevelopment = process.env.NODE_ENV === 'development';
 var result = null;
-
 
 exports.getSessions = getSessions;
 exports.getSession = getSession;
@@ -33,8 +33,9 @@ exports.getItem = getItem;
 exports.lockDevice = lockDevice;
 exports.unlockForService = unlockForService;
 exports.unlockDevice = unlockDevice;
-
-
+exports.getSerialLookup = getSerialLookup;
+exports.getAllSessions = getAllSessions;
+exports.checkSessionInProgress = checkSessionInProgress;
 // Periodically resend unsent sessions
 resendSessions();
 setInterval(function() {
@@ -89,10 +90,33 @@ function getItem(id, callback) {
     });
 }
 
+function getSerialLookup(imei, callback) {
+    request({
+        url: SERIAL_LOOKUP_URL + imei,
+        headers: {
+            'Authorization': config.apiAuthorization
+        },
+        rejectUnauthorized: false,
+        json: true
+    }, function(error, response, body) {
+        if (error) {
+            console.error(error);
+            callback({error: error, item: null});
+        }
+        else {
+            console.log('Server returned: ');
+            console.log(body);
+            callback({error: null, item: body});
+        }
+    });
+}
+
 function getSessions(filter) {
     return sessions.getFiltered(filter);
 }
-
+function getAllSessions(){
+    return sessions.getAllSessions();
+}
 function getSession(itemNumber) {
     return sessions.get(itemNumber);
 }
@@ -108,6 +132,12 @@ function sessionStart(itemNumber, device, callback) {
             "status": 'Incomplete',
             "diagnose_only": diagnose_only,
             "device": session_device,
+            "current_step": 'Refresh started',
+            // "android_data": {
+            //     "current_step":"",
+            //     "number_of_auto_tests":"",
+            //     "number_of_manual_tests":""
+            // },
             "station": {
                 "name": station_name,
                 "service_tag": station_service_tag
@@ -119,7 +149,6 @@ function sessionStart(itemNumber, device, callback) {
         callback();
     });
 }
-
 function unlockForService(imei, callback) {
     console.log('Unlocking imei ' + imei + ' for service...');
     request({
@@ -145,54 +174,59 @@ function unlockForService(imei, callback) {
 
 function unlockDevice(itemNumber, callback) {
     var session = sessions.get(itemNumber);
-
-    request({
-        method: 'POST',
-        url: API_URL + '/unlockapi/unlock',
-        headers: {
-            'Authorization': config.api2Authorization
-        },
-        body: {'IMEI': session.device.serial_number},
-        rejectUnauthorized: false,
-        json: true
-    }, function(error, response, body) {
-        if (error) {
-            console.error(error);
-            logSession(session, 'Error', 'Unable to request device unlock.', JSON.stringify(data.error, null, 2));
-            callback({error: error, result: null});
-        }
-        else {
-            logSession(session, 'Info', 'Device is unlocked by ' + body.service);
-            callback({error: null, result: body});
-        }
+    getItem(itemNumber, function(res) {
+        var imei = res.item.Serial;
+        console.log(imei);
+        request({
+            method: 'POST',
+            url: API_URL + '/unlockapi/unlock',
+            headers: {
+                'Authorization': config.api2Authorization
+            },
+            body: {'IMEI': imei},
+            rejectUnauthorized: false,
+            json: true
+        }, function(error, response, body) {
+            if (error) {
+                console.error(error);
+                //logSession(session, 'Error', 'Unable to request device unlock.', JSON.stringify(data.error, null, 2));
+                callback({error: error, result: null});
+            }
+            else {
+               // logSession(session, 'Info', 'Device is unlocked by ' + body.service);
+                callback({error: null, result: body});
+            }
+        });
+        console.log('Unlock request has been sent');
     });
-    console.log('Unlock request has been sent');
 }
-
 function lockDevice(itemNumber, callback) {
     var session = sessions.get(itemNumber);
+    getItem(itemNumber, function(res) {
+        var imei = res.item.Serial;
+        request({
+            method: 'POST',
+            url: API_URL + '/unlockapi/lock',
+            headers: {
+                'Authorization': config.api2Authorization
+            },
+            body: {'IMEI': imei},
+            rejectUnauthorized: false,
+            json: true
+        }, function(error, response, body) {
+            if (error) {
+                console.error(error);
+                // logSession(session, 'Error', 'Unable to request device lock.', JSON.stringify(error, null, 2));
 
-    request({
-        method: 'POST',
-        url: API_URL + '/unlockapi/lock',
-        headers: {
-            'Authorization': config.api2Authorization
-        },
-        body: {'IMEI': session.device.serial_number},
-        rejectUnauthorized: false,
-        json: true
-    }, function(error, response, body) {
-        if (error) {
-            console.error(error);
-            logSession(session, 'Error', 'Unable to request device lock.', JSON.stringify(error, null, 2));
-            callback({error: error, result: null});
-        }
-        else {
-            logSession(session, 'Info', 'Device is locked by ' + body.service);
-            callback({error: null, result: body});
-        }
+                callback({error: error, result: null});
+            }
+            else {
+                // logSession(session, 'Info', 'Device is locked by ' + body.service);
+                callback({error: null, result: body});
+            }
+        });
+        console.log('Lock request has been sent');
     });
-    console.log('Lock request has been sent');
 }
 
 function sessionUpdate(itemNumber, level, message, details, callback) {
@@ -201,14 +235,21 @@ function sessionUpdate(itemNumber, level, message, details, callback) {
         console.warn('sessionUpdate attempted for a session that is not started.');
         console.warn('message: ' + message);
     } else {
-        logSession(session, level, message, details);
+        if (message === 'Android auto') {
+            session.currentStep = 'Auto passed';
+            session.device.passed_auto = details.passedAuto;
+        } else if (message === 'Android manual') {
+            session.currentStep = 'Manual Testing';
+            session.device.passed_manual = details.passedManual;
+        } else {
+            logSession(session, level, message, details);
+        }
     }
     callback();
 }
 
 function sessionFinish(itemNumber, data, callback) {
     var session = sessions.get(itemNumber);
-
     console.log('A client requested to finish an ' + session.device.type + ' refresh of item number ' + itemNumber);
     if (session.device.type === 'XboxOne') {
         if (isDevelopment) {
@@ -273,7 +314,6 @@ function closeSession(session, success, callback) {
         logSession(session, 'Info', 'Refresh failed.');
         session.status = 'Fail';
     }
-    console.log(session);
     callback(success);
 
     fs.mkdir(UNSENT_SESSIONS_DIRECTORY, function(err) {
@@ -292,7 +332,7 @@ function closeSession(session, success, callback) {
                     console.error('Unable to write the file ' + file + '. Cannot save session for resend!', err);
                     console.error(session);
                 }
-                sessions.delete(session.device.item_number);
+                //sessions.delete(session.device.item_number);
                 sendSession(content, file);
             });
         }
@@ -364,7 +404,6 @@ function resendSessions() {
         }
     });
 }
-
 function filesExist(directory, files) {
     if (files.length === 0) {
         return true;
@@ -403,8 +442,18 @@ function changeDeviceFormat(device) {
                 case 'Type':
                     session_device.type = device.Type;
                     break;
+                case 'numberOfAuto':
+                    session_device.number_of_auto = device.numberOfAuto;
+                    break;
+                case 'numberOfManual':
+                    session_device.number_of_manual = device.numberOfManual;
+                    break;
             }
         }
     }
     return session_device;
+}
+
+function checkSessionInProgress(item) {
+    return sessions.checkSessionInProgress(item);
 }

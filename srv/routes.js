@@ -5,6 +5,7 @@ var config = require('./config');
 var inventory = require('./inventory.js');
 var station = require('./station.js');
 var controller = require('./usbonly/controller');
+var simultaneous = require('./simultaneous/simultaneous');
 
 module.exports = function(io, data) {
 // Express Router
@@ -31,6 +32,7 @@ module.exports = function(io, data) {
     });
 
     router.get('/data/inventory/:id', function(req, res) {
+        console.log('request for get item was sent');
         inventory.getItem(req.params.id, function(item) {
             res.json(item);
         });
@@ -57,7 +59,12 @@ module.exports = function(io, data) {
     router.get('/data/inventory/sessions', function(req, res) {
         res.json(inventory.getSessions(req.body));
     });
-
+    router.get('/data/getAllSessions', function(req, res) {
+        res.json(inventory.getAllSessions());
+    });
+    router.post('/data/checkSession', function(req, res) {
+        res.json(inventory.checkSessionInProgress(req.body));
+    });
     router.get('/data/inventory/sessions/:id', function(req, res) {
         res.json(inventory.getSession(req.params.id));
     });
@@ -197,7 +204,5 @@ module.exports = function(io, data) {
             }
         });
     });
-
-
     return router;
 };

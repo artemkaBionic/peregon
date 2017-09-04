@@ -5,10 +5,11 @@
         .module('app.user')
         .controller('UserController', UserController);
 
-    UserController.$inject = ['$q', '$state', 'config', 'stationService', 'inventoryService', 'socketService', '$scope', 'toastr'];
+    UserController.$inject = ['$timeout', '$window','$q', '$state', 'config', 'stationService', 'inventoryService', 'socketService', '$scope', 'toastr', '$http'];
 
-    function UserController($q, $state, config, stationService, inventoryService, socketService, $scope, toastr) {
+    function UserController($timeout, $window, $q, $state, config, stationService, inventoryService, socketService, $scope, toastr, $http) {
         /*jshint validthis: true */
+        console.log($state.current.name);
         var vm = this;
         vm.ready = false;
         vm.searchString = '';
@@ -19,7 +20,75 @@
         vm.searchStringError = false;
         vm.searchStringSkuWarning = false;
         vm.isServiceCenter = false;
+        vm.sessionType = 'All Sessions';
+        vm.sessions = [];
+        vm.sortType = 'start_time';
+        vm.sortReverse = true;
+        vm.numberToDisplay = 8;
+        vm.limit = 10;
+        $scope.$on('$viewContentLoaded', function() {
+            console.log($state.current.name);
+            $timeout(function(){
+                getSessions();
+            }, 2000);
+        });
+        $scope.$watch('vm.textToFilter',function(newTextToFilter){
+             $scope.$watch('vm.sessionType', function(newDropdown, oldDropdown){
+                 var dropDownChoice = newDropdown ? newDropdown : oldDropdown;
+                 if (newTextToFilter) {
+                     vm.filterParam = dropDownChoice.replace(/\s/g, '').concat(' ').concat(newTextToFilter);
+                 } else {
+                     vm.filterParam = dropDownChoice.replace(/\s/g, '');
+                 }
+             });
+        });
 
+        vm.increaseLimit = function() {
+            vm.sessionsLength = 0;
+            for (var key in vm.sessions) {
+                if (vm.sessions.hasOwnProperty(key)) {
+                    vm.sessionsLength++;
+                }
+            }
+            if (vm.limit <  vm.sessionsLength) {
+                vm.limit += 10;
+            }
+        };
+        var container = angular.element(document.querySelector('.content-full-height-scroll'));
+        container.on('scroll', function(){
+            var divAnchor = document.querySelector('#Header-anchor');
+            var divHeader = angular.element(document.getElementById('Header'));
+            var col1 = angular.element(document.getElementById('col1'));
+            var col2 = angular.element(document.getElementById('col2'));
+            var col3 = angular.element(document.getElementById('col3'));
+            var col4 = angular.element(document.getElementById('col4'));
+            var col5 = angular.element(document.getElementById('col5'));
+            var col6 = angular.element(document.getElementById('col6'));
+            var col7 = angular.element(document.getElementById('col7'));
+            var background = angular.element(document.getElementById('background'));
+            var windowScrollTop = divHeader[0].getBoundingClientRect().top;
+            if (windowScrollTop <= divAnchor.offsetTop) {
+                col1.attr('style','height:40px;position:fixed;top:0vh;z-index:400');
+                col2.attr('style','height:40px;position:fixed;top:0vh;z-index:400');
+                col3.attr('style','height:40px;position:fixed;top:0vh;z-index:400');
+                col4.attr('style','height:40px;position:fixed;top:0vh;z-index:400');
+                col5.attr('style','height:40px;position:fixed;top:0vh;z-index:400');
+                col6.attr('style','height:40px;position:fixed;top:0vh;z-index:400');
+                col7.attr('style','height:40px;position:fixed;top:0vh;z-index:400');
+                background.attr('style','background-color:#f5f5f5;position:fixed;top:0vh;z-index:390;left:0;width:95%;height:33px;margin-top:-7px');
+            } else {
+                col1.attr('style','position:"";top:"";z-index:300');
+                col2.attr('style','position:"";top:"";z-index:300');
+                col3.attr('style','position:"";top:"";z-index:300');
+                col4.attr('style','position:"";top:"";z-index:300');
+                col5.attr('style','position:"";top:"";z-index:300');
+                col6.attr('style','position:"";top:"";z-index:300');
+                col7.attr('style','position:"";top:"";z-index:300');
+                background.attr('style','background-color:"";position:"";top:"";z-index:300');
+            }
+        });
+        //'Fail', 'Incomplete'
+        vm.filterParam = vm.textToFilter;
         vm.searchStringChange = function() {
             vm.searchString = vm.searchString.toUpperCase();
             if (vm.searchString !== vm.lastValidSearchString) {
@@ -56,7 +125,43 @@
             }
         };
         $scope.$watch('vm.searchString', vm.searchStringChange);
+        vm.changeFilter = function(filter){
+            vm.sessionType = filter;
+        };
 
+        getSessions();
+        socketService.on('app-start', function(data) {
+            toast(data.data.imei);
+            getSessions();
+        });
+
+        socketService.on('android-session-expired', function(data) {
+            if ($state.current.name === 'root.user') {
+                console.log('sending session expired from home');
+                toastr.warning('Session expired for device:' + data.device, {
+                    'tapToDismiss': true,
+                    'timeOut': 3000,
+                    'closeButton': true
+                });
+                getSessions();
+            }
+        });
+        socketService.on('session-expired-confirmation', function() {
+            if ($state.current.name === 'root.user') {
+                getSessions();
+            }
+        });
+        socketService.on('android-reset', function(status) {
+            toastr.info('Refresh finished for device:' + status.imei, {
+                'tapToDismiss': true,
+                'timeOut': 3000,
+                'closeButton': true
+            });
+            getSessions();
+        });
+        socketService.on('android-remove', function() {
+            getSessions();
+        });
         vm.showGuide = function() {
             if (vm.item !== null) {
                 var $stateParams = {};
@@ -66,6 +171,24 @@
                 $state.go('root.user.guide', $stateParams);
             }
         };
+        // jscs:disable
+        vm.showGuideForCards = function(itemNumber) {
+            var item = {'InventoryNumber': itemNumber};
+
+            inventoryService.checkSession(item)
+                .then(function(res) {
+                    console.log(res);
+                    if (res.session_id) {
+                        var $stateParams = {};
+                        $stateParams.itemNumber = itemNumber;
+                        vm.item = null;
+                        vm.searchString = '';
+                        $state.go('root.user.guide', $stateParams);
+                    }
+                });
+        };
+        // jscs: enable
+        //console.log(vm.dummySessions);
 
         vm.unlockForService = function() {
             if (vm.item) {
@@ -102,6 +225,7 @@
             //     console.log('User.js Event app-start');
             //
             // }
+
         });
         //=========== End Working on catching the Android Connect before ItemNumber entered==========
         activate();
@@ -111,6 +235,19 @@
             })];
             return $q.all(queries).then(function() {
                 vm.ready = true;
+            });
+        }
+        function getSessions(){
+            $http.get('/data/getAllSessions/')
+                .then(function(response) {
+                    vm.sessions =  response.data;
+                });
+        }
+        function toast(deviceid){
+            toastr.info('Refresh started for device:' + deviceid, {
+                'tapToDismiss': true,
+                'timeOut': 3000,
+                'closeButton': true
             });
         }
     }
