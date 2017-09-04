@@ -123,6 +123,7 @@
 
             return deferred.promise;
         };
+
         // TODO: once we will be refactoring session reports for usb only
         // refreshes we'll remove this function and will create generic one
         service.startAndroidSession = function(sessionDate, item) {
@@ -158,7 +159,26 @@
 
             return deferred.promise;
         };
+        service.checkSession = function(item) {
+            var url = '/data/checkSession';
+            var deferred = $q.defer();
 
+            $http.post(url, item).then(function(result) {
+                deferred.resolve(result.data);
+            });
+
+            return deferred.promise;
+        };
+        service.getSession = function(sessionId) {
+            var url = '/data/inventory/sessions/' + sessionId;
+            var deferred = $q.defer();
+
+            $http.get(url).then(function(result) {
+                deferred.resolve(result.data);
+            });
+
+            return deferred.promise;
+        };
         return service;
     }
 })();

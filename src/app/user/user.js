@@ -9,6 +9,7 @@
 
     function UserController($timeout, $window, $q, $state, config, stationService, inventoryService, socketService, $scope, toastr, $http) {
         /*jshint validthis: true */
+        console.log($state.current.name);
         var vm = this;
         vm.ready = false;
         vm.searchString = '';
@@ -26,6 +27,7 @@
         vm.numberToDisplay = 8;
         vm.limit = 10;
         $scope.$on('$viewContentLoaded', function() {
+            console.log($state.current.name);
             $timeout(function(){
                 getSessions();
             }, 2000);
@@ -129,17 +131,35 @@
 
         getSessions();
         socketService.on('app-start', function(data) {
-            console.log(data);
             toast(data.data.imei);
             getSessions();
         });
 
+        socketService.on('android-session-expired', function(data) {
+            if ($state.current.name === 'root.user') {
+                console.log('sending session expired from home');
+                toastr.warning('Session expired for device:' + data.device, {
+                    'tapToDismiss': true,
+                    'timeOut': 3000,
+                    'closeButton': true
+                });
+                getSessions();
+            }
+        });
+        socketService.on('session-expired-confirmation', function() {
+            if ($state.current.name === 'root.user') {
+                getSessions();
+            }
+        });
         socketService.on('android-reset', function(status) {
             toastr.info('Refresh finished for device:' + status.imei, {
                 'tapToDismiss': true,
                 'timeOut': 3000,
                 'closeButton': true
             });
+            getSessions();
+        });
+        socketService.on('android-remove', function() {
             getSessions();
         });
         vm.showGuide = function() {
@@ -151,7 +171,23 @@
                 $state.go('root.user.guide', $stateParams);
             }
         };
+        // jscs:disable
+        vm.showGuideForCards = function(itemNumber) {
+            var item = {'InventoryNumber': itemNumber};
 
+            inventoryService.checkSession(item)
+                .then(function(res) {
+                    console.log(res);
+                    if (res.session_id) {
+                        var $stateParams = {};
+                        $stateParams.itemNumber = itemNumber;
+                        vm.item = null;
+                        vm.searchString = '';
+                        $state.go('root.user.guide', $stateParams);
+                    }
+                });
+        };
+        // jscs: enable
         //console.log(vm.dummySessions);
 
         vm.unlockForService = function() {

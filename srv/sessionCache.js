@@ -28,8 +28,22 @@ SessionCache.prototype.get = function(key) {
 };
 
 SessionCache.prototype.delete = function(key) {
-    //console.log('deleting session key');
     delete this._sessions[key];
+};
+SessionCache.prototype.checkSessionInProgress = function(item) {
+    console.log('Checking if there is session in progress for device ' + item.InventoryNumber);
+    for (var key in this._sessions) {
+        if (this._sessions.hasOwnProperty(key)) {
+            if (this._sessions[key].device.item_number === item.InventoryNumber) {
+                if (this._sessions[key].status === 'Incomplete') {
+                    console.log('Session incomplete');
+                    // console.log(this._sessions[key]);
+                    return {'started': true, 'session_id': key};
+                }
+            }
+        }
+    }
+    return {'started': false};
 };
 
 module.exports = new SessionCache();

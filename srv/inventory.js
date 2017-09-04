@@ -22,7 +22,6 @@ const RESEND_SESSIONS_INTERVAL = 900000; // 15 minutes
 var isDevelopment = process.env.NODE_ENV === 'development';
 var result = null;
 
-
 exports.getSessions = getSessions;
 exports.getSession = getSession;
 exports.sessionStart = sessionStart;
@@ -35,6 +34,7 @@ exports.unlockForService = unlockForService;
 exports.unlockDevice = unlockDevice;
 exports.getSerialLookup = getSerialLookup;
 exports.getAllSessions = getAllSessions;
+exports.checkSessionInProgress = checkSessionInProgress;
 // Periodically resend unsent sessions
 resendSessions();
 setInterval(function() {
@@ -57,8 +57,6 @@ function getItem(id, callback) {
         }
         else {
             console.log('Server returned: ');
-            console.log('this function is called');
-
             console.log(body);
             callback({error: null, item: body});
         }
@@ -107,6 +105,12 @@ function sessionStart(itemNumber, device, callback) {
             "status": 'Incomplete',
             "diagnose_only": diagnose_only,
             "device": session_device,
+            "current_step": 'Refresh started',
+            // "android_data": {
+            //     "current_step":"",
+            //     "number_of_auto_tests":"",
+            //     "number_of_manual_tests":""
+            // },
             "station": {
                 "name": station_name,
                 "service_tag": station_service_tag
@@ -118,7 +122,6 @@ function sessionStart(itemNumber, device, callback) {
         callback();
     });
 }
-
 function unlockForService(imei, callback) {
     console.log('Unlocking imei ' + imei + ' for service...');
     request({
@@ -170,7 +173,6 @@ function unlockDevice(itemNumber, callback) {
         console.log('Unlock request has been sent');
     });
 }
-
 function lockDevice(itemNumber, callback) {
     var session = sessions.get(itemNumber);
     getItem(itemNumber, function(res) {
@@ -198,7 +200,6 @@ function lockDevice(itemNumber, callback) {
         });
         console.log('Lock request has been sent');
     });
-
 }
 
 function sessionUpdate(itemNumber, level, message, details, callback) {
@@ -207,14 +208,21 @@ function sessionUpdate(itemNumber, level, message, details, callback) {
         console.warn('sessionUpdate attempted for a session that is not started.');
         console.warn('message: ' + message);
     } else {
-        logSession(session, level, message, details);
+        if (message === 'Android auto') {
+            session.currentStep = 'Auto passed';
+            session.device.passed_auto = details.passedAuto;
+        } else if (message === 'Android manual') {
+            session.currentStep = 'Manual Testing';
+            session.device.passed_manual = details.passedManual;
+        } else {
+            logSession(session, level, message, details);
+        }
     }
     callback();
 }
 
 function sessionFinish(itemNumber, data, callback) {
     var session = sessions.get(itemNumber);
-    console.log(session);
     console.log('A client requested to finish an ' + session.device.type + ' refresh of item number ' + itemNumber);
     if (session.device.type === 'XboxOne') {
         if (isDevelopment) {
@@ -279,7 +287,6 @@ function closeSession(session, success, callback) {
         logSession(session, 'Info', 'Refresh failed.');
         session.status = 'Fail';
     }
-   // console.log(session);
     callback(success);
 
     fs.mkdir(UNSENT_SESSIONS_DIRECTORY, function(err) {
@@ -370,7 +377,6 @@ function resendSessions() {
         }
     });
 }
-
 function filesExist(directory, files) {
     if (files.length === 0) {
         return true;
@@ -409,8 +415,18 @@ function changeDeviceFormat(device) {
                 case 'Type':
                     session_device.type = device.Type;
                     break;
+                case 'numberOfAuto':
+                    session_device.number_of_auto = device.numberOfAuto;
+                    break;
+                case 'numberOfManual':
+                    session_device.number_of_manual = device.numberOfManual;
+                    break;
             }
         }
     }
     return session_device;
+}
+
+function checkSessionInProgress(item) {
+    return sessions.checkSessionInProgress(item);
 }

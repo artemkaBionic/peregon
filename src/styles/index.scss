@@ -3582,3 +3582,18 @@ orbicular i {
 .instruction-list-container{
   width: 600px;
 }
+.clickable-item {
+  cursor: pointer;
+}
+.clickable-item:hover{
+  box-shadow: 0 0 3px #888888!important;
+}
+.button-in-progress{
+  color: orange;
+}
+.button-failed{
+  color:red;
+}
+.button-successful{
+  color:#6cab1c;
+}

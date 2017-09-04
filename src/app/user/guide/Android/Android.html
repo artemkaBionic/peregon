@@ -331,16 +331,21 @@
       <div class="anim-wizard-step android-finish-failed" ng-switch-when="finishFail">
         <div class="step-header text-align-center">
           <i class="fa fa-ban warning-icon"></i>
-          <h2 ng-show="vm.Broken || vm.TestsFault">Device needs to be repaired</h2>
-          <h3 class="step-header text-align-center" ng-show="vm.Broken || vm.TestsFault">Ship it to WSA for repair</h3>
+          <h2 ng-show="(vm.Broken || vm.TestsFault) && !vm.AndroidDisconnected">Device needs to be repaired</h2>
+          <h3 class="step-header text-align-center" ng-show="(vm.Broken || vm.TestsFault) && !vm.AndroidDisconnected">Ship it to WSA for repair</h3>
           <h2 ng-show="vm.TestsFault">The following tests failed:</h2>
-          <h3 class="failed-tests" ng-show="vm.TestsFault" ng-repeat="testName in vm.failedTests">{{testName}}</h3>
+          <h3 class="failed-tests" ng-show="vm.TestsFault " ng-repeat="testName in vm.failedTests">{{testName}}</h3>
           <h2 ng-show="vm.AndroidDisconnected">Android Device has been disconnected</h2>
         </div>
         <div class="row nav-btn">
-          <button class="btn btn-primary btn-rounded center" ng-click="vm.refreshEnd()">
-            Finish <i class="fa fa-caret-right"></i>
-          </button>
+          <div class="col-md-6 col-sm-6">
+            <button ng-click="vm.activate()" class="btn btn-choose-med btn-info pull-right">Restart
+            </button>
+          </div>
+          <div class="col-md-6 col-sm-6">
+            <button ng-click="vm.refreshEnd()" class="btn btn-choose-med btn-danger pull-left">Finish
+            </button>
+          </div>
         </div>
       </div>
 

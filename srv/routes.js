@@ -62,6 +62,9 @@ module.exports = function(io, data) {
     router.get('/data/getAllSessions', function(req, res) {
         res.json(inventory.getAllSessions());
     });
+    router.post('/data/checkSession', function(req, res) {
+        res.json(inventory.checkSessionInProgress(req.body));
+    });
     router.get('/data/inventory/sessions/:id', function(req, res) {
         res.json(inventory.getSession(req.params.id));
     });
@@ -201,12 +204,5 @@ module.exports = function(io, data) {
             }
         });
     });
-    // router.post('/trackDevices', function(req, res) {
-    //     simultaneous.deviceBridge(io).then(function(response){
-    //         res.status(200).send();
-    //         //console.log('App installed for device: ' + response);
-    //     });
-    // });
-
     return router;
 };

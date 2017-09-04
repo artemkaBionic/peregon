@@ -27,19 +27,35 @@ function deviceBridge(io) {
                     console.log(err);
                 });
             });
-            tracker.on('remove', function(device) {
-                console.log('Device %s was unplugged', device.id);
-                var index = devices.indexOf(device.id);
-                if (index > -1) {
-                    devices.splice(index, 1);
+    // check for expired sessions every 10 minutes
+    setInterval(function() {
+        checkSessionExpired();
+    }, 600000);
+    // 3600000 - hour 600000 - 10 mins
+    function checkSessionExpired() {
+        console.log('check for expired sessions');
+        var sessions = inventory.getAllSessions();
+        for (var key in sessions) {
+            if (sessions.hasOwnProperty(key)) {
+                if(sessions[key].status === 'Incomplete') {
+                    var sessionDate = new Date(sessions[key].start_time);
+                    var plusOneHour = sessionDate.getTime() + (3600000);
+                    var expireDate = new Date(plusOneHour);
+                    var currentDate = new Date();
+                    if (currentDate > expireDate) {
+                        console.log('Session with key:' + key + ' is expired');
+                        io.emit('android-session-expired', {'sessionId': key, 'device': sessions[key].device.serial_number});
+                        setTimeout(function(){
+                            finishSession(key, {'complete': false});
+                            io.emit('session-expired-confirmation', {});
+                        },5000);
+                    } else {
+                        console.log('No expired sessions.');
+                    }
                 }
-                io.emit('android-remove',{});
-            });
-        })
-        .catch(function (err) {
-            console.error('Something went wrong while connecting device:', err.stack)
-        });
-
+            }
+        }
+    }
     function getSerialLookup(imei){
         return new Promise(function(resolve, reject) {
             inventory.getSerialLookup(imei, function(item) {
@@ -130,13 +146,29 @@ function deviceBridge(io) {
         }
         return true;
     }
+
     function readLogcat(serial) {
          console.log('Reading logcat for device: ' + serial);
          var aaronsLogcat = spawn('adb', ['-s' ,serial ,'logcat' , '-s', 'Aarons_Result']);
          var passedTests = [];
+         var failedTests = [];
+         var failedAutoTests = [];
+         var failedManualTests = [];
+         var passedAutoTests = [];
+         var passedManualTests = [];
          var imei = '';
          var appStartedDataJson = '';
-         var sessionDate = new Date();
+         var sessionDate = new Date().toISOString();
+         tracker.on('remove', function(device) {
+            console.log('Device %s was unplugged', device.id);
+            var index = devices.indexOf(device.id);
+            if (index > -1) {
+                devices.splice(index, 1);
+                io.emit('android-remove',{});
+            }
+            finishSession(sessionDate, {'complete': false});
+         });
+
          aaronsLogcat.stdout.on('data', function (data) {
               if(IsJsonString(decoder.write(data).substring(decoder.write(data).indexOf("{")))) {
                   // check if app started
@@ -144,9 +176,10 @@ function deviceBridge(io) {
                       appStartedDataJson = JSON.parse(decoder.write(data).substring(decoder.write(data).indexOf("{")));
                       imei = appStartedDataJson.data.imei;
                       getSerialLookup(imei).then(function (res) {
-                          startSession(sessionDate, res.item);
-                          console.log(sessions.get(sessionDate));
-                          //updateSession(sessionDate, 'Info', 'Android refresh app has started.');
+                          var item = res.item;
+                          item.numberOfAuto = appStartedDataJson.data.auto;
+                          item.numberOfManual = appStartedDataJson.data.manual;
+                          startSession(sessionDate, item);
                           io.emit('app-start', appStartedDataJson);
                       }).catch(function (err) {
                           console.log('Failed to get serial number because of: ' + err);
@@ -162,9 +195,8 @@ function deviceBridge(io) {
                               io.emit('android-reset', {'status': 'Refresh Successful', 'imei': res.item.Serial});
                           } else {
                               finishSession(sessionDate, {'complete': false});
-                              io.emit('android-reset', {'status': 'Refresh Failed', 'imei': res.item.Serial});
+                              io.emit('android-reset', {'status': 'Refresh Failed', 'imei': res.item.Serial, 'failed_tests': failedTests});
                           }
-                          console.log(sessions.get(sessionDate));
                       }).catch(function (err) {
                           console.log('Failed to get serial number because of: ' + err);
                       });
@@ -175,19 +207,39 @@ function deviceBridge(io) {
                       if (!decoder.write(data).includes('beginning')) {
                           //var testResultJson = '';
                           var testResultJson = JSON.parse(decoder.write(data).substring(decoder.write(data).indexOf("{")));
-                          // add passed tests to array of passed tests
+                          // add tests to arrays of tests
                           if (testResultJson.passed === true) {
-                              passedTests.push(testResultJson);
+                              passedTests.push(testResultJson.commandName);
+                              if (testResultJson.commandName.startsWith('AutoTestCommand')){
+                                  passedAutoTests.push(testResultJson.commandName);
+                              } else {
+                                  passedManualTests.push(testResultJson.commandName);
+                              }
+                          } else {
+                              failedTests.push(testResultJson.commandName);
+                              if (testResultJson.commandName.startsWith('AutoTestCommand')){
+                                  failedAutoTests.push(testResultJson);
+                              } else {
+                                  failedManualTests.push(testResultJson.commandName);
+                              }
                           }
-
+                          if(failedAutoTests.length + passedAutoTests.length <= appStartedDataJson.data.auto) {
+                              updateSession(sessionDate, 'Info Test', 'Android auto', {'passedAuto':failedAutoTests.length + passedAutoTests.length });
+                          }
+                          if(failedManualTests.length + passedManualTests.length <= appStartedDataJson.data.manual) {
+                              updateSession(sessionDate, 'Info Test', 'Android manual', {'passedManual':failedManualTests.length + passedManualTests.length });
+                          }
                           var message = testResultJson.commandName + ' ' + (testResultJson.passed ? 'passed' : 'failed') + '\n';
                           updateSession(sessionDate, 'Info', message, testResultJson.data);
-
                           io.emit("android-test", testResultJson);
                       }
                   }
               }
          });
-
     }
+    })
+
+    .catch(function (err) {
+        console.error('Something went wrong while connecting device:', err.stack)
+    });
 }
