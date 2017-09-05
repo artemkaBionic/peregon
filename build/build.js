@@ -201,6 +201,7 @@ gulp.task('copySrv', function () {
     gulp.src([
         './srv/bin/**/*',
         './srv/usbonly/**/*',
+        './srv/simultaneous/**/*',
         './srv/views/**/*',
         './srv/*.js',
         './srv/*.json'
