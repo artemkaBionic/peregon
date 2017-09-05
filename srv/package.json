@@ -14,7 +14,6 @@
     "body-parser": "^1.14.1",
     "child_process": "^1.0.2",
     "debug": "^2.2.0",
-    "drivelist": "^5.1.8",
     "express": "^4.13.3",
     "jade": "^1.11.0",
     "mongodb": "^2.0.45",
