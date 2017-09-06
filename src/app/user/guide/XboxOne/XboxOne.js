@@ -79,24 +79,24 @@
 
         function loadDevices() {
             return deviceService.getDevices().then(function(devices) {
-                if (vm.selectedDevice === null && devices.length > 0) {
-                    for (var i = devices.length - 1; i >= 0; --i) {
-                        if (devices[i].size >= usbDeviceMinSize) {
-                            vm.selectedDevice = devices[i];
-                            break;
-                        }
-                    }
-                }
+                // if (vm.selectedDevice === null && devices.length > 0) {
+                //     // for (var i = devices.length - 1; i >= 0; --i) {
+                //     //     if (devices[i].size >= usbDeviceMinSize) {
+                //     //         vm.selectedDevice = devices[i];
+                //     //         break;
+                //     //     }
+                //     // }
+                // }
             });
         }
 
         function loadMediaPackages() {
             return packageService.getMediaPackages('xbox-one').then(function(mediaPackages) {
-                for (var i = mediaPackages.length - 1; i >= 0; --i) {
-                    if (vm.refreshMediaPackage === null && mediaPackages[i].name === refreshMediaPackageName) {
-                        vm.refreshMediaPackage = mediaPackages[i];
-                    }
-                }
+                // for (var i = mediaPackages.length - 1; i >= 0; --i) {
+                //     if (vm.refreshMediaPackage === null && mediaPackages[i].name === refreshMediaPackageName) {
+                //         vm.refreshMediaPackage = mediaPackages[i];
+                //     }
+                // }
             });
         }
 

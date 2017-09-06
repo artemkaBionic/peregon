@@ -5,9 +5,9 @@
         .module('app.user')
         .controller('UserController', UserController);
 
-    UserController.$inject = ['$timeout', '$window','$q', '$state', 'config', 'stationService', 'inventoryService', 'socketService', '$scope', 'toastr', '$http'];
+    UserController.$inject = ['$timeout', '$window','$q', '$state', 'config', 'stationService', 'inventoryService', 'socketService', '$scope', 'toastr', '$http', 'popupLauncher'];
 
-    function UserController($timeout, $window, $q, $state, config, stationService, inventoryService, socketService, $scope, toastr, $http) {
+    function UserController($timeout, $window, $q, $state, config, stationService, inventoryService, socketService, $scope, toastr, $http, popupLauncher) {
         /*jshint validthis: true */
         console.log($state.current.name);
         var vm = this;
@@ -25,7 +25,7 @@
         vm.sortType = 'start_time';
         vm.sortReverse = true;
         vm.numberToDisplay = 8;
-        vm.limit = 10;
+        vm.limit = 20;
         $scope.$on('$viewContentLoaded', function() {
             console.log($state.current.name);
             $timeout(function(){
@@ -51,7 +51,7 @@
                 }
             }
             if (vm.limit <  vm.sessionsLength) {
-                vm.limit += 10;
+                vm.limit += 20;
             }
         };
         var container = angular.element(document.querySelector('.content-full-height-scroll'));
@@ -172,18 +172,29 @@
             }
         };
         // jscs:disable
-        vm.showGuideForCards = function(itemNumber) {
-            var item = {'InventoryNumber': itemNumber};
-
+        vm.showGuideForCards = function(session) {
+            var item = {'InventoryNumber': session.device.item_number};
             inventoryService.checkSession(item)
                 .then(function(res) {
                     console.log(res);
-                    if (res.session_id) {
+                    if (res.session_id && session.status !== 'Fail') {
                         var $stateParams = {};
-                        $stateParams.itemNumber = itemNumber;
+                        $stateParams.itemNumber = session.device.item_number;
                         vm.item = null;
                         vm.searchString = '';
                         $state.go('root.user.guide', $stateParams);
+                    } else {
+                        if (session.status === 'Fail') {
+                            if (session.failedTests) {
+                                vm.failedTests = session.failedTests;
+                                openHelpModal('xs',vm.failedTests);
+                            } else {
+                                vm.failedTests = ['Session failed because Android device was unplugged.'];
+                                openHelpModal('xxs',vm.failedTests);
+                            }
+                        } else {
+                            openHelpModal('xxs','Device refreshed successfully.');
+                        }
                     }
                 });
         };
@@ -241,6 +252,7 @@
             $http.get('/data/getAllSessions/')
                 .then(function(response) {
                     vm.sessions =  response.data;
+                    console.log(vm.sessions);
                 });
         }
         function toast(deviceid){
@@ -248,6 +260,25 @@
                 'tapToDismiss': true,
                 'timeOut': 3000,
                 'closeButton': true
+            });
+        }
+        function openHelpModal(modalSize, data) {
+            if (typeof(data) === 'string') {
+                vm.data = {
+                    message: data
+                };
+            } else {
+                vm.data = {
+                    errors: data
+                };
+            }
+            popupLauncher.openModal({
+                templateUrl: 'app/user/guide/Modals/Message-modal.html',
+                controller: 'MessageModalController',
+                bindToController: true,
+                controllerAs: 'vm',
+                resolve: {data:vm.data},
+                size: modalSize
             });
         }
     }

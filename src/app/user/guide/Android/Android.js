@@ -182,6 +182,9 @@
 
                                 } else if(reponse.currentStep === 'Manual Testing') {
                                     vm.step = vm.steps.diagnosticTwo;
+                                } else if(reponse.currentStep === 'Session Failed') {
+                                    vm.step = vm.steps.finishFail;
+                                    vm.failedTests =  response.failed_tests;
                                 }
                                 vm.manualPassed = reponse.device.passed_manual;
                                 vm.manualSize = reponse.device.number_of_manual;

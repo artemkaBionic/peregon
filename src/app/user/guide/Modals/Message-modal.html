@@ -1,0 +1,23 @@
+<horizontal-ui-sheet horizontal-scroll1="" class="shuffle-animation apc-sheet-full modal-android">
+  <div class="manual-modal-content">
+    <div class="text-center">
+      <img class="imageManualModal" ng-src="{{vm.data.image}}"/>
+    </div>
+    <div class="modalTextManual text-center">
+      <div ng-show="vm.errors">
+        <h3>Such tests failed:</h3>
+        <div ng-repeat="error in vm.errors">
+          {{error}}
+        </div>
+      </div>
+      <div ng-show="vm.message">
+        <h3>{{vm.message}}</h3>
+      </div>
+    </div>
+    <div class="navigtion-buttons manual-modal-footer">
+      <button  ng-click="vm.closeModal()" class="btn center btn-primary btn-rounded android-modal-dismiss">
+        <span>Close</span>
+      </button>
+    </div>
+  </div>
+</horizontal-ui-sheet>

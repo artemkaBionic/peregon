@@ -36,6 +36,7 @@ exports.unlockDevice = unlockDevice;
 exports.getSerialLookup = getSerialLookup;
 exports.getAllSessions = getAllSessions;
 exports.checkSessionInProgress = checkSessionInProgress;
+exports.checkSessionByDevice = checkSessionByDevice;
 // Periodically resend unsent sessions
 resendSessions();
 setInterval(function() {
@@ -241,12 +242,16 @@ function sessionUpdate(itemNumber, level, message, details, callback) {
         } else if (message === 'Android manual') {
             session.currentStep = 'Manual Testing';
             session.device.passed_manual = details.passedManual;
+        }else if (message === 'Android test fail') {
+            session.currentStep = 'Session Failed';
+            session.failedTests = details.failedTests;
         } else {
             logSession(session, level, message, details);
         }
     }
     callback();
 }
+
 
 function sessionFinish(itemNumber, data, callback) {
     var session = sessions.get(itemNumber);
@@ -448,6 +453,12 @@ function changeDeviceFormat(device) {
                 case 'numberOfManual':
                     session_device.number_of_manual = device.numberOfManual;
                     break;
+                case 'failedTests':
+                    session_device.failed_tests = device.failedTests;
+                    break;
+                case 'adbSerial':
+                    session_device.adb_serial = device.adbSerial;
+                    break;
             }
         }
     }
@@ -456,4 +467,7 @@ function changeDeviceFormat(device) {
 
 function checkSessionInProgress(item) {
     return sessions.checkSessionInProgress(item);
+}
+function checkSessionByDevice(item) {
+    return sessions.checkSessionByDevice(item);
 }
