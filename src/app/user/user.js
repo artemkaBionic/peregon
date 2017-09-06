@@ -25,7 +25,7 @@
         vm.sortReverse = true;
         vm.numberToDisplay = 8;
         vm.limit = 20;
-        $scope.$on('$stateChangeSuccess', function () {
+        $scope.$on('$stateChangeSuccess', function() {
             getSessions();
         });
         $scope.$watch('vm.textToFilter',function(newTextToFilter){
