@@ -289,10 +289,12 @@
         vm.finish = function() {
             eventService.AndroidGuideInProcess = false;
             vm.androidFinished = true;
-            if (vm.TestsFault || vm.Broken || vm.AndroidDisconnected) {
+            if (vm.Broken) {
                 inventoryService.startAndroidSession(vm.sessionDate, item)
                     .then(inventoryService.updateSession(vm.sessionDate, 'Info', 'Device is broken'))
                         .then(inventoryService.finishSession(vm.sessionDate, {'complete': false}));
+                vm.finishFail();
+            } else if (vm.TestsFault || vm.AndroidDisconnected) {
                 vm.finishFail();
             } else {
                 vm.finishSuccess();
@@ -304,7 +306,9 @@
         }; // Finish Button - Go to the Home Screen
         /*=================End Guide Steps functions===============*/
         /*=================Modal Tips Steps functions===============*/
-
+        vm.goHome = function() {
+            $state.go('root.user');
+        };
         vm.ModalStep = null;
         // Android Modal Window Steps Functions
         vm.modalConnect = function() {
