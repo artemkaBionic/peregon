@@ -129,8 +129,14 @@
 
         getSessions();
         socketService.on('app-start', function(data) {
-            toast(data.data.imei);
-            getSessions();
+            if ($state.current.name === 'root.user') {
+                toastr.info('Refresh started for device:' + data.data.imei, {
+                    'tapToDismiss': true,
+                    'timeOut': 3000,
+                    'closeButton': true
+                });
+                getSessions();
+            }
         });
 
         socketService.on('android-session-expired', function(data) {
@@ -149,15 +155,19 @@
             }
         });
         socketService.on('android-reset', function(status) {
-            toastr.info('Refresh finished for device:' + status.imei, {
-                'tapToDismiss': true,
-                'timeOut': 3000,
-                'closeButton': true
-            });
-            getSessions();
+            if ($state.current.name === 'root.user') {
+                toastr.info('Refresh finished for device:' + status.imei, {
+                    'tapToDismiss': true,
+                    'timeOut': 3000,
+                    'closeButton': true
+                });
+                getSessions();
+            }
         });
         socketService.on('android-remove', function() {
-            getSessions();
+            if ($state.current.name === 'root.user') {
+                getSessions();
+            }
         });
         vm.showGuide = function() {
             if (vm.item !== null) {
@@ -251,13 +261,6 @@
                 .then(function(response) {
                     vm.sessions =  response.data;
                 });
-        }
-        function toast(deviceid){
-            toastr.info('Refresh started for device:' + deviceid, {
-                'tapToDismiss': true,
-                'timeOut': 3000,
-                'closeButton': true
-            });
         }
         function openHelpModal(modalSize, data) {
             if (typeof(data) === 'string') {
