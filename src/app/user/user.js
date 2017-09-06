@@ -5,9 +5,9 @@
         .module('app.user')
         .controller('UserController', UserController);
 
-    UserController.$inject = ['$timeout', '$window','$q', '$state', 'config', 'stationService', 'inventoryService', 'socketService', '$scope', 'toastr', '$http', 'popupLauncher'];
+    UserController.$inject = ['$q', '$state', 'config', 'stationService', 'inventoryService', 'socketService', '$scope', 'toastr', '$http', 'popupLauncher'];
 
-    function UserController($timeout, $window, $q, $state, config, stationService, inventoryService, socketService, $scope, toastr, $http, popupLauncher) {
+    function UserController($q, $state, config, stationService, inventoryService, socketService, $scope, toastr, $http, popupLauncher) {
         /*jshint validthis: true */
         var vm = this;
         vm.ready = false;
@@ -25,10 +25,8 @@
         vm.sortReverse = true;
         vm.numberToDisplay = 8;
         vm.limit = 20;
-        $scope.$on('$viewContentLoaded', function() {
-            $timeout(function(){
-                getSessions();
-            }, 2000);
+        $scope.$on('$stateChangeSuccess', function () {
+            getSessions();
         });
         $scope.$watch('vm.textToFilter',function(newTextToFilter){
              $scope.$watch('vm.sessionType', function(newDropdown, oldDropdown){

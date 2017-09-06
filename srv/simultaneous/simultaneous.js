@@ -84,8 +84,11 @@ function deviceBridge(io) {
         })
     }
     function startSession(sessionDate, item){
-        inventory.sessionStart(sessionDate, item, function(){
-            console.log('Session with date stamp:' + sessionDate + ' had started');
+        return new Promise(function(resolve, reject) {
+            inventory.sessionStart(sessionDate, item, function () {
+                console.log('Session with date stamp:' + sessionDate + ' had started');
+                resolve(sessionDate);
+            });
         });
     }
     function updateSession(sessionDate, level, message, details){
@@ -185,8 +188,9 @@ function deviceBridge(io) {
                           item.numberOfAuto = appStartedDataJson.data.auto;
                           item.numberOfManual = appStartedDataJson.data.manual;
                           item.adbSerial = serial;
-                          startSession(sessionDate, item);
-                          io.emit('app-start', appStartedDataJson);
+                          startSession(sessionDate, item).then(function() {
+                              io.emit('app-start', appStartedDataJson);
+                          });
                       }).catch(function (err) {
                           console.log('Failed to get serial number because of: ' + err);
                       });
