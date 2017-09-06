@@ -130,23 +130,25 @@
         getSessions();
         socketService.on('app-start', function(data) {
             if ($state.current.name === 'root.user') {
-                toastr.info('Refresh started for device:' + data.data.imei, {
-                    'tapToDismiss': true,
-                    'timeOut': 3000,
-                    'closeButton': true
+                getSessions().then(function() {
+                    toastr.info('Refresh started for device:' + data.data.imei, {
+                        'tapToDismiss': true,
+                        'timeOut': 3000,
+                        'closeButton': true
+                    });
                 });
-                getSessions();
             }
         });
 
         socketService.on('android-session-expired', function(data) {
             if ($state.current.name === 'root.user') {
-                toastr.warning('Session expired for device:' + data.device, {
-                    'tapToDismiss': true,
-                    'timeOut': 3000,
-                    'closeButton': true
+                getSessions().then(function() {
+                    toastr.warning('Session expired for device:' + data.device, {
+                        'tapToDismiss': true,
+                        'timeOut': 3000,
+                        'closeButton': true
+                    });
                 });
-                getSessions();
             }
         });
         socketService.on('session-expired-confirmation', function() {
@@ -156,12 +158,13 @@
         });
         socketService.on('android-reset', function(status) {
             if ($state.current.name === 'root.user') {
-                toastr.info('Refresh finished for device:' + status.imei, {
-                    'tapToDismiss': true,
-                    'timeOut': 3000,
-                    'closeButton': true
+                getSessions().then(function() {
+                    toastr.info('Refresh finished for device:' + status.imei, {
+                        'tapToDismiss': true,
+                        'timeOut': 3000,
+                        'closeButton': true
+                    });
                 });
-                getSessions();
             }
         });
         socketService.on('android-remove', function() {
@@ -257,10 +260,13 @@
             });
         }
         function getSessions(){
+            var deferred = $q.defer();
             $http.get('/data/getAllSessions/')
                 .then(function(response) {
                     vm.sessions =  response.data;
+                    deferred.resolve(vm.sessions);
                 });
+            return deferred.promise;
         }
         function openHelpModal(modalSize, data) {
             if (typeof(data) === 'string') {
