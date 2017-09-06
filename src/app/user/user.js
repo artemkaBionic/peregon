@@ -9,7 +9,6 @@
 
     function UserController($timeout, $window, $q, $state, config, stationService, inventoryService, socketService, $scope, toastr, $http, popupLauncher) {
         /*jshint validthis: true */
-        console.log($state.current.name);
         var vm = this;
         vm.ready = false;
         vm.searchString = '';
@@ -27,7 +26,6 @@
         vm.numberToDisplay = 8;
         vm.limit = 20;
         $scope.$on('$viewContentLoaded', function() {
-            console.log($state.current.name);
             $timeout(function(){
                 getSessions();
             }, 2000);
@@ -137,7 +135,6 @@
 
         socketService.on('android-session-expired', function(data) {
             if ($state.current.name === 'root.user') {
-                console.log('sending session expired from home');
                 toastr.warning('Session expired for device:' + data.device, {
                     'tapToDismiss': true,
                     'timeOut': 3000,
@@ -176,7 +173,6 @@
             var item = {'InventoryNumber': session.device.item_number};
             inventoryService.checkSession(item)
                 .then(function(res) {
-                    console.log(res);
                     if (res.session_id && session.status !== 'Fail') {
                         var $stateParams = {};
                         $stateParams.itemNumber = session.device.item_number;
@@ -187,7 +183,11 @@
                         if (session.status === 'Fail') {
                             if (session.failedTests) {
                                 vm.failedTests = session.failedTests;
-                                openHelpModal('xs',vm.failedTests);
+                                if (vm.failedTests.length <= 4) {
+                                    openHelpModal('xxs',vm.failedTests);
+                                } else {
+                                    openHelpModal('xs',vm.failedTests);
+                                }
                             } else {
                                 vm.failedTests = ['Session failed because Android device was unplugged.'];
                                 openHelpModal('xxs',vm.failedTests);
@@ -199,8 +199,6 @@
                 });
         };
         // jscs: enable
-        //console.log(vm.dummySessions);
-
         vm.unlockForService = function() {
             if (vm.item) {
                 inventoryService.unlockForService(vm.item.Serial).then(function(data) {
@@ -252,7 +250,6 @@
             $http.get('/data/getAllSessions/')
                 .then(function(response) {
                     vm.sessions =  response.data;
-                    console.log(vm.sessions);
                 });
         }
         function toast(deviceid){
