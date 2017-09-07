@@ -134,7 +134,6 @@ function sessionStart(itemNumber, device, callback) {
             "status": 'Incomplete',
             "diagnose_only": diagnose_only,
             "device": session_device,
-            "current_step": 'Refresh started',
             // "android_data": {
             //     "current_step":"",
             //     "number_of_auto_tests":"",
@@ -243,7 +242,7 @@ function sessionUpdate(itemNumber, level, message, details, callback) {
         } else if (message === 'Android manual') {
             session.currentStep = 'Manual Testing';
             session.device.passed_manual = details.passedManual;
-        }else if (message === 'Android test fail') {
+        } else if (message === 'Android test fail') {
             session.currentStep = 'Session Failed';
             session.failedTests = details.failedTests;
         } else {
@@ -339,6 +338,14 @@ function closeSession(session, success, callback) {
                     console.error(session);
                 }
                 //sessions.delete(session.device.item_number);
+                // deleting extra keys which added for client to continue session
+                delete content.session.device.number_of_auto;
+                delete content.session.device.number_of_manual;
+                delete content.session.device.adb_serial;
+                delete content.session.device.passed_auto;
+                delete content.session.device.passed_manual;
+                delete content.session.currentStep;
+                delete content.session.failed_tests;
                 sendSession(content, file);
             });
         }
