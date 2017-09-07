@@ -200,8 +200,13 @@
                                     openHelpModal('xs',vm.failedTests);
                                 }
                             } else {
-                                vm.failedTests = ['Session failed because Android device was unplugged.'];
-                                openHelpModal('xxs',vm.failedTests);
+                                if (session.logs[0].message === 'Device is broken') {
+                                    vm.failedTests = ['Device is broken.'];
+                                    openHelpModal('xxs','Session failed because device is broken.');
+                                } else {
+                                    openHelpModal('xxs','Session failed because Android device was unplugged.');
+                                }
+
                             }
                         } else {
                             openHelpModal('xxs','Device refreshed successfully.');

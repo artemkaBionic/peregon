@@ -179,12 +179,11 @@
                             .then(function(reponse){
                                 if (reponse.currentStep === 'Auto passed') {
                                     vm.step = vm.steps.diagnosticOne;
-
                                 } else if(reponse.currentStep === 'Manual Testing') {
                                     vm.step = vm.steps.diagnosticTwo;
                                 } else if(reponse.currentStep === 'Session Failed') {
                                     vm.step = vm.steps.finishFail;
-                                    vm.failedTests =  response.failed_tests;
+                                    vm.failedTests =  response.failedTests;
                                 }
                                 vm.manualPassed = reponse.device.passed_manual;
                                 vm.manualSize = reponse.device.number_of_manual;

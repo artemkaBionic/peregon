@@ -20,6 +20,7 @@ function deviceBridge(io) {
         .then(function (tracker) {
             tracker.on('add', function (device) {
                 console.log('Device %s was plugged in', device.id);
+
                 setTimeout(function(){
                     io.emit('android-add',{});
                     console.log('Device ' + device.id + ' is ready to install app');
