@@ -3,7 +3,7 @@
     angular.module('app.user')
         .filter('inputFilter', function() {
             return function(input, filterStr) {
-                // var arr = Object.keys(input).map(function(key) { return input[key]; });
+                 var arr = Object.keys(input).map(function(key) { return input[key]; });
                 // if (!angular.isUndefined(filterStr)) {
                 //     var tokens = filterStr.split(' ');
                 //     for (var i = 0; i < tokens.length; i++){
@@ -53,7 +53,7 @@
                 //     return keysExistsInObj.length === tokens.length;
                 // });
                 // return items;
-                return input;
+                return arr;
             };
         });
 }());
