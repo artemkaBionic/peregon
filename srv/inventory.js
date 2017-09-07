@@ -338,14 +338,7 @@ function closeSession(session, success, callback) {
                     console.error(session);
                 }
                 //sessions.delete(session.device.item_number);
-                // deleting extra keys which added for client to continue session
-                delete content.session.device.number_of_auto;
-                delete content.session.device.number_of_manual;
-                delete content.session.device.adb_serial;
-                delete content.session.device.passed_auto;
-                delete content.session.device.passed_manual;
-                delete content.session.currentStep;
-                delete content.session.failed_tests;
+
                 sendSession(content, file);
             });
         }
@@ -378,6 +371,16 @@ function lockDeviceAndSendSession(content, file) {
 }
 
 function sendSession(content, file) {
+    // deleting extra keys which added for client to continue session
+    delete content.session.device.number_of_auto;
+    delete content.session.device.number_of_manual;
+    delete content.session.device.adb_serial;
+    delete content.session.device.passed_auto;
+    delete content.session.device.passed_manual;
+    delete content.session.currentStep;
+    delete content.session.failed_tests;
+    console.log('sending session');
+    //console.log(content);
     return request({
         method: 'POST',
         url: API_URL + '/session',
