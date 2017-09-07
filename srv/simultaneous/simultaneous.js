@@ -20,21 +20,23 @@ function deviceBridge(io) {
         .then(function (tracker) {
             tracker.on('add', function (device) {
                 console.log('Device %s was plugged in', device.id);
-                installApp(device.id);
-                // client.waitForDevice(device.id).then(function(authorizedDevice) {
-                //     console.log(authorizedDevice + ' is authorized and ready to install app.');
-                //     io.emit('android-add',{});
-                //     installApp(authorizedDevice);
-                // }).catch(function(err) {
-                //     console.log(err);
-                // });
+                //installApp(device.id);
+                client.waitForDevice(device.id).then(function(authorizedDevice) {
+                    console.log(authorizedDevice + ' is authorized and ready to install app.');
+                    io.emit('android-add',{});
+                    installApp(authorizedDevice);
+                }).catch(function(err) {
+                    console.log(err);
+                });
             });
             tracker.on('remove', function(device) {
                 console.log('Device %s was unplugged', device.id);
                 var index = devices.indexOf(device.id);
                 var sessionId = inventory.checkSessionByDevice({'adbSerial': device.id}).session_id;
                 console.log(sessionId + 'sessionID');
-                finishSession(sessionId, {'complete': false});
+                if (sessionId !== undefined) {
+                    finishSession(sessionId, {'complete': false});
+                }
                 if (index > -1) {
                     devices.splice(index, 1);
                     io.emit('android-remove',{});
