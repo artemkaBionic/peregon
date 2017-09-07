@@ -101,8 +101,6 @@ function deviceBridge(io) {
         inventory.sessionUpdate(sessionDate, level, message, details, function(err) {
             if (err) {
                 console.log(err);
-            } else {
-                console.log('Session with date stamp:' + sessionDate + ' was updated');
             }
         });
     }
