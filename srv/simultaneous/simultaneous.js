@@ -189,60 +189,61 @@ function deviceBridge(io) {
                           item.adbSerial = serial;
                           startSession(sessionDate, item).then(function(res) {
                               io.emit('app-start', appStartedDataJson);
-                              console.log('Session:' + res + ' started');
+                          }).catch(function(err) {
+                              console.log(err);
                           });
                       }).catch(function (err) {
                           console.log('Failed to get serial number because of: ' + err);
                       });
                   }
-                  // // check if vipe started indexOf !== -1 means 'includes'
-                  // else if (decoder.write(data).indexOf('VipeStarted') !== -1) {
-                  //     getSerialLookup(imei).then(function (res) {
-                  //         // if passed tests array length = to number of all tests then session was successful
-                  //         if (passedTests.length === (appStartedDataJson.data.auto + appStartedDataJson.data.manual)) {
-                  //             updateSession(sessionDate, 'Info', 'Android refresh app has initiated a factory reset.');
-                  //             finishSession(sessionDate, {'complete': true});
-                  //             io.emit('android-reset', {'status': 'Refresh Successful', 'imei': res.item.Serial});
-                  //         } else {
-                  //             updateSession(sessionDate, 'Info', 'Android test fail', {'failedTests':failedTests});
-                  //             finishSession(sessionDate, {'complete': false});
-                  //             io.emit('android-reset', {'status': 'Refresh Failed', 'imei': res.item.Serial, 'failed_tests': failedTests});
-                  //         }
-                  //     }).catch(function (err) {
-                  //         console.log('Failed to get serial number because of: ' + err);
-                  //     });
-                  //
-                  // }
-                  // // tests progress indexOf === -1 means 'not includes'
-                  // else if (decoder.write(data).indexOf('beginning') === -1) {
-                  //         //var testResultJson = '';
-                  //         var testResultJson = JSON.parse(decoder.write(data).substring(decoder.write(data).indexOf("{")));
-                  //         // add tests to arrays of tests
-                  //         if (testResultJson.passed === true) {
-                  //             passedTests.push(testResultJson.commandName);
-                  //             if (testResultJson.commandName.indexOf('AutoTestCommand') !== -1){
-                  //                 passedAutoTests.push(testResultJson.commandName);
-                  //             } else {
-                  //                 passedManualTests.push(testResultJson.commandName);
-                  //             }
-                  //         } else {
-                  //             failedTests.push(testResultJson.commandName);
-                  //             if (testResultJson.commandName.indexOf('AutoTestCommand') !== -1){
-                  //                 failedAutoTests.push(testResultJson);
-                  //             } else {
-                  //                 failedManualTests.push(testResultJson.commandName);
-                  //             }
-                  //         }
-                  //         if(failedAutoTests.length + passedAutoTests.length <= appStartedDataJson.data.auto) {
-                  //             updateSession(sessionDate, 'Info Test', 'Android auto', {'passedAuto':failedAutoTests.length + passedAutoTests.length });
-                  //         }
-                  //         if(failedManualTests.length + passedManualTests.length <= appStartedDataJson.data.manual) {
-                  //             updateSession(sessionDate, 'Info Test', 'Android manual', {'passedManual':failedManualTests.length + passedManualTests.length });
-                  //         }
-                  //         var message = testResultJson.commandName + ' ' + (testResultJson.passed ? 'passed' : 'failed') + '\n';
-                  //         updateSession(sessionDate, 'Info', message, testResultJson.data);
-                  //         io.emit("android-test", testResultJson);
-                  // }
+                  // check if vipe started indexOf !== -1 means 'includes'
+                  else if (decoder.write(data).indexOf('VipeStarted') !== -1) {
+                      getSerialLookup(imei).then(function (res) {
+                          // if passed tests array length = to number of all tests then session was successful
+                          if (passedTests.length === (appStartedDataJson.data.auto + appStartedDataJson.data.manual)) {
+                              updateSession(sessionDate, 'Info', 'Android refresh app has initiated a factory reset.');
+                              finishSession(sessionDate, {'complete': true});
+                              io.emit('android-reset', {'status': 'Refresh Successful', 'imei': res.item.Serial});
+                          } else {
+                              updateSession(sessionDate, 'Info', 'Android test fail', {'failedTests':failedTests});
+                              finishSession(sessionDate, {'complete': false});
+                              io.emit('android-reset', {'status': 'Refresh Failed', 'imei': res.item.Serial, 'failed_tests': failedTests});
+                          }
+                      }).catch(function (err) {
+                          console.log('Failed to get serial number because of: ' + err);
+                      });
+
+                  }
+                  // tests progress indexOf === -1 means 'not includes'
+                  else if (decoder.write(data).indexOf('beginning') === -1) {
+                          //var testResultJson = '';
+                          var testResultJson = JSON.parse(decoder.write(data).substring(decoder.write(data).indexOf("{")));
+                          // add tests to arrays of tests
+                          if (testResultJson.passed === true) {
+                              passedTests.push(testResultJson.commandName);
+                              if (testResultJson.commandName.indexOf('AutoTestCommand') !== -1){
+                                  passedAutoTests.push(testResultJson.commandName);
+                              } else {
+                                  passedManualTests.push(testResultJson.commandName);
+                              }
+                          } else {
+                              failedTests.push(testResultJson.commandName);
+                              if (testResultJson.commandName.indexOf('AutoTestCommand') !== -1){
+                                  failedAutoTests.push(testResultJson);
+                              } else {
+                                  failedManualTests.push(testResultJson.commandName);
+                              }
+                          }
+                          if(failedAutoTests.length + passedAutoTests.length <= appStartedDataJson.data.auto) {
+                              updateSession(sessionDate, 'Info Test', 'Android auto', {'passedAuto':failedAutoTests.length + passedAutoTests.length });
+                          }
+                          if(failedManualTests.length + passedManualTests.length <= appStartedDataJson.data.manual) {
+                              updateSession(sessionDate, 'Info Test', 'Android manual', {'passedManual':failedManualTests.length + passedManualTests.length });
+                          }
+                          var message = testResultJson.commandName + ' ' + (testResultJson.passed ? 'passed' : 'failed') + '\n';
+                          updateSession(sessionDate, 'Info', message, testResultJson.data);
+                          io.emit("android-test", testResultJson);
+                  }
               }
          });
     }

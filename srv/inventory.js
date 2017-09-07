@@ -123,6 +123,7 @@ function getSession(itemNumber) {
 }
 
 function sessionStart(itemNumber, device, callback) {
+    console.log('Session:' + itemNumber + 'starts now' );
     var diagnose_only = false;
     var session_device = changeDeviceFormat(device);
     var station_name = station.getName();
