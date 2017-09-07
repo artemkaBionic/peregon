@@ -22,7 +22,7 @@ function deviceBridge(io) {
                 console.log('Device %s was plugged in', device.id);
 
                 setTimeout(function(){
-                    console.log('now we should install app');
+                    console.log('Device ' + device.id + ' is ready to install app');
                     installApp(device.id);
                 },5000);
                 // client.waitForDevice(device.id).then(function(authorizedDevice) {
