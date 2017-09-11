@@ -182,6 +182,14 @@ function deviceBridge(io) {
          var imei = '';
          var appStartedDataJson = '';
          var sessionDate = new Date().toISOString();
+         var unknownItem = { InventoryNumber: 'Unauthorized',
+             Type: 'Android',
+             Sku: 'Unauthorized',
+             Manufacturer: 'Unauthorized',
+             Model: 'Unauthorized',
+             Description: 'Unauthorized',
+             Serial: 'Unauthorized',
+             adbSerial: serial};
          aaronsLogcat.stdout.on('data', function (data) {
               if(IsJsonString(decoder.write(data).substring(decoder.write(data).indexOf("{")))) {
                   // check if app started indexOf !== -1 means 'includes'
@@ -190,6 +198,7 @@ function deviceBridge(io) {
                       imei = appStartedDataJson.data.imei;
                       getSerialLookup(imei).then(function (res) {
                           var item = res.item;
+                          console.log(res.item);
                           item.numberOfAuto = appStartedDataJson.data.auto;
                           item.numberOfManual = appStartedDataJson.data.manual;
                           item.adbSerial = serial;
@@ -200,8 +209,18 @@ function deviceBridge(io) {
                           });
                       }).catch(function (err) {
                           console.log('Failed to get serial number because of: ' + err);
+                          unknownItem.Serial = imei;
+                          unknownItem.numberOfAuto = appStartedDataJson.data.auto;
+                          unknownItem.numberOfManual = appStartedDataJson.data.manual;
+                          startSession(sessionDate, unknownItem).then(function(res) {
+                              io.emit('app-start', appStartedDataJson);
+                              updateSession(sessionDate, 'Info', 'Android device is not found in Inventory');
+                          }).catch(function(err) {
+                              console.log(err);
+                          });
                       });
                   }
+
                   // check if vipe started indexOf !== -1 means 'includes'
                   else if (decoder.write(data).indexOf('VipeStarted') !== -1) {
                       getSerialLookup(imei).then(function (res) {

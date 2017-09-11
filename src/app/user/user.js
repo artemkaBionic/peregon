@@ -38,7 +38,9 @@
                  }
              });
         });
-
+        $scope.$on('updateList', function(event) {
+            getSessions();
+        });
         vm.increaseLimit = function() {
             vm.sessionsLength = 0;
             for (var key in vm.sessions) {
@@ -181,38 +183,48 @@
         };
         // jscs:disable
         vm.showGuideForCards = function(session) {
-            var item = {'InventoryNumber': session.device.item_number};
-            inventoryService.checkSession(item)
-                .then(function(res) {
-                    if (res.session_id && session.status !== 'Fail') {
-                        var $stateParams = {};
-                        $stateParams.itemNumber = session.device.item_number;
-                        vm.item = null;
-                        vm.searchString = '';
-                        $state.go('root.user.guide', $stateParams);
-                    } else {
-                        if (session.status === 'Fail') {
-                            if (session.failedTests) {
-                                vm.failedTests = session.failedTests;
-                                if (vm.failedTests.length <= 4) {
-                                    openHelpModal('xxs',vm.failedTests);
+            var item = {'InventoryNumber': session.device.item_number, 'adbSerial': session.device.adb_serial};
+            if (session.status === 'Device Unauthorized') {
+
+                inventoryService.checkSessionByAdbSerial(item)
+                    .then(function(res) {
+                        openHelpModal('xs','Unauthorized Device', res.session_id);
+                    });
+            } else {
+                inventoryService.checkSession(item)
+                    .then(function(res) {
+                        if (res.session_id && session.status !== 'Fail') {
+                            var $stateParams = {};
+                            $stateParams.itemNumber = session.device.item_number;
+                            vm.item = null;
+                            vm.searchString = '';
+                            $state.go('root.user.guide', $stateParams);
+
+                        } else {
+                            if (session.status === 'Fail') {
+                                if (session.failedTests) {
+                                    vm.failedTests = session.failedTests;
+                                    if (vm.failedTests.length <= 4) {
+                                        openHelpModal('xxs',vm.failedTests);
+                                    } else {
+                                        openHelpModal('xs',vm.failedTests);
+                                    }
                                 } else {
-                                    openHelpModal('xs',vm.failedTests);
+                                    if (session.logs[0].message === 'Device is broken') {
+                                        vm.failedTests = ['Device is broken.'];
+                                        openHelpModal('xxs','Session failed because device is broken.');
+                                    } else {
+                                        openHelpModal('xxs','Session failed because Android device was unplugged.');
+                                    }
+
                                 }
                             } else {
-                                if (session.logs[0].message === 'Device is broken') {
-                                    vm.failedTests = ['Device is broken.'];
-                                    openHelpModal('xxs','Session failed because device is broken.');
-                                } else {
-                                    openHelpModal('xxs','Session failed because Android device was unplugged.');
-                                }
-
+                                openHelpModal('xxs','Device refreshed successfully.');
                             }
-                        } else {
-                            openHelpModal('xxs','Device refreshed successfully.');
                         }
-                    }
-                });
+                    });
+            }
+
         };
         // jscs: enable
         vm.unlockForService = function() {
@@ -271,10 +283,11 @@
                 });
             return deferred.promise;
         }
-        function openHelpModal(modalSize, data) {
+        function openHelpModal(modalSize, data, sessionId) {
             if (typeof(data) === 'string') {
                 vm.data = {
-                    message: data
+                    message: data,
+                    sessionId: sessionId
                 };
             } else {
                 vm.data = {

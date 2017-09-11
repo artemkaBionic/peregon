@@ -49,7 +49,10 @@ SessionCache.prototype.checkSessionByDevice = function(item) {
     console.log('Checking if there is session in progress for device ' + item.InventoryNumber);
     for (var key in this._sessions) {
         if (this._sessions.hasOwnProperty(key)) {
-            if (this._sessions[key].status === 'Incomplete') {
+            console.log(this._sessions[key].status);
+            console.log(this._sessions[key].device.adb_serial);
+            console.log(item);
+            if (this._sessions[key].status === 'Incomplete' || this._sessions[key].status === 'Device Unauthorized') {
                if (this._sessions[key].device.adb_serial === item.adbSerial) {
                     console.log('Session incomplete');
                     // console.log(this._sessions[key]);

@@ -37,6 +37,7 @@ exports.getSerialLookup = getSerialLookup;
 exports.getAllSessions = getAllSessions;
 exports.checkSessionInProgress = checkSessionInProgress;
 exports.checkSessionByDevice = checkSessionByDevice;
+exports.sessionUpdateItem = sessionUpdateItem;
 // Periodically resend unsent sessions
 resendSessions();
 setInterval(function() {
@@ -66,6 +67,7 @@ function getItemFromAzure(id, callback){
 }
 // Item lookup from our Mongo DB
 function getItem(id, callback) {
+    console.log(API_URL + '/aarons/inventorylookup' + id);
     request({
         rejectUnauthorized: false,
         uri: API_URL + '/aarons/inventorylookup' + id,
@@ -245,6 +247,9 @@ function sessionUpdate(itemNumber, level, message, details, callback) {
         } else if (message === 'Android test fail') {
             session.currentStep = 'Session Failed';
             session.failedTests = details.failedTests;
+        } else if (message === 'Android device is not found in Inventory') {
+            session.status = 'Device Unauthorized';
+            //session.failedTests = details.failedTests;
         } else {
             logSession(session, level, message, details);
         }
@@ -252,7 +257,48 @@ function sessionUpdate(itemNumber, level, message, details, callback) {
     callback();
 }
 
-
+function sessionUpdateItem(sessionId, device, level, message, details, callback) {
+    var session = sessions.get(sessionId);
+    //var session_device = changeDeviceFormat(device);
+    if (typeof session === 'undefined') {
+        console.warn('sessionUpdate attempted for a session that is not started.');
+        console.warn('message: ' + message);
+    } else {
+        session.status = 'Incomplete';
+        session.device.sku = device.Sku;
+        session.device.item_number = device.InventoryNumber;
+        session.device.model = device.Model;
+        session.device.manufacturer = device.Manufacturer;
+        session.device.serial_number = device.Serial;
+        session.device.type = device.Type;
+        logSession(session, level, message, details);
+        if(session.device.passed_auto <= session.device.number_of_auto) {
+            session.currentStep = 'Auto passed';
+        }
+        if(session.device.passed_manual <= session.device.number_of_manual) {
+            session.currentStep = 'Manual Testing';
+        }
+    }
+    callback();
+}
+// case 'Sku':
+// session_device.sku = device.Sku;
+// break;
+// case 'InventoryNumber':
+// session_device.item_number = device.InventoryNumber;
+// break;
+// case 'Model':
+// session_device.model = device.Model;
+// break;
+// case 'Manufacturer':
+// session_device.manufacturer = device.Manufacturer;
+// break;
+// case 'Serial':
+// session_device.serial_number = device.Serial;
+// break;
+// case 'Type':
+// session_device.type = device.Type;
+// break;
 function sessionFinish(itemNumber, data, callback) {
     var session = sessions.get(itemNumber);
     console.log('A client requested to finish an ' + session.device.type + ' refresh of item number ' + itemNumber);

@@ -23,7 +23,7 @@
         </div>
       </div>
       <div class="row text-center item-error-row">
-          <div  ng-hide="vm.item === null">
+          <div ng-hide="vm.item === null">
             <button class="item-button" type="submit"><strong>{{'SKU: '+vm.item.Sku}}</strong><br/>{{vm.item.Description}}
             </button>
           </div>
@@ -147,6 +147,7 @@
                     <div style="font-weight: 600" class="col-xs-6 text-ellipsis">
                       <span ng-show="session.status === 'Success'" class="button-successful" data-toggle="tooltip" title="Refresh Successful"> Refresh Successful</span>
                       <span ng-show="session.status === 'Fail'" class="button-failed" data-toggle="tooltip" title="Refresh Failed">Refresh Failed</span>
+                      <span ng-show="session.status === 'Device Unauthorized'" class="button-failed" data-toggle="tooltip" title="Refresh Failed">Device Unauthorized</span>
                       <span ng-show="session.status === 'Incomplete'" class="button-in-progress" data-toggle="tooltip" title="In Progress">In Progress <span class="fa fa-step-forward"></span></span>
                     </div>
                   </div>

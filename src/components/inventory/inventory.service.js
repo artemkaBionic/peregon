@@ -139,6 +139,16 @@
             return deferred.promise;
         };
 
+        service.updateSessionItem = function(sessionDate, item) {
+            var url = '/data/inventory/sessions/' + sessionDate + '/updateSessionItem';
+            var deferred = $q.defer();
+
+            $http.post(url, item).then(function(result) {
+                deferred.resolve(result.data);
+            });
+
+            return deferred.promise;
+        };
         service.updateSession = function(itemNumber, level, message, details) {
             var url = '/data/inventory/sessions/' + itemNumber + '/update';
             var deferred = $q.defer();
@@ -163,6 +173,16 @@
         };
         service.checkSession = function(item) {
             var url = '/data/checkSession';
+            var deferred = $q.defer();
+
+            $http.post(url, item).then(function(result) {
+                deferred.resolve(result.data);
+            });
+
+            return deferred.promise;
+        };
+        service.checkSessionByAdbSerial = function(item) {
+            var url = '/data/checkSessionByAdbSerial';
             var deferred = $q.defer();
 
             $http.post(url, item).then(function(result) {

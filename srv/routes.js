@@ -65,6 +65,9 @@ module.exports = function(io, data) {
     router.post('/data/checkSession', function(req, res) {
         res.json(inventory.checkSessionInProgress(req.body));
     });
+    router.post('/data/checkSessionByAdbSerial', function(req, res) {
+        res.json(inventory.checkSessionByDevice(req.body));
+    });
     router.get('/data/inventory/sessions/:id', function(req, res) {
         res.json(inventory.getSession(req.params.id));
     });
@@ -76,7 +79,18 @@ module.exports = function(io, data) {
     });
 
     router.post('/data/inventory/sessions/:id/update', function(req, res) {
+
         inventory.sessionUpdate(req.params.id, req.body.level, req.body.message, req.body.details, function(err, result) {
+            if (err) {
+                console.log(err);
+            }
+            res.json(result);
+        });
+    });
+
+    router.post('/data/inventory/sessions/:id/updateSessionItem', function(req, res) {
+       // console.log(req);
+        inventory.sessionUpdateItem(req.params.id, req.body, req.body.level, req.body.message, req.body.details, function(err, result) {
             if (err) {
                 console.log(err);
             }
