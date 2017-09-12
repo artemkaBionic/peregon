@@ -21,14 +21,15 @@
         vm.showAuthCheck = false;
         vm.showAuth = true;
         vm.sessionAlreadyInProgress = false;
+        vm.wrongDeviceType = false;
         // jscs:disable
         if (data.errors) {
             vm.errors = data.errors;
         } else {
             vm.message = data.message;
             vm.sessionId = data.sessionId;
-            vm.serialNo = data.serialNo;
-            console.log(vm.sessionId);
+            vm.serialNo = data.session.device.serial_number;
+            vm.deviceType = data.session.device.type;
             vm.authorize = function(){
                 inventoryService.checkSession(vm.item).then(function(res) {
                     if (res.session_id) {
@@ -58,6 +59,7 @@
 
                 vm.searchStringChange = function() {
                     vm.sessionAlreadyInProgress = false;
+                    vm.wrongDeviceType = false;
                     vm.searchString = vm.searchString.toUpperCase();
                     if (vm.searchString !== vm.lastValidSearchString) {
                         vm.searchStringError = false;
@@ -70,7 +72,9 @@
                                 vm.item = null;
                                 inventoryService.getItem(vm.searchString).then(function(item) {
                                     vm.item = item;
-
+                                    if (item !== null && item.Type !== vm.deviceType) {
+                                        vm.wrongDeviceType = true;
+                                    }
                                     vm.itemNumberError = false;
                                 }, function() {
                                     if (vm.item === null) { // If vm.item is populated then a successful call to getItem was completed before this failure was returned.

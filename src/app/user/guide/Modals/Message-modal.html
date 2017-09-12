@@ -30,12 +30,15 @@
           <div ng-show="vm.item === null" ng-hide="vm.searchString.length < 7 || vm.itemNumberError || vm.searchStringSkuWarning || vm.searchStringError">
             <i class="fa fa-spinner fa-spin" style="font-size:90px"></i>
           </div>
-          <div ng-hide="vm.item === null || vm.showAuthCheck || vm.sessionAlreadyInProgress">
+          <div ng-hide="vm.item === null || vm.wrongDeviceType || vm.showAuthCheck || vm.sessionAlreadyInProgress">
             <span  type="submit"><strong>{{'SKU: '+vm.item.Sku}}</strong><br/>{{vm.item.Description}}
             </span>
           </div>
           <div class="item-button-error" ng-show="vm.itemNumberError"><strong>Item not found</strong><br/>Check
             the ItemNumber
+          </div>
+          <div class="item-button-error" ng-show="vm.wrongDeviceType"><strong>Item Number entered is for {{vm.item.Type}}</strong>
+            <br/> Make sure you are typing Item Number for {{vm.deviceType}}
           </div>
           <div class="item-button-error" ng-show="vm.searchStringSkuWarning">
             <strong>It looks like you might be typing a SKU</strong><br/>Make sure you are entering a valid Item Number.
@@ -53,7 +56,7 @@
     </div>
     <div class="navigtion-buttons manual-modal-footer">
       <div class="row simultaneous-modal-footer-btns" >
-        <button ng-disabled="vm.item === null || vm.showAuthCheck || vm.sessionAlreadyInProgress" type="submit"
+        <button ng-disabled="vm.item === null || vm.wrongDeviceType || vm.showAuthCheck || vm.sessionAlreadyInProgress" type="submit"
                 class="btn-success btn-rounded" ng-click="vm.authorize()">Ok</button>
         <button type="submit" class="btn-primary btn-rounded" ng-click="vm.closeModal()">Cancel</button>
       </div>

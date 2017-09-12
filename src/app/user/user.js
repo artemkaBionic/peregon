@@ -231,7 +231,7 @@
                 inventoryService.checkSessionByStartDate(item.start_time)
                     .then(function (res) {
                         console.log(res);
-                        openHelpModal('xxxs', 'Unrecognized Device', res.session_id, item.serial);
+                        openHelpModal('xxxs', 'Unrecognized Device', res.session_id, session);
                     });
             }
         };
@@ -292,12 +292,12 @@
                 });
             return deferred.promise;
         }
-        function openHelpModal(modalSize, data, sessionId, serialNo) {
+        function openHelpModal(modalSize, data, sessionId, session) {
             if (typeof(data) === 'string') {
                 vm.data = {
                     message: data,
                     sessionId: sessionId,
-                    serialNo: serialNo
+                    session: session
                 };
             } else {
                 vm.data = {
