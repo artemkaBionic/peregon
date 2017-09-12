@@ -11,7 +11,8 @@
         </div>
       </div>
       <div ng-show="vm.message">
-        <h3>{{vm.message}} <span ng-show="vm.serialNo"> with <strong>Serial: {{vm.serialNo}}</strong></span></h3>
+        <h4 ng-show="vm.serialNo">{{vm.message}} <span > with <strong>Serial: {{vm.serialNo}}</strong></span></h4>
+        <h3 ng-hide="vm.serialNo">{{vm.message}}</h3>
       </div>
       <div ng-show="vm.showItemInput">
         <div class="row">
