@@ -20,11 +20,11 @@ function deviceBridge(io) {
         .then(function (tracker) {
             tracker.on('add', function (device) {
                 console.log('Device %s was plugged in', device.id);
-                // setTimeout(function(){
-                //     io.emit('android-add',{});
-                //     console.log('Device ' + device.id + ' is ready to install app');
-                //     installApp(device.id);
-                // },8000);
+                setTimeout(function(){
+                    io.emit('android-add',{});
+                    console.log('Device ' + device.id + ' is ready to install app');
+                    installApp(device.id);
+                },8000);
                 // client.waitForDevice(device.id).then(function(authorizedDevice) {
                 //     console.log(authorizedDevice + ' is authorized and ready to install app.');
                 //     io.emit('android-add',{});
@@ -32,11 +32,7 @@ function deviceBridge(io) {
                 // }).catch(function(err) {
                 //     console.log(err);
                 // });
-                return client.waitForDevice(device.id).then(function (authorizedDevice) {
-                    console.log(authorizedDevice + ' is authorized and ready to install app.');
-                    //     io.emit('android-add',{});
-                    //     installApp(authorizedDevice);
-                })
+
             });
             tracker.on('remove', function(device) {
                 console.log('Device %s was unplugged', device.id);
