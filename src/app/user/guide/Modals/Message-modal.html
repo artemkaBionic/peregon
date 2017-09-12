@@ -25,16 +25,14 @@
             </div>
           </div>
         </div>
-        <div class="row" ng-hide="vm.item === null || vm.showAuthCheck || vm.sessionAlreadyInProgress">
-          <div style="margin-top: 30px;margin-bottom: 30px; font-size: 17pt">
-            Are you sure that you are refreshing this item: <b>{{vm.item.Description}}</b> SKU: <b>{{vm.item.Sku}}</b>?
-          </div>
-          <button type="submit" class="btn-success btn-rounded" ng-click="vm.authorize()">YES</button>
-          <button type="submit" class="btn-danger btn-rounded" ng-click="vm.wrongItemNumber()">NO</button>
-        </div>
-        <div class="row text-center item-error-row" style="margin-top: 45px">
+
+        <div class="row text-center item-error-row" style="margin-top: 25px; font-size: 20pt">
           <div ng-show="vm.item === null" ng-hide="vm.searchString.length < 7 || vm.itemNumberError || vm.searchStringSkuWarning || vm.searchStringError">
-            <i class="fa fa-spinner fa-spin" style="font-size:110px"></i>
+            <i class="fa fa-spinner fa-spin" style="font-size:90px"></i>
+          </div>
+          <div ng-hide="vm.item === null || vm.showAuthCheck || vm.sessionAlreadyInProgress">
+            <span  type="submit"><strong>{{'SKU: '+vm.item.Sku}}</strong><br/>{{vm.item.Description}}
+            </span>
           </div>
           <div class="item-button-error" ng-show="vm.itemNumberError"><strong>Item not found</strong><br/>Check
             the ItemNumber
@@ -54,9 +52,11 @@
       </div>
     </div>
     <div class="navigtion-buttons manual-modal-footer">
-      <button  ng-click="vm.closeModal()" class="btn center btn-primary btn-rounded android-modal-dismiss">
-        <span>Cancel</span>
-      </button>
+      <div class="row simultaneous-modal-footer-btns" >
+        <button ng-disabled="vm.item === null || vm.showAuthCheck || vm.sessionAlreadyInProgress" type="submit"
+                class="btn-success btn-rounded" ng-click="vm.authorize()">Ok</button>
+        <button type="submit" class="btn-primary btn-rounded" ng-click="vm.closeModal()">Cancel</button>
+      </div>
     </div>
   </div>
 </horizontal-ui-sheet>

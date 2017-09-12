@@ -412,17 +412,18 @@ figcaption {
     margin-top: -100px !important;
   }
 }
-.modal-xxs {
-  width: 35vw;
+
+.modal-xxxs {
+  width: 45vw;
   .modal-content {
     border: 0;
     border-radius: 16px;
-    height: 250px !important;
+    height: 400px !important;
     position: fixed !important;
     z-index: 999 !important;
     top: 50% !important;
-    margin-left: -20px !important;
-    margin-top: -100px !important;
+    margin-left: 40px !important;
+    margin-top: -220px !important;
   }
 }
 .modal-dialog {
@@ -3727,4 +3728,11 @@ orbicular i {
   border-radius: 5px;
   font-size: 0.7vw;
   padding: 3px 10px 3px 10px;
+}
+.simultaneous-modal-footer-btns{
+  margin: 0 auto;
+  width: 320px;
+  button{
+    margin-top: 10px;
+  }
 }
