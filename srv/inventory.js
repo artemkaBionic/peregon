@@ -286,24 +286,7 @@ function sessionUpdateItem(sessionId, device, level, message, details, callback)
     }
     callback();
 }
-// case 'Sku':
-// session_device.sku = device.Sku;
-// break;
-// case 'InventoryNumber':
-// session_device.item_number = device.InventoryNumber;
-// break;
-// case 'Model':
-// session_device.model = device.Model;
-// break;
-// case 'Manufacturer':
-// session_device.manufacturer = device.Manufacturer;
-// break;
-// case 'Serial':
-// session_device.serial_number = device.Serial;
-// break;
-// case 'Type':
-// session_device.type = device.Type;
-// break;
+
 function sessionFinish(itemNumber, data, callback) {
     var session = sessions.get(itemNumber);
     console.log('A client requested to finish an ' + session.device.type + ' refresh of item number ' + itemNumber);
@@ -431,7 +414,6 @@ function sendSession(content, file) {
     delete content.session.currentStep;
     delete content.session.failed_tests;
 
-    //console.log(content);
     if (content.session.device.item_number ){
         console.log('sending session');
         return request({
@@ -444,7 +426,7 @@ function sendSession(content, file) {
             rejectUnauthorized: false,
             json: true
         }).then(function(body) {
-            console.log('session sent');
+            console.log('session sent ' + content.session.start_time.toISOString());
             // Delete the file if it was successfully sent
             fs.unlinkSync(file);
         }).catch(function(error) {
@@ -452,11 +434,13 @@ function sendSession(content, file) {
             console.log(error);
         });
     } else {
-        console.log('Not sending session');
+        console.log('session with this start time not sent:' + content.session.start_time)
     }
 }
 
+
 function resendSessions() {
+    checkSessionByStartDate();
     // Loop through all the files in the unsent sessions directory
     fs.readdir(UNSENT_SESSIONS_DIRECTORY, function(err, files) {
         if (err) {
@@ -470,7 +454,15 @@ function resendSessions() {
                     if (err) {
                         console.error("Could not read " + file, err);
                     } else {
-                        sendSession(JSON.parse(content), file);
+                        var contentJson = JSON.parse(content);
+                        // Checking if there is session in session cache and if it matches with session in file
+                        if (checkSessionByStartDate(contentJson.session.start_time).has_session === true) {
+                            // if matches get device from session cache and put it on place of device in file
+                            console.log('Resend session found session with start time:' + contentJson.session.start_time);
+                            var session = sessions.get(checkSessionByStartDate(contentJson.session.start_time).session_id);
+                            contentJson.session.device = session.device;
+                        }
+                        sendSession(contentJson, file);
                     }
                 });
             });
@@ -543,7 +535,5 @@ function getSessionInProgressByDevice(item) {
     return sessions.getSessionInProgressByDevice(item);
 }
 function getAllSessionsByDevice(serial) {
-    console.log(serial);
-    console.log('---------------');
     return sessions.getAllSessionsByDevice(serial);
 }

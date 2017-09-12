@@ -182,7 +182,10 @@ function deviceBridge(io) {
          var imei = '';
          var appStartedDataJson = '';
          var sessionDate = new Date().toISOString();
-         var unknownItem = { adbSerial: serial };
+         var unknownItem = {
+             Type:'Android',
+             adbSerial: serial
+         };
          var deviceAuthorized = true;
          aaronsLogcat.stdout.on('data', function (data) {
               if(IsJsonString(decoder.write(data).substring(decoder.write(data).indexOf("{")))) {
