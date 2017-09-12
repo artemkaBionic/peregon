@@ -25,13 +25,18 @@ function deviceBridge(io) {
                 //     console.log('Device ' + device.id + ' is ready to install app');
                 //     installApp(device.id);
                 // },8000);
-                client.waitForDevice(device.id).then(function(authorizedDevice) {
+                // client.waitForDevice(device.id).then(function(authorizedDevice) {
+                //     console.log(authorizedDevice + ' is authorized and ready to install app.');
+                //     io.emit('android-add',{});
+                //     installApp(authorizedDevice);
+                // }).catch(function(err) {
+                //     console.log(err);
+                // });
+                return client.waitForDevice(device.id).then(function (authorizedDevice) {
                     console.log(authorizedDevice + ' is authorized and ready to install app.');
-                    io.emit('android-add',{});
-                    installApp(authorizedDevice);
-                }).catch(function(err) {
-                    console.log(err);
-                });
+                    //     io.emit('android-add',{});
+                    //     installApp(authorizedDevice);
+                })
             });
             tracker.on('remove', function(device) {
                 console.log('Device %s was unplugged', device.id);
