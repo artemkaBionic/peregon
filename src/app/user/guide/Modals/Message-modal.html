@@ -33,7 +33,7 @@
           <button type="submit" class="btn-danger btn-rounded" ng-click="vm.wrongItemNumber()">NO</button>
         </div>
         <div class="row text-center item-error-row" style="margin-top: 45px">
-          <div ng-show="vm.item === null" ng-hide="vm.itemNumberError || vm.searchStringSkuWarning || vm.searchStringError">
+          <div ng-show="vm.item === null" ng-hide="vm.searchString.length < 7 || vm.itemNumberError || vm.searchStringSkuWarning || vm.searchStringError">
             <i class="fa fa-spinner fa-spin" style="font-size:110px"></i>
           </div>
           <div class="item-button-error" ng-show="vm.itemNumberError"><strong>Item not found</strong><br/>Check
