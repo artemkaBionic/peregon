@@ -181,11 +181,11 @@
 
             return deferred.promise;
         };
-        service.checkSessionByAdbSerial = function(item) {
-            var url = '/data/checkSessionByAdbSerial';
+        service.checkSessionByStartDate = function(startDate) {
+            var url = '/data/checkSessionByStartDate/' + startDate;
             var deferred = $q.defer();
 
-            $http.post(url, item).then(function(result) {
+            $http.get(url).then(function(result) {
                 deferred.resolve(result.data);
             });
 
@@ -193,6 +193,16 @@
         };
         service.getSession = function(sessionId) {
             var url = '/data/inventory/sessions/' + sessionId;
+            var deferred = $q.defer();
+
+            $http.get(url).then(function(result) {
+                deferred.resolve(result.data);
+            });
+
+            return deferred.promise;
+        };
+        service.getAllSessionsByDevice = function(serial) {
+            var url = '/data/getAllSessionsByDevice/' + serial;
             var deferred = $q.defer();
 
             $http.get(url).then(function(result) {

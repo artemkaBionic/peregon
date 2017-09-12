@@ -146,14 +146,16 @@
                     </div>
                     <div style="font-weight: 600" class="col-xs-6 text-ellipsis">
                       <span ng-show="session.status === 'Success'" class="button-successful" data-toggle="tooltip" title="Refresh Successful"> Refresh Successful</span>
-                      <span ng-show="session.status === 'Fail'" class="button-failed" data-toggle="tooltip" title="Refresh Failed">Refresh Failed</span>
-                      <span ng-show="session.status === 'Device Unauthorized'" class="button-failed" data-toggle="tooltip" title="Refresh Failed">Device Unauthorized</span>
+                      <span ng-show="session.status === 'Fail' && session.device.item_number" class="button-failed" data-toggle="tooltip" title="Refresh Failed">Refresh Failed</span>
+                      <span ng-show="session.status === 'Device Unrecognized' || !session.device.item_number" class="button-failed" data-toggle="tooltip" title="Device Unrecognized">Device Unrecognized</span>
                       <span ng-show="session.status === 'Incomplete'" class="button-in-progress" data-toggle="tooltip" title="In Progress">In Progress <span class="fa fa-step-forward"></span></span>
                     </div>
                   </div>
                 </div>
                 <div class="col-xs-2 text-ellipsis" data-toggle="tooltip" title="{{session.start_time | date : 'MMM d, y h:mm:ss a'}}">
-                  {{session.start_time | date : 'MMM d, y h:mm:ss a'}}
+                  <span ng-show="session.status !== 'Device Unrecognized' && session.device.item_number">{{session.start_time | date : 'MMM d, y h:mm:ss a'}}</span>
+                  <button ng-show="session.status === 'Device Unrecognized' || !session.device.item_number" style="border-radius:10px" type="button" class="btn btn-danger btn-xs">Click here to recognize</button>
+                  <!--<span  class="button-successful" data-toggle="tooltip" title="Refresh Successful"> Refresh Successful</span>-->
                 </div>
               </div>
             </li>
@@ -163,6 +165,7 @@
               </div>
             </li>
           </ul>
+      </div>
       </div>
     </div>
 </section>

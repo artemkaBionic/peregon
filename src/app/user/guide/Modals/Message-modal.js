@@ -21,19 +21,27 @@
         vm.showAuthCheck = false;
         vm.showAuth = true;
         vm.sessionAlreadyInProgress = false;
+        // jscs:disable
         if (data.errors) {
             vm.errors = data.errors;
         } else {
             vm.message = data.message;
             vm.sessionId = data.sessionId;
+            vm.serialNo = data.serialNo;
             console.log(vm.sessionId);
             vm.authorize = function(){
                 inventoryService.checkSession(vm.item).then(function(res) {
                     if (res.session_id) {
                         vm.sessionAlreadyInProgress = true;
-                        vm.wrongItemNumber();
+                        //vm.wrongItemNumber();
                     } else {
-                        inventoryService.updateSessionItem(vm.sessionId, vm.item).then(function(res) {
+                        inventoryService.getAllSessionsByDevice(vm.serialNo).then(function(res) {
+                            for (var i = 0; i < res.sessions.length;i++) {
+                                var session = res.sessions[i];
+                                inventoryService.updateSessionItem(session, vm.item).then(function(res) {
+                                    console.log(res);
+                                });
+                            }
                             $rootScope.$broadcast('updateList');
                             vm.closeModal();
                         })
@@ -41,16 +49,11 @@
                 });
 
             };
-            vm.authorizationCheck = function(){
-                vm.sessionAlreadyInProgress = false;
-                vm.showAuthCheck = true;
-                vm.showAuth = false;
-            };
             vm.wrongItemNumber = function(){
-                vm.showAuthCheck = false;
-                vm.showAuth = true;
+                vm.searchString = '';
             };
-            if (vm.sessionId !== undefined ) {
+
+            if (vm.sessionId !== undefined) {
                 vm.showItemInput = true;
 
                 vm.searchStringChange = function() {
@@ -59,7 +62,6 @@
                     if (vm.searchString !== vm.lastValidSearchString) {
                         vm.searchStringError = false;
                         vm.itemNumberError = false;
-                        vm.wrongItemNumber();
                         //vm.sessionAlreadyInProgress = false;
                         vm.searchStringSkuWarning = config.partialSkuRegEx.test(vm.searchString);
                         if (config.partialItemNumberRegEx.test(vm.searchString)) {
@@ -89,6 +91,7 @@
                 $scope.$watch('vm.searchString', vm.searchStringChange);
             }
         }
+        // jscs:enable
         vm.closeModal = popupLauncher.closeModal;//Close modal window by pressing on Dismiss button
     }
 })();

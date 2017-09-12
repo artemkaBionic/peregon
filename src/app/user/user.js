@@ -182,16 +182,21 @@
             }
         };
         // jscs:disable
-        vm.showGuideForCards = function(session) {
-            var item = {'InventoryNumber': session.device.item_number, 'adbSerial': session.device.adb_serial};
-            if (session.status === 'Device Unauthorized') {
 
-                inventoryService.checkSessionByAdbSerial(item)
-                    .then(function(res) {
-                        openHelpModal('xs','Unauthorized Device', res.session_id);
-                    });
-            } else {
-                inventoryService.checkSession(item)
+        function updateSessionsForAllDevices(serial){
+            inventoryService.getAllSessionsByDevice(serial)
+                .then(function(res) {
+                    console.log(res);
+                    //openHelpModal('xs','Unrecognized Device', res.session_id);
+                });
+        }
+        vm.showGuideForCards = function(session) {
+            var item = {'InventoryNumber': session.device.item_number,
+                'start_time': session.start_time,
+                'serial':session.device.serial_number
+            };
+            if(session.device.item_number) {
+                inventoryService.checkSessionByStartDate(item.start_time)
                     .then(function(res) {
                         if (res.session_id && session.status !== 'Fail') {
                             var $stateParams = {};
@@ -199,7 +204,6 @@
                             vm.item = null;
                             vm.searchString = '';
                             $state.go('root.user.guide', $stateParams);
-
                         } else {
                             if (session.status === 'Fail') {
                                 if (session.failedTests) {
@@ -223,8 +227,13 @@
                             }
                         }
                     });
+            } else {
+                inventoryService.checkSessionByStartDate(item.start_time)
+                    .then(function (res) {
+                        console.log(res);
+                        openHelpModal('xs', 'Unrecognized Device', res.session_id, item.serial);
+                    });
             }
-
         };
         // jscs: enable
         vm.unlockForService = function() {
@@ -283,11 +292,12 @@
                 });
             return deferred.promise;
         }
-        function openHelpModal(modalSize, data, sessionId) {
+        function openHelpModal(modalSize, data, sessionId, serialNo) {
             if (typeof(data) === 'string') {
                 vm.data = {
                     message: data,
-                    sessionId: sessionId
+                    sessionId: sessionId,
+                    serialNo: serialNo
                 };
             } else {
                 vm.data = {

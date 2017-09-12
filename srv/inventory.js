@@ -19,7 +19,7 @@ const SERIAL_LOOKUP_URL = 'https://' + config.apiHost + '/api/seriallookup/';
 const API_URL = 'https://api2.basechord.com';
 //const API_URL2 = 'http://localhost:3000';
 const RESEND_SESSIONS_INTERVAL = 900000; // 15 minutes
-
+console.log(UNSENT_SESSIONS_DIRECTORY);
 var isDevelopment = process.env.NODE_ENV === 'development';
 var result = null;
 
@@ -36,8 +36,10 @@ exports.unlockDevice = unlockDevice;
 exports.getSerialLookup = getSerialLookup;
 exports.getAllSessions = getAllSessions;
 exports.checkSessionInProgress = checkSessionInProgress;
-exports.checkSessionByDevice = checkSessionByDevice;
+exports.checkSessionByStartDate = checkSessionByStartDate;
 exports.sessionUpdateItem = sessionUpdateItem;
+exports.getAllSessionsByDevice = getAllSessionsByDevice;
+exports.getSessionInProgressByDevice = getSessionInProgressByDevice;
 // Periodically resend unsent sessions
 resendSessions();
 setInterval(function() {
@@ -65,6 +67,7 @@ function getItemFromAzure(id, callback){
         }
     });
 }
+
 // Item lookup from our Mongo DB
 function getItem(id, callback) {
     console.log(API_URL + '/aarons/inventorylookup' + id);
@@ -248,7 +251,7 @@ function sessionUpdate(itemNumber, level, message, details, callback) {
             session.currentStep = 'Session Failed';
             session.failedTests = details.failedTests;
         } else if (message === 'Android device is not found in Inventory') {
-            session.status = 'Device Unauthorized';
+            session.status = 'Device Unrecognized';
             //session.failedTests = details.failedTests;
         } else {
             logSession(session, level, message, details);
@@ -264,7 +267,9 @@ function sessionUpdateItem(sessionId, device, level, message, details, callback)
         console.warn('sessionUpdate attempted for a session that is not started.');
         console.warn('message: ' + message);
     } else {
-        session.status = 'Incomplete';
+        if (session.status === 'Device Unrecognized') {
+            session.status = 'Incomplete';
+        }
         session.device.sku = device.Sku;
         session.device.item_number = device.InventoryNumber;
         session.device.model = device.Model;
@@ -425,24 +430,30 @@ function sendSession(content, file) {
     delete content.session.device.passed_manual;
     delete content.session.currentStep;
     delete content.session.failed_tests;
-    console.log('sending session');
+
     //console.log(content);
-    return request({
-        method: 'POST',
-        url: API_URL + '/session',
-        headers: {
-            'Authorization': config.api2Authorization
-        },
-        body: content.session,
-        rejectUnauthorized: false,
-        json: true
-    }).then(function(body) {
-        // Delete the file if it was successfully sent
-        fs.unlinkSync(file);
-    }).catch(function(error) {
-        console.log('ERROR: Unable to send session.');
-        console.log(error);
-    });
+    if (content.session.device.item_number ){
+        console.log('sending session');
+        return request({
+            method: 'POST',
+            url: API_URL + '/session',
+            headers: {
+                'Authorization': config.api2Authorization
+            },
+            body: content.session,
+            rejectUnauthorized: false,
+            json: true
+        }).then(function(body) {
+            console.log('session sent');
+            // Delete the file if it was successfully sent
+            fs.unlinkSync(file);
+        }).catch(function(error) {
+            console.log('ERROR: Unable to send session.');
+            console.log(error);
+        });
+    } else {
+        console.log('Not sending session');
+    }
 }
 
 function resendSessions() {
@@ -525,6 +536,14 @@ function changeDeviceFormat(device) {
 function checkSessionInProgress(item) {
     return sessions.checkSessionInProgress(item);
 }
-function checkSessionByDevice(item) {
-    return sessions.checkSessionByDevice(item);
+function checkSessionByStartDate(item) {
+    return sessions.checkSessionByStartDate(item);
+}
+function getSessionInProgressByDevice(item) {
+    return sessions.getSessionInProgressByDevice(item);
+}
+function getAllSessionsByDevice(serial) {
+    console.log(serial);
+    console.log('---------------');
+    return sessions.getAllSessionsByDevice(serial);
 }

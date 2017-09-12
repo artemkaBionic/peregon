@@ -55,7 +55,6 @@ module.exports = function(io, data) {
             res.json(result);
         });
     });
-
     router.get('/data/inventory/sessions', function(req, res) {
         res.json(inventory.getSessions(req.body));
     });
@@ -65,8 +64,9 @@ module.exports = function(io, data) {
     router.post('/data/checkSession', function(req, res) {
         res.json(inventory.checkSessionInProgress(req.body));
     });
-    router.post('/data/checkSessionByAdbSerial', function(req, res) {
-        res.json(inventory.checkSessionByDevice(req.body));
+    router.get('/data/checkSessionByStartDate/:id', function(req, res) {
+        console.log(req.params.id);
+        res.json(inventory.checkSessionByStartDate(req.params.id));
     });
     router.get('/data/inventory/sessions/:id', function(req, res) {
         res.json(inventory.getSession(req.params.id));
@@ -77,7 +77,9 @@ module.exports = function(io, data) {
             res.json(result);
         });
     });
-
+    router.get('/data/getAllSessionsByDevice/:id', function(req, res) {
+            res.json(inventory.getAllSessionsByDevice(req.params.id));
+    });
     router.post('/data/inventory/sessions/:id/update', function(req, res) {
 
         inventory.sessionUpdate(req.params.id, req.body.level, req.body.message, req.body.details, function(err, result) {
