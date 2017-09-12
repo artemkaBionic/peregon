@@ -16,7 +16,7 @@
       </div>
       <div ng-show="vm.showItemInput">
         <div class="row">
-          <p>Please enter valid Item Number to authorize the device.</p>
+          <p>Please enter valid Item Number to recognize the device.</p>
           <div class="item-center">
             <div class="inner-addon left-addon">
               <i class="icon fa fa-barcode" style="font-size: 28pt"></i>
@@ -25,9 +25,6 @@
             </div>
           </div>
         </div>
-        <!--<div class="row text-center" style="margin-top: 25px" ng-show="vm.showAuth">-->
-          <!--<button ng-disabled="vm.item === null" type="submit" class="btn-primary btn-rounded" ng-click="vm.authorizationCheck()">Authorize</button>-->
-        <!--</div>-->
         <div class="row" ng-hide="vm.item === null || vm.showAuthCheck || vm.sessionAlreadyInProgress">
           <div style="margin-top: 30px;margin-bottom: 30px; font-size: 17pt">
             Are you sure that you are refreshing this item: <b>{{vm.item.Description}}</b> SKU: <b>{{vm.item.Sku}}</b>?
@@ -36,9 +33,6 @@
           <button type="submit" class="btn-danger btn-rounded" ng-click="vm.wrongItemNumber()">NO</button>
         </div>
         <div class="row text-center item-error-row" style="margin-top: 45px">
-          <!--<div ng-hide="vm.item === null || vm.showAuthCheck || vm.sessionAlreadyInProgress" style="font-size: 17pt">-->
-            <!--<strong>{{'SKU: '+vm.item.Sku}}</strong><br/>{{vm.item.Description}}-->
-          <!--</div>-->
           <div ng-show="vm.item === null" ng-hide="vm.itemNumberError || vm.searchStringSkuWarning || vm.searchStringError">
             <i class="fa fa-spinner fa-spin" style="font-size:110px"></i>
           </div>

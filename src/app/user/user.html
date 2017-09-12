@@ -127,6 +127,8 @@
                   <div class="row">
                     <div class="col-xs-2 text-ellipsis" data-toggle="tooltip" title="{{session.device.item_number}}">
                       {{session.device.item_number}}
+                      <button ng-show="session.status === 'Device Unrecognized' || !session.device.item_number" style="border-radius:5px;font-size: 0.6vw" type="button" class="btn btn-primary btn-xs">Enter item number</button>
+
                     </div>
                     <div class="col-xs-2 text-ellipsis" data-toggle="tooltip" title="{{session.device.sku}}">
                       {{session.device.sku}}
@@ -153,9 +155,7 @@
                   </div>
                 </div>
                 <div class="col-xs-2 text-ellipsis" data-toggle="tooltip" title="{{session.start_time | date : 'MMM d, y h:mm:ss a'}}">
-                  <span ng-show="session.status !== 'Device Unrecognized' && session.device.item_number">{{session.start_time | date : 'MMM d, y h:mm:ss a'}}</span>
-                  <button ng-show="session.status === 'Device Unrecognized' || !session.device.item_number" style="border-radius:10px" type="button" class="btn btn-danger btn-xs">Click here to recognize</button>
-                  <!--<span  class="button-successful" data-toggle="tooltip" title="Refresh Successful"> Refresh Successful</span>-->
+                  {{session.start_time | date : 'MMM d, y h:mm:ss a'}}
                 </div>
               </div>
             </li>
