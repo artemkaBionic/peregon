@@ -188,11 +188,26 @@ module.exports = function(io, data) {
             var connectionState = event.data;
             station.setConnectionState(connectionState);
             if (connectionState.isOnline) {
-                inventory.resendSessions();
+                inventory.resendSessions(event.data);
             }
+            io.emit(event.name, event.data);
+        } else if (event.name === "device-add"){
+            controller.isRefreshUsb(event.data.id, function(err, isInitialized) {
+                if (err) {
+                    console.error(err);
+                } else {
+                    if (isInitialized) {
+                        controller.prepareUsb(io, {usb: event.data, item: null});
+                    } else {
+                        io.emit(event.name, event.data);
+                    }
+                }
+            })
+        } else {
+            io.emit(event.name, event.data);
         }
 
-        io.emit(event.name, event.data);
+
         res.json();
     });
 

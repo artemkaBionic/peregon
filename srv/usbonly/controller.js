@@ -3,7 +3,7 @@ var config = require('../config');
 var partitions = require('./partitions');
 var content = require('./content');
 var fs = require('fs');
-
+var versions = require('./versions');
 
 exports.prepareUsb = function(io, data) {
     console.log('prepareUsb');
@@ -30,7 +30,21 @@ exports.prepareUsb = function(io, data) {
         }
     });
 };
-
+exports.isRefreshUsb = function(device, callback){
+    //var device = data.usb.id;
+    versions.getUsbVersions(device, function(err, res){
+        if(err) {
+            console.error(err);
+            callback(err, null);
+        } else {
+            if (res === null) {
+                callback(null, false);
+            } else {
+                callback(null, true);
+            }
+        }
+    });
+};
 exports.readSession = function(io, data, callback) {
     console.log('readSession');
     var device = data.usb.id;

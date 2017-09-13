@@ -30,21 +30,6 @@ function addProgress(value) {
     io.emit('usb-progress', {progress: totalProgress, timeRemaining: timeRemaining});
 }
 
-function prepareForFileCopy(device, callback) {
-    // Undo change by the prepareRefreshType to prepare for file copy
-    fs.rename('/mnt/' + device + config.usbWindowsPartition + '/EFI/Boot/bootx64.disabled', '/mnt/' + device + config.usbWindowsPartition + '/EFI/Boot/bootx64.efi', function(err) {
-        if (err) {
-            if (err.code === 'ENOENT') {
-                callback(null);
-            } else {
-                callback(err);
-            }
-        } else {
-            callback(null);
-        }
-    });
-}
-
 function copyFiles(contentTemp, copyFilesSize, totalSize, callback) {
     console.log('Copying files to USB');
     var err = '';
@@ -55,7 +40,7 @@ function copyFiles(contentTemp, copyFilesSize, totalSize, callback) {
     console.log('Running command "' + rsyncCommand + '"');
     var rsync = spawn('script', ['-c', rsyncCommand]);
 
-    rsync.stdout.on('data', function(data) {
+    rsync.stdout.on('data', function (data) {
         var message = decoder.write(data);
         try {
             var progress = Math.round(parseInt(message.match(/[^ ]+/g)[2].replace('%', '')) * progressRatio);
@@ -67,12 +52,12 @@ function copyFiles(contentTemp, copyFilesSize, totalSize, callback) {
         }
     });
 
-    rsync.stderr.on('data', function(data) {
+    rsync.stderr.on('data', function (data) {
         var message = decoder.write(data);
         err += message;
     });
 
-    rsync.on('exit', function(code) {
+    rsync.on('exit', function (code) {
         console.log('rsync process exited with code ' + code.toString());
         console.log(err);
         if (code !== 0) {
@@ -93,7 +78,7 @@ function applyMacImage(device, macImageSize, totalSize, callback) {
     console.log('Running command "' + ddCommand + '"');
     var dd = spawn('script', ['-c', ddCommand]);
 
-    dd.stdout.on('data', function(data) {
+    dd.stdout.on('data', function (data) {
         var message = decoder.write(data);
         try {
             var progress = Math.round(parseInt(message) * progressRatio);
@@ -105,13 +90,13 @@ function applyMacImage(device, macImageSize, totalSize, callback) {
         }
     });
 
-    dd.stderr.on('data', function(data) {
+    dd.stderr.on('data', function (data) {
         var message = decoder.write(data);
         err += message;
     });
 
-    dd.on('exit', function(code) {
-        shell.exec('sync', function() {
+    dd.on('exit', function (code) {
+        shell.exec('sync', function () {
             if (code !== 0) {
                 console.log('dd process exited with code ' + code.toString());
                 console.log(err);
@@ -135,16 +120,17 @@ function createItemFile(device, item, callback) {
 
 function finishApplyContent(device, item, callback) {
     console.log('Device ' + device + ' content update is complete.');
-    versions.createVersionsFile(device, function(err) {
+    versions.createVersionsFile(device, function (err) {
         if (err) {
             console.error(err);
         }
-        createItemFile(device, item, function(err) {
-            if (err) {
-                console.error(err);
-            }
-            exports.prepareRefreshType(device, item.Type, callback);
-        });
+        if (item !== null) {
+            createItemFile(device, item, function (err) {
+                if (err) {
+                    console.error(err);
+                }
+            });
+        }
     });
 }
 
@@ -152,85 +138,37 @@ function copyFilesAndApplyImages(device, contentTemp, copyFilesSize, macImageSiz
     var totalSize = macImageSize + copyFilesSize;
     timeStarted = Date.now();
     totalProgress = 0;
-    prepareForFileCopy(device, function(err) {
+    copyFiles(contentTemp, copyFilesSize, totalSize, function (err) {
         if (err) {
             callback(err);
         } else {
-            copyFiles(contentTemp, copyFilesSize, totalSize, function(err) {
-                if (err) {
-                    callback(err);
-                } else {
-                    if (applyMac) {
-                        applyMacImage(device, macImageSize, totalSize, function(err) {
-                            if (err) {
-                                callback(err);
-                            } else {
-                                finishApplyContent(device, item, callback);
-                            }
-                        })
+            if (applyMac) {
+                applyMacImage(device, macImageSize, totalSize, function (err) {
+                    if (err) {
+                        callback(err);
                     } else {
                         finishApplyContent(device, item, callback);
                     }
-                }
-            });
+                })
+            } else {
+                finishApplyContent(device, item, callback);
+            }
         }
     });
 }
 
-exports.prepareRefreshType = function(device, refreshType, callback) {
-    console.log('Preparing USB for ' + refreshType + ' refresh');
-    if (refreshType === 'Windows' || refreshType === 'WindowsUsb') {
-        //Enable Windows boot
-        shell.exec('parted --script /dev/' + device + ' set ' + config.usbWindowsPartition + ' boot on', function(code, stdout, stderr) {
-            if (code !== 0) {
-                callback(new Error(stdout));
-            } else {
-                fs.rename('/mnt/' + device + config.usbWindowsPartition + '/EFI/Boot/bootx64.disabled', '/mnt/' + device + config.usbWindowsPartition + '/EFI/Boot/bootx64.efi', function(err) {
-                    if (err) {
-                        if (err.code === 'ENOENT') {
-                            callback(null);
-                        } else {
-                            callback(err);
-                        }
-                    } else {
-                        callback(null);
-                    }
-                });
-            }
-        });
-    } else {
-        //Disable Windows boot
-        shell.exec('parted --script /dev/' + device + ' set ' + config.usbWindowsPartition + ' boot off', function(code, stdout, stderr) {
-            if (code !== 0) {
-                callback(new Error(stdout));
-            } else {
-                fs.rename('/mnt/' + device + config.usbWindowsPartition + '/EFI/Boot/bootx64.efi', '/mnt/' + device + config.usbWindowsPartition + '/EFI/Boot/bootx64.disabled', function(err) {
-                    if (err) {
-                        if (err.code === 'ENOENT') {
-                            callback(null);
-                        } else {
-                            callback(err);
-                        }
-                    } else {
-                        callback(null);
-                    }
-                });
-            }
-        });
-    }
-};
 
-exports.updateContent = function(socket_io, device, item, callback) {
+exports.updateContent = function (socket_io, device, item, callback) {
     console.log('Updating content on ' + device);
     io = socket_io;
 
-    versions.getCurrentVersions(function(err, currentVersions) {
+    versions.getCurrentVersions(function (err, currentVersions) {
         if (err) {
             callback(err);
         } else {
             console.log('Current Versions:');
             console.log(currentVersions);
-            versions.getUsbVersions(device, function(err, usbVersions) {
+            versions.getUsbVersions(device, function (err, usbVersions) {
                 if (err) {
                     callback(err);
                 } else {
@@ -249,18 +187,18 @@ exports.updateContent = function(socket_io, device, item, callback) {
                     command += ' && ln -s ' + config.winPeAppContent + ' ' + path.join(contentTemp, device + config.usbWindowsPartition, 'default');
                     // Prepare Windows Files
                     command += ' && ln -s ' + config.windowsContent + ' ' + path.join(contentTemp, device + config.usbWindowsPartition, 'packages');
-                    shell.exec(command, function(code, stdout, stderr) {
+                    shell.exec(command, function (code, stdout, stderr) {
                         if (code !== 0) {
                             callback(new Error(stderr));
                         } else {
                             // Get size of files to copy
-                            shell.exec('rsync ' + rsyncParameters + ' --stats --dry-run ' + path.join(contentTemp, '*') + ' /mnt/ | grep "Total transferred file size:" | awk \'{print $5;}\' | sed \'s/,//g\'', function(code, stdout, stderr) {
+                            shell.exec('rsync ' + rsyncParameters + ' --stats --dry-run ' + path.join(contentTemp, '*') + ' /mnt/ | grep "Total transferred file size:" | awk \'{print $5;}\' | sed \'s/,//g\'', function (code, stdout, stderr) {
                                 if (code !== 0) {
                                     callback(new Error(stderr));
                                 } else {
                                     var copyFilesSize = parseInt(stdout.trim().split(os.EOL));
                                     if (usbVersions === null || usbVersions.mac !== currentVersions.mac) {
-                                        shell.exec('du --bytes --dereference ' + config.macContent + ' | awk \'END {print $1;}\'', {silent: true}, function(code, stdout, stderr) {
+                                        shell.exec('du --bytes --dereference ' + config.macContent + ' | awk \'END {print $1;}\'', {silent: true}, function (code, stdout, stderr) {
                                             if (code !== 0) {
                                                 callback(new Error(stderr));
                                             } else {
@@ -281,7 +219,7 @@ exports.updateContent = function(socket_io, device, item, callback) {
     });
 };
 
-exports.clearStatus = function(device) {
+exports.clearStatus = function (device) {
     //Remove Xbox Refresh status files
     shell.rm([
         '/mnt/' + device + config.usbXboxPartition + '/$SystemUpdate/smcerr.log',
