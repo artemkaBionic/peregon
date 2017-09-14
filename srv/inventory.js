@@ -12,7 +12,7 @@ var request = require("requestretry");
 var uuid = require('uuid/v1');
 var station = require('./station');
 const sessions = require('./sessionCache');
-
+const usbDrives = require('./usbonly/usbCache');
 const UNSENT_SESSIONS_DIRECTORY = config.kioskDataPath + '/unsentSessions';
 const INVENTORY_LOOKUP_URL = 'https://' + config.apiHost + '/api/inventorylookup/';
 const SERIAL_LOOKUP_URL = 'https://' + config.apiHost + '/api/seriallookup/';
@@ -40,6 +40,8 @@ exports.checkSessionByStartDate = checkSessionByStartDate;
 exports.sessionUpdateItem = sessionUpdateItem;
 exports.getAllSessionsByDevice = getAllSessionsByDevice;
 exports.getSessionInProgressByDevice = getSessionInProgressByDevice;
+exports.getAllUsbDrives = getAllUsbDrives;
+exports.getLowestUsbProgress = getLowestUsbProgress;
 // Periodically resend unsent sessions
 resendSessions();
 setInterval(function() {
@@ -127,6 +129,12 @@ function getSession(itemNumber) {
     return sessions.get(itemNumber);
 }
 
+function getAllUsbDrives(){
+    return usbDrives.getAllUsbDrives();
+}
+function getLowestUsbProgress(){
+    return usbDrives.getLowestUsbProgress();
+}
 function sessionStart(itemNumber, device, callback) {
     console.log('Session:' + itemNumber + 'starts now' );
     var diagnose_only = false;

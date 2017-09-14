@@ -33,10 +33,10 @@
                 controller: 'MediaController',
                 controllerAs: 'vm'
             })
-            .state('root.simultaneous', {
-                url: '/simultaneous/',
-                templateUrl: 'app/user/simultaneous/simultaneous.template.html',
-                controller: 'SimultaneousController',
+            .state('root.usbGuides', {
+                url: '/usbGuides/',
+                templateUrl: 'app/user/guide/UsbGuides/UsbGuides.template.html',
+                controller: 'UsbGuidesController',
                 controllerAs: 'vm'
             })
             .state('root.media.package', {

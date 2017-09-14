@@ -25,6 +25,132 @@
         vm.sortReverse = true;
         vm.numberToDisplay = 8;
         vm.limit = 20;
+        vm.steps = {
+            sessions: {
+                name: 'sessions',
+                number: 1
+            },
+            bootDevices: {
+                name: 'bootDevices',
+                number: 2
+            }
+        };
+        vm.substeps = {
+            noBootDevices: {
+                name: 'noBootDevices',
+                number: 1
+            },
+            newBootDevice: {
+                name: 'newBootDevice',
+                number: 2
+            },
+            bootDevicesProcessing: {
+                name: 'bootDevicesProcessing',
+                number: 3
+            },
+            bootDevicesReady: {
+                name: 'bootDevicesReady',
+                number: 4
+            }
+        };
+        vm.step = vm.steps.sessions;
+        vm.substep = vm.substeps.noBootDevices;
+        document.getElementById('sessions').style.borderBottom = '3px solid black';
+        vm.viewSessions = function(){
+            document.getElementById('sessions').style.borderBottom = '3px solid black';
+            document.getElementById('bootDevices').style.borderBottom = 'unset';
+            vm.step = vm.steps.sessions;
+            console.log(vm.step);
+        };
+        getAllUsbDrives();
+        vm.viewBootDevices = function(){
+            getAllUsbDrives();
+            document.getElementById('bootDevices').style.borderBottom = '3px solid black';
+            document.getElementById('sessions').style.borderBottom = 'unset';
+            vm.step = vm.steps.bootDevices;
+            //console.log(vm.step);
+        };
+        function getAllUsbDrives(){
+            $http.get('/getAllUsbDrives')
+                .then(function(response) {
+                    vm.usbDrives = response.data;
+                    vm.numberOfDevices = 0;
+                    vm.notReadyDevices = 0;
+                    for (var key in vm.usbDrives) {
+                        if (vm.usbDrives.hasOwnProperty(key)) {
+                            vm.numberOfDevices++;
+                            if (vm.numberOfDevices !== 0 && vm.usbDrives[key].status === 'not_ready') {
+                                vm.notReadyDevices++;
+                            }
+                        }
+                    }
+                    if (vm.notReadyDevices > 0) {
+                        vm.substep = vm.substeps.newBootDevice;
+                    }
+                    if (vm.notReadyDevices === 1) {
+                        vm.usbText = 'Boot Drive';
+                        vm.usbDrivesText = 'Now you can create your Boot Drive.';
+                        vm.usbButtonText = 'Create Boot Drive';
+                        vm.usbDrivesTitle = vm.notReadyDevices + ' New USB Flash Drive is connected'
+                    } else if (vm.notReadyDevices > 1){
+                        vm.usbText = 'Boot Drives';
+                        vm.usbDrivesTitle = vm.notReadyDevices + ' New USB Flash Drives are connected';
+                        vm.usbDrivesText = 'Now you can create your Boot Drives.';
+                        vm.usbButtonText = 'Create Boot Drives';
+                    }
+                    console.log(vm.numberOfDevices);
+                });
+        }
+        function getAllNotReadyUsbDrives(){
+            console.log('here');
+            var deferred = $q.defer();
+            var usbIds = [];
+            $http.get('/getAllUsbDrives')
+                .then(function(response) {
+                    for (var key in response.data) {
+                        if (response.data.hasOwnProperty(key)) {
+                            if (vm.usbDrives[key].status === 'not_ready') {
+                                usbIds.push(key);
+                                deferred.resolve(usbIds);
+                            }
+                        }
+                    }
+                });
+            return deferred.promise;
+        }
+        function prepareUsbDrives(data){
+            for (var i = 0; i < data.length; i++) {
+                //console.log({usb:data[i]});
+                $http({
+                    url: '/prepareUsb',
+                    method: 'POST',
+                    headers: {'content-type': 'application/json'},
+                    data: {usb:data[i],item: {}}
+                });
+            }
+
+        }
+        vm.createBootDrives = function(){
+            getAllNotReadyUsbDrives().then(function(res) {
+                prepareUsbDrives(res);
+            });
+            vm.substep = vm.substeps.bootDevicesProcessing;
+        };
+        vm.cancelBootDrive = function(){
+            vm.substep = vm.substeps.bootDevicesReady;
+        };
+        socketService.on('device-add', function() {
+            toastr.success('USB Drive connected to refresh station', {
+                'tapToDismiss': true,
+                'timeOut': 3000,
+                'closeButton': true
+            });
+            document.getElementById('bootDevices').style.borderBottom = '3px solid black';
+            document.getElementById('sessions').style.borderBottom = 'unset';
+            vm.step = vm.steps.bootDevices;
+            vm.substep = vm.substeps.newBootDevice;
+            getAllUsbDrives();
+        });
         $scope.$on('$stateChangeSuccess', function() {
             getSessions();
         });

@@ -4,7 +4,7 @@ var partitions = require('./partitions');
 var content = require('./content');
 var fs = require('fs');
 var versions = require('./versions');
-
+var usbDrives = require('./usbCache');
 exports.prepareUsb = function(io, data) {
     console.log('prepareUsb');
     var device = data.usb.id;
@@ -15,7 +15,8 @@ exports.prepareUsb = function(io, data) {
             console.error(err);
             partitions.unmountPartitions(device, function() {
                 console.log('Error updating partitions');
-                io.emit('usb-complete', {err: err});
+                usbDrives.completeUsb({err: err, device: device});
+                io.emit('usb-complete', {err: err, device: device});
             });
         } else {
             content.updateContent(io, device, item, function(err) {
@@ -24,7 +25,8 @@ exports.prepareUsb = function(io, data) {
                     console.log(err);
                 }
                 partitions.unmountPartitions(device, function() {
-                    io.emit('usb-complete', {err: err});
+                    usbDrives.completeUsb({err: err, device: device});
+                    io.emit('usb-complete', {err: err, device: device});
                 });
             });
         }

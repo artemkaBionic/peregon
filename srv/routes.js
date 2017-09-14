@@ -6,6 +6,7 @@ var inventory = require('./inventory.js');
 var station = require('./station.js');
 var controller = require('./usbonly/controller');
 var simultaneous = require('./simultaneous/simultaneous');
+var usbDrives = require('./usbonly/usbCache');
 
 module.exports = function(io, data) {
 // Express Router
@@ -60,6 +61,12 @@ module.exports = function(io, data) {
     });
     router.get('/data/getAllSessions', function(req, res) {
         res.json(inventory.getAllSessions());
+    });
+    router.get('/getAllUsbDrives', function(req, res) {
+        res.json(inventory.getAllUsbDrives());
+    });
+    router.get('/getLowestUsbProgress', function(req, res) {
+        res.json(inventory.getLowestUsbProgress());
     });
     router.post('/data/checkSession', function(req, res) {
         res.json(inventory.checkSessionInProgress(req.body));
@@ -165,17 +172,14 @@ module.exports = function(io, data) {
             res.json(data);
         });
     });
-
     router.get('/data/package/:sku', function(req, res) {
         station.getPackage(req.params.sku, function(data) {
             res.json(data);
         })
     });
-
     router.get('/data/getConnectionState', function(req, res) {
         res.json(station.getConnectionState());
     });
-
     router.post('/event/:name', function(req, res) {
         var event = {};
         event.name = req.params.name;
@@ -199,10 +203,15 @@ module.exports = function(io, data) {
                     if (isInitialized) {
                         controller.prepareUsb(io, {usb: event.data, item: null});
                     } else {
+                        usbDrives.set(event.data.id, {id: event.data.id, status:'not_ready', progress: event.data.size});
+                        console.log(usbDrives.getAllUsbDrives());
                         io.emit(event.name, event.data);
                     }
                 }
             })
+        } else if (event.name === "device-remove"){
+            usbDrives.delete(event.data.id);
+            console.log(usbDrives.getAllUsbDrives());
         } else {
             io.emit(event.name, event.data);
         }
@@ -210,6 +219,7 @@ module.exports = function(io, data) {
 
         res.json();
     });
+
 
     router.post('/system/reboot', function(req, res) {
         console.log('Rebooting...');
@@ -235,5 +245,6 @@ module.exports = function(io, data) {
             }
         });
     });
+
     return router;
 };

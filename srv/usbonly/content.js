@@ -8,7 +8,7 @@ var uuid = require('uuid/v1');
 var versions = require('./versions');
 var fs = require('fs');
 var StringDecoder = require('string_decoder').StringDecoder;
-
+var usbDrive = require('./usbCache');
 var decoder = new StringDecoder('utf8');
 
 // The Windows package contains an unused image file (install.wim) and inefficient driver collections.
@@ -17,20 +17,15 @@ var decoder = new StringDecoder('utf8');
 var rsyncParameters = '--recursive --copy-links --times --modify-window=1 --delete-before --no-inc-recursive --exclude=packages/97fc1b7c-049f-4933-88e5-cb19362e3360/Images/install.wim --exclude=packages/97fc1b7c-049f-4933-88e5-cb19362e3360/Drivers/HP-* --exclude=packages/97fc1b7c-049f-4933-88e5-cb19362e3360/Drivers/Hewlett-Packard-* --exclude=packages/97fc1b7c-049f-4933-88e5-cb19362e3360/Drivers/Dell-*';
 
 var io = null;
-var timeStarted = null;
-var totalProgress = null;
+//var totalProgress = null;
 
-function addProgress(value) {
-    totalProgress += value;
-    var timeElapsed = Date.now() - timeStarted;
-    var timeRemaining = Math.round((timeElapsed / totalProgress * 100) - timeElapsed);
-    console.log('Progress: ' + totalProgress + '%');
-    console.log('Time elapsed: ' + timeElapsed);
-    console.log('Time remaining: ' + timeRemaining);
-    io.emit('usb-progress', {progress: totalProgress, timeRemaining: timeRemaining});
+function updateProgress(value, device) {
+    console.log('Progress for device: ' + device + ' is: ' + value + '%');
+    io.emit('usb-progress', {progress: value, device: device});
+    usbDrive.updateProgress(value, device);
 }
 
-function copyFiles(contentTemp, copyFilesSize, totalSize, callback) {
+function copyFiles(contentTemp, copyFilesSize, totalSize, device, callback) {
     console.log('Copying files to USB');
     var err = '';
     var sentProgress = 0;
@@ -45,7 +40,8 @@ function copyFiles(contentTemp, copyFilesSize, totalSize, callback) {
         try {
             var progress = Math.round(parseInt(message.match(/[^ ]+/g)[2].replace('%', '')) * progressRatio);
             if (progress > sentProgress) {
-                addProgress(progress - sentProgress);
+                // addProgress(progress - sentProgress);
+                updateProgress(progress, device);
                 sentProgress = progress;
             }
         } catch (err) {
@@ -83,7 +79,7 @@ function applyMacImage(device, macImageSize, totalSize, callback) {
         try {
             var progress = Math.round(parseInt(message) * progressRatio);
             if (progress > sentProgress && progress <= 100) {
-                addProgress(progress - sentProgress);
+                updateProgress(progress, device);
                 sentProgress = progress;
             }
         } catch (err) {
@@ -136,9 +132,8 @@ function finishApplyContent(device, item, callback) {
 
 function copyFilesAndApplyImages(device, contentTemp, copyFilesSize, macImageSize, item, applyMac, callback) {
     var totalSize = macImageSize + copyFilesSize;
-    timeStarted = Date.now();
-    totalProgress = 0;
-    copyFiles(contentTemp, copyFilesSize, totalSize, function (err) {
+    //updateProgress(0, device);
+    copyFiles(contentTemp, copyFilesSize, totalSize, device, function (err) {
         if (err) {
             callback(err);
         } else {
