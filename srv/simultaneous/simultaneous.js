@@ -180,7 +180,7 @@ function deviceBridge(io) {
          var passedAutoTests = [];
          var passedManualTests = [];
          var imei = '';
-         var appStartedDataJson = '';
+         var appStartedDataJson = {};
          var sessionDate = new Date().toISOString();
          var unknownItem = {
              Type:'Android',
@@ -192,8 +192,8 @@ function deviceBridge(io) {
                   // check if app started indexOf !== -1 means 'includes'
                   if (decoder.write(data).indexOf('AppStartedCommand') !== -1) {
                       appStartedDataJson = JSON.parse(decoder.write(data).substring(decoder.write(data).indexOf("{")));
-                      //appStartedDataJson.deviceSerial = imei;
                       imei = appStartedDataJson.data.imei;
+                      appStartedDataJson.sessionId = sessionDate;
                       getSerialLookup(imei).then(function (res) {
                           var item = res.item;
                           console.log(res.item);
@@ -229,19 +229,19 @@ function deviceBridge(io) {
                               if (passedTests.length === (appStartedDataJson.data.auto + appStartedDataJson.data.manual)) {
                                   updateSession(sessionDate, 'Info', 'Android refresh app has initiated a factory reset.');
                                   finishSession(sessionDate, {'complete': true});
-                                  io.emit('android-reset', {'status': 'Refresh Successful', 'imei': res.item.Serial});
+                                  io.emit('android-reset', {'status': 'Refresh Successful', 'imei': res.item.Serial, 'sessionId': sessionDate});
                               } else {
                                   updateSession(sessionDate, 'Info', 'Android test fail', {'failedTests':failedTests});
                                   finishSession(sessionDate, {'complete': false});
-                                  io.emit('android-reset', {'status': 'Refresh Failed', 'imei': res.item.Serial, 'failed_tests': failedTests});
+                                  io.emit('android-reset', {'status': 'Refresh Failed', 'imei': res.item.Serial, 'failed_tests': failedTests, 'sessionId': sessionDate});
                               }
                           } else {
                               if (passedTests.length === (appStartedDataJson.data.auto + appStartedDataJson.data.manual)) {
                                   updateSession(sessionDate, 'Info', 'Android refresh app has initiated a factory reset.');
-                                  io.emit('android-reset', {'status': 'Refresh Successful', 'imei': res.item.Serial});
+                                  io.emit('android-reset', {'status': 'Refresh Successful', 'imei': res.item.Serial, 'sessionId': sessionDate});
                               } else {
                                   updateSession(sessionDate, 'Info', 'Android test fail', {'failedTests':failedTests});
-                                  io.emit('android-reset', {'status': 'Refresh Failed', 'imei': res.item.Serial, 'failed_tests': failedTests});
+                                  io.emit('android-reset', {'status': 'Refresh Failed', 'imei': res.item.Serial, 'failed_tests': failedTests, 'sessionId': sessionDate});
                               }
                           }
                       }).catch(function (err) {
@@ -253,7 +253,7 @@ function deviceBridge(io) {
                   else if (decoder.write(data).indexOf('beginning') === -1) {
                           //var testResultJson = '';
                           var testResultJson = JSON.parse(decoder.write(data).substring(decoder.write(data).indexOf("{")));
-                          testResultJson.deviceSerial = imei;
+                          testResultJson.sessionId = sessionDate;
                           // add tests to arrays of tests
                           if (testResultJson.passed === true) {
                               passedTests.push(testResultJson.commandName);
