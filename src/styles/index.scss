@@ -424,7 +424,7 @@ figcaption {
     margin-left: -20px !important;
   }
 }
-.modal-xxxs {
+.modal-sm-to-xs {
   width: 45vw;
   .modal-content {
     border: 0;
@@ -3715,6 +3715,9 @@ orbicular i {
 }
 .modalTextManual {
   margin: 20px 30px 20px 30px;
+}
+.modalErrors{
+  margin-top: -25px
 }
 .clickable-item {
   cursor: pointer;

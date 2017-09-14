@@ -22,14 +22,20 @@
         vm.showAuth = true;
         vm.sessionAlreadyInProgress = false;
         vm.wrongDeviceType = false;
+        vm.showUnrecoginzedDeviceFooter = false;
         // jscs:disable
         if (data.errors) {
             vm.errors = data.errors;
         } else {
             vm.message = data.message;
-            vm.sessionId = data.sessionId;
-            vm.serialNo = data.session.device.serial_number;
-            vm.deviceType = data.session.device.type;
+            if (data.sessionId) {
+                vm.sessionId = data.sessionId;
+            }
+            if (data.session) {
+                vm.showUnrecoginzedDeviceFooter = true;
+                vm.serialNo = data.session.device.serial_number;
+                vm.deviceType = data.session.device.type;
+            }
             vm.authorize = function(){
                 inventoryService.checkSession(vm.item).then(function(res) {
                     if (res.session_id) {

@@ -211,7 +211,7 @@
                                     if (vm.failedTests.length <= 4) {
                                         openHelpModal('xxs',vm.failedTests);
                                     } else {
-                                        openHelpModal('xs',vm.failedTests);
+                                        openHelpModal('sm-to-xs',vm.failedTests);
                                     }
                                 } else {
                                     if (session.logs[0].message === 'Device is broken') {
@@ -231,7 +231,7 @@
                 inventoryService.checkSessionByStartDate(item.start_time)
                     .then(function (res) {
                         console.log(res);
-                        openHelpModal('xxxs', 'Unrecognized Device', res.session_id, session);
+                        openHelpModal('sm-to-xs', 'Unrecognized Device', res.session_id, session);
                     });
             }
         };
