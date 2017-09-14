@@ -192,6 +192,7 @@ function deviceBridge(io) {
                   // check if app started indexOf !== -1 means 'includes'
                   if (decoder.write(data).indexOf('AppStartedCommand') !== -1) {
                       appStartedDataJson = JSON.parse(decoder.write(data).substring(decoder.write(data).indexOf("{")));
+                      //appStartedDataJson.deviceSerial = imei;
                       imei = appStartedDataJson.data.imei;
                       getSerialLookup(imei).then(function (res) {
                           var item = res.item;
@@ -252,6 +253,7 @@ function deviceBridge(io) {
                   else if (decoder.write(data).indexOf('beginning') === -1) {
                           //var testResultJson = '';
                           var testResultJson = JSON.parse(decoder.write(data).substring(decoder.write(data).indexOf("{")));
+                          testResultJson.deviceSerial = imei;
                           // add tests to arrays of tests
                           if (testResultJson.passed === true) {
                               passedTests.push(testResultJson.commandName);
