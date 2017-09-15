@@ -127,7 +127,10 @@ function deviceBridge(io) {
                 }).catch(function (err) {
                     console.error('Something went wrong while installing the app on device: ' + serial + ' Error:' + err.stack)
                })
+        }).catch(function (err) {
+            console.error('Something went wrong while uninstalling the app on device: ' + serial )
         });
+
     }
     function checkDeviceProgress(serial) {
         console.log(devices.length + ' devices in process');
