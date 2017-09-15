@@ -101,7 +101,7 @@ function deviceBridge(io) {
     function updateSession(sessionDate, level, message, details){
         inventory.sessionUpdate(sessionDate, level, message, details, function(err) {
             if (err) {
-                console.log(err);
+                console.error(err);
             }
         });
     }
@@ -122,13 +122,13 @@ function deviceBridge(io) {
                     clearLogcat(serial).then(function(serialNo){
                         checkDeviceProgress(serialNo)
                     }).catch(function(err) {
-                        console.log('Something went wrong while clearing logcat for device: ' + serial + ' Error:' + err.stack)
+                        console.error('Something went wrong while clearing logcat for device: ' + serial + ' Error:' + err.stack);
                     });
                 }).catch(function (err) {
-                    console.error('Something went wrong while installing the app on device: ' + serial + ' Error:' + err.stack)
+                    console.error('Something went wrong while installing the app on device: ' + serial + ' Error:' + err.stack);
                })
         }).catch(function (err) {
-            console.error('Something went wrong while uninstalling the app on device: ' + serial )
+            console.error('Something went wrong while uninstalling the app on device: ' + serial + ' Error:' + err.stack);
         });
 
     }
@@ -151,7 +151,7 @@ function deviceBridge(io) {
                 console.log('[%s] %s', serial, output.toString().trim());
                 readLogcat(serial);
             }).catch(function(err) {
-                console.error('Something went wrong while launching the app on device: ' + serial + ' Error:' + err.stack)
+                console.error('Something went wrong while launching the app on device: ' + serial + ' Error:' + err.stack);
             });
     }
 
@@ -206,7 +206,7 @@ function deviceBridge(io) {
                           startSession(sessionDate, item).then(function(res) {
                               io.emit('app-start', appStartedDataJson);
                           }).catch(function(err) {
-                              console.log(err);
+                              console.error(err);
                           });
                       }).catch(function (err) {
                           console.log('Failed to get serial number because of: ' + err);
@@ -219,7 +219,7 @@ function deviceBridge(io) {
                               io.emit('app-start', appStartedDataJson);
                               updateSession(sessionDate, 'Info', 'Android device is not found in Inventory');
                           }).catch(function(err) {
-                              console.log(err);
+                              console.error(err);
                           });
                       });
                   }
