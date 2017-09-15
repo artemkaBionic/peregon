@@ -19,9 +19,19 @@ UsbCache.prototype.getAllUsbDrives = function(){
 UsbCache.prototype.updateProgress = function(progress, device){
     for (var key in this._usbDrives) {
         if (this._usbDrives.hasOwnProperty(key)) {
-            if (this._usbDrives[key].status === 'not_ready' && key === device){
+            if (key === device){
                 this._usbDrives[key].status = 'in_progress';
                 this._usbDrives[key].progress = progress;
+            }
+        }
+    }
+};
+UsbCache.prototype.finishProgress = function(device){
+    for (var key in this._usbDrives) {
+        if (this._usbDrives.hasOwnProperty(key)) {
+            if (key === device){
+                this._usbDrives[key].status = 'ready';
+                this._usbDrives[key].progress = 100;
             }
         }
     }

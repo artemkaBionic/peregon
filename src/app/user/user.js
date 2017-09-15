@@ -70,23 +70,50 @@
             vm.step = vm.steps.bootDevices;
             //console.log(vm.step);
         };
+        socketService.on('device-add', function() {
+            toastr.success('USB Drive connected to refresh station', {
+                'tapToDismiss': true,
+                'timeOut': 3000,
+                'closeButton': true
+            });
+            document.getElementById('bootDevices').style.borderBottom = '3px solid black';
+            document.getElementById('sessions').style.borderBottom = 'unset';
+            vm.step = vm.steps.bootDevices;
+            vm.substep = vm.substeps.newBootDevice;
+            getAllUsbDrives();
+        });
+        socketService.on('usb-progress', function() {
+            getAllUsbDrives();
+        });
+        socketService.on('usb-complete', function() {
+            getAllUsbDrives();
+        });
+        $scope.$on('$stateChangeSuccess', function() {
+            getSessions();
+        });
         function getAllUsbDrives(){
             $http.get('/getAllUsbDrives')
                 .then(function(response) {
                     vm.usbDrives = response.data;
                     vm.numberOfDevices = 0;
                     vm.notReadyDevices = 0;
+                    vm.inProgressDevices = 0;
+                    vm.readyDevices = 0;
                     for (var key in vm.usbDrives) {
                         if (vm.usbDrives.hasOwnProperty(key)) {
                             vm.numberOfDevices++;
                             if (vm.numberOfDevices !== 0 && vm.usbDrives[key].status === 'not_ready') {
                                 vm.notReadyDevices++;
                             }
+                            if (vm.numberOfDevices !== 0 && vm.usbDrives[key].status === 'in_progress') {
+                                vm.inProgressDevices++;
+                            }
+                            if (vm.numberOfDevices !== 0 && vm.usbDrives[key].status === 'ready') {
+                                vm.readyDevices++;
+                            }
                         }
                     }
-                    if (vm.notReadyDevices > 0) {
-                        vm.substep = vm.substeps.newBootDevice;
-                    }
+
                     if (vm.notReadyDevices === 1) {
                         vm.usbText = 'Boot Drive';
                         vm.usbDrivesText = 'Now you can create your Boot Drive.';
@@ -98,7 +125,15 @@
                         vm.usbDrivesText = 'Now you can create your Boot Drives.';
                         vm.usbButtonText = 'Create Boot Drives';
                     }
-                    console.log(vm.numberOfDevices);
+
+                    if (vm.readyDevices === vm.numberOfDevices) {
+                        vm.substep = vm.substeps.bootDevicesReady;
+                    } else if (vm.notReadyDevices > 0) {
+                        vm.substep = vm.substeps.newBootDevice;
+                    } else if (vm.inProgressDevices > 0) {
+                        vm.substep = vm.substeps.bootDevicesProcessing;
+                    }
+
                 });
         }
         function getAllNotReadyUsbDrives(){
@@ -139,21 +174,7 @@
         vm.cancelBootDrive = function(){
             vm.substep = vm.substeps.bootDevicesReady;
         };
-        socketService.on('device-add', function() {
-            toastr.success('USB Drive connected to refresh station', {
-                'tapToDismiss': true,
-                'timeOut': 3000,
-                'closeButton': true
-            });
-            document.getElementById('bootDevices').style.borderBottom = '3px solid black';
-            document.getElementById('sessions').style.borderBottom = 'unset';
-            vm.step = vm.steps.bootDevices;
-            vm.substep = vm.substeps.newBootDevice;
-            getAllUsbDrives();
-        });
-        $scope.$on('$stateChangeSuccess', function() {
-            getSessions();
-        });
+
         $scope.$watch('vm.textToFilter',function(newTextToFilter){
              $scope.$watch('vm.sessionType', function(newDropdown, oldDropdown){
                  var dropDownChoice = newDropdown ? newDropdown : oldDropdown;

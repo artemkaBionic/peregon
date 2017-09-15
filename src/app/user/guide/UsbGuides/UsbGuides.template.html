@@ -23,12 +23,28 @@
       <i class="fa fa-chevron-right" aria-hidden="true"></i>
         <a class="usb-instruction-navbtn" ng-click="vm.showDell()">Dell Laptops</a>
         <i class="fa fa-chevron-right" aria-hidden="true"></i>
-          <a class="usb-instruction-navbtn">X-Box One</a>
+          <a class="usb-instruction-navbtn" ng-click="vm.showXbox()">X-Box One</a>
           <i class="fa fa-chevron-right" aria-hidden="true"></i>
-            <a class="usb-instruction-navbtn">Apple devices</a>
+            <a class="usb-instruction-navbtn" ng-click="vm.showMac()">Mac</a>
     </div>
-    <div id="relative" class="">
+    <div id="instructions" class="">
       <!--HP Guide-->
+      <!--<div class="row">-->
+        <!--<div class="col-xs-10 col-xs-offset-1">-->
+          <!--<div class="row instruction-row" >-->
+            <!--<div class="col-xs-6">-->
+              <!--<ul>-->
+                <!--<li>Insert USB drive into the laptop. Preferably, use the SuperSpeed (SS) USB 3.0 port.</li>-->
+              <!--</ul>-->
+            <!--</div>-->
+            <!--<div class="col-xs-6 text-center">-->
+              <!--<div class="instruction-img-border">-->
+                <!--<img class="instruction-img" ng-click="vm.openModal('../../../../../assets/images/usb3Port.jpg')" src="../../../../../assets/images/usb3Port.jpg">-->
+              <!--</div>-->
+            <!--</div>-->
+          <!--</div>-->
+        <!--</div>-->
+      <!--</div>-->
       <div ng-show="vm.step.name === 'hp'">
         <h1 class="guide-caption text-center" style="color:black">Follow these steps to refresh HP laptop:</h1>
         <div class="row instruction-row" >
@@ -70,9 +86,13 @@
         <div class="row instruction-row">
           <div class="col-xs-4">
             <ul>
-              <li>When the Refresh Environment has loaded, follow the instructions to start the refresh.</li>
-              <li>After the refresh is finished, click the OK button to turn off the computer.</li>
+              <li>Re-insert USB drive to the Refresh Station to complete the refresh.</li>
             </ul>
+          </div>
+          <div class="col-xs-4 text-center">
+            <div class="instruction-img-border">
+              <img class="instruction-img" ng-click="vm.openModal('../../../../../assets/images/USB-Insert.jpg')" src="../../../../../assets/images/USB-Insert.jpg">
+            </div>
           </div>
         </div>
       </div>
@@ -118,14 +138,102 @@
         <div class="row instruction-row">
           <div class="col-xs-4">
             <ul>
-              <li>When the Refresh Environment has loaded, follow the instructions to start the refresh.</li>
-              <li>After the refresh is finished, click the OK button to turn off the computer.</li>
+              <li>Re-insert USB drive to the Refresh Station to complete the refresh.</li>
             </ul>
+          </div>
+          <div class="col-xs-4 text-center">
+            <div class="instruction-img-border">
+              <img class="instruction-img" ng-click="vm.openModal('../../../../../assets/images/USB-Insert.jpg')" src="../../../../../assets/images/USB-Insert.jpg">
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--Apple Guide-->
+      <div ng-show="vm.step.name === 'apple'">
+        <h1 class="guide-caption text-center" style="color:black">Follow these steps to refresh Mac:</h1>
+        <div class="row instruction-row" >
+          <div class="col-xs-4">
+            <ul>
+              <li>Insert USB drive into the Mac. It is stongly recommended to charge the Mac while refreshing, so if it
+                only has one USB-C port you should use a splitter.
+              </li>
+            </ul>
+          </div>
+          <div class="col-xs-4 text-center">
+            <div class="instruction-img-border">
+                <img class="instruction-img" ng-click="vm.openModal('../../../../../assets/guides/Mac/macbook-adpt-usbc-dgtlavmulti-pf.png')" src="../../../../../assets/guides/Mac/macbook-adpt-usbc-dgtlavmulti-pf.png">
+            </div>
+          </div>
+        </div>
+        <div class="row instruction-row" >
+          <div class="col-xs-4">
+            <ul>
+              <li>Power on (or reboot) the Mac and hold the Option key until boot options are visible. Select
+                "Refresh".
+              </li>
+            </ul>
+          </div>
+          <div class="col-xs-4 text-center">
+            <div class="instruction-img-border">
+              <img class="instruction-img" ng-click="vm.openModal('../../../../../assets/guides/Mac/ALT-Option-Key-Mac.jpg')" src="../../../../../assets/guides/Mac/ALT-Option-Key-Mac.jpg">
+            </div>
+          </div>
+        </div>
+        <div class="row instruction-row">
+          <div class="col-xs-4">
+            <ul>
+              <li>When the refresh process is complete, hold the power button down until the shutdown options are
+                displayed. Select "Shut Down".
+              </li>
+            </ul>
+          </div>
+          <div class="col-xs-4 text-center">
+            <div class="instruction-img-border">
+              <img class="instruction-img" ng-click="vm.openModal('../../../../../assets/guides/Mac/HT5869_shutdown_dialog-en.png')" src="../../../../../assets/guides/Mac/HT5869_shutdown_dialog-en.png">
+            </div>
+          </div>
+        </div>
+        <div class="row instruction-row">
+          <div class="col-xs-4">
+            <ul>
+              <li>Re-insert USB drive to the Refresh Station to complete the refresh.</li>
+            </ul>
+          </div>
+          <div class="col-xs-4 text-center">
+            <div class="instruction-img-border">
+              <img class="instruction-img" ng-click="vm.openModal('../../../../../assets/images/USB-Insert.jpg')" src="../../../../../assets/images/USB-Insert.jpg">
+            </div>
+          </div>
+        </div>
+      </div>
+    <!--XBOX-->
+      <div class="row" style="font-size: 18px; color:black" ng-show="vm.step.name === 'xBox'">
+        <h1 class="guide-caption text-center" style="color:black">Follow these steps to refresh X-Box One:</h1>
+        <div class="row border-step">
+          <div class="col-sm-8 col-xs-12 text-center">
+            <video controls style="width: 60vw;border: 1px black solid">
+              <source src="/assets/videos/XboxOneRefresh.webm" type='video/webm;codecs="vp9, vorbis"'>
+              <source src="/assets/videos/XboxOneRefresh.mp4" type="video/mp4">
+              <track label="English" kind="subtitles" srclang="en" src="/assets/videos/XboxOneRefresh-en.vtt" default>
+              Your browser does not support the video tag.
+            </video>
+          </div>
+          <div class="col-sm-4 col-xs-12 ref-list">
+            <ol style=" margin-left: -20px; margin-right: 40px;">
+              <li>If the Xbox is plugged in, unplug it and wait a few seconds.</li>
+              <li>Plug in the USB drive and power cord.</li>
+              <li>Press and hold the <b>BIND</b> and <b>EJECT</b> buttons while turning it on.</li>
+              <li>Listen for two "power-up" tones a couple of seconds apart.</li>
+              <li>Release the <b>BIND</b> and <b>EJECT</b> buttons.</li>
+              <li>Wait a few seconds for the Xbox button light to turn off, then unplug the Xbox and remove the USB
+                drive.
+              </li>
+            </ol>
           </div>
         </div>
       </div>
       <!-- The Modal -->
-      <div id="myModal" class="modal-instruction absolute block">
+      <div id="myModal" class="modal-instruction absolute block" style="height: 78vh!important">
         <img class="modal-content-guide centered" id="img01">
       </div>
     </div>

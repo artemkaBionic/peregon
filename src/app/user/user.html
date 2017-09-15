@@ -53,13 +53,16 @@
             <div class="row ">
               <div class="col-xs-5">
                 <div class="boot-instruction-row boot-instruction-title">
-                  <span>Create Boot Drives from Flash Drives to refresh multiple devices simultaneously</span>
+                  <span>Create Boot Drive from Flash Drive to refresh multiple devices simultaneously</span>
                 </div>
                 <div class="boot-instruction-row">
-                  <span style="color:grey">To create a Boot Drive insert 32GB or larger Flash Drive to refresh station. Then follow instructions how to refresh device.</span>
+                  <span style="color:grey">To refresh multiple devices simultaneously insert 32GB or larger Flash Drive to Refresh Station.
+                    It will take up to 20 minutes to create Boot Drive from inserted Flash Drive. When Boot Drive is created disconnect Boot Drive from Refresh Station
+                    and insert it to device you want to refresh. Then follow instructions on devices screen.
+                  <br><br> If you need more detailed refresh instructions you can view them by clicking on <strong>USB-only refresh instructions</strong>.</span>
                 </div>
                 <div class="boot-instruction-row">
-                  <a style="font-weight: bold;" ui-sref="root.usbGuides"><i class="fa fa-file-text-o" aria-hidden="true"></i> Refresh instructions <i class="fa fa-chevron-right" aria-hidden="true"></i></a>
+                  <a style="font-weight: bold;" ui-sref="root.usbGuides"><i class="fa fa-file-text-o" aria-hidden="true"></i> USB-only refresh instructions <i class="fa fa-chevron-right" aria-hidden="true"></i></a>
                 </div>
               </div>
               <div class="col-xs-1">
@@ -72,16 +75,16 @@
                     </div>
                   </div>
                   <div class="boot-instruction-row boot-instruction-title-grey">
-                    <span>Connect USB Flash Drive to get started.</span>
+                    <span>Connect USB flash Drive to get started.</span>
                   </div>
                   <div class="boot-instruction-row">
-                    <span style="color:grey">USB Flash drive should be 32GB or larger.</span>
+                    <span style="color:grey">USB flash drive should be 32GB or larger.</span>
                   </div>
                 </div>
                 <div ng-show="vm.substep.name === 'newBootDevice'">
                   <div class="boot-instruction-row">
                     <div class="usb-icon">
-                      <i style="font-style: normal;font-weight: bold">{{vm.numberOfDevices}}</i>
+                      <i style="font-style: normal;font-weight: bold">{{vm.notReadyDevices}}</i>
                     </div>
                   </div>
                   <div class="boot-instruction-row boot-instruction-title-grey">
@@ -89,7 +92,7 @@
                   </div>
                   <div class="boot-instruction-row">
                     <span style="color:grey">{{vm.usbDrivesText}}<br>
-                    <strong>Warning!</strong> This will vipe all information you have on USB Drives.
+                    <strong>Warning!</strong> This will vipe all information you have on USB flasg drives.
                     </span>
                   </div>
                   <div class="boot-instruction-row">
@@ -105,7 +108,7 @@
                     <span>Setting up {{vm.usbText}}</span>
                   </div>
                   <div class="boot-instruction-row">
-                    <span style="color:grey">Boot partitions are loading into connecter {{vm.usbText}}.<br>
+                    <span style="color:grey">Boot partitions are loading into connected {{vm.usbText}}.<br>
                     <strong>Warning!</strong> Do not remove {{vm.usbText}} from Refresh Station until loading will be finished.
                     </span>
                   </div>

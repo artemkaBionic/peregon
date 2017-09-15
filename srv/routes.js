@@ -203,7 +203,7 @@ module.exports = function(io, data) {
                     if (isInitialized) {
                         controller.prepareUsb(io, {usb: event.data, item: null});
                     } else {
-                        usbDrives.set(event.data.id, {id: event.data.id, status:'not_ready', progress: event.data.size});
+                        usbDrives.set(event.data.id, {id: event.data.id, status:'not_ready', progress: 0});
                         console.log(usbDrives.getAllUsbDrives());
                         io.emit(event.name, event.data);
                     }
@@ -212,6 +212,15 @@ module.exports = function(io, data) {
         } else if (event.name === "device-remove"){
             usbDrives.delete(event.data.id);
             console.log(usbDrives.getAllUsbDrives());
+            io.emit(event.name, event.data);
+        } else if (event.name === "usb-complete"){
+            usbDrives.finishProgress(event.data.id);
+            console.log(usbDrives.getAllUsbDrives());
+            io.emit(event.name, event.data);
+        } else if (event.name === "usb-progress"){
+            usbDrives.updateProgress(event.data.progress, event.data.id);
+            console.log(usbDrives.getAllUsbDrives());
+            io.emit(event.name, event.data);
         } else {
             io.emit(event.name, event.data);
         }

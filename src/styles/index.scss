@@ -3687,6 +3687,22 @@ orbicular i {
     color:blue;
   }
 }
+#instructions{
+  height:78vh;
+  position:relative;
+  overflow-x: hidden;
+  overflow-y: auto;
+  b{
+    font-weight: 400;
+  }
+  .instruction-list{
+    margin-top: 0px !important;
+    margin-bottom: 0px!important;
+  }
+  a {
+    color:blue;
+  }
+}
 #guide-no-images-sm{
   height: calc(100vh - 135px)!important;
   position:relative;
@@ -3710,7 +3726,10 @@ orbicular i {
   position:absolute;
   white-space: nowrap;
 }
-
+#instructions > #myModal{
+  position:absolute;
+  white-space: nowrap;
+}
 /* Caption of Modal Image */
 #caption {
   margin: auto;

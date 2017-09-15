@@ -32,13 +32,24 @@
         vm.step = vm.steps.hp;
         vm.showHp = function(){
             vm.step = vm.steps.hp;
+            modal.style.display = 'none';
         };
         vm.showDell = function(){
             vm.step = vm.steps.dell;
+            modal.style.display = 'none';
+        };
+        vm.showMac = function(){
+            vm.step = vm.steps.apple;
+            modal.style.display = 'none';
+        };
+        vm.showXbox = function(){
+            vm.step = vm.steps.xBox;
+            modal.style.display = 'none';
         };
         vm.openModal = function(src) {
             modal.style.display = 'block';
             modalImg.src = src;
+
         };
         modal.onclick = function() {
             modal.style.display = 'none';
@@ -48,7 +59,7 @@
                 _el.style.transform = 'translateY(' + this.scrollTop + 'px)';
             });
         }
-        var el = document.querySelector('#relative > #myModal');
+        var el = document.querySelector('#instructions > #myModal');
         sticky(el);
     }
 })();
