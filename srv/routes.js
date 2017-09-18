@@ -213,15 +213,17 @@ module.exports = function(io, data) {
             usbDrives.delete(event.data.id);
             console.log(usbDrives.getAllUsbDrives());
             io.emit(event.name, event.data);
-        } else if (event.name === "usb-complete"){
-            usbDrives.finishProgress(event.data.id);
-            console.log(usbDrives.getAllUsbDrives());
-            io.emit(event.name, event.data);
-        } else if (event.name === "usb-progress"){
-            usbDrives.updateProgress(event.data.progress, event.data.id);
-            console.log(usbDrives.getAllUsbDrives());
-            io.emit(event.name, event.data);
-        } else {
+        }
+        // else if (event.name === "usb-complete"){
+        //     usbDrives.finishProgress(event.data.id);
+        //     console.log(usbDrives.getAllUsbDrives());
+        //     io.emit(event.name, event.data);
+        // } else if (event.name === "usb-progress"){
+        //     usbDrives.updateProgress(event.data.progress, event.data.id);
+        //     console.log(usbDrives.getAllUsbDrives());
+        //     io.emit(event.name, event.data);
+        // }
+        else {
             io.emit(event.name, event.data);
         }
 

@@ -923,7 +923,7 @@ button[disabled]:hover {
   height:40px;
   border-top: 2px solid rgba(168, 150, 194, 0.7);
   position: relative;
-  margin: 0px 10px 0px 10px;
+  margin: 10px 10px 0px 10px;
 }
 .simultaneous-header{
   margin-top: 10px;
@@ -3687,8 +3687,13 @@ orbicular i {
     color:blue;
   }
 }
+.heading-instructions{
+  font-size: 18pt;
+  color: black;
+  font-weight: 400;
+}
 #instructions{
-  height:78vh;
+  height:84vh;
   position:relative;
   overflow-x: hidden;
   overflow-y: auto;

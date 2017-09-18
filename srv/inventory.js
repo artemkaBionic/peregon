@@ -44,6 +44,7 @@ exports.getAllUsbDrives = getAllUsbDrives;
 exports.getLowestUsbProgress = getLowestUsbProgress;
 // Periodically resend unsent sessions
 resendSessions();
+
 setInterval(function() {
     resendSessions();
 }, RESEND_SESSIONS_INTERVAL);

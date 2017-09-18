@@ -34,7 +34,7 @@
                 controllerAs: 'vm'
             })
             .state('root.usbGuides', {
-                url: '/usbGuides/',
+                url: '/usbGuides/:device',
                 templateUrl: 'app/user/guide/UsbGuides/UsbGuides.template.html',
                 controller: 'UsbGuidesController',
                 controllerAs: 'vm'

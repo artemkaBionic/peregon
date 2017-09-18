@@ -5,9 +5,9 @@
         .module('app.user')
         .controller('UsbGuidesController', UsbGuidesController);
 
-    UsbGuidesController.$inject = [];
+    UsbGuidesController.$inject = ['$stateParams'];
 
-    function UsbGuidesController() {
+    function UsbGuidesController($stateParams) {
         var vm = this;
         vm.steps = {
             hp: {
@@ -27,25 +27,27 @@
                 number: 4
             }
         };
+        console.log($stateParams);
+
         var modal = document.getElementById('myModal');
         var modalImg = document.getElementById('img01');
-        vm.step = vm.steps.hp;
-        vm.showHp = function(){
-            vm.step = vm.steps.hp;
-            modal.style.display = 'none';
-        };
-        vm.showDell = function(){
+        if ($stateParams.device === 'dell') {
             vm.step = vm.steps.dell;
             modal.style.display = 'none';
-        };
-        vm.showMac = function(){
+            vm.title = 'Dell laptop refresh';
+        } else if ($stateParams.device === 'hewlettPackard'){
+            vm.step = vm.steps.hp;
+            modal.style.display = 'none';
+            vm.title = 'HP laptop refresh';
+        } else if ($stateParams.device === 'mac'){
             vm.step = vm.steps.apple;
             modal.style.display = 'none';
-        };
-        vm.showXbox = function(){
+            vm.title = 'Mac refresh';
+        } else {
             vm.step = vm.steps.xBox;
             modal.style.display = 'none';
-        };
+            vm.title = 'X-Box refresh';
+        }
         vm.openModal = function(src) {
             modal.style.display = 'block';
             modalImg.src = src;

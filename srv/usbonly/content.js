@@ -21,8 +21,8 @@ var io = null;
 
 function updateProgress(value, device) {
     console.log('Progress for device: ' + device + ' is: ' + value + '%');
-    io.emit('usb-progress', {progress: value, device: device});
     usbDrive.updateProgress(value, device);
+    io.emit('usb-progress', {progress: value, device: device});
 }
 
 function copyFiles(contentTemp, copyFilesSize, totalSize, device, callback) {
@@ -103,7 +103,6 @@ function applyMacImage(device, macImageSize, totalSize, callback) {
         });
     });
 }
-
 function createItemFile(device, item, callback) {
     var usbItemFile = '/mnt/' + device + config.usbStatusPartition + '/item.json';
     try {

@@ -53,17 +53,27 @@
             <div class="row ">
               <div class="col-xs-5">
                 <div class="boot-instruction-row boot-instruction-title">
-                  <span>Create Boot Drive from Flash Drive to refresh multiple devices simultaneously</span>
+                  <span>Create Bootable USB-drive from USB-drive to start UBS-only refresh</span>
                 </div>
                 <div class="boot-instruction-row">
-                  <span style="color:grey">To refresh multiple devices simultaneously insert 32GB or larger Flash Drive to Refresh Station.
-                    It will take up to 20 minutes to create Boot Drive from inserted Flash Drive. When Boot Drive is created disconnect Boot Drive from Refresh Station
+                  <span style="color:grey">To perform USB-only refresh insert 32GB or larger USB-drive to Refresh Station.
+                    It will take up to 20 minutes to create Bootable USB-drive. When Bootable USB-drive is created disconnect Bootable USB-drive from Refresh Station
                     and insert it to device you want to refresh. Then follow instructions on devices screen.
-                  <br><br> If you need more detailed refresh instructions you can view them by clicking on <strong>USB-only refresh instructions</strong>.</span>
+                  <br><br> If you need detailed refresh instructions you can view them by clicking on links below.</span>
                 </div>
                 <div class="boot-instruction-row">
-                  <a style="font-weight: bold;" ui-sref="root.usbGuides"><i class="fa fa-file-text-o" aria-hidden="true"></i> USB-only refresh instructions <i class="fa fa-chevron-right" aria-hidden="true"></i></a>
+                  <a style="font-weight: bold;" ui-sref="root.usbGuides({device: 'dell'})"> <i class="fa fa-windows" aria-hidden="true"></i> Dell laptops instructions <i class="fa fa-chevron-right" aria-hidden="true"></i></a>
                 </div>
+                <div style="margin-top: 3px">
+                  <a style="font-weight: bold;" ui-sref="root.usbGuides({device: 'hewlettPackard'})"><i class="fa fa-windows" aria-hidden="true"></i> HP laptops instructions <i class="fa fa-chevron-right" aria-hidden="true"></i></a>
+                </div>
+                <div style="margin-top: 3px">
+                  <a style="font-weight: bold;" ui-sref="root.usbGuides({device: 'xBoxOne'})"><img style="background-color:#9072bd; width: 13px" src="../../../assets/images/xbox-logo.png"> X-Box instructions <i class="fa fa-chevron-right" aria-hidden="true"></i></a>
+                </div>
+                <div style="margin-top: 3px">
+                  <a style="font-weight: bold;" ui-sref="root.usbGuides({device: 'mac'})"><i class="fa fa-apple" aria-hidden="true"></i> Mac instructions <i class="fa fa-chevron-right" aria-hidden="true"></i></a>
+                </div>
+
               </div>
               <div class="col-xs-1">
               </div>
@@ -92,7 +102,7 @@
                   </div>
                   <div class="boot-instruction-row">
                     <span style="color:grey">{{vm.usbDrivesText}}<br>
-                    <strong>Warning!</strong> This will vipe all information you have on USB flasg drives.
+                    <strong>Warning!</strong> This will vipe all information you have on {{vm.usbDrive}}.
                     </span>
                   </div>
                   <div class="boot-instruction-row">
@@ -105,11 +115,11 @@
                     <i class="fa fa-spinner fa-spin" style="font-size:50px"></i>
                   </div>
                   <div class="boot-instruction-row boot-instruction-title-grey">
-                    <span>Setting up {{vm.usbText}}</span>
+                    <span>Preparing {{vm.bootableUsb}}</span>
                   </div>
                   <div class="boot-instruction-row">
-                    <span style="color:grey">Boot partitions are loading into connected {{vm.usbText}}.<br>
-                    <strong>Warning!</strong> Do not remove {{vm.usbText}} from Refresh Station until loading will be finished.
+                    <span style="color:grey">Boot partitions are loading into connected {{vm.usbDrive}}.<br>
+                    <strong>Warning!</strong> Do not remove {{vm.usbDrive}} from Refresh Station until loading will be finished.
                     </span>
                   </div>
                 </div>
@@ -118,11 +128,11 @@
                     <i style="color:forestgreen" class="fa fa-check-circle fa-5x" aria-hidden="true"></i>
                   </div>
                   <div class="boot-instruction-row boot-instruction-title-grey">
-                    <span>Boot Devices are ready</span>
+                    <span>{{vm.bootableUsbReadyText}}</span>
                   </div>
                   <div class="boot-instruction-row">
-                    <span style="color:grey">You can remove them from Refresh Station and start refresh.<br>
-                    <strong>Warning!</strong> Do not forget to insert Boot Devices back to station once refreshes will be completed.
+                    <span style="color:grey">You can remove {{vm.bootableUsb}} from Refresh Station and start refresh.<br>
+                    <strong>Warning!</strong> Do not forget to insert {{vm.bootableUsb}} back to station once refreshes will be completed.
                     </span>
                   </div>
                 </div>

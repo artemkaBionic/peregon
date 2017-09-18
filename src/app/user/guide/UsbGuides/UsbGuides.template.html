@@ -10,7 +10,7 @@
             </div>
             <img class="guide-logo" src="/assets/images/Logo.png">
           </div>
-          <div class="home-header">USB refresh guides</div>
+          <div class="home-header">{{vm.title}}</div>
         </div>
       </div>
       <div class="col-sm-5 header-col">
@@ -18,35 +18,9 @@
     </div>
   </header>
   <div horizontal-ui-sheet-content>
-    <div class="row text-center">
-      <a class="usb-instruction-navbtn" ng-click="vm.showHp()">HP Laptops</a>
-      <i class="fa fa-chevron-right" aria-hidden="true"></i>
-        <a class="usb-instruction-navbtn" ng-click="vm.showDell()">Dell Laptops</a>
-        <i class="fa fa-chevron-right" aria-hidden="true"></i>
-          <a class="usb-instruction-navbtn" ng-click="vm.showXbox()">X-Box One</a>
-          <i class="fa fa-chevron-right" aria-hidden="true"></i>
-            <a class="usb-instruction-navbtn" ng-click="vm.showMac()">Mac</a>
-    </div>
     <div id="instructions" class="">
-      <!--HP Guide-->
-      <!--<div class="row">-->
-        <!--<div class="col-xs-10 col-xs-offset-1">-->
-          <!--<div class="row instruction-row" >-->
-            <!--<div class="col-xs-6">-->
-              <!--<ul>-->
-                <!--<li>Insert USB drive into the laptop. Preferably, use the SuperSpeed (SS) USB 3.0 port.</li>-->
-              <!--</ul>-->
-            <!--</div>-->
-            <!--<div class="col-xs-6 text-center">-->
-              <!--<div class="instruction-img-border">-->
-                <!--<img class="instruction-img" ng-click="vm.openModal('../../../../../assets/images/usb3Port.jpg')" src="../../../../../assets/images/usb3Port.jpg">-->
-              <!--</div>-->
-            <!--</div>-->
-          <!--</div>-->
-        <!--</div>-->
-      <!--</div>-->
       <div ng-show="vm.step.name === 'hp'">
-        <h1 class="guide-caption text-center" style="color:black">Follow these steps to refresh HP laptop:</h1>
+        <div class="guide-caption text-center heading-instructions">Follow these steps to refresh HP laptop:</div>
         <div class="row instruction-row" >
           <div class="col-xs-4">
             <ul>
@@ -98,7 +72,7 @@
       </div>
       <!--DELL Guide-->
       <div ng-show="vm.step.name === 'dell'">
-        <h1 class="guide-caption text-center" style="color:black">Follow these steps to refresh Dell laptop:</h1>
+        <div class="guide-caption text-center heading-instructions">Follow these steps to refresh Dell laptop:</div>
         <div class="row instruction-row" >
           <div class="col-xs-4">
             <ul>
@@ -150,7 +124,7 @@
       </div>
       <!--Apple Guide-->
       <div ng-show="vm.step.name === 'apple'">
-        <h1 class="guide-caption text-center" style="color:black">Follow these steps to refresh Mac:</h1>
+        <div class="guide-caption text-center heading-instructions">Follow these steps to refresh Mac:</div>
         <div class="row instruction-row" >
           <div class="col-xs-4">
             <ul>
@@ -208,7 +182,7 @@
       </div>
     <!--XBOX-->
       <div class="row" style="font-size: 18px; color:black" ng-show="vm.step.name === 'xBox'">
-        <h1 class="guide-caption text-center" style="color:black">Follow these steps to refresh X-Box One:</h1>
+        <div class="guide-caption text-center heading-instructions" style="margin-bottom: 10px">Follow these steps to refresh X-Box One:</div>
         <div class="row border-step">
           <div class="col-sm-8 col-xs-12 text-center">
             <video controls style="width: 60vw;border: 1px black solid">
@@ -233,7 +207,7 @@
         </div>
       </div>
       <!-- The Modal -->
-      <div id="myModal" class="modal-instruction absolute block" style="height: 78vh!important">
+      <div id="myModal" class="modal-instruction absolute block" style="height: 84vh!important">
         <img class="modal-content-guide centered" id="img01">
       </div>
     </div>

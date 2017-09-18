@@ -115,23 +115,43 @@
                     }
 
                     if (vm.notReadyDevices === 1) {
-                        vm.usbText = 'Boot Drive';
-                        vm.usbDrivesText = 'Now you can create your Boot Drive.';
-                        vm.usbButtonText = 'Create Boot Drive';
-                        vm.usbDrivesTitle = vm.notReadyDevices + ' New USB Flash Drive is connected'
+                        vm.bootableUsb = 'Bootable USB-drive';
+                        vm.usbDrive = 'USB-drive';
+                        vm.usbDrivesText = 'Now you can create your Bootable USB-drive.';
+                        vm.usbButtonText = 'Create Bootable USB-drive';
+                        vm.usbDrivesTitle = vm.notReadyDevices + ' New USB-drive is connected'
                     } else if (vm.notReadyDevices > 1){
-                        vm.usbText = 'Boot Drives';
-                        vm.usbDrivesTitle = vm.notReadyDevices + ' New USB Flash Drives are connected';
-                        vm.usbDrivesText = 'Now you can create your Boot Drives.';
-                        vm.usbButtonText = 'Create Boot Drives';
+                        vm.bootableUsb = 'Bootable USB-drives';
+                        vm.usbDrive = 'USB-drives';
+                        vm.usbText = 'Bootable USB-drives';
+                        vm.usbDrivesTitle = vm.notReadyDevices + ' New USB-drives are connected';
+                        vm.usbDrivesText = 'Now you can create your Bootable USB-drives.';
+                        vm.usbButtonText = 'Create Bootable USB-drives';
+                    }
+                    if (vm.inProgressDevices === 1) {
+                        vm.bootableUsb = 'Bootable USB-drive';
+                        vm.usbDrive = 'USB-drive';
+                    } else if (vm.inProgressDevices > 1){
+                        vm.bootableUsb = 'Bootable USB-drives';
+                        vm.usbDrive = 'USB-drives';
                     }
 
-                    if (vm.readyDevices === vm.numberOfDevices) {
-                        vm.substep = vm.substeps.bootDevicesReady;
-                    } else if (vm.notReadyDevices > 0) {
+                    if (vm.readyDevices === 1) {
+                        vm.bootableUsb = 'Bootable USB-drive';
+                        vm.bootableUsbReadyText = 'Bootable USB-drive is ready';
+                    } else if (vm.readyDevices > 1){
+                        vm.bootableUsb = 'Bootable USB-drive';
+                        vm.bootableUsbReadyText = 'Bootable USB-drives are ready';
+                    }
+
+                    if (vm.notReadyDevices > 0) {
                         vm.substep = vm.substeps.newBootDevice;
                     } else if (vm.inProgressDevices > 0) {
                         vm.substep = vm.substeps.bootDevicesProcessing;
+                    }  else if (vm.numberOfDevices === 0) {
+                        vm.substep = vm.substeps.noBootDevices;
+                    } else {
+                        vm.substep = vm.substeps.bootDevicesReady;
                     }
 
                 });
@@ -156,12 +176,12 @@
         function prepareUsbDrives(data){
             for (var i = 0; i < data.length; i++) {
                 //console.log({usb:data[i]});
-                $http({
-                    url: '/prepareUsb',
-                    method: 'POST',
-                    headers: {'content-type': 'application/json'},
-                    data: {usb:data[i],item: {}}
-                });
+                // $http({
+                //     url: '/prepareUsb',
+                //     method: 'POST',
+                //     headers: {'content-type': 'application/json'},
+                //     data: {usb:data[i],item: {}}
+                // });
             }
 
         }
