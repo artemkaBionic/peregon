@@ -38,8 +38,10 @@
                  }
              });
         });
-        $scope.$on('updateList', function(event) {
-            getSessions();
+        $scope.$on('updateList', function() {
+            setTimeout(function() {
+                getSessions();
+            },1000);
         });
         vm.increaseLimit = function() {
             vm.sessionsLength = 0;
@@ -183,13 +185,6 @@
         };
         // jscs:disable
 
-        function updateSessionsForAllDevices(serial){
-            inventoryService.getAllSessionsByDevice(serial)
-                .then(function(res) {
-                    console.log(res);
-                    //openHelpModal('xs','Unrecognized Device', res.session_id);
-                });
-        }
         vm.showGuideForCards = function(session) {
             var item = {'InventoryNumber': session.device.item_number,
                 'start_time': session.start_time,
@@ -230,7 +225,6 @@
             } else {
                 inventoryService.checkSessionByStartDate(item.start_time)
                     .then(function (res) {
-                        console.log(res);
                         openHelpModal('sm-to-xs', 'Unrecognized Device', res.session_id, session);
                     });
             }
