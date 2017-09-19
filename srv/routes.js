@@ -7,7 +7,7 @@ var station = require('./station.js');
 var controller = require('./usbonly/controller');
 var simultaneous = require('./simultaneous/simultaneous');
 var usbDrives = require('./usbonly/usbCache');
-
+var sessions = require('./session_storage/sessions')
 module.exports = function(io, data) {
 // Express Router
     var router = express.Router();
@@ -257,6 +257,8 @@ module.exports = function(io, data) {
             }
         });
     });
-
+    router.post('/test', function(req, res) {
+        sessions.test();
+    });
     return router;
 };
