@@ -20,27 +20,25 @@ function deviceBridge(io) {
         .then(function (tracker) {
             tracker.on('add', function (device) {
                 console.log('Device %s was plugged in', device.id);
-                setTimeout(function(){
-                    io.emit('android-add',{});
-                    console.log('Device ' + device.id + ' is ready to install app');
+                io.emit('android-add',{});
+            });
+            tracker.on('change', function(device) {
+                console.log('Device type:' + device.type + ' for device:' + device.id);
+                if(device.type === 'device') {
+                    console.log('Device ' + device.id + ' is ready to install app.');
                     installApp(device.id);
-                },8000);
-                // client.waitForDevice(device.id).then(function(authorizedDevice) {
-                //     console.log(authorizedDevice + ' is authorized and ready to install app.');
-                //     io.emit('android-add',{});
-                //     installApp(authorizedDevice);
-                // }).catch(function(err) {
-                //     console.log(err);
-                // });
-
+                }
             });
             tracker.on('remove', function(device) {
                 console.log('Device %s was unplugged', device.id);
                 var index = devices.indexOf(device.id);
                 var sessionId = inventory.getSessionInProgressByDevice({'adbSerial': device.id}).session_id;
-                console.log(sessionId + 'sessionID');
                 if (sessionId !== undefined) {
-                    finishSession(sessionId, {'complete': false});
+                    getSession(sessionId).then(function (response) {
+                        if (response.status === 'Incomplete') {
+                            finishSession(sessionId, {'complete': false});
+                        }
+                    });
                 }
                 if (index > -1) {
                     devices.splice(index, 1);
@@ -105,8 +103,8 @@ function deviceBridge(io) {
             }
         });
     }
-    function finishSession(sessionDate, details){
-        inventory.sessionFinish(sessionDate, details, function(result) {
+    function finishSession(sessionId, details){
+        inventory.sessionFinish(sessionId, details, function(result) {
             console.log('Session is finished ' + result);
         });
     }
@@ -193,7 +191,6 @@ function deviceBridge(io) {
              Type:'Android',
              adbSerial: serial
          };
-         var deviceAuthorized = true;
          aaronsLogcat.stdout.on('data', function (data) {
               if(IsJsonString(decoder.write(data).substring(decoder.write(data).indexOf("{")))) {
                   // check if app started indexOf !== -1 means 'includes'
@@ -217,8 +214,6 @@ function deviceBridge(io) {
                           unknownItem.Serial = imei;
                           unknownItem.numberOfAuto = appStartedDataJson.data.auto;
                           unknownItem.numberOfManual = appStartedDataJson.data.manual;
-                          //unknownItem.adbSerial = serial;
-                          deviceAuthorized = false;
                           startSession(sessionDate, unknownItem).then(function(res) {
                               io.emit('app-start', appStartedDataJson);
                               updateSession(sessionDate, 'Info', 'Android device is not found in Inventory');
@@ -230,66 +225,55 @@ function deviceBridge(io) {
 
                   // check if vipe started indexOf !== -1 means 'includes'
                   else if (decoder.write(data).indexOf('VipeStarted') !== -1) {
-                      if (deviceAuthorized) {
-                          getSerialLookup(imei).then(function (res) {
-                              // if passed tests array length = to number of all tests then session was successful
-                              if (passedTests.length === (appStartedDataJson.data.auto + appStartedDataJson.data.manual)) {
-                                  updateSession(sessionDate, 'Info', 'Android refresh app has initiated a factory reset.');
-                                  finishSession(sessionDate, {'complete': true});
-                                  io.emit('android-reset', {'status': 'Refresh Successful', 'imei': res.item.Serial, 'sessionId': sessionDate});
-                              } else {
-                                  updateSession(sessionDate, 'Info', 'Android test fail', {'failedTests':failedTests});
-                                  finishSession(sessionDate, {'complete': false});
-                                  io.emit('android-reset', {'status': 'Refresh Failed', 'imei': res.item.Serial, 'failed_tests': failedTests, 'sessionId': sessionDate});
-                              }
-                          }).catch(function (err) {
-                            console.log('Failed to get serial number because of: ' + err);
-                          });
-                      } else {
-                          getSession(sessionDate).then(function(response) {
-                              if (passedTests.length === (appStartedDataJson.data.auto + appStartedDataJson.data.manual)) {
-                                  updateSession(sessionDate, 'Info', 'Android refresh app has initiated a factory reset.');
-                                  io.emit('android-reset', {'status': 'Refresh Successful', 'imei': response.device.serial_number, 'sessionId': sessionDate});
-                              } else {
-                                  updateSession(sessionDate, 'Info', 'Android test fail', {'failedTests':failedTests});
-                                  io.emit('android-reset', {'status': 'Refresh Failed', 'imei': response.device.serial_number, 'failed_tests': failedTests, 'sessionId': sessionDate});
-                              }
-                          }).catch(function (err) {
-                              console.log('Failed to find session because of: ' + err);
-                          });
-
-                      }
-
+                        if (failedTests.length > 0) {
+                            updateSession(sessionDate, 'Info', 'Android test fail', {'failedTests':failedTests});
+                            finishSession(sessionDate, {'complete': false});
+                            io.emit('android-reset', {
+                                'status': 'Refresh Failed',
+                                'imei': imei,
+                                'failed_tests': failedTests,
+                                'sessionId': sessionDate
+                            });
+                        } else {
+                            updateSession(sessionDate, 'Info', 'Android refresh app has initiated a factory reset.');
+                            finishSession(sessionDate, {'complete': true});
+                            io.emit('android-reset', {
+                                'status': 'Refresh Successful',
+                                'imei': imei,
+                                'sessionId': sessionDate
+                            });
+                        }
                   }
+
                   // tests progress indexOf === -1 means 'not includes'
                   else if (decoder.write(data).indexOf('beginning') === -1) {
-                          var testResultJson = JSON.parse(decoder.write(data).substring(decoder.write(data).indexOf("{")));
-                          testResultJson.sessionId = sessionDate;
-                          // add tests to arrays of tests
-                          if (testResultJson.passed === true) {
-                              passedTests.push(testResultJson.commandName);
-                              if (testResultJson.commandName.indexOf('AutoTestCommand') !== -1){
-                                  passedAutoTests.push(testResultJson.commandName);
-                              } else {
-                                  passedManualTests.push(testResultJson.commandName);
-                              }
-                          } else {
-                              failedTests.push(testResultJson.commandName);
-                              if (testResultJson.commandName.indexOf('AutoTestCommand') !== -1){
-                                  failedAutoTests.push(testResultJson);
-                              } else {
-                                  failedManualTests.push(testResultJson.commandName);
-                              }
-                          }
-                          if(failedAutoTests.length + passedAutoTests.length <= appStartedDataJson.data.auto) {
-                              updateSession(sessionDate, 'Info Test', 'Android auto', {'passedAuto':failedAutoTests.length + passedAutoTests.length });
-                          }
-                          if(failedManualTests.length + passedManualTests.length <= appStartedDataJson.data.manual) {
-                              updateSession(sessionDate, 'Info Test', 'Android manual', {'passedManual':failedManualTests.length + passedManualTests.length });
-                          }
-                          var message = testResultJson.commandName + ' ' + (testResultJson.passed ? 'passed' : 'failed') + '\n';
-                          updateSession(sessionDate, 'Info', message, testResultJson.data);
-                          io.emit("android-test", testResultJson);
+                        var testResultJson = JSON.parse(decoder.write(data).substring(decoder.write(data).indexOf("{")));
+                        testResultJson.sessionId = sessionDate;
+                        // add tests to arrays of tests
+                        if (testResultJson.passed === true) {
+                            passedTests.push(testResultJson.commandName);
+                            if (testResultJson.commandName.indexOf('AutoTestCommand') !== -1){
+                                passedAutoTests.push(testResultJson.commandName);
+                            } else {
+                                passedManualTests.push(testResultJson.commandName);
+                            }
+                        } else {
+                            failedTests.push(testResultJson.commandName);
+                            if (testResultJson.commandName.indexOf('AutoTestCommand') !== -1){
+                                failedAutoTests.push(testResultJson);
+                            } else {
+                                failedManualTests.push(testResultJson.commandName);
+                            }
+                        }
+                        if(failedAutoTests.length + passedAutoTests.length <= appStartedDataJson.data.auto) {
+                            updateSession(sessionDate, 'Info Test', 'Android auto', {'passedAuto':failedAutoTests.length + passedAutoTests.length });
+                        }
+                        if(failedManualTests.length + passedManualTests.length <= appStartedDataJson.data.manual) {
+                            updateSession(sessionDate, 'Info Test', 'Android manual', {'passedManual':failedManualTests.length + passedManualTests.length });
+                        }
+                        var message = testResultJson.commandName + ' ' + (testResultJson.passed ? 'passed' : 'failed') + '\n';
+                        updateSession(sessionDate, 'Info', message, testResultJson.data);
+                        io.emit("android-test", testResultJson);
                   }
               }
          });

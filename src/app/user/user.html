@@ -155,10 +155,10 @@
                       {{session.device.serial_number}}
                     </div>
                     <div style="font-weight: 600" class="col-xs-6 text-ellipsis">
-                      <span ng-show="session.status === 'Success'" class="button-successful" data-toggle="tooltip" title="Refresh Successful"> Refresh Successful</span>
+                      <span ng-show="session.status === 'Success' && session.device.item_number" class="button-successful" data-toggle="tooltip" title="Refresh Successful"> Refresh Successful</span>
                       <span ng-show="session.status === 'Fail' && session.device.item_number" class="button-failed" data-toggle="tooltip" title="Refresh Failed">Refresh Failed</span>
-                      <span ng-show="session.status === 'Device Unrecognized' || !session.device.item_number" class="button-failed" data-toggle="tooltip" title="Device Unrecognized">Device Unrecognized</span>
-                      <span ng-show="session.status === 'Incomplete'" class="button-in-progress" data-toggle="tooltip" title="In Progress">In Progress <span class="fa fa-step-forward"></span></span>
+                      <span ng-show="!session.device.item_number" class="button-failed" data-toggle="tooltip" title="Device Unrecognized">Device Unrecognized</span>
+                      <span ng-show="session.status === 'Incomplete' && session.device.item_number" class="button-in-progress" data-toggle="tooltip" title="In Progress">In Progress <span class="fa fa-step-forward"></span></span>
                     </div>
                   </div>
                 </div>
