@@ -214,15 +214,15 @@ module.exports = function(io, data) {
             console.log(usbDrives.getAllUsbDrives());
             io.emit(event.name, event.data);
         }
-        // else if (event.name === "usb-complete"){
-        //     usbDrives.finishProgress(event.data.id);
-        //     console.log(usbDrives.getAllUsbDrives());
-        //     io.emit(event.name, event.data);
-        // } else if (event.name === "usb-progress"){
-        //     usbDrives.updateProgress(event.data.progress, event.data.id);
-        //     console.log(usbDrives.getAllUsbDrives());
-        //     io.emit(event.name, event.data);
-        // }
+        else if (event.name === "usb-complete"){
+            usbDrives.finishProgress(event.data.id);
+            console.log(usbDrives.getAllUsbDrives());
+            io.emit(event.name, event.data);
+        } else if (event.name === "usb-progress"){
+            usbDrives.updateProgress(event.data.progress, event.data.id);
+            console.log(usbDrives.getAllUsbDrives());
+            io.emit(event.name, event.data);
+        }
         else {
             io.emit(event.name, event.data);
         }
@@ -243,6 +243,7 @@ module.exports = function(io, data) {
     });
 
     router.post('/prepareUsb', function(req, res) {
+       //console.log(req.body);
         controller.prepareUsb(io, req.body);
         res.status(200).send();
     });

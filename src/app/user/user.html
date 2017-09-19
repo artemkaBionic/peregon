@@ -53,12 +53,12 @@
             <div class="row ">
               <div class="col-xs-5">
                 <div class="boot-instruction-row boot-instruction-title">
-                  <span>Create Bootable USB-drive from USB-drive to start UBS-only refresh</span>
+                  <span>Prepare Bootable USB drive for USB-only refresh</span>
                 </div>
                 <div class="boot-instruction-row">
-                  <span style="color:grey">To perform USB-only refresh insert 32GB or larger USB-drive to Refresh Station.
-                    It will take up to 20 minutes to create Bootable USB-drive. When Bootable USB-drive is created disconnect Bootable USB-drive from Refresh Station
-                    and insert it to device you want to refresh. Then follow instructions on devices screen.
+                  <span style="color:grey">Insert 32GB or larger USB drive into the Refresh Station.
+                    It will take up to 20 minutes to prepare the Bootable USB drive. <br><br> When ready, remove it it from the Refresh Station
+                    and use it to boot the device you want refresh. Then follow instructions on the devices screen.
                   <br><br> If you need detailed refresh instructions you can view them by clicking on links below.</span>
                 </div>
                 <div class="boot-instruction-row">
@@ -92,9 +92,14 @@
                   </div>
                 </div>
                 <div ng-show="vm.substep.name === 'newBootDevice'">
+                  <!--<div class="boot-instruction-row">-->
+                    <!--<div class="usb-icon">-->
+                      <!--<i style="font-style: normal;font-weight: bold">{{vm.notReadyDevices}}</i>-->
+                    <!--</div>-->
+                  <!--</div>-->
                   <div class="boot-instruction-row">
                     <div class="usb-icon">
-                      <i style="font-style: normal;font-weight: bold">{{vm.notReadyDevices}}</i>
+                      <i class="fa fa-usb" aria-hidden="true"></i>
                     </div>
                   </div>
                   <div class="boot-instruction-row boot-instruction-title-grey">
@@ -102,7 +107,7 @@
                   </div>
                   <div class="boot-instruction-row">
                     <span style="color:grey">{{vm.usbDrivesText}}<br>
-                    <strong>Warning!</strong> This will vipe all information you have on {{vm.usbDrive}}.
+                    <strong>Warning!</strong> This will wipe all information you have on {{vm.usbDrive}}.
                     </span>
                   </div>
                   <div class="boot-instruction-row">

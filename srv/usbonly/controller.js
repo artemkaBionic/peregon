@@ -7,9 +7,9 @@ var versions = require('./versions');
 var usbDrives = require('./usbCache');
 exports.prepareUsb = function(io, data) {
     console.log('prepareUsb');
-    var device = data.usb.id;
+    var device = data.usb;
     var item = data.item;
-
+    console.log(device);
     partitions.updatePartitions(device, function(err) {
         if (err) {
             console.error(err);
@@ -49,7 +49,7 @@ exports.isRefreshUsb = function(device, callback){
 };
 exports.readSession = function(io, data, callback) {
     console.log('readSession');
-    var device = data.usb.id;
+    var device = data.usb;
     var isSessionComplete = false;
 
     partitions.mountPartitions(device, function(err) {

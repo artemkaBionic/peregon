@@ -5,9 +5,9 @@
         .module('app.user')
         .controller('UserController', UserController);
 
-    UserController.$inject = ['$q', '$state', 'config', 'stationService', 'inventoryService', 'socketService', '$scope', 'toastr', '$http', 'popupLauncher'];
+    UserController.$inject = ['$q', '$state', 'config', 'stationService', 'inventoryService', 'socketService', '$scope', 'toastr', '$http', 'popupLauncher', '$rootScope', '$timeout'];
 
-    function UserController($q, $state, config, stationService, inventoryService, socketService, $scope, toastr, $http, popupLauncher) {
+    function UserController($q, $state, config, stationService, inventoryService, socketService, $scope, toastr, $http, popupLauncher, $rootScope, $timeout) {
         /*jshint validthis: true */
         var vm = this;
         vm.ready = false;
@@ -62,7 +62,7 @@
             vm.step = vm.steps.sessions;
             console.log(vm.step);
         };
-        getAllUsbDrives();
+        //getAllUsbDrives();
         vm.viewBootDevices = function(){
             getAllUsbDrives();
             document.getElementById('bootDevices').style.borderBottom = '3px solid black';
@@ -83,6 +83,7 @@
             getAllUsbDrives();
         });
         socketService.on('usb-progress', function() {
+            console.log('in progress');
             getAllUsbDrives();
         });
         socketService.on('usb-complete', function() {
@@ -115,33 +116,33 @@
                     }
 
                     if (vm.notReadyDevices === 1) {
-                        vm.bootableUsb = 'Bootable USB-drive';
-                        vm.usbDrive = 'USB-drive';
-                        vm.usbDrivesText = 'Now you can create your Bootable USB-drive.';
-                        vm.usbButtonText = 'Create Bootable USB-drive';
-                        vm.usbDrivesTitle = vm.notReadyDevices + ' New USB-drive is connected'
+                        vm.bootableUsb = 'Bootable USB drive';
+                        vm.usbDrive = 'USB drive';
+                        vm.usbDrivesText = 'Now you can create your Bootable USB drive.';
+                        vm.usbButtonText = 'Create Bootable USB drive';
+                        vm.usbDrivesTitle = vm.notReadyDevices + ' New USB drive is connected'
                     } else if (vm.notReadyDevices > 1){
-                        vm.bootableUsb = 'Bootable USB-drives';
-                        vm.usbDrive = 'USB-drives';
-                        vm.usbText = 'Bootable USB-drives';
-                        vm.usbDrivesTitle = vm.notReadyDevices + ' New USB-drives are connected';
-                        vm.usbDrivesText = 'Now you can create your Bootable USB-drives.';
-                        vm.usbButtonText = 'Create Bootable USB-drives';
+                        vm.bootableUsb = 'Bootable USB drives';
+                        vm.usbDrive = 'USB drives';
+                        vm.usbText = 'Bootable USB drives';
+                        vm.usbDrivesTitle = vm.notReadyDevices + ' New USB drives are connected';
+                        vm.usbDrivesText = 'Now you can create your Bootable USB drives.';
+                        vm.usbButtonText = 'Create Bootable USB drives';
                     }
                     if (vm.inProgressDevices === 1) {
-                        vm.bootableUsb = 'Bootable USB-drive';
-                        vm.usbDrive = 'USB-drive';
+                        vm.bootableUsb = 'Bootable USB drive';
+                        vm.usbDrive = 'USB drive';
                     } else if (vm.inProgressDevices > 1){
-                        vm.bootableUsb = 'Bootable USB-drives';
-                        vm.usbDrive = 'USB-drives';
+                        vm.bootableUsb = 'Bootable USB drives';
+                        vm.usbDrive = 'USB drives';
                     }
 
                     if (vm.readyDevices === 1) {
-                        vm.bootableUsb = 'Bootable USB-drive';
-                        vm.bootableUsbReadyText = 'Bootable USB-drive is ready';
+                        vm.bootableUsb = 'Bootable USB drive';
+                        vm.bootableUsbReadyText = 'Bootable USB drive is ready';
                     } else if (vm.readyDevices > 1){
-                        vm.bootableUsb = 'Bootable USB-drive';
-                        vm.bootableUsbReadyText = 'Bootable USB-drives are ready';
+                        vm.bootableUsb = 'Bootable USB drive';
+                        vm.bootableUsbReadyText = 'Bootable USB drives are ready';
                     }
 
                     if (vm.notReadyDevices > 0) {
@@ -175,7 +176,7 @@
         }
         function prepareUsbDrives(data){
             for (var i = 0; i < data.length; i++) {
-                //console.log({usb:data[i]});
+                console.log({usb:data[i],item: {}});
                 // $http({
                 //     url: '/prepareUsb',
                 //     method: 'POST',
@@ -208,6 +209,7 @@
         $scope.$on('updateList', function(event) {
             getSessions();
         });
+
         vm.increaseLimit = function() {
             vm.sessionsLength = 0;
             for (var key in vm.sessions) {
