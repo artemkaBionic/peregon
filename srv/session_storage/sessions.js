@@ -1,18 +1,19 @@
 var Db = require('tingodb')().Db,
     assert = require('assert');
-exports.test = test;
 var db = new Db('.', {});
-// Fetch a collection to insert document into
 var collection = db.collection("sessions");
-// Insert a single document
-function test(){
-    // collection.insert([{hello:'world_safe1'}
-    //     , {hello:'world_safe2'}], {w:1}, function(err, result) {
-    //     assert.equal(null, err);
-    //
-    //     // Fetch the document
-    //
-    // });
+exports.getAllSessions = getAllSessions;
+exports.addSession = addSession;
+
+function addSession(id, session){
+    var session2 = session;
+    session2._id = id;
+    collection.insert([session2], {w:1}, function(err, result) {
+        assert.equal(null, err);
+    });
+}
+
+function getAllSessions(){
     collection.find({}).toArray(function(err, result) {
         if (err) throw err;
         console.log(result);

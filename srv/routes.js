@@ -257,8 +257,12 @@ module.exports = function(io, data) {
             }
         });
     });
-    router.post('/test', function(req, res) {
-        sessions.test();
+    router.post('/addSession', function(req, res) {
+        console.log(req);
+        sessions.addSession();
+    });
+    router.post('/getSessions', function(req, res) {
+        sessions.getAllSessions();
     });
     return router;
 };

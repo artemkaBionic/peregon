@@ -22,7 +22,7 @@ const RESEND_SESSIONS_INTERVAL = 900000; // 15 minutes
 console.log(UNSENT_SESSIONS_DIRECTORY);
 var isDevelopment = process.env.NODE_ENV === 'development';
 var result = null;
-
+var sessions2 = require('./session_storage/sessions');
 exports.getSessions = getSessions;
 exports.getSession = getSession;
 exports.sessionStart = sessionStart;
@@ -160,6 +160,7 @@ function sessionStart(itemNumber, device, callback) {
         };
 
         sessions.set(itemNumber, newSession);
+        sessions2.addSession(itemNumber, newSession);
         callback();
     });
 }
