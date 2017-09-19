@@ -47,6 +47,7 @@
             vm.autoPassed = 0;
             vm.manualPassed = 0;
             vm.failedTests = [];
+            vm.sessionId = '';
             vm.step = vm.steps.startOne; //!!! Definition for first Guide Step
             vm.sessionDate =  new Date().toISOString();
             if (eventService.InternetConnection) {
@@ -175,6 +176,7 @@
             inventoryService.checkSession(item)
                 .then(function(res) {
                     if (res.session_id) {
+                        vm.sessionId = res.session_id;
                         inventoryService.getSession(res.session_id)
                             .then(function(reponse){
                                 if (reponse.currentStep === 'Auto passed') {
@@ -427,7 +429,6 @@
         /*=================End Diagnostics Orbicular Progress Bar Definition=================*/
         /*=================USB Connect end Events===============*/
         waitForAndroidAdd();//Event listener
-
         function waitForAndroidAdd() {
                 socketService.on('android-add', function() {
                     if ($state.current.name === 'root.user.guide') {
@@ -464,45 +465,52 @@
 
                 socketService.on('app-start', function(data) {
                     if ($state.current.name === 'root.user.guide') {
-                        vm.autoSize = data.data.auto;//Get number of Auto tests
-                        vm.manualSize = data.data.manual;//Get number of Manual tests
-                        vm.refreshAppStarted = true;
-                        if (vm.step === vm.steps.waitForAppStart) {
-                            vm.diagnosticOne();
+                        if (data.sessionId === vm.sessionId) {
+                            vm.autoSize = data.data.auto;//Get number of Auto tests
+                            vm.manualSize = data.data.manual;//Get number of Manual tests
+                            vm.refreshAppStarted = true;
+                            if (vm.step === vm.steps.waitForAppStart) {
+                                vm.diagnosticOne();
+                            }
                         }
                     }
                 });
 
                 socketService.on('android-test', function(data) {
                     if ($state.current.name === 'root.user.guide') {
-                        if (data.passed === false) {
-                            vm.TestsFault = true;//If one of the Auto tests Fails
+                        if (data.sessionId === vm.sessionId) {
+                            if (data.passed === false) {
+                                vm.TestsFault = true;//If one of the Auto tests Fails
+                            }
+
+                            if (data.type === 1) {
+                                if (vm.step !== vm.steps.diagnosticOne) {
+                                    vm.diagnosticOne();//Starting Auto diagnostic from the beginning
+                                } // Phone can be connected even on the first Step, if lazy associate
+                                progressAuto();
+                            }
+                            if (data.type === 0) {
+                                if (vm.step !== vm.steps.diagnosticTwo) {
+                                    vm.diagnosticTwo();//Starting Manual diagnostic from the beginning
+                                }
+                                progressManual();
+                            }
                         }
 
-                        if (data.type === 1) {
-                            if (vm.step !== vm.steps.diagnosticOne) {
-                                vm.diagnosticOne();//Starting Auto diagnostic from the beginning
-                            } // Phone can be connected even on the first Step, if lazy associate
-                            progressAuto();
-                        }
-                        if (data.type === 0) {
-                            if (vm.step !== vm.steps.diagnosticTwo) {
-                                vm.diagnosticTwo();//Starting Manual diagnostic from the beginning
-                            }
-                            progressManual();
-                        }
                     }
                 });
 
                 socketService.on('android-reset', function(data) {
                     if ($state.current.name === 'root.user.guide') {
-                        // jscs:disable
-                        vm.failedTests = data.failed_tests;
-                        if (vm.failedTests.length > 0) {
-                            vm.TestsFault = true;
+                        if (data.sessionId === vm.sessionId) {
+                            // jscs:disable
+                            vm.failedTests = data.failed_tests;
+                            if (vm.failedTests.length > 0) {
+                                vm.TestsFault = true;
+                            }
+                            // jscs:enable
+                            vm.finish();
                         }
-                        // jscs:enable
-                        vm.finish();
                     }
                 });
         }

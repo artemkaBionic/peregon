@@ -101,7 +101,7 @@ function deviceBridge(io) {
     function updateSession(sessionDate, level, message, details){
         inventory.sessionUpdate(sessionDate, level, message, details, function(err) {
             if (err) {
-                console.log(err);
+                console.error(err);
             }
         });
     }
@@ -110,7 +110,11 @@ function deviceBridge(io) {
             console.log('Session is finished ' + result);
         });
     }
-
+    function getSession(date){
+        return new Promise(function(resolve) {
+            resolve(inventory.getSession(date));
+        });
+    }
     function installApp(serial){
         client.uninstall(serial,'com.basechord.aarons.androidrefresh.basechord').then(function(){
             console.log('Uninstalled previous version of app successfully for device: ' + serial);
@@ -122,12 +126,15 @@ function deviceBridge(io) {
                     clearLogcat(serial).then(function(serialNo){
                         checkDeviceProgress(serialNo)
                     }).catch(function(err) {
-                        console.log('Something went wrong while clearing logcat for device: ' + serial + ' Error:' + err.stack)
+                        console.error('Something went wrong while clearing logcat for device: ' + serial + ' Error:' + err.stack);
                     });
                 }).catch(function (err) {
-                    console.error('Something went wrong while installing the app on device: ' + serial + ' Error:' + err.stack)
+                    console.error('Something went wrong while installing the app on device: ' + serial + ' Error:' + err.stack);
                })
+        }).catch(function (err) {
+            console.error('Something went wrong while uninstalling the app on device: ' + serial + ' Error:' + err.stack);
         });
+
     }
     function checkDeviceProgress(serial) {
         console.log(devices.length + ' devices in process');
@@ -148,7 +155,7 @@ function deviceBridge(io) {
                 console.log('[%s] %s', serial, output.toString().trim());
                 readLogcat(serial);
             }).catch(function(err) {
-                console.error('Something went wrong while launching the app on device: ' + serial + ' Error:' + err.stack)
+                console.error('Something went wrong while launching the app on device: ' + serial + ' Error:' + err.stack);
             });
     }
 
@@ -180,7 +187,7 @@ function deviceBridge(io) {
          var passedAutoTests = [];
          var passedManualTests = [];
          var imei = '';
-         var appStartedDataJson = '';
+         var appStartedDataJson = {};
          var sessionDate = new Date().toISOString();
          var unknownItem = {
              Type:'Android',
@@ -193,6 +200,7 @@ function deviceBridge(io) {
                   if (decoder.write(data).indexOf('AppStartedCommand') !== -1) {
                       appStartedDataJson = JSON.parse(decoder.write(data).substring(decoder.write(data).indexOf("{")));
                       imei = appStartedDataJson.data.imei;
+                      appStartedDataJson.sessionId = sessionDate;
                       getSerialLookup(imei).then(function (res) {
                           var item = res.item;
                           console.log(res.item);
@@ -202,7 +210,7 @@ function deviceBridge(io) {
                           startSession(sessionDate, item).then(function(res) {
                               io.emit('app-start', appStartedDataJson);
                           }).catch(function(err) {
-                              console.log(err);
+                              console.error(err);
                           });
                       }).catch(function (err) {
                           console.log('Failed to get serial number because of: ' + err);
@@ -215,43 +223,48 @@ function deviceBridge(io) {
                               io.emit('app-start', appStartedDataJson);
                               updateSession(sessionDate, 'Info', 'Android device is not found in Inventory');
                           }).catch(function(err) {
-                              console.log(err);
+                              console.error(err);
                           });
                       });
                   }
 
                   // check if vipe started indexOf !== -1 means 'includes'
                   else if (decoder.write(data).indexOf('VipeStarted') !== -1) {
-                      getSerialLookup(imei).then(function (res) {
-                          if (deviceAuthorized) {
+                      if (deviceAuthorized) {
+                          getSerialLookup(imei).then(function (res) {
                               // if passed tests array length = to number of all tests then session was successful
                               if (passedTests.length === (appStartedDataJson.data.auto + appStartedDataJson.data.manual)) {
                                   updateSession(sessionDate, 'Info', 'Android refresh app has initiated a factory reset.');
                                   finishSession(sessionDate, {'complete': true});
-                                  io.emit('android-reset', {'status': 'Refresh Successful', 'imei': res.item.Serial});
+                                  io.emit('android-reset', {'status': 'Refresh Successful', 'imei': res.item.Serial, 'sessionId': sessionDate});
                               } else {
                                   updateSession(sessionDate, 'Info', 'Android test fail', {'failedTests':failedTests});
                                   finishSession(sessionDate, {'complete': false});
-                                  io.emit('android-reset', {'status': 'Refresh Failed', 'imei': res.item.Serial, 'failed_tests': failedTests});
+                                  io.emit('android-reset', {'status': 'Refresh Failed', 'imei': res.item.Serial, 'failed_tests': failedTests, 'sessionId': sessionDate});
                               }
-                          } else {
+                          }).catch(function (err) {
+                            console.log('Failed to get serial number because of: ' + err);
+                          });
+                      } else {
+                          getSession(sessionDate).then(function(response) {
                               if (passedTests.length === (appStartedDataJson.data.auto + appStartedDataJson.data.manual)) {
                                   updateSession(sessionDate, 'Info', 'Android refresh app has initiated a factory reset.');
-                                  io.emit('android-reset', {'status': 'Refresh Successful', 'imei': res.item.Serial});
+                                  io.emit('android-reset', {'status': 'Refresh Successful', 'imei': response.device.serial_number, 'sessionId': sessionDate});
                               } else {
                                   updateSession(sessionDate, 'Info', 'Android test fail', {'failedTests':failedTests});
-                                  io.emit('android-reset', {'status': 'Refresh Failed', 'imei': res.item.Serial, 'failed_tests': failedTests});
+                                  io.emit('android-reset', {'status': 'Refresh Failed', 'imei': response.device.serial_number, 'failed_tests': failedTests, 'sessionId': sessionDate});
                               }
-                          }
-                      }).catch(function (err) {
-                          console.log('Failed to get serial number because of: ' + err);
-                      });
+                          }).catch(function (err) {
+                              console.log('Failed to find session because of: ' + err);
+                          });
+
+                      }
 
                   }
                   // tests progress indexOf === -1 means 'not includes'
                   else if (decoder.write(data).indexOf('beginning') === -1) {
-                          //var testResultJson = '';
                           var testResultJson = JSON.parse(decoder.write(data).substring(decoder.write(data).indexOf("{")));
+                          testResultJson.sessionId = sessionDate;
                           // add tests to arrays of tests
                           if (testResultJson.passed === true) {
                               passedTests.push(testResultJson.commandName);

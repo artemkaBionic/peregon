@@ -4,7 +4,7 @@
       <img class="imageManualModal" ng-src="{{vm.data.image}}"/>
     </div>
     <div class="modalTextManual text-center">
-      <div ng-show="vm.errors">
+      <div ng-show="vm.errors" class="modalErrors">
         <h3>Such tests failed:</h3>
         <div ng-repeat="error in vm.errors">
           {{error}}
@@ -17,13 +17,15 @@
       <div ng-show="vm.showItemInput">
         <div class="row">
           <p>Please enter valid Item Number to recognize the device.</p>
-          <div class="item-center">
-            <div class="inner-addon left-addon">
-              <i class="icon fa fa-barcode" style="font-size: 28pt"></i>
-              <input type="text" maxlength="10" style="font-size: 17pt" autofocus ng-focus="vm.item === null;"
-                     class="form-control item-number-input" placeholder="Enter Item Number" type="text" ng-model="vm.searchString"/>
+          <form ng-submit="vm.authorize()">
+            <div class="item-center">
+              <div class="inner-addon left-addon">
+                <i class="icon fa fa-barcode" style="font-size: 28pt"></i>
+                <input type="text" maxlength="10" style="font-size: 17pt" autofocus ng-focus="vm.item === null;"
+                       class="form-control item-number-input" placeholder="Enter Item Number" type="text" ng-model="vm.searchString" />
+              </div>
             </div>
-          </div>
+          </form>
         </div>
 
         <div class="row text-center item-error-row" style="margin-top: 25px; font-size: 20pt">
@@ -55,10 +57,13 @@
       </div>
     </div>
     <div class="navigtion-buttons manual-modal-footer">
-      <div class="row simultaneous-modal-footer-btns" >
+      <div class="row simultaneous-modal-footer-btns" ng-show="vm.showUnrecoginzedDeviceFooter">
         <button ng-disabled="vm.item === null || vm.wrongDeviceType || vm.showAuthCheck || vm.sessionAlreadyInProgress" type="submit"
                 class="btn-success btn-rounded" ng-click="vm.authorize()">Ok</button>
         <button type="submit" class="btn-primary btn-rounded" ng-click="vm.closeModal()">Cancel</button>
+      </div>
+      <div class="row text-center" style="margin-top: 15px" ng-hide="vm.showUnrecoginzedDeviceFooter">
+        <button type="submit" class="btn-primary btn-rounded" ng-click="vm.closeModal()">Close</button>
       </div>
     </div>
   </div>
