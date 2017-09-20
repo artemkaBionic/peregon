@@ -13,6 +13,7 @@ var sessions = require('../sessionCache');
 var StringDecoder = require('string_decoder').StringDecoder;
 var decoder = new StringDecoder('utf8');
 var inventory = require('../inventory');
+
 exports.deviceBridge = deviceBridge;
 
 function deviceBridge(io) {
