@@ -125,8 +125,8 @@ function getSessions(filter) {
 function getAllSessions(){
     return sessions.getAllSessions();
 }
-function getSession(itemNumber) {
-    return sessions.get(itemNumber);
+function getSession(sessionId) {
+    return sessions.get(sessionId);
 }
 
 function getAllUsbDrives(){
@@ -136,7 +136,10 @@ function getLowestUsbProgress(){
     return usbDrives.getLowestUsbProgress();
 }
 function sessionStart(itemNumber, device, callback) {
-    console.log('Session:' + itemNumber + 'starts now' );
+    console.log('Session:' + itemNumber + 'starts now');
+}
+function sessionStart(sessionId, device, callback) {
+    console.log('Session:' + sessionId + 'starts now' );
     var diagnose_only = false;
     var session_device = changeDeviceFormat(device);
     var station_name = station.getName();
@@ -158,9 +161,9 @@ function sessionStart(itemNumber, device, callback) {
             },
             "logs": []
         };
-
         sessions.set(itemNumber, newSession);
         sessions2.addSession(itemNumber, newSession);
+        sessions.set(sessionId, newSession);
         callback();
     });
 }
@@ -259,9 +262,6 @@ function sessionUpdate(itemNumber, level, message, details, callback) {
         } else if (message === 'Android test fail') {
             session.currentStep = 'Session Failed';
             session.failedTests = details.failedTests;
-        } else if (message === 'Android device is not found in Inventory') {
-            session.status = 'Device Unrecognized';
-            //session.failedTests = details.failedTests;
         } else {
             logSession(session, level, message, details);
         }
@@ -276,9 +276,6 @@ function sessionUpdateItem(sessionId, device, level, message, details, callback)
         console.warn('sessionUpdate attempted for a session that is not started.');
         console.warn('message: ' + message);
     } else {
-        if (session.status === 'Device Unrecognized') {
-            session.status = 'Incomplete';
-        }
         session.device.sku = device.Sku;
         session.device.item_number = device.InventoryNumber;
         session.device.model = device.Model;
@@ -292,13 +289,15 @@ function sessionUpdateItem(sessionId, device, level, message, details, callback)
         if(session.device.passed_manual <= session.device.number_of_manual) {
             session.currentStep = 'Manual Testing';
         }
+        if (session.status !== 'Incomplete') {
+            resendSessions();
+        }
     }
     callback();
 }
-
-function sessionFinish(itemNumber, data, callback) {
-    var session = sessions.get(itemNumber);
-    console.log('A client requested to finish an ' + session.device.type + ' refresh of item number ' + itemNumber);
+function sessionFinish(sessionId, data, callback) {
+    var session = sessions.get(sessionId);
+    console.log('A client requested to finish an ' + session.device.type + ' refresh of session id ' + sessionId);
     if (session.device.type === 'XboxOne') {
         if (isDevelopment) {
             logSession(session, 'Info', 'Checking ' + data.device.id + ' for evidence that the refresh completed successfully.');
@@ -336,6 +335,7 @@ function sessionFinish(itemNumber, data, callback) {
     } else {
         closeSession(session, data.complete, callback);
     }
+
 }
 
 function logSession(session, level, message, details) {
@@ -422,9 +422,9 @@ function sendSession(content, file) {
     delete content.session.device.passed_manual;
     delete content.session.currentStep;
     delete content.session.failed_tests;
-
+    var sessionID = new Date(content.session.start_time).toISOString();
     if (content.session.device.item_number ){
-        console.log('sending session');
+        console.log('Sending session with this start time:' + sessionID + ' for device: ' + content.session.device.item_number);
         return request({
             method: 'POST',
             url: API_URL + '/session',
@@ -435,7 +435,7 @@ function sendSession(content, file) {
             rejectUnauthorized: false,
             json: true
         }).then(function(body) {
-            console.log('session sent ' + content.session.start_time.toISOString());
+            console.log('Session with this start time:' + sessionID + ' was sent.' );
             // Delete the file if it was successfully sent
             fs.unlinkSync(file);
         }).catch(function(error) {
@@ -443,13 +443,12 @@ function sendSession(content, file) {
             console.log(error);
         });
     } else {
-        console.log('session with this start time not sent:' + content.session.start_time)
+        console.log('Session with this start time not sent:' + sessionID)
     }
 }
 
 
 function resendSessions() {
-    checkSessionByStartDate();
     // Loop through all the files in the unsent sessions directory
     fs.readdir(UNSENT_SESSIONS_DIRECTORY, function(err, files) {
         if (err) {
@@ -467,7 +466,7 @@ function resendSessions() {
                         // Checking if there is session in session cache and if it matches with session in file
                         if (checkSessionByStartDate(contentJson.session.start_time).has_session === true) {
                             // if matches get device from session cache and put it on place of device in file
-                            console.log('Resend session found session with start time:' + contentJson.session.start_time);
+                            console.log('Resend session function found session with start time:' + contentJson.session.start_time + ' and updating session item.');
                             var session = sessions.get(checkSessionByStartDate(contentJson.session.start_time).session_id);
                             contentJson.session.device = session.device;
                         }
