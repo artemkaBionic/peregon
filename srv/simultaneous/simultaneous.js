@@ -2,6 +2,9 @@
 var config = require('../config');
 var adb = require('adbkit');
 var Promise = require('bluebird');
+Promise.config({
+    warnings: false
+});
 var client = adb.createClient();
 var apk = __dirname + '/app-release.apk';
 var spawn = require('child_process').spawn;
