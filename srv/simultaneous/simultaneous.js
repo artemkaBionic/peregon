@@ -94,24 +94,24 @@ function deviceBridge(io) {
             });
         })
     }
-    function startSession(sessionDate, item){
-        console.log('Starting session ' + sessionDate);
+    function startSession(sessionId, item){
+        console.log('Starting session ' + sessionId);
         return new Promise(function(resolve) {
-            inventory.sessionStart(sessionDate, item, function () {
-                resolve(sessionDate);
+            inventory.sessionStart(sessionId, item, function () {
+                resolve(sessionId);
             });
         });
     }
-    function updateSession(sessionDate, level, message, details){
-        console.log('Updating session ' + sessionDate);
-        inventory.sessionUpdate(sessionDate, level, message, details, function(err) {
+    function updateSession(sessionId, level, message, details){
+        console.log('Updating session ' + sessionId);
+        inventory.sessionUpdate(sessionId, level, message, details, function(err) {
             if (err) {
                 console.error(err);
             }
         });
     }
     function finishSession(sessionId, details){
-        console.log('Finishing session ' + sessionDate);
+        console.log('Finishing session ' + sessionId);
         inventory.sessionFinish(sessionId, details, function(result) {
             console.log('Session is finished ' + result);
         });
