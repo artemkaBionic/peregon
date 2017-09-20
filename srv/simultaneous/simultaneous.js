@@ -250,8 +250,8 @@ function deviceBridge(io) {
                     });
                 }
 
-                // check if vipe started indexOf !== -1 means 'includes'
-                else if (data.indexOf('VipeStarted') !== -1) {
+                // check if wipe started indexOf !== -1 means 'includes'
+                else if (data.indexOf('WipeStarted') !== -1) {
                     if (failedTests.length > 0) {
                         updateSession(sessionDate, 'Info', 'Android test fail', {'failedTests': failedTests});
                         finishSession(sessionDate, {'complete': false});
