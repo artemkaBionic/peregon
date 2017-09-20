@@ -181,16 +181,6 @@
 
             return deferred.promise;
         };
-        service.checkSessionByStartDate = function(startDate) {
-            var url = '/data/checkSessionByStartDate/' + startDate;
-            var deferred = $q.defer();
-
-            $http.get(url).then(function(result) {
-                deferred.resolve(result.data);
-            });
-
-            return deferred.promise;
-        };
         service.getSession = function(sessionId) {
             var url = '/data/inventory/sessions/' + sessionId;
             var deferred = $q.defer();

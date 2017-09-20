@@ -36,7 +36,6 @@ exports.unlockDevice = unlockDevice;
 exports.getSerialLookup = getSerialLookup;
 exports.getAllSessions = getAllSessions;
 exports.checkSessionInProgress = checkSessionInProgress;
-exports.checkSessionByStartDate = checkSessionByStartDate;
 exports.sessionUpdateItem = sessionUpdateItem;
 exports.getAllSessionsByDevice = getAllSessionsByDevice;
 exports.getSessionInProgressByDevice = getSessionInProgressByDevice;
@@ -452,10 +451,10 @@ function resendSessions() {
                     } else {
                         var contentJson = JSON.parse(content);
                         // Checking if there is session in session cache and if it matches with session in file
-                        if (checkSessionByStartDate(contentJson.session.start_time).has_session === true) {
+                        var session = sessions.get(contentJson.session.start_time);
+                        if (session) {
                             // if matches get device from session cache and put it on place of device in file
                             console.log('Resend session function found session with start time:' + contentJson.session.start_time + ' and updating session item.');
-                            var session = sessions.get(checkSessionByStartDate(contentJson.session.start_time).session_id);
                             contentJson.session.device = session.device;
                         }
                         sendSession(contentJson, file);
@@ -523,9 +522,6 @@ function changeDeviceFormat(device) {
 
 function checkSessionInProgress(item) {
     return sessions.checkSessionInProgress(item);
-}
-function checkSessionByStartDate(item) {
-    return sessions.checkSessionByStartDate(item);
 }
 function getSessionInProgressByDevice(item) {
     return sessions.getSessionInProgressByDevice(item);

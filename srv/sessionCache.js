@@ -44,7 +44,7 @@ SessionCache.prototype.checkSessionInProgress = function(item) {
     }
     return {'started': false};
 };
-SessionCache.prototype.checkSessionByStartDate = function(startTime) {
+SessionCache.prototype.getSessionByStartDate = function(startTime) {
     console.log('Checking if there is session with such starting date: ' + startTime);
     for (var key in this._sessions) {
         if (this._sessions.hasOwnProperty(key)) {

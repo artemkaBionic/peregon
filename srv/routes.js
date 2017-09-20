@@ -64,10 +64,6 @@ module.exports = function(io, data) {
     router.post('/data/checkSession', function(req, res) {
         res.json(inventory.checkSessionInProgress(req.body));
     });
-    router.get('/data/checkSessionByStartDate/:id', function(req, res) {
-        console.log(req.params.id);
-        res.json(inventory.checkSessionByStartDate(req.params.id));
-    });
     router.get('/data/inventory/sessions/:id', function(req, res) {
         res.json(inventory.getSession(req.params.id));
     });

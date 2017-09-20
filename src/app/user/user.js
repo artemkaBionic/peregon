@@ -190,9 +190,9 @@
                 'start_time': session.start_time,
                 'serial':session.device.serial_number
             };
-            if(session.device.item_number) {
-                inventoryService.checkSessionByStartDate(item.start_time)
-                    .then(function(res) {
+            inventoryService.getSession(item.start_time)
+                .then(function(res) {
+                    if(session.device.item_number) {
                         if (res.session_id && session.status === 'Incomplete') {
                             var $stateParams = {};
                             $stateParams.itemNumber = session.device.item_number;
@@ -200,32 +200,28 @@
                             vm.searchString = '';
                             $state.go('root.user.guide', $stateParams);
                         } else if (session.status === 'Fail') {
-                             if (session.failedTests) {
-                                 vm.failedTests = session.failedTests;
-                                 if (vm.failedTests.length <= 4) {
-                                     openHelpModal('xxs',vm.failedTests);
-                                 } else {
-                                     openHelpModal('sm-to-xs',vm.failedTests);
-                                 }
-                             } else {
-                                 if (session.logs[0].message === 'Device is broken') {
-                                     vm.failedTests = ['Device is broken.'];
-                                     openHelpModal('xxs','Session failed because device is broken.');
-                                 } else {
-                                     openHelpModal('xxs','Session failed because Android device was unplugged.');
-                                 }
-                             }
+                            if (session.failedTests) {
+                                vm.failedTests = session.failedTests;
+                                if (vm.failedTests.length <= 4) {
+                                    openHelpModal('xxs',vm.failedTests);
+                                } else {
+                                    openHelpModal('sm-to-xs',vm.failedTests);
+                                }
+                            } else {
+                                if (session.logs[0].message === 'Device is broken') {
+                                    vm.failedTests = ['Device is broken.'];
+                                    openHelpModal('xxs','Session failed because device is broken.');
+                                } else {
+                                    openHelpModal('xxs','Session failed because Android device was unplugged.');
+                                }
+                            }
                         } else {
                             openHelpModal('xxs','Device refreshed successfully.');
                         }
-
-                    });
-            } else {
-                inventoryService.checkSessionByStartDate(item.start_time)
-                    .then(function (res) {
+                    } else {
                         openHelpModal('sm-to-xs', 'Unrecognized Device', res.session_id, session);
-                    });
-            }
+                    }
+                });
         };
         // jscs: enable
         vm.unlockForService = function() {
