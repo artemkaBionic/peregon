@@ -83,6 +83,7 @@ function deviceBridge(io) {
         }
     }
     function getSerialLookup(imei){
+        console.log('Getting serial lookup for imei:' + imei);
         return new Promise(function(resolve, reject) {
             inventory.getSerialLookup(imei, function(item) {
                 if (JSON.stringify(item).toLowerCase().indexOf('did not find device') === -1){
@@ -93,26 +94,30 @@ function deviceBridge(io) {
             });
         })
     }
-    function startSession(sessionDate, item){
+    function startSession(sessionId, item){
+        console.log('Starting session ' + sessionId);
         return new Promise(function(resolve) {
-            inventory.sessionStart(sessionDate, item, function () {
-                resolve(sessionDate);
+            inventory.sessionStart(sessionId, item, function () {
+                resolve(sessionId);
             });
         });
     }
-    function updateSession(sessionDate, level, message, details){
-        inventory.sessionUpdate(sessionDate, level, message, details, function(err) {
+    function updateSession(sessionId, level, message, details){
+        console.log('Updating session ' + sessionId);
+        inventory.sessionUpdate(sessionId, level, message, details, function(err) {
             if (err) {
                 console.error(err);
             }
         });
     }
     function finishSession(sessionId, details){
+        console.log('Finishing session ' + sessionId);
         inventory.sessionFinish(sessionId, details, function(result) {
             console.log('Session is finished ' + result);
         });
     }
     function getSession(date){
+        console.log('Getting session ' + date);
         return new Promise(function(resolve) {
             resolve(inventory.getSession(date));
         });
@@ -151,6 +156,7 @@ function deviceBridge(io) {
         }
     }
     function startApp(serial) {
+        console.log('Starting refresh app for device:' + serial);
         return client.shell(serial, 'am start -n com.basechord.aarons.androidrefresh.basechord/com.basechord.aarons.androidrefresh.basechord.app.MainActivity -a android.intent.action.MAIN -c android.intent.category.LAUNCHER')
             .then(adb.util.readAll)
             .then(function (output) {
@@ -162,6 +168,7 @@ function deviceBridge(io) {
     }
 
     function clearLogcat(serial){
+        console.log('Clearing logcat for device:' + serial);
         return new Promise(function (resolve, reject) {
             var aaronsClearLogcat = spawn('adb', ['-s', serial,'logcat', '-c']);
             aaronsClearLogcat.stdout.on('data', function (data) {

@@ -139,7 +139,7 @@ function sessionStart(itemNumber, device, callback) {
     console.log('Session:' + itemNumber + 'starts now');
 }
 function sessionStart(sessionId, device, callback) {
-    console.log('Session:' + sessionId + 'starts now' );
+    console.log('Session:' + sessionId + ' started' );
     var diagnose_only = false;
     var session_device = changeDeviceFormat(device);
     var station_name = station.getName();
