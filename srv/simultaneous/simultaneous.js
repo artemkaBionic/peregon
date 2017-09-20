@@ -2,6 +2,9 @@
 var config = require('../config');
 var adb = require('adbkit');
 var Promise = require('bluebird');
+Promise.config({
+    warnings: false
+});
 var client = adb.createClient();
 var apk = __dirname + '/app-release.apk';
 var spawn = require('child_process').spawn;
@@ -10,6 +13,7 @@ var sessions = require('../sessionCache');
 var StringDecoder = require('string_decoder').StringDecoder;
 var decoder = new StringDecoder('utf8');
 var inventory = require('../inventory');
+
 exports.deviceBridge = deviceBridge;
 
 function deviceBridge(io) {
