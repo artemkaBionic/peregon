@@ -360,7 +360,7 @@
                 'serial':session.device.serial_number
             };
             if(session.device.item_number) {
-                inventoryService.checkSessionByStartDate(item.start_time)
+                inventoryService.getSessionByParams({'start_time':item.start_time})
                     .then(function(res) {
                         console.log(res);
                         if (res._id && session.status === 'Incomplete') {
@@ -391,7 +391,7 @@
 
                     });
             } else {
-                inventoryService.checkSessionByStartDate(item.start_time)
+                inventoryService.getSessionByParams({'start_time':item.start_time})
                     .then(function (res) {
                         openHelpModal('sm-to-xs', 'Unrecognized Device', res._id, session);
                     });
@@ -475,6 +475,5 @@
                 size: modalSize
             });
         }
-
     }
 })();

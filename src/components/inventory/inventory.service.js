@@ -149,8 +149,8 @@
 
             return deferred.promise;
         };
-        service.updateSession = function(itemNumber, level, message, details) {
-            var url = '/data/inventory/sessions/' + itemNumber + '/update';
+        service.updateSession = function(sessionId, level, message, details) {
+            var url = '/data/inventory/sessions/' + sessionId + '/update';
             var deferred = $q.defer();
 
             console.log(message);
@@ -171,46 +171,31 @@
 
             return deferred.promise;
         };
-        service.checkSession = function(item) {
-            var url = '/data/checkSession';
+        service.getSessionByParams = function(params) {
             var deferred = $q.defer();
-
-            $http.post(url, item).then(function(result) {
+            $http({
+                url: '/getSessionByParams',
+                method: 'POST',
+                headers: {'content-type': 'application/json'},
+                data: params
+            }).then(function(result) {
                 deferred.resolve(result.data);
             });
-
             return deferred.promise;
         };
-        service.checkSessionByStartDate = function(startDate) {
-            var url = '/data/checkSessionByStartDate/' + startDate;
+        service.getAllSessionsByParams = function(params) {
             var deferred = $q.defer();
-
-            $http.get(url).then(function(result) {
+            $http({
+                url: '/getSessionsByParams',
+                method: 'POST',
+                headers: {'content-type': 'application/json'},
+                data: params
+            }).then(function(result) {
                 deferred.resolve(result.data);
             });
-
             return deferred.promise;
         };
-        service.getSession = function(sessionId) {
-            var url = '/data/inventory/sessions/' + sessionId;
-            var deferred = $q.defer();
 
-            $http.get(url).then(function(result) {
-                deferred.resolve(result.data);
-            });
-
-            return deferred.promise;
-        };
-        service.getAllSessionsByDevice = function(serial) {
-            var url = '/data/getAllSessionsByDevice/' + serial;
-            var deferred = $q.defer();
-
-            $http.get(url).then(function(result) {
-                deferred.resolve(result.data);
-            });
-
-            return deferred.promise;
-        };
         return service;
     }
 })();

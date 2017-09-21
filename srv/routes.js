@@ -60,7 +60,7 @@ module.exports = function(io, data) {
         res.json(inventory.getSessions(req.body));
     });
     router.get('/data/getAllSessions', function(req, res) {
-        sessions.getAllSessions().then(function(response){
+        sessions.getSessionsByParams({}).then(function(response){
             res.json(response);
         });
     });
@@ -73,12 +73,13 @@ module.exports = function(io, data) {
     router.post('/data/checkSession', function(req, res) {
         res.json(inventory.checkSessionInProgress(req.body));
     });
-    router.get('/data/checkSessionByStartDate/:id', function(req, res) {
-        sessions.checkSessionByStartDate(req.params.id).then(function(session) {
-            res.json(session);
-        });
 
-    });
+    // router.post('/data/checkSessionByStartDate/', function(req, res) {
+    //     sessions.getSessionsByParams(req.body).then(function(session) {
+    //         res.json(session);
+    //     });
+    //
+    // });
     router.get('/data/inventory/sessions/:id', function(req, res) {
         res.json(inventory.getSession(req.params.id));
     });
@@ -103,8 +104,10 @@ module.exports = function(io, data) {
 
     router.post('/data/inventory/sessions/:id/updateSessionItem', function(req, res) {
        // console.log(req);
-        sessions.sessionUpdateItem(req.params.id, req.body).then(function(result) {
+        inventory.sessionUpdateItem(req.params.id, req.body).then(function(result) {
             res.json({sessionUpdated: result});
+        }).catch(function(err){
+            console.log('Something went wrong while updating session item for serial:' + req.params.id);
         });
     });
 
@@ -259,11 +262,18 @@ module.exports = function(io, data) {
         });
     });
 
-    router.post('/getSessions', function(req, res) {
-        console.log(req);
-        // sessions.getAllSessions().then(function(response){
-        //     res.json(response);
-        // });
+    router.post('/getSessionsByParams', function(req, res) {
+        console.log(req.body);
+        sessions.getSessionsByParams(req.body).then(function(response){
+            res.json(response);
+        });
+    });
+
+    router.post('/getSessionByParams', function(req, res) {
+        sessions.getSessionByParams(req.body).then(function(session) {
+            res.json(session);
+        });
+
     });
     return router;
 };
