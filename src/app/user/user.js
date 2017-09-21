@@ -370,25 +370,24 @@
                             vm.searchString = '';
                             $state.go('root.user.guide', $stateParams);
                         } else if (session.status === 'Fail') {
-                             if (session.failedTests) {
-                                 vm.failedTests = session.failedTests;
-                                 if (vm.failedTests.length <= 4) {
-                                     openHelpModal('xxs',vm.failedTests);
-                                 } else {
-                                     openHelpModal('sm-to-xs',vm.failedTests);
-                                 }
-                             } else {
-                                 if (session.logs[0].message === 'Device is broken') {
-                                     vm.failedTests = ['Device is broken.'];
-                                     openHelpModal('xxs','Session failed because device is broken.');
-                                 } else {
-                                     openHelpModal('xxs','Session failed because Android device was unplugged.');
-                                 }
-                             }
+                            if (session.failedTests) {
+                                vm.failedTests = session.failedTests;
+                                if (vm.failedTests.length <= 4) {
+                                    openHelpModal('xxs',vm.failedTests);
+                                } else {
+                                    openHelpModal('sm-to-xs',vm.failedTests);
+                                }
+                            } else {
+                                if (session.logs[0].message === 'Device is broken') {
+                                    vm.failedTests = ['Device is broken.'];
+                                    openHelpModal('xxs','Session failed because device is broken.');
+                                } else {
+                                    openHelpModal('xxs','Session failed because Android device was unplugged.');
+                                }
+                            }
                         } else {
                             openHelpModal('xxs','Device refreshed successfully.');
                         }
-
                     });
             } else {
                 inventoryService.getSessionByParams({'start_time':item.start_time})

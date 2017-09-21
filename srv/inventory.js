@@ -496,4 +496,3 @@ function changeDeviceFormat(device) {
     }
     return session_device;
 }
-

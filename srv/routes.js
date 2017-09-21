@@ -74,12 +74,6 @@ module.exports = function(io, data) {
         res.json(inventory.checkSessionInProgress(req.body));
     });
 
-    // router.post('/data/checkSessionByStartDate/', function(req, res) {
-    //     sessions.getSessionsByParams(req.body).then(function(session) {
-    //         res.json(session);
-    //     });
-    //
-    // });
     router.get('/data/inventory/sessions/:id', function(req, res) {
         res.json(inventory.getSession(req.params.id));
     });

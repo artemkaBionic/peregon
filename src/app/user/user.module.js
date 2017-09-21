@@ -63,7 +63,6 @@
 
         guideTemplate.$inject = ['$templateCache', '$http', 'item'];
         function guideTemplate($templateCache, $http, item) {
-            console.log(item.SubType);
             var templateUrl = 'app/user/guide/unsupported.html';
             if (item.Type !== null) {
                 if (item.Type === 'Manual') {

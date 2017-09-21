@@ -13,7 +13,7 @@
     "srv"
   ],
   "dependencies": {
-    "p0rtal": "git@github.com:Appchord/P0rtal.git",
+    "p0rtal": "git@github.com:mobichord/P0rtal.git",
     "angular-moment": "~0.9.0",
     "socket.io-client": "~1.3.5",
     "angular-toastr": "~1.4.1",

@@ -24,7 +24,7 @@
       </div>
       <div class="row text-center item-error-row">
           <div ng-hide="vm.item === null">
-            <button class="item-button" type="submit"><strong>{{'SKU: '+vm.item.Sku}}</strong><br/>{{vm.item.Description}}
+            <button class="item-button" type="submit"><strong>SKU: {{vm.item.Sku}}</strong><br/>{{vm.item.Description}}
             </button>
           </div>
           <div class="item-button-error" ng-show="vm.itemNumberError"><strong>Item not found</strong><br/>Check
