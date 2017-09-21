@@ -37,24 +37,16 @@
                 vm.deviceType = data.session.device.type;
             }
             vm.authorize = function(){
-                inventoryService.checkSession(vm.item).then(function(res) {
-                    if (res.session_id) {
+                inventoryService.getAllSessionsByParams({'device.item_number': vm.item.InventoryNumber, status:'Incomplete'}).then(function(sessions) {
+                    if (sessions.length > 0) {
                         vm.sessionAlreadyInProgress = true;
-                        //vm.wrongItemNumber();
                     } else {
-                        inventoryService.getAllSessionsByDevice(vm.serialNo).then(function(res) {
-                            for (var i = 0; i < res.sessions.length;i++) {
-                                var session = res.sessions[i];
-                                inventoryService.updateSessionItem(session, vm.item).then(function(res) {
-                                    console.log(res);
-                                });
-                            }
+                        inventoryService.updateSessionItem(vm.serialNo, vm.item).then(function() {
                             $rootScope.$broadcast('updateList');
                             vm.closeModal();
-                        })
+                        });
                     }
-                });
-
+                 });
             };
             vm.wrongItemNumber = function(){
                 vm.searchString = '';

@@ -38,7 +38,115 @@
           </div>
         </div>
       </form>
-      <div class="row simultaneous-info" ng-show="vm.isServiceCenter">
+      <div class="row simultaneous-nav text-center">
+        <span id="sessions" class="simultaneous-nav-btn text-uppercase" ng-click="vm.viewSessions()">
+          <span>Sessions</span>
+        </span>
+        <span id="bootDevices" class="simultaneous-nav-btn text-uppercase" ng-click="vm.viewBootDevices()">
+          <span>Boot drives <span ng-show="vm.notReadyDevices !== 0 && vm.step.name === 'sessions'" class="badge" style="background-color:#6cab1c">{{vm.notReadyDevices}}</span></span>
+        </span>
+        <br>
+      </div>
+      <div class="row simultaneous-info" ng-show="vm.step.name === 'bootDevices'">
+        <div class="row">
+          <div class="col-xs-10 col-xs-offset-1">
+            <div class="row ">
+              <div class="col-xs-5">
+                <div class="boot-instruction-row boot-instruction-title">
+                  <span>Prepare Bootable USB drive for USB-only refresh</span>
+                </div>
+                <div class="boot-instruction-row">
+                  <span style="color:grey">Insert 32GB or larger USB drive into the Refresh Station.
+                    It will take up to 20 minutes to prepare the Bootable USB drive. <br><br> When ready, remove it it from the Refresh Station
+                    and use it to boot the device you want refresh. Then follow instructions on the devices screen.
+                  <br><br> If you need detailed refresh instructions you can view them by clicking on links below.</span>
+                </div>
+                <div class="boot-instruction-row">
+                  <a style="font-weight: bold;" ui-sref="root.usbGuides({device: 'dell'})"> <i class="fa fa-windows" aria-hidden="true"></i> Dell laptops instructions <i class="fa fa-chevron-right" aria-hidden="true"></i></a>
+                </div>
+                <div style="margin-top: 3px">
+                  <a style="font-weight: bold;" ui-sref="root.usbGuides({device: 'hewlettPackard'})"><i class="fa fa-windows" aria-hidden="true"></i> HP laptops instructions <i class="fa fa-chevron-right" aria-hidden="true"></i></a>
+                </div>
+                <div style="margin-top: 3px">
+                  <a style="font-weight: bold;" ui-sref="root.usbGuides({device: 'xBoxOne'})"><img style="background-color:#9072bd; width: 13px" src="../../../assets/images/xbox-logo.png"> X-Box instructions <i class="fa fa-chevron-right" aria-hidden="true"></i></a>
+                </div>
+                <div style="margin-top: 3px">
+                  <a style="font-weight: bold;" ui-sref="root.usbGuides({device: 'mac'})"><i class="fa fa-apple" aria-hidden="true"></i> Mac instructions <i class="fa fa-chevron-right" aria-hidden="true"></i></a>
+                </div>
+
+              </div>
+              <div class="col-xs-1">
+              </div>
+              <div class="col-xs-6 text-center">
+                <div ng-show="vm.substep.name === 'noBootDevices'">
+                  <div class="boot-instruction-row">
+                    <div class="usb-icon">
+                      <i class="fa fa-usb" aria-hidden="true"></i>
+                    </div>
+                  </div>
+                  <div class="boot-instruction-row boot-instruction-title-grey">
+                    <span>Connect USB flash Drive to get started.</span>
+                  </div>
+                  <div class="boot-instruction-row">
+                    <span style="color:grey">USB flash drive should be 32GB or larger.</span>
+                  </div>
+                </div>
+                <div ng-show="vm.substep.name === 'newBootDevice'">
+                  <!--<div class="boot-instruction-row">-->
+                    <!--<div class="usb-icon">-->
+                      <!--<i style="font-style: normal;font-weight: bold">{{vm.notReadyDevices}}</i>-->
+                    <!--</div>-->
+                  <!--</div>-->
+                  <div class="boot-instruction-row">
+                    <div class="usb-icon">
+                      <i class="fa fa-usb" aria-hidden="true"></i>
+                    </div>
+                  </div>
+                  <div class="boot-instruction-row boot-instruction-title-grey">
+                    <span>{{vm.usbDrivesTitle}} </span>
+                  </div>
+                  <div class="boot-instruction-row">
+                    <span style="color:grey">{{vm.usbDrivesText}}<br>
+                    <strong>Warning!</strong> This will wipe all information you have on {{vm.usbDrive}}.
+                    </span>
+                  </div>
+                  <div class="boot-instruction-row">
+                    <button class="btn btn-success btn-rounded" ng-click="vm.createBootDrives()">{{vm.usbButtonText}}</button>
+                    <!--<button class="btn btn-danger btn-rounded" ng-click="vm.cancelBootDrive()">Cancel</button>-->
+                  </div>
+                </div>
+                <div ng-show="vm.substep.name === 'bootDevicesProcessing'">
+                  <div class="boot-instruction-row">
+                    <i class="fa fa-spinner fa-spin" style="font-size:50px"></i>
+                  </div>
+                  <div class="boot-instruction-row boot-instruction-title-grey">
+                    <span>Preparing {{vm.bootableUsb}}</span>
+                  </div>
+                  <div class="boot-instruction-row">
+                    <span style="color:grey">Boot partitions are loading into connected {{vm.usbDrive}}.<br>
+                    <strong>Warning!</strong> Do not remove {{vm.usbDrive}} from Refresh Station until loading will be finished.
+                    </span>
+                  </div>
+                </div>
+                <div ng-show="vm.substep.name === 'bootDevicesReady'">
+                  <div class="boot-instruction-row">
+                    <i style="color:forestgreen" class="fa fa-check-circle fa-5x" aria-hidden="true"></i>
+                  </div>
+                  <div class="boot-instruction-row boot-instruction-title-grey">
+                    <span>{{vm.bootableUsbReadyText}}</span>
+                  </div>
+                  <div class="boot-instruction-row">
+                    <span style="color:grey">You can remove {{vm.bootableUsb}} from Refresh Station and start refresh.<br>
+                    <strong>Warning!</strong> Do not forget to insert {{vm.bootableUsb}} back to station once refreshes will be completed.
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row simultaneous-info" ng-show="vm.step.name === 'sessions'">
         <div class="col-xs-10 col-xs-offset-1">
           <div class="row simultaneous-header">
             <div class="col-xs-9">

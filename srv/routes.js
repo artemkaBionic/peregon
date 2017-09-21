@@ -6,7 +6,8 @@ var inventory = require('./inventory.js');
 var station = require('./station.js');
 var controller = require('./usbonly/controller');
 var simultaneous = require('./simultaneous/simultaneous');
-
+var usbDrives = require('./usbonly/usbCache');
+var sessions = require('./session_storage/sessions')
 module.exports = function(io, data) {
 // Express Router
     var router = express.Router();
@@ -59,11 +60,20 @@ module.exports = function(io, data) {
         res.json(inventory.getSessions(req.body));
     });
     router.get('/data/getAllSessions', function(req, res) {
-        res.json(inventory.getAllSessions());
+        sessions.getSessionsByParams({}).then(function(response){
+            res.json(response);
+        });
+    });
+    router.get('/getAllUsbDrives', function(req, res) {
+        res.json(inventory.getAllUsbDrives());
+    });
+    router.get('/getLowestUsbProgress', function(req, res) {
+        res.json(inventory.getLowestUsbProgress());
     });
     router.post('/data/checkSession', function(req, res) {
         res.json(inventory.checkSessionInProgress(req.body));
     });
+
     router.get('/data/inventory/sessions/:id', function(req, res) {
         res.json(inventory.getSession(req.params.id));
     });
@@ -88,11 +98,10 @@ module.exports = function(io, data) {
 
     router.post('/data/inventory/sessions/:id/updateSessionItem', function(req, res) {
        // console.log(req);
-        inventory.sessionUpdateItem(req.params.id, req.body, req.body.level, req.body.message, req.body.details, function(err, result) {
-            if (err) {
-                console.log(err);
-            }
-            res.json(result);
+        inventory.sessionUpdateItem(req.params.id, req.body).then(function(result) {
+            res.json({sessionUpdated: result});
+        }).catch(function(err){
+            console.log('Something went wrong while updating session item for serial:' + req.params.id);
         });
     });
 
@@ -161,17 +170,14 @@ module.exports = function(io, data) {
             res.json(data);
         });
     });
-
     router.get('/data/package/:sku', function(req, res) {
         station.getPackage(req.params.sku, function(data) {
             res.json(data);
         })
     });
-
     router.get('/data/getConnectionState', function(req, res) {
         res.json(station.getConnectionState());
     });
-
     router.post('/event/:name', function(req, res) {
         var event = {};
         event.name = req.params.name;
@@ -184,13 +190,45 @@ module.exports = function(io, data) {
             var connectionState = event.data;
             station.setConnectionState(connectionState);
             if (connectionState.isOnline) {
-                inventory.resendSessions();
+                inventory.resendSessions(event.data);
             }
+            io.emit(event.name, event.data);
+        } else if (event.name === "device-add"){
+            controller.isRefreshUsb(event.data.id, function(err, isInitialized) {
+                if (err) {
+                    console.error(err);
+                } else {
+                    if (isInitialized) {
+                        controller.prepareUsb(io, {usb: event.data, item: null});
+                    } else {
+                        usbDrives.set(event.data.id, {id: event.data.id, status:'not_ready', progress: 0});
+                        console.log(usbDrives.getAllUsbDrives());
+                        io.emit(event.name, event.data);
+                    }
+                }
+            })
+        } else if (event.name === "device-remove"){
+            usbDrives.delete(event.data.id);
+            console.log(usbDrives.getAllUsbDrives());
+            io.emit(event.name, event.data);
+        }
+        else if (event.name === "usb-complete"){
+            usbDrives.finishProgress(event.data.id);
+            console.log(usbDrives.getAllUsbDrives());
+            io.emit(event.name, event.data);
+        } else if (event.name === "usb-progress"){
+            usbDrives.updateProgress(event.data.progress, event.data.id);
+            console.log(usbDrives.getAllUsbDrives());
+            io.emit(event.name, event.data);
+        }
+        else {
+            io.emit(event.name, event.data);
         }
 
-        io.emit(event.name, event.data);
+
         res.json();
     });
+
 
     router.post('/system/reboot', function(req, res) {
         console.log('Rebooting...');
@@ -203,6 +241,7 @@ module.exports = function(io, data) {
     });
 
     router.post('/prepareUsb', function(req, res) {
+       //console.log(req.body);
         controller.prepareUsb(io, req.body);
         res.status(200).send();
     });
@@ -215,6 +254,20 @@ module.exports = function(io, data) {
                 res.status(200).json(isSessionComplete);
             }
         });
+    });
+
+    router.post('/getSessionsByParams', function(req, res) {
+        console.log(req.body);
+        sessions.getSessionsByParams(req.body).then(function(response){
+            res.json(response);
+        });
+    });
+
+    router.post('/getSessionByParams', function(req, res) {
+        sessions.getSessionByParams(req.body).then(function(session) {
+            res.json(session);
+        });
+
     });
     return router;
 };

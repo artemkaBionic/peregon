@@ -916,8 +916,14 @@ button[disabled]:hover {
 }
 .simultaneous-info {
   border-top: 2px solid rgba(168, 150, 194, 0.7);
+  margin: 0px 10px 10px 10px;
+  z-index: 1;
+}
+.simultaneous-nav {
+  height:40px;
+  border-top: 2px solid rgba(168, 150, 194, 0.7);
   position: relative;
-  margin: 10px 10px 10px 10px;
+  margin: 10px 10px 0px 10px;
 }
 .simultaneous-header{
   margin-top: 10px;
@@ -932,6 +938,63 @@ button[disabled]:hover {
 }
 .simultaneous-table-header{
   padding: 10px;
+}
+.simultaneous-modal-footer-btns{
+  margin: 0 auto;
+  width: 320px;
+  button{
+    margin-top: 10px;
+  }
+}
+.simultaneous-nav-btn{
+  display: inline-block;
+  z-index:2;
+  font-size: 17px;
+  margin: 0px 5px 0px 5px;
+  padding: 8.5px 5px 5px 5px;
+  font-weight: bold;
+  //color: black;
+}
+.simultaneous-nav-btn:hover {
+  padding: 8.5px 5px 6px 5px;
+  background-color: lightgrey;
+  cursor:pointer;
+}
+.boot-instructions-col{
+  border-right: 1px solid grey;
+}
+.boot-instruction-row {
+  margin-top: 20px;
+}
+
+.boot-instruction-title {
+  font-size: 15pt;
+  font-weight: bold;
+  line-height: 110%;
+}
+.boot-instruction-title-grey {
+  font-size: 15pt;
+  font-weight: bold;
+  line-height: 110%;
+  color:grey;
+}
+.usb-icon{
+  width:50px;
+  height:50px;
+  background-color:lightgrey;
+  border-radius:100%;
+  line-height:50px;
+  text-align:center;
+  vertical-align:middle;
+  display:inline-block;
+  margin: 0 auto;
+  i{
+    line-height: inherit;
+    font-size:15pt;
+  }
+}
+.usb-instruction-navbtn{
+  font-size: 17pt;
 }
 .item-number-input {
   text-indent: 43px;
@@ -3624,6 +3687,27 @@ orbicular i {
     color:blue;
   }
 }
+.heading-instructions{
+  font-size: 18pt;
+  color: black;
+  font-weight: 400;
+}
+#instructions{
+  height:84vh;
+  position:relative;
+  overflow-x: hidden;
+  overflow-y: auto;
+  b{
+    font-weight: 400;
+  }
+  .instruction-list{
+    margin-top: 0px !important;
+    margin-bottom: 0px!important;
+  }
+  a {
+    color:blue;
+  }
+}
 #guide-no-images-sm{
   height: calc(100vh - 135px)!important;
   position:relative;
@@ -3647,7 +3731,10 @@ orbicular i {
   position:absolute;
   white-space: nowrap;
 }
-
+#instructions > #myModal{
+  position:absolute;
+  white-space: nowrap;
+}
 /* Caption of Modal Image */
 #caption {
   margin: auto;
@@ -3742,11 +3829,4 @@ orbicular i {
   border-radius: 5px;
   font-size: 0.7vw;
   padding: 3px 10px 3px 10px;
-}
-.simultaneous-modal-footer-btns{
-  margin: 0 auto;
-  width: 320px;
-  button{
-    margin-top: 10px;
-  }
 }

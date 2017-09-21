@@ -5,9 +5,9 @@
         .module('app.user')
         .controller('UserController', UserController);
 
-    UserController.$inject = ['$q', '$state', 'config', 'stationService', 'inventoryService', 'socketService', '$scope', 'toastr', '$http', 'popupLauncher'];
+    UserController.$inject = ['$q', '$state', 'config', 'stationService', 'inventoryService', 'socketService', '$scope', 'toastr', '$http', 'popupLauncher', '$rootScope', '$timeout'];
 
-    function UserController($q, $state, config, stationService, inventoryService, socketService, $scope, toastr, $http, popupLauncher) {
+    function UserController($q, $state, config, stationService, inventoryService, socketService, $scope, toastr, $http, popupLauncher, $rootScope, $timeout) {
         /*jshint validthis: true */
         var vm = this;
         vm.ready = false;
@@ -25,9 +25,177 @@
         vm.sortReverse = true;
         vm.numberToDisplay = 8;
         vm.limit = 20;
+        vm.steps = {
+            sessions: {
+                name: 'sessions',
+                number: 1
+            },
+            bootDevices: {
+                name: 'bootDevices',
+                number: 2
+            }
+        };
+        vm.substeps = {
+            noBootDevices: {
+                name: 'noBootDevices',
+                number: 1
+            },
+            newBootDevice: {
+                name: 'newBootDevice',
+                number: 2
+            },
+            bootDevicesProcessing: {
+                name: 'bootDevicesProcessing',
+                number: 3
+            },
+            bootDevicesReady: {
+                name: 'bootDevicesReady',
+                number: 4
+            }
+        };
+        vm.step = vm.steps.sessions;
+        vm.substep = vm.substeps.noBootDevices;
+        document.getElementById('sessions').style.borderBottom = '3px solid black';
+        vm.viewSessions = function(){
+            document.getElementById('sessions').style.borderBottom = '3px solid black';
+            document.getElementById('bootDevices').style.borderBottom = 'unset';
+            vm.step = vm.steps.sessions;
+            console.log(vm.step);
+        };
+        //getAllUsbDrives();
+        vm.viewBootDevices = function(){
+            getAllUsbDrives();
+            document.getElementById('bootDevices').style.borderBottom = '3px solid black';
+            document.getElementById('sessions').style.borderBottom = 'unset';
+            vm.step = vm.steps.bootDevices;
+            //console.log(vm.step);
+        };
+        socketService.on('device-add', function() {
+            toastr.success('USB Drive connected to refresh station', {
+                'tapToDismiss': true,
+                'timeOut': 3000,
+                'closeButton': true
+            });
+            document.getElementById('bootDevices').style.borderBottom = '3px solid black';
+            document.getElementById('sessions').style.borderBottom = 'unset';
+            vm.step = vm.steps.bootDevices;
+            vm.substep = vm.substeps.newBootDevice;
+            getAllUsbDrives();
+        });
+        socketService.on('usb-progress', function() {
+            console.log('in progress');
+            getAllUsbDrives();
+        });
+        socketService.on('usb-complete', function() {
+            getAllUsbDrives();
+        });
         $scope.$on('$stateChangeSuccess', function() {
             getSessions();
         });
+        function getAllUsbDrives(){
+            $http.get('/getAllUsbDrives')
+                .then(function(response) {
+                    vm.usbDrives = response.data;
+                    vm.numberOfDevices = 0;
+                    vm.notReadyDevices = 0;
+                    vm.inProgressDevices = 0;
+                    vm.readyDevices = 0;
+                    for (var key in vm.usbDrives) {
+                        if (vm.usbDrives.hasOwnProperty(key)) {
+                            vm.numberOfDevices++;
+                            if (vm.numberOfDevices !== 0 && vm.usbDrives[key].status === 'not_ready') {
+                                vm.notReadyDevices++;
+                            }
+                            if (vm.numberOfDevices !== 0 && vm.usbDrives[key].status === 'in_progress') {
+                                vm.inProgressDevices++;
+                            }
+                            if (vm.numberOfDevices !== 0 && vm.usbDrives[key].status === 'ready') {
+                                vm.readyDevices++;
+                            }
+                        }
+                    }
+
+                    if (vm.notReadyDevices === 1) {
+                        vm.bootableUsb = 'Bootable USB drive';
+                        vm.usbDrive = 'USB drive';
+                        vm.usbDrivesText = 'Now you can create your Bootable USB drive.';
+                        vm.usbButtonText = 'Create Bootable USB drive';
+                        vm.usbDrivesTitle = vm.notReadyDevices + ' New USB drive is connected'
+                    } else if (vm.notReadyDevices > 1){
+                        vm.bootableUsb = 'Bootable USB drives';
+                        vm.usbDrive = 'USB drives';
+                        vm.usbText = 'Bootable USB drives';
+                        vm.usbDrivesTitle = vm.notReadyDevices + ' New USB drives are connected';
+                        vm.usbDrivesText = 'Now you can create your Bootable USB drives.';
+                        vm.usbButtonText = 'Create Bootable USB drives';
+                    }
+                    if (vm.inProgressDevices === 1) {
+                        vm.bootableUsb = 'Bootable USB drive';
+                        vm.usbDrive = 'USB drive';
+                    } else if (vm.inProgressDevices > 1){
+                        vm.bootableUsb = 'Bootable USB drives';
+                        vm.usbDrive = 'USB drives';
+                    }
+
+                    if (vm.readyDevices === 1) {
+                        vm.bootableUsb = 'Bootable USB drive';
+                        vm.bootableUsbReadyText = 'Bootable USB drive is ready';
+                    } else if (vm.readyDevices > 1){
+                        vm.bootableUsb = 'Bootable USB drive';
+                        vm.bootableUsbReadyText = 'Bootable USB drives are ready';
+                    }
+
+                    if (vm.notReadyDevices > 0) {
+                        vm.substep = vm.substeps.newBootDevice;
+                    } else if (vm.inProgressDevices > 0) {
+                        vm.substep = vm.substeps.bootDevicesProcessing;
+                    }  else if (vm.numberOfDevices === 0) {
+                        vm.substep = vm.substeps.noBootDevices;
+                    } else {
+                        vm.substep = vm.substeps.bootDevicesReady;
+                    }
+
+                });
+        }
+        function getAllNotReadyUsbDrives(){
+            console.log('here');
+            var deferred = $q.defer();
+            var usbIds = [];
+            $http.get('/getAllUsbDrives')
+                .then(function(response) {
+                    for (var key in response.data) {
+                        if (response.data.hasOwnProperty(key)) {
+                            if (vm.usbDrives[key].status === 'not_ready') {
+                                usbIds.push(key);
+                                deferred.resolve(usbIds);
+                            }
+                        }
+                    }
+                });
+            return deferred.promise;
+        }
+        function prepareUsbDrives(data){
+            for (var i = 0; i < data.length; i++) {
+                console.log({usb:data[i],item: {}});
+                // $http({
+                //     url: '/prepareUsb',
+                //     method: 'POST',
+                //     headers: {'content-type': 'application/json'},
+                //     data: {usb:data[i],item: {}}
+                // });
+            }
+
+        }
+        vm.createBootDrives = function(){
+            getAllNotReadyUsbDrives().then(function(res) {
+                prepareUsbDrives(res);
+            });
+            vm.substep = vm.substeps.bootDevicesProcessing;
+        };
+        vm.cancelBootDrive = function(){
+            vm.substep = vm.substeps.bootDevicesReady;
+        };
+
         $scope.$watch('vm.textToFilter',function(newTextToFilter){
              $scope.$watch('vm.sessionType', function(newDropdown, oldDropdown){
                  var dropDownChoice = newDropdown ? newDropdown : oldDropdown;
@@ -43,6 +211,7 @@
                 getSessions();
             },500);
         });
+
         vm.increaseLimit = function() {
             vm.sessionsLength = 0;
             for (var key in vm.sessions) {
@@ -190,10 +359,11 @@
                 'start_time': session.start_time,
                 'serial':session.device.serial_number
             };
-            inventoryService.getSession(item.start_time)
-                .then(function(res) {
-                    if(session.device.item_number) {
-                        if (res.session_id && session.status === 'Incomplete') {
+            if(session.device.item_number) {
+                inventoryService.getSessionByParams({'start_time':item.start_time})
+                    .then(function(res) {
+                        console.log(res);
+                        if (res._id && session.status === 'Incomplete') {
                             var $stateParams = {};
                             $stateParams.itemNumber = session.device.item_number;
                             vm.item = null;
@@ -218,10 +388,13 @@
                         } else {
                             openHelpModal('xxs','Device refreshed successfully.');
                         }
-                    } else {
-                        openHelpModal('sm-to-xs', 'Unrecognized Device', res.session_id, session);
-                    }
-                });
+                    });
+            } else {
+                inventoryService.getSessionByParams({'start_time':item.start_time})
+                    .then(function (res) {
+                        openHelpModal('sm-to-xs', 'Unrecognized Device', res._id, session);
+                    });
+            }
         };
         // jscs: enable
         vm.unlockForService = function() {

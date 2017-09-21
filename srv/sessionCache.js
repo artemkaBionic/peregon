@@ -63,7 +63,7 @@ SessionCache.prototype.getSessionInProgressByDevice = function(item) {
     console.log('Checking if there is session in progress for device ' + item.adbSerial);
     for (var key in this._sessions) {
         if (this._sessions.hasOwnProperty(key)) {
-            if (this._sessions[key].status === 'Incomplete' || this._sessions[key].status === 'Device Unrecognized') {
+            if (this._sessions[key].status === 'Incomplete') {
                 if (this._sessions[key].device.adb_serial === item.adbSerial) {
                     console.log('Session found for serial:' + item.adbSerial);
                     return {'started': true, 'session_id': key};

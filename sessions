@@ -1,0 +1,6 @@
+{"k":"0000000103","o":"0000000513","v":"001"}
+{"_id":"2017-09-21T14:22:51.095Z","_uid":1,"_dt":1506003992356,"_s":"51d4d17d56742d35b52cdbdfd6bb3364"}
+{"start_time":"2017-09-21T14:22:52.090Z","end_time":null,"status":"Incomplete","diagnose_only":false,"device":{"type":"Android","adb_serial":"ZX1D324MD8","serial_number":"352149076335834","number_of_auto":6,"number_of_manual":11,"passed_manual":0,"passed_auto":6,"sku":"7393SN4","item_number":"0000000000","model":"Note 4 5.7\"","manufacturer":"Samsung"},"station":{"name":"station7446a09dac51","service_tag":"2UA3340ZS6"},"logs":[],"is_sent":false,"_id":"2017-09-21T14:22:51.095Z","currentStep":"Manual Testing"}
+{"k":"0000000103","o":"0000000422","v":"001"}
+{"_id":"2017-09-21T14:28:50.067Z","_uid":1,"_dt":1506004181908,"_s":"668d987c4df5877a6a8f364331f9fd32"}
+{"start_time":"2017-09-21T14:28:51.081Z","end_time":null,"status":"Incomplete","diagnose_only":false,"device":{"type":"Android","adb_serial":"ZX1D324MD8","serial_number":"359297054136394","number_of_auto":6,"number_of_manual":11,"passed_manual":0,"passed_auto":6},"station":{"name":"station7446a09dac51","service_tag":"2UA3340ZS6"},"logs":[],"is_sent":false,"_id":"2017-09-21T14:28:50.067Z","currentStep":"Manual Testing"}
