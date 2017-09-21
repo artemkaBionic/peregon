@@ -42,16 +42,19 @@
                         vm.sessionAlreadyInProgress = true;
                         //vm.wrongItemNumber();
                     } else {
-                        inventoryService.getAllSessionsByDevice(vm.serialNo).then(function(res) {
-                            for (var i = 0; i < res.sessions.length;i++) {
-                                var session = res.sessions[i];
-                                inventoryService.updateSessionItem(session, vm.item).then(function(res) {
-                                    console.log(res);
-                                });
-                            }
+                        // inventoryService.getAllSessionsByDevice(vm.serialNo).then(function(res) {
+                        //     for (var i = 0; i < res.sessions.length;i++) {
+                        //         var session = res.sessions[i];
+                        //
+                        //     }
+                        //
+                        //
+                        // })
+                        inventoryService.updateSessionItem(vm.serialNo, vm.item).then(function(res) {
+                            console.log(res);
                             $rootScope.$broadcast('updateList');
                             vm.closeModal();
-                        })
+                        });
                     }
                 });
 

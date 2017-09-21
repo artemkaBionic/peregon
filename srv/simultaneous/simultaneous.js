@@ -13,7 +13,7 @@ var sessions = require('../sessionCache');
 var StringDecoder = require('string_decoder').StringDecoder;
 var decoder = new StringDecoder('utf8');
 var inventory = require('../inventory');
-
+var sessions2 = require('../session_storage/sessions');
 exports.deviceBridge = deviceBridge;
 
 function deviceBridge(io) {
@@ -36,14 +36,19 @@ function deviceBridge(io) {
             tracker.on('remove', function(device) {
                 console.log('Device %s was unplugged', device.id);
                 var index = devices.indexOf(device.id);
-                var sessionId = inventory.getSessionInProgressByDevice({'adbSerial': device.id}).session_id;
-                if (sessionId !== undefined) {
-                    getSession(sessionId).then(function (response) {
-                        if (response.status === 'Incomplete') {
-                            finishSession(sessionId, {'complete': false});
-                        }
-                    });
-                }
+                // var sessionId = inventory.getSessionInProgressByDevice({'adbSerial': device.id}).session_id;
+                // if (sessionId !== undefined) {
+                //     getSession(sessionId).then(function (response) {
+                //         if (response.status === 'Incomplete') {
+                //             finishSession(sessionId, {'complete': false});
+                //         }
+                //     });
+                // }
+                //console.log(inventory.findSessionByParams());
+                sessions2.findSessionByParams({'device.adb_serial': device.id}).then(function(res) {
+                   // console.log(res);
+                    finishSession(res._id, {'complete': false});
+                });
                 if (index > -1) {
                     devices.splice(index, 1);
                     io.emit('android-remove',{});
@@ -280,7 +285,8 @@ function deviceBridge(io) {
                             updateSession(sessionDate, 'Info Test', 'Android auto', {'passedAuto':failedAutoTests.length + passedAutoTests.length });
                         }
                         if(failedManualTests.length + passedManualTests.length <= appStartedDataJson.data.manual) {
-                            updateSession(sessionDate, 'Info Test', 'Android manual', {'passedManual':failedManualTests.length + passedManualTests.length });
+                            updateSession(sessionDate, 'Info Test', 'Android manual', {'passedManual':failedManualTests.length + passedManualTests.length,
+                                'passedAuto':failedAutoTests.length + passedAutoTests.length });
                         }
                         var message = testResultJson.commandName + ' ' + (testResultJson.passed ? 'passed' : 'failed') + '\n';
                         updateSession(sessionDate, 'Info', message, testResultJson.data);

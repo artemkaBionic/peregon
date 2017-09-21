@@ -139,8 +139,8 @@
             return deferred.promise;
         };
 
-        service.updateSessionItem = function(sessionDate, item) {
-            var url = '/data/inventory/sessions/' + sessionDate + '/updateSessionItem';
+        service.updateSessionItem = function(serial, item) {
+            var url = '/data/inventory/sessions/' + serial + '/updateSessionItem';
             var deferred = $q.defer();
 
             $http.post(url, item).then(function(result) {

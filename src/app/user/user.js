@@ -362,7 +362,8 @@
             if(session.device.item_number) {
                 inventoryService.checkSessionByStartDate(item.start_time)
                     .then(function(res) {
-                        if (res.session_id && session.status === 'Incomplete') {
+                        console.log(res);
+                        if (res._id && session.status === 'Incomplete') {
                             var $stateParams = {};
                             $stateParams.itemNumber = session.device.item_number;
                             vm.item = null;
@@ -392,7 +393,7 @@
             } else {
                 inventoryService.checkSessionByStartDate(item.start_time)
                     .then(function (res) {
-                        openHelpModal('sm-to-xs', 'Unrecognized Device', res.session_id, session);
+                        openHelpModal('sm-to-xs', 'Unrecognized Device', res._id, session);
                     });
             }
         };
@@ -474,5 +475,6 @@
                 size: modalSize
             });
         }
+
     }
 })();

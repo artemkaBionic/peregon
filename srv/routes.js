@@ -60,7 +60,9 @@ module.exports = function(io, data) {
         res.json(inventory.getSessions(req.body));
     });
     router.get('/data/getAllSessions', function(req, res) {
-        res.json(inventory.getAllSessions());
+        sessions.getAllSessions().then(function(response){
+            res.json(response);
+        });
     });
     router.get('/getAllUsbDrives', function(req, res) {
         res.json(inventory.getAllUsbDrives());
@@ -72,8 +74,10 @@ module.exports = function(io, data) {
         res.json(inventory.checkSessionInProgress(req.body));
     });
     router.get('/data/checkSessionByStartDate/:id', function(req, res) {
-        console.log(req.params.id);
-        res.json(inventory.checkSessionByStartDate(req.params.id));
+        sessions.checkSessionByStartDate(req.params.id).then(function(session) {
+            res.json(session);
+        });
+
     });
     router.get('/data/inventory/sessions/:id', function(req, res) {
         res.json(inventory.getSession(req.params.id));
@@ -99,11 +103,8 @@ module.exports = function(io, data) {
 
     router.post('/data/inventory/sessions/:id/updateSessionItem', function(req, res) {
        // console.log(req);
-        inventory.sessionUpdateItem(req.params.id, req.body, req.body.level, req.body.message, req.body.details, function(err, result) {
-            if (err) {
-                console.log(err);
-            }
-            res.json(result);
+        sessions.sessionUpdateItem(req.params.id, req.body).then(function(result) {
+            res.json({sessionUpdated: result});
         });
     });
 
@@ -257,12 +258,12 @@ module.exports = function(io, data) {
             }
         });
     });
-    router.post('/addSession', function(req, res) {
-        console.log(req);
-        sessions.addSession();
-    });
+
     router.post('/getSessions', function(req, res) {
-        sessions.getAllSessions();
+        console.log(req);
+        // sessions.getAllSessions().then(function(response){
+        //     res.json(response);
+        // });
     });
     return router;
 };
