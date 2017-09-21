@@ -13,6 +13,10 @@
         vm.isPackageReady = null;
         vm.item = item;
         vm.guideUrl = config.guidesPath + '/' + item.Sku + '/' + config.guidesIndexFile;
+        //Support Progressive SKUs
+        if(item.Sku.startsWith('73608')) {
+            vm.guideUrl = config.guidesPath + '/73608__/' + config.guidesIndexFile;
+        }
         vm.ready = false;
 
         activate();
