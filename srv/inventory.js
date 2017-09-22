@@ -409,7 +409,6 @@ function sendSession(session) {
         console.log('Session with this ID not sent:' + sessionID)
     }
 }
-
 function resendSessions() {
     console.log('Attempting to resend unsent sessions');
     sessions.getSessionsByParams(

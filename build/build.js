@@ -202,6 +202,7 @@ gulp.task('copySrv', function () {
         './srv/bin/**/*',
         './srv/usbonly/**/*',
         './srv/simultaneous/**/*',
+        './srv/session_storage/**/*',
         './srv/views/**/*',
         './srv/*.js',
         './srv/*.json'
