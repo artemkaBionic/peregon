@@ -8,11 +8,12 @@ var path = require('path');
 var fs = require('fs');
 var childProcess = require('child_process');
 var rimraf = require('rimraf');
-var request = require("requestretry");
+var request = require('requestretry');
 var uuid = require('uuid/v1');
 var station = require('./station');
 const usbDrives = require('./usbonly/usbCache');
-const INVENTORY_LOOKUP_URL = 'https://' + config.apiHost + '/api/inventorylookup/';
+const INVENTORY_LOOKUP_URL = 'https://' + config.apiHost +
+    '/api/inventorylookup/';
 const SERIAL_LOOKUP_URL = 'https://' + config.apiHost + '/api/seriallookup/';
 const API_URL = 'https://api2.basechord.com';
 //const API_URL2 = 'http://localhost:3000';
@@ -32,7 +33,6 @@ exports.sessionFinish = sessionFinish;
 exports.resendSessions = resendSessions;
 exports.getItem = getItem;
 exports.lockDevice = lockDevice;
-exports.unlockForService = unlockForService;
 exports.unlockDevice = unlockDevice;
 exports.getSerialLookup = getSerialLookup;
 //exports.getAllSessions = getAllSessions;
@@ -50,7 +50,7 @@ exports.getLowestUsbProgress = getLowestUsbProgress;
 // }, RESEND_SESSIONS_INTERVAL);
 
 // Reverse lookup to Azure in case if not found in our Mongo DB
-function getItemFromAzure(id, callback){
+function getItemFromAzure(id, callback) {
     console.log('Getting item from azure with Item Id: ' + id);
     request({
         url: INVENTORY_LOOKUP_URL + id,
@@ -89,7 +89,7 @@ function getItem(id, callback) {
         else {
             console.log('NodeJS server returned: ');
             console.log(response.body);
-            if (!JSON.parse(response.body).message){
+            if (!JSON.parse(response.body).message) {
                 callback({error: null, item: JSON.parse(response.body)});
             } else {
                 console.log('Calling reverse lookup from Azure with Id: ' + id);
@@ -131,47 +131,49 @@ function getSerialLookup(imei, callback) {
 //     return sessions.get(sessionId);
 // }
 
-function getAllUsbDrives(){
+function getAllUsbDrives() {
     return usbDrives.getAllUsbDrives();
 }
-function getLowestUsbProgress(){
+
+function getLowestUsbProgress() {
     return usbDrives.getLowestUsbProgress();
 }
 
 function sessionStart(sessionId, device, callback) {
-    console.log('Session:' + sessionId + ' started' );
+    console.log('Session:' + sessionId + ' started');
     var diagnose_only = false;
     var session_device = changeDeviceFormat(device);
     var station_name = station.getName();
-    var start_time = new Date().toISOString();
+    var start_time = sessionId;
     station.getServiceTag(function(station_service_tag) {
         var newSession = {
-            "start_time": start_time,
-            "end_time": null,
-            "status": 'Incomplete',
-            "diagnose_only": diagnose_only,
-            "device": session_device,
-            "station": {
-                "name": station_name,
-                "service_tag": station_service_tag
+            'start_time': start_time,
+            'end_time': null,
+            'status': 'Incomplete',
+            'diagnose_only': diagnose_only,
+            'device': session_device,
+            'station': {
+                'name': station_name,
+                'service_tag': station_service_tag
             },
-            "logs": [],
-            "is_sent": false,
-            "_id": sessionId
+            'logs': [],
+            'is_sent': false,
+            '_id': sessionId
         };
         sessions.set(sessionId, newSession);
         callback();
     });
 }
-function unlockForService(imei, callback) {
-    console.log('Unlocking imei ' + imei + ' for service...');
+
+function unlockDevice(imei, forService, callback) {
+    console.log('Unlocking imei ' + imei);
     request({
         method: 'POST',
         url: API_URL + '/unlockapi/unlock',
         headers: {
             'Authorization': config.api2Authorization
         },
-        body: {'IMEI': imei, 'unlocked_for_service': true},
+        body: {'IMEI': imei, 'unlocked_for_service': forService},
         rejectUnauthorized: false,
         json: true
     }, function(error, response, body) {
@@ -186,67 +188,33 @@ function unlockForService(imei, callback) {
     console.log('Unlock request has been sent');
 }
 
-function unlockDevice(itemNumber, callback) {
-    //var session = sessions.get(itemNumber);
-    getItem(itemNumber, function(res) {
-        var imei = res.item.Serial;
-        console.log(imei);
-        request({
-            method: 'POST',
-            url: API_URL + '/unlockapi/unlock',
-            headers: {
-                'Authorization': config.api2Authorization
-            },
-            body: {'IMEI': imei},
-            rejectUnauthorized: false,
-            json: true
-        }, function(error, response, body) {
-            if (error) {
-                console.error(error);
-                //logSession(session, 'Error', 'Unable to request device unlock.', JSON.stringify(data.error, null, 2));
-                callback({error: error, result: null});
-            }
-            else {
-               // logSession(session, 'Info', 'Device is unlocked by ' + body.service);
-                callback({error: null, result: body});
-            }
-        });
-        console.log('Unlock request has been sent');
+function lockDevice(imei, callback) {
+    request({
+        method: 'POST',
+        url: API_URL + '/unlockapi/lock',
+        headers: {
+            'Authorization': config.api2Authorization
+        },
+        body: {'IMEI': imei},
+        rejectUnauthorized: false,
+        json: true
+    }, function(error, response, body) {
+        if (error) {
+            console.error(error);
+            callback({error: error, result: null});
+        }
+        else {
+            callback({error: null, result: body});
+        }
     });
-}
-function lockDevice(itemNumber, callback) {
-    //var session = sessions.get(itemNumber);
-    getItem(itemNumber, function(res) {
-        var imei = res.item.Serial;
-        request({
-            method: 'POST',
-            url: API_URL + '/unlockapi/lock',
-            headers: {
-                'Authorization': config.api2Authorization
-            },
-            body: {'IMEI': imei},
-            rejectUnauthorized: false,
-            json: true
-        }, function(error, response, body) {
-            if (error) {
-                console.error(error);
-                // logSession(session, 'Error', 'Unable to request device lock.', JSON.stringify(error, null, 2));
-
-                callback({error: error, result: null});
-            }
-            else {
-                // logSession(session, 'Info', 'Device is locked by ' + body.service);
-                callback({error: null, result: body});
-            }
-        });
-        console.log('Lock request has been sent');
-    });
+    console.log('Lock request has been sent');
 }
 
 function sessionUpdate(sessionId, level, message, details, callback) {
-    sessions.getSessionByParams({'_id':sessionId}).then(function(session) {
+    sessions.getSessionByParams({'_id': sessionId}).then(function(session) {
         if (typeof session === 'undefined') {
-            console.warn('sessionUpdate attempted for a session that is not started.');
+            console.warn(
+                'sessionUpdate attempted for a session that is not started.');
             console.warn('message: ' + message);
         } else {
             if (message === 'Android auto') {
@@ -269,13 +237,13 @@ function sessionUpdate(sessionId, level, message, details, callback) {
             }
         }
         callback();
-    }).catch(function(err){
-        console.log('Something went wrong while getting sessions of err' + err );
+    }).catch(function(err) {
+        console.log('Something went wrong while getting sessions of err' + err);
     });
 }
 
 function sessionUpdateItem(serial, device) {
-    return new Promise(function (resolve, reject) {
+    return new Promise(function(resolve, reject) {
         sessions.sessionUpdateItem(serial, device).then(function(err, result) {
             if (err) {
                 reject(err);
@@ -283,56 +251,75 @@ function sessionUpdateItem(serial, device) {
                 resolve(result);
                 //resendSessions();
             }
-        }).catch(function(err){
-            console.log('Something went wrong while updating session item for serial:' + err);
+        }).catch(function(err) {
+            console.log('Something went wrong while updating session item for serial:' +
+                err);
         });
-    })
+    });
 
 }
 
 function sessionFinish(session, data, callback) {
     //var session = sessions.get(sessionId);
     //sessions.findSessionByParams({'_id':sessionId}).then(function(session) {
-        console.log('A client requested to finish an ' + session.device.type + ' refresh of session id ' + session._id);
-        if (session.device.type === 'XboxOne') {
-            if (isDevelopment) {
-                logSession(session, 'Info', 'Checking ' + data.device.id + ' for evidence that the refresh completed successfully.');
-                logSession(session, 'Info', 'Simulating verifying a refresh in a development environment by waiting 3 seconds.');
-                console.log('Simulating verifying a refresh in a development environment by waiting 3 seconds.');
-                setTimeout(function() {
-                    closeSession(session, true, callback);
-                }, 3000);
-            } else {
-                logSession(session, 'Info', 'Checking ' + data.device.id + ' for evidence that the refresh completed successfully.');
-                var mountSource = '/dev/' + data.device.id + '1';
-                var mountTarget = '/mnt/' + data.device.id + '1';
-                fs.mkdir(mountTarget, function(err) {
-                    if (err && err.code !== 'EEXIST') {
-                        logSession(session, 'Error', 'Error creating directory ' + mountTarget, err);
-                    } else {
-                        logSession(session, 'Info', 'Attempting to mount ' + mountSource + ' to ' + mountTarget);
-                        var mount = childProcess.spawn('mount', [mountSource, mountTarget]);
-                        mount.on('close', function(code) {
-                            var systemUpdateDir = path.join(mountTarget, '$SystemUpdate');
-                            if (code !== 0) {
-                                logSession(session, 'Error', 'Error, failed to mount ' + mountSource + ' to ' + mountTarget, 'Mount command failed with error code ' + code);
-                            } else {
-                                logSession(session, 'Info', 'Successfully mounted ' + mountSource + ' to ' + mountTarget);
-                                var success = filesExist(systemUpdateDir, ['smcerr.log', 'update.cfg', 'update.log', 'update2.cfg']);
-                                rimraf(path.join(mountTarget, '*'), function(err) {
-                                    childProcess.spawn('umount', [mountTarget]);
-                                    closeSession(session, success, callback);
-                                });
-                            }
-                        });
-                    }
-                });
-            }
+    console.log('A client requested to finish an ' + session.device.type +
+        ' refresh of session id ' + session._id);
+    if (session.device.type === 'XboxOne') {
+        if (isDevelopment) {
+            logSession(session, 'Info', 'Checking ' + data.device.id +
+                ' for evidence that the refresh completed successfully.');
+            logSession(session, 'Info',
+                'Simulating verifying a refresh in a development environment by waiting 3 seconds.');
+            console.log(
+                'Simulating verifying a refresh in a development environment by waiting 3 seconds.');
+            setTimeout(function() {
+                closeSession(session, true, callback);
+            }, 3000);
         } else {
-            closeSession(session, data.complete, callback);
+            logSession(session, 'Info', 'Checking ' + data.device.id +
+                ' for evidence that the refresh completed successfully.');
+            var mountSource = '/dev/' + data.device.id + '1';
+            var mountTarget = '/mnt/' + data.device.id + '1';
+            fs.mkdir(mountTarget, function(err) {
+                if (err && err.code !== 'EEXIST') {
+                    logSession(session, 'Error', 'Error creating directory ' +
+                        mountTarget, err);
+                } else {
+                    logSession(session, 'Info', 'Attempting to mount ' +
+                        mountSource + ' to ' + mountTarget);
+                    var mount = childProcess.spawn('mount',
+                        [mountSource, mountTarget]);
+                    mount.on('close', function(code) {
+                        var systemUpdateDir = path.join(mountTarget,
+                            '$SystemUpdate');
+                        if (code !== 0) {
+                            logSession(session,
+                                'Error', 'Error, failed to mount ' +
+                                mountSource + ' to ' +
+                                mountTarget, 'Mount command failed with error code ' +
+                                code);
+                        } else {
+                            logSession(session,
+                                'Info', 'Successfully mounted ' + mountSource +
+                                ' to ' + mountTarget);
+                            var success = filesExist(systemUpdateDir, [
+                                'smcerr.log',
+                                'update.cfg',
+                                'update.log',
+                                'update2.cfg']);
+                            rimraf(path.join(mountTarget, '*'), function(err) {
+                                childProcess.spawn('umount', [mountTarget]);
+                                closeSession(session, success, callback);
+                            });
+                        }
+                    });
+                }
+            });
         }
+    } else {
+        closeSession(session, data.complete, callback);
+    }
     //});
-
 
 }
 
@@ -344,14 +331,15 @@ function logSession(session, level, message, details) {
             details = '';
 
         var logEntry = {
-            "timestamp": new Date(),
-            "level": level,
-            "message": message,
-            "details": details
+            'timestamp': new Date(),
+            'level': level,
+            'message': message,
+            'details': details
         };
         sessions.pushLogs(sessionId, logEntry);
     });
 }
+
 function closeSession(session, success, callback) {
     console.log('Closing session');
     session.end_time = new Date();
@@ -377,7 +365,8 @@ function timeoutExpired(startTime) {
 }
 
 function lockDeviceAndSendSession(content, file) {
-    if (!content.state.deviceLocked && !timeoutExpired(content.session.start_time)) {
+    if (!content.state.deviceLocked &&
+        !timeoutExpired(content.session.start_time)) {
         lockDevice(content.session.item_number, function(data) {
             if (data.error === null) {
                 content.state.deviceLocked = true;
@@ -429,16 +418,18 @@ function sendSession(session) {
     // }
 }
 
-
 function resendSessions() {
     console.log('Attempting to resend unsent sessions');
-    sessions.getSessionsByParams({'device.item_number': { $exists: true, $ne: null }, 'is_sent': false}).then(function(sessions) {
-        for (var i = 0; i < sessions.length; i++) {
-            sendSession(sessions[i]);
-        }
-    }).catch(function(err){
-        console.log(err);
-    });
+    sessions.getSessionsByParams(
+        {'device.item_number': {$exists: true, $ne: null}, 'is_sent': false}).
+        then(function(sessions) {
+            for (var i = 0; i < sessions.length; i++) {
+                sendSession(sessions[i]);
+            }
+        }).
+        catch(function(err) {
+            console.log(err);
+        });
 }
 
 function filesExist(directory, files) {

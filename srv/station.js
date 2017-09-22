@@ -9,21 +9,21 @@ var connectionState = null;
 var service_tag = null;
 var name = null;
 
-
 exports.getServiceTag = function(callback) {
     if (service_tag === null) {
         if (isDevelopment) {
             service_tag = '2UA3340ZS6'; // Lab Station
             callback(service_tag);
         } else {
-            shell.exec('dmidecode -s system-serial-number', function(code, stdout, stderr) {
-                if (code !== 0) {
-                    console.error(stderr);
-                } else {
-                    service_tag = stdout.substr(0, stdout.indexOf("\n")); // First line
-                }
-                callback(service_tag);
-            });
+            shell.exec('dmidecode -s system-serial-number',
+                function(code, stdout, stderr) {
+                    if (code !== 0) {
+                        console.error(stderr);
+                    } else {
+                        service_tag = stdout.substr(0, stdout.indexOf('\n')); // First line
+                    }
+                    callback(service_tag);
+                });
         }
     } else {
         callback(service_tag);
@@ -69,34 +69,36 @@ exports.getUsbDrives = function(callback) {
 
 exports.getUsbDrive = function(id, callback) {
     console.log('Getting USB drive information for ' + id);
-    shell.exec('udevadm info --query=property --path=/sys/block/' + id, {silent: true}, function(code, stdout, stderr) {
-        if (code !== 0) {
-            callback(stderr, null);
-        } else {
-            var deviceInfo = stdout.trim().split(os.EOL);
-            var device = {
-                id: id,
-                type: null
-            };
-            deviceInfo.forEach(function(element) {
-                if (element === 'ID_BUS=usb') {
-                    device.type = 'USB';
-                }
-            });
-            if (device.type === null) {
-                callback(null, null);
+    shell.exec('udevadm info --query=property --path=/sys/block/' + id,
+        {silent: true}, function(code, stdout, stderr) {
+            if (code !== 0) {
+                callback(stderr, null);
             } else {
-                shell.exec('blockdev --getsize64 /dev/' + id, function(code, stdout, stderr) {
-                    if (code !== 0) {
-                        callback(stderr, null);
-                    } else {
-                        device.size = stdout;
-                        callback(null, device);
+                var deviceInfo = stdout.trim().split(os.EOL);
+                var device = {
+                    id: id,
+                    type: null
+                };
+                deviceInfo.forEach(function(element) {
+                    if (element === 'ID_BUS=usb') {
+                        device.type = 'USB';
                     }
                 });
+                if (device.type === null) {
+                    callback(null, null);
+                } else {
+                    shell.exec('blockdev --getsize64 /dev/' + id,
+                        function(code, stdout, stderr) {
+                            if (code !== 0) {
+                                callback(stderr, null);
+                            } else {
+                                device.size = stdout;
+                                callback(null, device);
+                            }
+                        });
+                }
             }
-        }
-    });
+        });
 };
 
 exports.setConnectionState = function(state) {
@@ -109,8 +111,9 @@ exports.getConnectionState = function() {
 
 exports.getIsServiceCenter = function(callback) {
     if (isDevelopment) {
-        console.log('Simulating service center check in a Windows development environment.');
-        callback(false);
+        console.log(
+            'Simulating service center check in a Windows development environment.');
+        callback(true);
     } else {
         fs.stat('/srv/packages/ServiceCenter.mode', function(err, stat) {
             if (err == null) {
@@ -120,7 +123,9 @@ exports.getIsServiceCenter = function(callback) {
                 console.log('isServiceCenter = false');
                 callback(false);
             } else {
-                console.log('Error while checking if /srv/packages/ServiceCenter.mode exists: ', err.code);
+                console.log(
+                    'Error while checking if /srv/packages/ServiceCenter.mode exists: ',
+                    err.code);
                 callback(null);
             }
         });
@@ -132,7 +137,8 @@ exports.getPackage = function(sku, callback) {
         isDownloaded: null
     };
     if (isDevelopment) {
-        console.log('Simulating package download check in a Windows development environment.');
+        console.log(
+            'Simulating package download check in a Windows development environment.');
         package.isDownloaded = true;
         callback(package);
     } else {
@@ -144,7 +150,8 @@ exports.getPackage = function(sku, callback) {
                 console.log('Package for sku ' + sku + ' is NOT downloaded.');
                 package.isDownloaded = false;
             } else {
-                console.log('Error while checking if /srv/packages/' + sku + '/.complete exists: ', err.code);
+                console.log('Error while checking if /srv/packages/' + sku +
+                    '/.complete exists: ', err.code);
             }
             callback(package);
         });

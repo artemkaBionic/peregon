@@ -17,6 +17,9 @@
             })
             .state('root.user.guide', {
                 url: '/guide/:itemNumber',
+                params: {
+                    sessionId: null
+                },
                 resolve: {
                     item: getItem
                 },
@@ -144,7 +147,7 @@
                 }
 
                 return timeString;
-            }
+            };
         });
     }
 

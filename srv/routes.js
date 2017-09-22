@@ -7,7 +7,7 @@ var station = require('./station.js');
 var controller = require('./usbonly/controller');
 var simultaneous = require('./simultaneous/simultaneous');
 var usbDrives = require('./usbonly/usbCache');
-var sessions = require('./session_storage/sessions')
+var sessions = require('./session_storage/sessions');
 module.exports = function(io, data) {
 // Express Router
     var router = express.Router();
@@ -39,28 +39,23 @@ module.exports = function(io, data) {
         });
     });
 
-    router.get('/data/inventory/lock/:id', function(req, res) {
-        inventory.lockDevice(req.params.id, function(result) {
+    router.post('/data/inventory/lock/:imei', function(req, res) {
+        inventory.lockDevice(req.params.imei, function(result) {
             res.json(result);
         });
+    });
+    router.post('/data/inventory/unlock/:imei', function(req, res) {
+        inventory.unlockDevice(req.params.imei, req.body.forService,
+            function(result) {
+                res.json(result);
+            });
     });
 
-    router.get('/data/inventory/unlockForService/:imei', function(req, res) {
-        inventory.unlockForService(req.params.imei, function(result) {
-            res.json(result);
-        });
-    });
-
-    router.get('/data/inventory/unlock/:id', function(req, res) {
-        inventory.unlockDevice(req.params.id, function(result) {
-            res.json(result);
-        });
-    });
     router.get('/data/inventory/sessions', function(req, res) {
         res.json(inventory.getSessions(req.body));
     });
     router.get('/data/getAllSessions', function(req, res) {
-        sessions.getSessionsByParams({}).then(function(response){
+        sessions.getSessionsByParams({}).then(function(response) {
             res.json(response);
         });
     });
@@ -84,86 +79,108 @@ module.exports = function(io, data) {
         });
     });
     router.get('/data/getAllSessionsByDevice/:id', function(req, res) {
-            res.json(inventory.getAllSessionsByDevice(req.params.id));
+        res.json(inventory.getAllSessionsByDevice(req.params.id));
     });
     router.post('/data/inventory/sessions/:id/update', function(req, res) {
 
-        inventory.sessionUpdate(req.params.id, req.body.level, req.body.message, req.body.details, function(err, result) {
-            if (err) {
-                console.log(err);
-            }
-            res.json(result);
-        });
+        inventory.sessionUpdate(req.params.id, req.body.level, req.body.message,
+            req.body.details, function(err, result) {
+                if (err) {
+                    console.log(err);
+                }
+                res.json(result);
+            });
     });
 
-    router.post('/data/inventory/sessions/:id/updateSessionItem', function(req, res) {
-       // console.log(req);
-        inventory.sessionUpdateItem(req.params.id, req.body).then(function(result) {
-            res.json({sessionUpdated: result});
-        }).catch(function(err){
-            console.log('Something went wrong while updating session item for serial:' + req.params.id);
+    router.post('/data/inventory/sessions/:id/updateSessionItem',
+        function(req, res) {
+            // console.log(req);
+            inventory.sessionUpdateItem(req.params.id, req.body).
+                then(function(result) {
+                    res.json({sessionUpdated: result});
+                }).
+                catch(function(err) {
+                    console.log('Something went wrong while updating session item for serial:' +
+                        req.params.id);
+                });
         });
-    });
 
     router.post('/data/inventory/sessions/:id/finish', function(req, res) {
-        inventory.sessionFinish(req.params.id, req.body.details, function(result) {
-            res.json(result);
-        });
+        inventory.sessionFinish(req.params.id, req.body.details,
+            function(result) {
+                res.json(result);
+            });
     });
 
-    router.get('/data/packages/:contentType/:contentSubtype?', function(req, res) {
-        try {
-            console.log('Client requests ' + req.params.contentSubtype + ' ' + req.params.contentType + ' packages');
-            switch (req.params.contentType) {
-                case 'media':
-                    if (isDevelopment) {
-                        res.json([
-                            {
-                                "type": "media",
-                                "subtype": "xbox-one",
-                                "id": "bc76b9f7-02f9-42e3-a9b7-3383b5287f07",
-                                "name": "Xbox One Refresh",
-                                "size": 24204
-                            },
-                            {
-                                "type": "media",
-                                "subtype": "xbox-one",
-                                "id": "6984e794-7934-4ecb-851a-da141da5a774",
-                                "name": "Xbox One Update",
-                                "size": 2000268
-                            }
-                        ]);
-                    } else {
-                        var packages = [];
-                        console.log('Searching for media packages in ' + config.mediaPackagePath);
-                        var dirs = getDirectories(config.mediaPackagePath);
-                        var len = dirs.length;
-                        for (var i = 0; i < len; ++i) {
-                            var fullDir = path.join(config.mediaPackagePath, dirs[i]);
-                            var packageFile = path.join(fullDir, '.package.json');
-                            console.log('Attempting to parse ' + packageFile);
-                            try {
-                                var package = JSON.parse(fs.readFileSync(packageFile, 'utf8'));
-                                if (package.type === "media" && ((typeof req.params.contentSubtype === 'undefined' && package.subtype === 'advertisement') || (typeof req.params.contentSubtype !== 'undefined' && package.subtype === req.params.contentSubtype))) {
-                                    packages.push(package);
+    router.get('/data/packages/:contentType/:contentSubtype?',
+        function(req, res) {
+            try {
+                console.log('Client requests ' + req.params.contentSubtype +
+                    ' ' + req.params.contentType + ' packages');
+                switch (req.params.contentType) {
+                    case 'media':
+                        if (isDevelopment) {
+                            res.json([
+                                {
+                                    'type': 'media',
+                                    'subtype': 'xbox-one',
+                                    'id': 'bc76b9f7-02f9-42e3-a9b7-3383b5287f07',
+                                    'name': 'Xbox One Refresh',
+                                    'size': 24204
+                                },
+                                {
+                                    'type': 'media',
+                                    'subtype': 'xbox-one',
+                                    'id': '6984e794-7934-4ecb-851a-da141da5a774',
+                                    'name': 'Xbox One Update',
+                                    'size': 2000268
                                 }
-                            } catch (e) {
-                                console.log('Error trying to read ' + packageFile);
-                                console.log(e);
+                            ]);
+                        } else {
+                            var packages = [];
+                            console.log('Searching for media packages in ' +
+                                config.mediaPackagePath);
+                            var dirs = getDirectories(config.mediaPackagePath);
+                            var len = dirs.length;
+                            for (var i = 0; i < len; ++i) {
+                                var fullDir = path.join(config.mediaPackagePath,
+                                    dirs[i]);
+                                var packageFile = path.join(fullDir,
+                                    '.package.json');
+                                console.log('Attempting to parse ' +
+                                    packageFile);
+                                try {
+                                    var package = JSON.parse(
+                                        fs.readFileSync(packageFile, 'utf8'));
+                                    if (package.type === 'media' &&
+                                        ((typeof req.params.contentSubtype ===
+                                            'undefined' && package.subtype ===
+                                            'advertisement') ||
+                                            (typeof req.params.contentSubtype !==
+                                                'undefined' &&
+                                                package.subtype ===
+                                                req.params.contentSubtype))) {
+                                        packages.push(package);
+                                    }
+                                } catch (e) {
+                                    console.log('Error trying to read ' +
+                                        packageFile);
+                                    console.log(e);
+                                }
                             }
+                            res.json(packages);
                         }
-                        res.json(packages);
-                    }
-                    break;
-                default:
-                    res.json(null);
-                    break;
+                        break;
+                    default:
+                        res.json(null);
+                        break;
+                }
+            } catch (e) {
+                console.log('Unable to get ' + req.params.contentType +
+                    ' packages.');
+                console.log(e);
             }
-        } catch (e) {
-            console.log('Unable to get ' + req.params.contentType + ' packages.');
-            console.log(e);
-        }
-    });
+        });
 
     router.get('/data/isServiceCenter', function(req, res) {
         station.getIsServiceCenter(function(data) {
@@ -173,7 +190,7 @@ module.exports = function(io, data) {
     router.get('/data/package/:sku', function(req, res) {
         station.getPackage(req.params.sku, function(data) {
             res.json(data);
-        })
+        });
     });
     router.get('/data/getConnectionState', function(req, res) {
         res.json(station.getConnectionState());
@@ -186,37 +203,43 @@ module.exports = function(io, data) {
         console.log(event.name + ' event has been reported.');
         console.log(event.data);
 
-        if (event.name === "connection-status") {
+        if (event.name === 'connection-status') {
             var connectionState = event.data;
             station.setConnectionState(connectionState);
             if (connectionState.isOnline) {
                 inventory.resendSessions(event.data);
             }
             io.emit(event.name, event.data);
-        } else if (event.name === "device-add"){
-            controller.isRefreshUsb(event.data.id, function(err, isInitialized) {
-                if (err) {
-                    console.error(err);
-                } else {
-                    if (isInitialized) {
-                        controller.prepareUsb(io, {usb: event.data, item: null});
+        } else if (event.name === 'device-add') {
+            controller.isRefreshUsb(event.data.id,
+                function(err, isInitialized) {
+                    if (err) {
+                        console.error(err);
                     } else {
-                        usbDrives.set(event.data.id, {id: event.data.id, status:'not_ready', progress: 0});
-                        console.log(usbDrives.getAllUsbDrives());
-                        io.emit(event.name, event.data);
+                        if (isInitialized) {
+                            controller.prepareUsb(io,
+                                {usb: event.data, item: null});
+                        } else {
+                            usbDrives.set(event.data.id, {
+                                id: event.data.id,
+                                status: 'not_ready',
+                                progress: 0
+                            });
+                            console.log(usbDrives.getAllUsbDrives());
+                            io.emit(event.name, event.data);
+                        }
                     }
-                }
-            })
-        } else if (event.name === "device-remove"){
+                });
+        } else if (event.name === 'device-remove') {
             usbDrives.delete(event.data.id);
             console.log(usbDrives.getAllUsbDrives());
             io.emit(event.name, event.data);
         }
-        else if (event.name === "usb-complete"){
+        else if (event.name === 'usb-complete') {
             usbDrives.finishProgress(event.data.id);
             console.log(usbDrives.getAllUsbDrives());
             io.emit(event.name, event.data);
-        } else if (event.name === "usb-progress"){
+        } else if (event.name === 'usb-progress') {
             usbDrives.updateProgress(event.data.progress, event.data.id);
             console.log(usbDrives.getAllUsbDrives());
             io.emit(event.name, event.data);
@@ -225,10 +248,8 @@ module.exports = function(io, data) {
             io.emit(event.name, event.data);
         }
 
-
         res.json();
     });
-
 
     router.post('/system/reboot', function(req, res) {
         console.log('Rebooting...');
@@ -241,7 +262,7 @@ module.exports = function(io, data) {
     });
 
     router.post('/prepareUsb', function(req, res) {
-       //console.log(req.body);
+        //console.log(req.body);
         controller.prepareUsb(io, req.body);
         res.status(200).send();
     });
@@ -258,7 +279,7 @@ module.exports = function(io, data) {
 
     router.post('/getSessionsByParams', function(req, res) {
         console.log(req.body);
-        sessions.getSessionsByParams(req.body).then(function(response){
+        sessions.getSessionsByParams(req.body).then(function(response) {
             res.json(response);
         });
     });

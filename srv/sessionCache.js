@@ -14,13 +14,14 @@ SessionCache.prototype.getFiltered = function(filter) {
     var filteredSessions = {};
     //console.log(this._sessions);
     for (var key in this._sessions) {
-        if (filter.device_type && filter.device_type === this._sessions[key].device.type) {
+        if (filter.device_type &&
+            filter.device_type === this._sessions[key].device.type) {
             filteredSessions[key] = this._sessions[key];
         }
     }
     return filteredSessions;
 };
-SessionCache.prototype.getAllSessions = function(){
+SessionCache.prototype.getAllSessions = function() {
     return this._sessions;
 };
 SessionCache.prototype.get = function(key) {
@@ -31,12 +32,15 @@ SessionCache.prototype.delete = function(key) {
     delete this._sessions[key];
 };
 SessionCache.prototype.checkSessionInProgress = function(item) {
-    console.log('Checking if there is session in progress for device ' + item.InventoryNumber);
+    console.log('Checking if there is session in progress for device ' +
+        item.InventoryNumber);
     for (var key in this._sessions) {
         if (this._sessions.hasOwnProperty(key)) {
             if (this._sessions[key].status === 'Incomplete') {
-                if (this._sessions[key].device.item_number === item.InventoryNumber) {
-                    console.log('Found incomplete session for item:' + item.InventoryNumber);
+                if (this._sessions[key].device.item_number ===
+                    item.InventoryNumber) {
+                    console.log('Found incomplete session for item:' +
+                        item.InventoryNumber);
                     return {'started': true, 'session_id': key};
                 }
             }
@@ -45,14 +49,16 @@ SessionCache.prototype.checkSessionInProgress = function(item) {
     return {'started': false};
 };
 SessionCache.prototype.getSessionByStartDate = function(startTime) {
-    console.log('Checking if there is session with such starting date: ' + startTime);
+    console.log('Checking if there is session with such starting date: ' +
+        startTime);
     for (var key in this._sessions) {
         if (this._sessions.hasOwnProperty(key)) {
             if (this._sessions[key].start_time.toISOString() === startTime) {
                 console.log('Found session with start date:' + startTime);
                 return {'has_session': true, 'session_id': key};
             } else {
-                console.log('Did not found session with start date:' + startTime);
+                console.log('Did not found session with start date:' +
+                    startTime);
             }
         }
 
@@ -60,7 +66,8 @@ SessionCache.prototype.getSessionByStartDate = function(startTime) {
     return {'has_session': false};
 };
 SessionCache.prototype.getSessionInProgressByDevice = function(item) {
-    console.log('Checking if there is session in progress for device ' + item.adbSerial);
+    console.log('Checking if there is session in progress for device ' +
+        item.adbSerial);
     for (var key in this._sessions) {
         if (this._sessions.hasOwnProperty(key)) {
             if (this._sessions[key].status === 'Incomplete') {
@@ -68,7 +75,8 @@ SessionCache.prototype.getSessionInProgressByDevice = function(item) {
                     console.log('Session found for serial:' + item.adbSerial);
                     return {'started': true, 'session_id': key};
                 } else {
-                    console.log('Session not found for serial:' + item.adbSerial);
+                    console.log('Session not found for serial:' +
+                        item.adbSerial);
                 }
             }
         }

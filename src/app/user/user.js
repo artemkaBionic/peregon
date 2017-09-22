@@ -366,6 +366,7 @@
                         if (res._id && session.status === 'Incomplete') {
                             var $stateParams = {};
                             $stateParams.itemNumber = session.device.item_number;
+                            $stateParams.sessionId = res._id;
                             vm.item = null;
                             vm.searchString = '';
                             $state.go('root.user.guide', $stateParams);
@@ -399,7 +400,7 @@
         // jscs: enable
         vm.unlockForService = function() {
             if (vm.item) {
-                inventoryService.unlockForService(vm.item.Serial).then(function(data) {
+                inventoryService.unlock(vm.item.Serial, true).then(function(data) {
                     if (data.error) {
                         toastr.error('Failed to unlock device. Please try again. If the problem continues, contact support.', 'Device NOT Unlocked', {
                             'tapToDismiss': true,

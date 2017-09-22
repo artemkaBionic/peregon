@@ -1,13 +1,26 @@
 (function() {
     'use strict';
 
-    angular
-        .module('app.user')
-        .controller('GuideControllerAndroid', GuideControllerAndroid);
+    angular.module('app.user').
+        controller('GuideControllerAndroid', GuideControllerAndroid);
 
-    GuideControllerAndroid.$inject = ['$q', '$scope', 'config', 'socketService', '$state', 'popupLauncher', 'toastr', '$timeout', 'inventoryService', 'item', 'eventService'];
+    GuideControllerAndroid.$inject = [
+        '$stateParams',
+        '$q',
+        '$scope',
+        'config',
+        'socketService',
+        '$state',
+        'popupLauncher',
+        'toastr',
+        '$timeout',
+        'inventoryService',
+        'item',
+        'eventService'];
 
-    function GuideControllerAndroid($q, $scope, config, socketService, $state, popupLauncher, toastr, $timeout, inventoryService, item, eventService) {
+    function GuideControllerAndroid(
+        $stateParams, $q, $scope, config, socketService, $state, popupLauncher, toastr,
+        $timeout, inventoryService, item, eventService, sessionId) {
 
         /*jshint validthis: true */
         var vm = this;
@@ -47,32 +60,45 @@
             vm.autoPassed = 0;
             vm.manualPassed = 0;
             vm.failedTests = [];
-            vm.sessionId = '';
+            vm.sessionId = $stateParams.sessionId;
             vm.step = vm.steps.startOne; //!!! Definition for first Guide Step
-            vm.sessionDate =  new Date().toISOString();
             if (eventService.InternetConnection) {
                 toastr.clear(eventService.connectionNotification);
             }
-            unlockDevice(vm.item.InventoryNumber);
+            if (vm.sessionId === null) {
+                inventoryService.getSessionByParams({
+                    'device.item_number': vm.item.InventoryNumber,
+                    'status': 'Incomplete'
+                }).then(function(session) {
+                    updateSession(session);
+                });
+            } else {
+                inventoryService.getSessionByParams({'_id': vm.sessionId}).
+                    then(function(session) {
+                        updateSession(session);
+                    });
+            }
+            unlockDevice();
         };
 
         function unlockDevice() {
             if (vm.item) {
-                inventoryService.unlock(vm.item.InventoryNumber).then(function(data) {
-                    if (!data.error) {
-                        vm.deviceLockService = data.result.service;
-                        vm.deviceLockServiceUnlocked = true;
-                        if (vm.step === vm.steps.waitForUnlock) {
-                            vm.step = vm.steps.preparationOne;
+                inventoryService.unlock(vm.item.Serial, false).
+                    then(function(data) {
+                        if (!data.error) {
+                            vm.deviceLockService = data.result.service;
+                            vm.deviceLockServiceUnlocked = true;
+                            if (vm.step === vm.steps.waitForUnlock) {
+                                vm.step = vm.steps.preparationOne;
+                            }
                         }
-                    }
-                });
+                    });
             }
         }
 
         function lockDevice() {
             if (vm.item) {
-                inventoryService.lock(vm.item.InventoryNumber);
+                inventoryService.lock(vm.item.Serial);
             }
         }
 
@@ -169,50 +195,44 @@
                 title: 'Enable USB Debugging'
             }
         };
-        /*================= End Modal Tips Steps definition===============*/
-        checkSession();
-        // jscs:disable
-        function checkSession() {
-            inventoryService.checkSession(item)
-                .then(function(res) {
-                    if (res.session_id) {
-                        vm.sessionId = res.session_id;
-                        inventoryService.getSession(res.session_id)
-                            .then(function(reponse){
-                                if (reponse.currentStep === 'Auto passed') {
-                                    vm.step = vm.steps.diagnosticOne;
-                                } else if(reponse.currentStep === 'Manual Testing') {
-                                    vm.step = vm.steps.diagnosticTwo;
-                                } else if(reponse.currentStep === 'Session Failed') {
-                                    vm.step = vm.steps.finishFail;
-                                    vm.failedTests =  response.failedTests;
-                                }
-                                vm.manualPassed = reponse.device.passed_manual;
-                                vm.manualSize = reponse.device.number_of_manual;
-                                vm.autoSize = reponse.device.number_of_auto;
-                                vm.autoPassed = reponse.device.passed_auto;
-                            })
-                    }
-                });
-        }
 
+        /*================= End Modal Tips Steps definition===============*/
+        function updateSession(session) {
+            // jscs:disable
+            if (session) {
+                if (vm.sessionId === null) {
+                    vm.sessionId = session._id;
+                }
+                if (session.currentStep === 'Auto passed') {
+                    vm.step = vm.steps.diagnosticOne;
+                } else if (session.currentStep === 'Manual Testing') {
+                    vm.step = vm.steps.diagnosticTwo;
+                } else if (session.currentStep === 'Session Failed') {
+                    vm.step = vm.steps.finishFail;
+                    vm.failedTests = session.failedTests;
+                }
+                vm.manualPassed = session.device.passed_manual;
+                vm.manualSize = session.device.number_of_manual;
+                vm.autoSize = session.device.number_of_auto;
+                vm.autoPassed = session.device.passed_auto;
+            }
+            // jscs: enable
+        }
 
         socketService.on('android-session-expired', function(data) {
             if ($state.current.name === 'root.user.guide') {
-                inventoryService.checkSession(item)
-                    .then(function (res) {
-                        if (res.session_id === data.sessionId) {
-                            vm.sessionExpired();
-                            toastr.warning('Session expired for device:' + data.device, {
-                                'tapToDismiss': true,
-                                'timeOut': 3000,
-                                'closeButton': true
-                            });
-                        }
-                    });
+                if (vm.sessionId === data.sessionId) {
+                    vm.sessionExpired();
+                    toastr.warning('Session expired for device:' + data.device,
+                        {
+                            'tapToDismiss': true,
+                            'timeOut': 3000,
+                            'closeButton': true
+                        });
+                }
             }
         });
-        // jscs: enable
+
         vm.openModal = function(modalSize) {
             popupLauncher.openModal({
                 templateUrl: 'app/user/guide/Android/Guide-modal.html',
@@ -291,9 +311,14 @@
             eventService.AndroidGuideInProcess = false;
             vm.androidFinished = true;
             if (vm.Broken) {
-                inventoryService.startAndroidSession(vm.sessionDate, item)
-                    .then(inventoryService.updateSession(vm.sessionDate, 'Info', 'Device is broken'))
-                        .then(inventoryService.finishSession(vm.sessionDate, {'complete': false}));
+                if (vm.sessionId === null) {
+                    vm.sessionId = new Date().toISOString();
+                }
+                inventoryService.startAndroidSession(vm.sessionId, item).
+                    then(inventoryService.updateSession(vm.sessionId, 'Info',
+                        'Device is broken')).
+                    then(inventoryService.finishSession(vm.sessionId,
+                        {'complete': false}));
                 vm.finishFail();
             } else if (vm.TestsFault || vm.AndroidDisconnected) {
                 vm.finishFail();
@@ -383,6 +408,7 @@
         };
 
         /*============================End Preparation====================*/
+
         /*=================Diagnostics=================*/
 
         function actionManual() {
@@ -406,6 +432,7 @@
         }
 
         /*=================End Diagnostics=================*/
+
         /*=================Diagnostics Orbicular Progress Bar Definition=================*/
 
         function progressAuto() {
@@ -430,89 +457,93 @@
         /*=================USB Connect end Events===============*/
         waitForAndroidAdd();//Event listener
         function waitForAndroidAdd() {
-                socketService.on('android-add', function() {
-                    if ($state.current.name === 'root.user.guide') {
-                        //inventoryService.updateSession(vm.item.InventoryNumber, 'Info', 'Android device connected.');
-                        vm.AndroidDisconnected = false;
-                        toastr.clear(vm.AndroidNotification);
-                        vm.AndroidNotification = toastr.info('Follow the instructions on the Android Device', 'Android Device Connected', {
+            socketService.on('android-add', function() {
+                if ($state.current.name === 'root.user.guide') {
+                    //inventoryService.updateSession(vm.item.InventoryNumber, 'Info', 'Android device connected.');
+                    vm.AndroidDisconnected = false;
+                    toastr.clear(vm.AndroidNotification);
+                    vm.AndroidNotification = toastr.info(
+                        'Follow the instructions on the Android Device',
+                        'Android Device Connected', {
                             'tapToDismiss': true,
                             'timeOut': 3000,
                             'closeButton': true
                         });//Toast Pop-Up notification parameters
-                        if (vm.androidFinished) {
-                            return;
-                        } else {
-                            waitForAppStart();
-                        }
+                    if (vm.androidFinished) {
+                        return;
+                    } else {
+                        waitForAppStart();
                     }
-                });
-                socketService.on('android-remove', function() {
-                    if ($state.current.name === 'root.user.guide') {
-                        toastr.clear(vm.AndroidNotification);
-                        if (vm.androidFinished) {
-                            vm.AndroidNotification = toastr.info('Refresh completed', 'Android Device has been Disconnected', {
+                }
+            });
+            socketService.on('android-remove', function() {
+                if ($state.current.name === 'root.user.guide') {
+                    toastr.clear(vm.AndroidNotification);
+                    if (vm.androidFinished) {
+                        vm.AndroidNotification = toastr.info(
+                            'Refresh completed',
+                            'Android Device has been Disconnected', {
                                 'tapToDismiss': true,
                                 'timeOut': 3000,
                                 'closeButton': true
                             });//Toast Pop-Up notification parameters
-                        } else {
-                            vm.AndroidDisconnected = true;
-                            vm.AndroidConnectionDoubleCheck();
+                    } else {
+                        vm.AndroidDisconnected = true;
+                        vm.AndroidConnectionDoubleCheck();
+                    }
+                }
+            });
+
+            socketService.on('app-start', function(data) {
+                if ($state.current.name === 'root.user.guide') {
+                    if (data.sessionId === vm.sessionId) {
+                        vm.autoSize = data.data.auto;//Get number of Auto tests
+                        vm.manualSize = data.data.manual;//Get number of Manual tests
+                        vm.refreshAppStarted = true;
+                        if (vm.step === vm.steps.waitForAppStart) {
+                            vm.diagnosticOne();
                         }
                     }
-                });
+                }
+            });
 
-                socketService.on('app-start', function(data) {
-                    if ($state.current.name === 'root.user.guide') {
-                        if (data.sessionId === vm.sessionId) {
-                            vm.autoSize = data.data.auto;//Get number of Auto tests
-                            vm.manualSize = data.data.manual;//Get number of Manual tests
-                            vm.refreshAppStarted = true;
-                            if (vm.step === vm.steps.waitForAppStart) {
-                                vm.diagnosticOne();
-                            }
-                        }
-                    }
-                });
-
-                socketService.on('android-test', function(data) {
-                    if ($state.current.name === 'root.user.guide') {
-                        if (data.sessionId === vm.sessionId) {
-                            if (data.passed === false) {
-                                vm.TestsFault = true;//If one of the Auto tests Fails
-                            }
-
-                            if (data.type === 1) {
-                                if (vm.step !== vm.steps.diagnosticOne) {
-                                    vm.diagnosticOne();//Starting Auto diagnostic from the beginning
-                                } // Phone can be connected even on the first Step, if lazy associate
-                                progressAuto();
-                            }
-                            if (data.type === 0) {
-                                if (vm.step !== vm.steps.diagnosticTwo) {
-                                    vm.diagnosticTwo();//Starting Manual diagnostic from the beginning
-                                }
-                                progressManual();
-                            }
+            socketService.on('android-test', function(data) {
+                if ($state.current.name === 'root.user.guide') {
+                    if (data.sessionId === vm.sessionId) {
+                        if (data.passed === false) {
+                            vm.TestsFault = true;//If one of the Auto tests Fails
                         }
 
-                    }
-                });
-
-                socketService.on('android-reset', function(data) {
-                    if ($state.current.name === 'root.user.guide') {
-                        if (data.sessionId === vm.sessionId) {
-                            // jscs:disable
-                            vm.failedTests = data.failed_tests;
-                            if (vm.failedTests.length > 0) {
-                                vm.TestsFault = true;
+                        if (data.type === 1) {
+                            if (vm.step !== vm.steps.diagnosticOne) {
+                                vm.diagnosticOne();//Starting Auto diagnostic from the beginning
+                            } // Phone can be connected even on the first Step, if lazy associate
+                            progressAuto();
+                        }
+                        if (data.type === 0) {
+                            if (vm.step !== vm.steps.diagnosticTwo) {
+                                vm.diagnosticTwo();//Starting Manual diagnostic from the beginning
                             }
-                            // jscs:enable
-                            vm.finish();
+                            progressManual();
                         }
                     }
-                });
+
+                }
+            });
+
+            socketService.on('android-reset', function(data) {
+                if ($state.current.name === 'root.user.guide') {
+                    if (data.sessionId === vm.sessionId) {
+                        // jscs:disable
+                        vm.failedTests = data.failed_tests;
+                        if (vm.failedTests.length > 0) {
+                            vm.TestsFault = true;
+                        }
+                        // jscs:enable
+                        vm.finish();
+                    }
+                }
+            });
         }
 
         /*=================End USB Connect end Events===============*/
