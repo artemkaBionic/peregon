@@ -54,11 +54,7 @@ module.exports = function(io, data) {
     router.get('/data/inventory/sessions', function(req, res) {
         res.json(inventory.getSessions(req.body));
     });
-    router.get('/data/getAllSessions', function(req, res) {
-        sessions.getSessionsByParams({}).then(function(response) {
-            res.json(response);
-        });
-    });
+
     router.get('/getAllUsbDrives', function(req, res) {
         res.json(inventory.getAllUsbDrives());
     });
@@ -92,18 +88,7 @@ module.exports = function(io, data) {
             });
     });
 
-    router.post('/data/inventory/sessions/:id/updateSessionItem',
-        function(req, res) {
-            // console.log(req);
-            inventory.sessionUpdateItem(req.params.id, req.body).
-                then(function(result) {
-                    res.json({sessionUpdated: result});
-                }).
-                catch(function(err) {
-                    console.log('Something went wrong while updating session item for serial:' +
-                        req.params.id);
-                });
-        });
+
 
     router.post('/data/inventory/sessions/:id/finish', function(req, res) {
         inventory.sessionFinish(req.params.id, req.body.details,
@@ -276,9 +261,15 @@ module.exports = function(io, data) {
             }
         });
     });
+    router.get('/data/getAllSessions', function(req, res) {
+        sessions.getSessionsByParams({}).then(function(response) {
+            res.json(response);
+        }).catch(function(err) {
+            console.log(err);
+        });
+    });
 
     router.post('/getSessionsByParams', function(req, res) {
-        console.log(req.body);
         sessions.getSessionsByParams(req.body).then(function(response) {
             res.json(response);
         });
@@ -288,7 +279,19 @@ module.exports = function(io, data) {
         sessions.getSessionByParams(req.body).then(function(session) {
             res.json(session);
         });
-
     });
+
+    router.post('/data/inventory/sessions/:id/updateSessionItem',
+        function(req, res) {
+
+            sessions.sessionUpdateItem(req.params.id, req.body).
+            then(function(result) {
+                inventory.resendSessions();
+                res.json({sessionUpdated: result});
+            }).
+            catch(function(err) {
+                console.log('Something went wrong while updating session item for serial:' + req.params.id);
+            });
+        });
     return router;
 };

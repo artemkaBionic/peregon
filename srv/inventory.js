@@ -27,27 +27,22 @@ Promise.config({
 });
 //exports.getSessions = getSessions;
 //exports.getSession = getSession;
+exports.getSerialLookup = getSerialLookup;
 exports.sessionStart = sessionStart;
+exports.getItem = getItem;
 exports.sessionUpdate = sessionUpdate;
 exports.sessionFinish = sessionFinish;
 exports.resendSessions = resendSessions;
-exports.getItem = getItem;
 exports.lockDevice = lockDevice;
 exports.unlockDevice = unlockDevice;
-exports.getSerialLookup = getSerialLookup;
-//exports.getAllSessions = getAllSessions;
-// exports.checkSessionInProgress = checkSessionInProgress;
-// exports.checkSessionByStartDate = checkSessionByStartDate;
 exports.sessionUpdateItem = sessionUpdateItem;
-// exports.getAllSessionsByDevice = getAllSessionsByDevice;
-// exports.getSessionInProgressByDevice = getSessionInProgressByDevice;
 exports.getAllUsbDrives = getAllUsbDrives;
 exports.getLowestUsbProgress = getLowestUsbProgress;
-// Periodically resend unsent sessions
-// resendSessions();
-// setInterval(function() {
-//     resendSessions();
-// }, RESEND_SESSIONS_INTERVAL);
+//Periodically resend unsent sessions
+resendSessions();
+setInterval(function() {
+    resendSessions();
+}, RESEND_SESSIONS_INTERVAL);
 
 // Reverse lookup to Azure in case if not found in our Mongo DB
 function getItemFromAzure(id, callback) {
@@ -120,7 +115,7 @@ function getSerialLookup(imei, callback) {
         }
     });
 }
-
+//
 // // function getSessions(filter) {
 // //     return sessions.getFiltered(filter);
 // // }
@@ -144,10 +139,9 @@ function sessionStart(sessionId, device, callback) {
     var diagnose_only = false;
     var session_device = changeDeviceFormat(device);
     var station_name = station.getName();
-    var start_time = sessionId;
     station.getServiceTag(function(station_service_tag) {
         var newSession = {
-            'start_time': start_time,
+            'start_time': new Date(),
             'end_time': null,
             'status': 'Incomplete',
             'diagnose_only': diagnose_only,
@@ -259,74 +253,74 @@ function sessionUpdateItem(serial, device) {
 
 }
 
-function sessionFinish(session, data, callback) {
+function sessionFinish(sessionId, data, callback) {
     //var session = sessions.get(sessionId);
-    //sessions.findSessionByParams({'_id':sessionId}).then(function(session) {
-    console.log('A client requested to finish an ' + session.device.type +
-        ' refresh of session id ' + session._id);
-    if (session.device.type === 'XboxOne') {
-        if (isDevelopment) {
-            logSession(session, 'Info', 'Checking ' + data.device.id +
-                ' for evidence that the refresh completed successfully.');
-            logSession(session, 'Info',
-                'Simulating verifying a refresh in a development environment by waiting 3 seconds.');
-            console.log(
-                'Simulating verifying a refresh in a development environment by waiting 3 seconds.');
-            setTimeout(function() {
-                closeSession(session, true, callback);
-            }, 3000);
+    sessions.getSessionByParams({'_id':sessionId}).then(function(session) {
+        console.log('A client requested to finish an ' + session.device.type +
+            ' refresh of session id ' + session._id);
+        if (session.device.type === 'XboxOne') {
+            if (isDevelopment) {
+                logSession(session, 'Info', 'Checking ' + data.device.id +
+                    ' for evidence that the refresh completed successfully.');
+                logSession(session, 'Info',
+                    'Simulating verifying a refresh in a development environment by waiting 3 seconds.');
+                console.log(
+                    'Simulating verifying a refresh in a development environment by waiting 3 seconds.');
+                setTimeout(function() {
+                    closeSession(session, true, callback);
+                }, 3000);
+            } else {
+                logSession(session, 'Info', 'Checking ' + data.device.id +
+                    ' for evidence that the refresh completed successfully.');
+                var mountSource = '/dev/' + data.device.id + '1';
+                var mountTarget = '/mnt/' + data.device.id + '1';
+                fs.mkdir(mountTarget, function(err) {
+                    if (err && err.code !== 'EEXIST') {
+                        logSession(session, 'Error', 'Error creating directory ' +
+                            mountTarget, err);
+                    } else {
+                        logSession(session, 'Info', 'Attempting to mount ' +
+                            mountSource + ' to ' + mountTarget);
+                        var mount = childProcess.spawn('mount',
+                            [mountSource, mountTarget]);
+                        mount.on('close', function(code) {
+                            var systemUpdateDir = path.join(mountTarget,
+                                '$SystemUpdate');
+                            if (code !== 0) {
+                                logSession(session,
+                                    'Error', 'Error, failed to mount ' +
+                                    mountSource + ' to ' +
+                                    mountTarget, 'Mount command failed with error code ' +
+                                    code);
+                            } else {
+                                logSession(session,
+                                    'Info', 'Successfully mounted ' + mountSource +
+                                    ' to ' + mountTarget);
+                                var success = filesExist(systemUpdateDir, [
+                                    'smcerr.log',
+                                    'update.cfg',
+                                    'update.log',
+                                    'update2.cfg']);
+                                rimraf(path.join(mountTarget, '*'), function(err) {
+                                    childProcess.spawn('umount', [mountTarget]);
+                                    closeSession(session, success, callback);
+                                });
+                            }
+                        });
+                    }
+                });
+            }
         } else {
-            logSession(session, 'Info', 'Checking ' + data.device.id +
-                ' for evidence that the refresh completed successfully.');
-            var mountSource = '/dev/' + data.device.id + '1';
-            var mountTarget = '/mnt/' + data.device.id + '1';
-            fs.mkdir(mountTarget, function(err) {
-                if (err && err.code !== 'EEXIST') {
-                    logSession(session, 'Error', 'Error creating directory ' +
-                        mountTarget, err);
-                } else {
-                    logSession(session, 'Info', 'Attempting to mount ' +
-                        mountSource + ' to ' + mountTarget);
-                    var mount = childProcess.spawn('mount',
-                        [mountSource, mountTarget]);
-                    mount.on('close', function(code) {
-                        var systemUpdateDir = path.join(mountTarget,
-                            '$SystemUpdate');
-                        if (code !== 0) {
-                            logSession(session,
-                                'Error', 'Error, failed to mount ' +
-                                mountSource + ' to ' +
-                                mountTarget, 'Mount command failed with error code ' +
-                                code);
-                        } else {
-                            logSession(session,
-                                'Info', 'Successfully mounted ' + mountSource +
-                                ' to ' + mountTarget);
-                            var success = filesExist(systemUpdateDir, [
-                                'smcerr.log',
-                                'update.cfg',
-                                'update.log',
-                                'update2.cfg']);
-                            rimraf(path.join(mountTarget, '*'), function(err) {
-                                childProcess.spawn('umount', [mountTarget]);
-                                closeSession(session, success, callback);
-                            });
-                        }
-                    });
-                }
-            });
+            closeSession(session, data.complete, callback);
         }
-    } else {
-        closeSession(session, data.complete, callback);
-    }
-    //});
+    }).catch(function(err){
+        console.log('Session with:' + sessionId + ' was not found in Tingo');
+    });
 
 }
 
 function logSession(session, level, message, details) {
-    sessions.checkSessionByStartDate(session.start_time).then(function(res) {
-        var sessionId = res._id;
-        console.log(sessionId);
+        var sessionId = session._id;
         if (typeof details === 'undefined')
             details = '';
 
@@ -337,9 +331,8 @@ function logSession(session, level, message, details) {
             'details': details
         };
         sessions.pushLogs(sessionId, logEntry);
-    });
 }
-
+//
 function closeSession(session, success, callback) {
     console.log('Closing session');
     session.end_time = new Date();
@@ -353,7 +346,7 @@ function closeSession(session, success, callback) {
         sessions.updateSession(session);
     }
     callback(success);
-    //sendSession(session);
+    sendSession(session);
 }
 
 function timeoutExpired(startTime) {
@@ -383,39 +376,38 @@ function lockDeviceAndSendSession(content, file) {
 }
 
 function sendSession(session) {
-    // // deleting extra keys which added for client to continue session
-    // delete session.device.number_of_auto;
-    // delete session.device.number_of_manual;
-    // //delete session.device.adb_serial;
-    // delete session.device.passed_auto;
-    // delete session.device.passed_manual;
-    // delete session.currentStep;
-    // delete session.failed_tests;
-    // var sessionID = session._id;
-    // if (session.device.item_number ){
-    //     console.log('Sending session with this ID:' + sessionID + ' for device: ' + session.device.item_number);
-    //     return request({
-    //         method: 'POST',
-    //         url: API_URL + '/session',
-    //         headers: {
-    //             'Authorization': config.api2Authorization
-    //         },
-    //         body: session,
-    //         rejectUnauthorized: false,
-    //         json: true
-    //     }).then(function(body) {
-    //         // Delete the file if it was successfully sent
-    //         session.is_sent = true;
-    //         sessions.updateSession(session);
-    //         console.log('Session with this this ID:' + sessionID + ' was sent.' );
-    //        // fs.unlinkSync(file);
-    //     }).catch(function(error) {
-    //         console.log('ERROR: Unable to send session.');
-    //         console.log(error);
-    //     });
-    // } else {
-    //     console.log('Session with this ID not sent:' + sessionID)
-    // }
+    // deleting extra keys which added for client to continue session
+    var sessionID = session._id;
+    if (session.device.item_number ){
+        delete session.device.number_of_auto;
+        delete session.device.number_of_manual;
+        delete session.device.adb_serial;
+        delete session.device.passed_auto;
+        delete session.device.passed_manual;
+        delete session.currentStep;
+        delete session.failed_tests;
+        console.log('Sending session with this ID:' + sessionID + ' for device: ' + session.device.item_number);
+        return request({
+            method: 'POST',
+            url: API_URL + '/session',
+            headers: {
+                'Authorization': config.api2Authorization
+            },
+            body: session,
+            rejectUnauthorized: false,
+            json: true
+        }).then(function(body) {
+            // update status is sent
+            session.is_sent = true;
+            sessions.updateSession(session);
+            console.log('Session with this this ID:' + sessionID + ' was sent.' );
+        }).catch(function(error) {
+            console.log('ERROR: Unable to send session.');
+            console.log(error);
+        });
+    } else {
+        console.log('Session with this ID not sent:' + sessionID)
+    }
 }
 
 function resendSessions() {

@@ -357,12 +357,12 @@
         vm.showGuideForCards = function(session) {
             var item = {'InventoryNumber': session.device.item_number,
                 'start_time': session.start_time,
-                'serial':session.device.serial_number
+                'serial':session.device.serial_number,
+                'id':session._id
             };
             if(session.device.item_number) {
-                inventoryService.getSessionByParams({'start_time':item.start_time})
+                inventoryService.getSessionByParams({'_id':session._id})
                     .then(function(res) {
-                        console.log(res);
                         if (res._id && session.status === 'Incomplete') {
                             var $stateParams = {};
                             $stateParams.itemNumber = session.device.item_number;
@@ -391,7 +391,7 @@
                         }
                     });
             } else {
-                inventoryService.getSessionByParams({'start_time':item.start_time})
+                inventoryService.getSessionByParams({'_id':session._id})
                     .then(function (res) {
                         openHelpModal('sm-to-xs', 'Unrecognized Device', res._id, session);
                     });

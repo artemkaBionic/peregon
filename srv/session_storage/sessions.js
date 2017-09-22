@@ -6,11 +6,12 @@ var Promise = require('bluebird');
 Promise.config({
     warnings: false
 });
-exports.getSessionsByParams = getSessionsByParams;
+
 exports.set = set;
-exports.pushLogs = pushLogs;
-exports.updateSession = updateSession;
+exports.getSessionsByParams = getSessionsByParams;
 exports.getSessionByParams = getSessionByParams;
+exports.updateSession = updateSession;
+exports.pushLogs = pushLogs;
 exports.sessionUpdateItem = sessionUpdateItem;
 function set(sessionId, session){
     console.log('Adding session with id:' + sessionId + ' to Tingo session storage');
@@ -20,7 +21,6 @@ function set(sessionId, session){
 }
 
 function getSessionsByParams(params){
-    console.log(params);
     return new Promise(function(resolve, reject) {
         sessions.find(params).toArray(function(err, result) {
             if (err) {
@@ -33,7 +33,7 @@ function getSessionsByParams(params){
 }
 
 function getSessionByParams(params) {
-    console.log('Finding session by params');
+    //console.log('Finding session by params');
     return new Promise(function(resolve, reject) {
         sessions.findOne(params, function(err, session) {
             if (err) {
@@ -46,6 +46,17 @@ function getSessionByParams(params) {
         })
     });
 }
+
+function updateSession(session) {
+    console.log('Updating in Tingo this session:' + session._id);
+    sessions.update({_id: session._id}, session, {upsert: true, setDefaultsOnInsert: true},
+        function (err) {
+            if (err) {
+                console.log('Can not update session' + session._id + 'in tingo because of' + err);
+            }
+        });
+}
+
 function pushLogs(sessionId, log){
     console.log('Pushing logs for session id:' + sessionId);
     sessions.update(
@@ -57,15 +68,7 @@ function pushLogs(sessionId, log){
         }
     )
 }
-function updateSession(session) {
-    console.log('Updating in Tingo this session:' + session._id);
-    sessions.update({_id: session._id}, session, {upsert: true, setDefaultsOnInsert: true},
-        function (err) {
-            if (err) {
-                console.log('Can not update session' + session._id + 'in tingo because of' + err);
-            }
-        });
-}
+
 function sessionUpdateItem(serialNumber, item) {
     console.log('Updating all sessons in Tingo with this serial:' + serialNumber);
     return new Promise(function(resolve, reject) {

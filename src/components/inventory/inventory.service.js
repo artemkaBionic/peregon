@@ -134,8 +134,7 @@
         };
 
         service.updateSessionItem = function(serial, item) {
-            var url = '/data/inventory/sessions/' + serial +
-                '/updateSessionItem';
+            var url = '/data/inventory/sessions/' + serial + '/updateSessionItem';
             var deferred = $q.defer();
 
             $http.post(url, item).then(function(result) {

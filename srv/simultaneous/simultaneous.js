@@ -37,13 +37,10 @@ function deviceBridge(io) {
         tracker.on('remove', function(device) {
             console.log('Device %s was unplugged', device.id);
             var index = devices.indexOf(device.id);
-            sessions2.getSessionsByParams(
+            sessions2.getSessionByParams(
                 {'device.adb_serial': device.id, 'status': 'Incomplete'}).
-                then(function(sessions) {
-                    for (var i = 0; i < sessions.length; i++) {
-                        console.log(sessions[i]);
-                        finishSession(sessions[i], {'complete': false});
-                    }
+                then(function(session) {
+                    finishSession(session._id, {'complete': false});
                 }).
                 catch(function(err) {
                     console.log('Something went wrong while disconnecting device' +
