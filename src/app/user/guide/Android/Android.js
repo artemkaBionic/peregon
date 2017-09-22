@@ -195,7 +195,26 @@
                 title: 'Enable USB Debugging'
             }
         };
-
+        checkSession();
+        // jscs:disable
+        function checkSession() {
+            inventoryService.getSessionByParams({'device.item_number':item.InventoryNumber, 'status':'Incomplete'})
+                .then(function(session) {
+                    console.log(session);
+                     if (session.currentStep === 'Auto passed') {
+                         vm.step = vm.steps.diagnosticOne;
+                     } else if(session.currentStep === 'Manual Testing') {
+                         vm.step = vm.steps.diagnosticTwo;
+                     } else if(session.currentStep === 'Session Failed') {
+                         vm.step = vm.steps.finishFail;
+                         vm.failedTests =  response.failedTests;
+                     }
+                     vm.manualPassed = session.device.passed_manual;
+                     vm.manualSize = session.device.number_of_manual;
+                     vm.autoSize = session.device.number_of_auto;
+                     vm.autoPassed = session.device.passed_auto;
+                });
+        }
         /*================= End Modal Tips Steps definition===============*/
         function updateSession(session) {
             // jscs:disable
@@ -211,10 +230,10 @@
                     vm.step = vm.steps.finishFail;
                     vm.failedTests = session.failedTests;
                 }
-                vm.manualPassed = session.device.passed_manual;
+                vm.manualPassed = session.device.passed_manual ? session.device.passed_manual: 0;
                 vm.manualSize = session.device.number_of_manual;
                 vm.autoSize = session.device.number_of_auto;
-                vm.autoPassed = session.device.passed_auto;
+                vm.autoPassed = session.device.passed_auto ? session.device.passed_auto: 0;
             }
             // jscs: enable
         }
@@ -436,9 +455,11 @@
         /*=================Diagnostics Orbicular Progress Bar Definition=================*/
 
         function progressAuto() {
+            console.log('call progress auto');
             vm.manualPassed = 0;// Reset The amount of passed steps
             if (vm.step === vm.steps.diagnosticOne) {
                 vm.autoPassed += 1;
+                console.log(vm.autoPassed);
                 if (vm.autoPassed === vm.autoSize) {
                     timeouts.push($timeout(vm.diagnosticTwo, 1000));
                 }
@@ -509,25 +530,22 @@
 
             socketService.on('android-test', function(data) {
                 if ($state.current.name === 'root.user.guide') {
-                    if (data.sessionId === vm.sessionId) {
-                        if (data.passed === false) {
-                            vm.TestsFault = true;//If one of the Auto tests Fails
-                        }
-
-                        if (data.type === 1) {
-                            if (vm.step !== vm.steps.diagnosticOne) {
-                                vm.diagnosticOne();//Starting Auto diagnostic from the beginning
-                            } // Phone can be connected even on the first Step, if lazy associate
-                            progressAuto();
-                        }
-                        if (data.type === 0) {
-                            if (vm.step !== vm.steps.diagnosticTwo) {
-                                vm.diagnosticTwo();//Starting Manual diagnostic from the beginning
-                            }
-                            progressManual();
-                        }
+                    if (data.passed === false) {
+                        vm.TestsFault = true;//If one of the Auto tests Fails
                     }
 
+                    if (data.type === 1) {
+                        if (vm.step !== vm.steps.diagnosticOne) {
+                            vm.diagnosticOne();//Starting Auto diagnostic from the beginning
+                        } // Phone can be connected even on the first Step, if lazy associate
+                        progressAuto();
+                    }
+                    if (data.type === 0) {
+                        if (vm.step !== vm.steps.diagnosticTwo) {
+                            vm.diagnosticTwo();//Starting Manual diagnostic from the beginning
+                        }
+                        progressManual();
+                    }
                 }
             });
 

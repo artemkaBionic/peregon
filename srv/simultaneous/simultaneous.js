@@ -9,11 +9,10 @@ var client = adb.createClient();
 var apk = __dirname + '/app-release.apk';
 var spawn = require('child_process').spawn;
 var station = require('../station');
-var sessions = require('../sessionCache');
 var StringDecoder = require('string_decoder').StringDecoder;
 var decoder = new StringDecoder('utf8');
 var inventory = require('../inventory');
-var sessions2 = require('../session_storage/sessions');
+var sessions = require('../session_storage/sessions');
 exports.deviceBridge = deviceBridge;
 
 function deviceBridge(io) {
@@ -37,7 +36,7 @@ function deviceBridge(io) {
         tracker.on('remove', function(device) {
             console.log('Device %s was unplugged', device.id);
             var index = devices.indexOf(device.id);
-            sessions2.getSessionByParams(
+            sessions.getSessionByParams(
                 {'device.adb_serial': device.id, 'status': 'Incomplete'}).
                 then(function(session) {
                     finishSession(session._id, {'complete': false});
@@ -55,35 +54,38 @@ function deviceBridge(io) {
         console.error('Something went wrong while connecting device:',
             err.stack);
     });
-    // check for expired sessions every 10 minutes
-    // setInterval(function() {
-    //     checkSessionExpired();
-    // }, 600000);
-    // // 3600000 - hour 600000 - 10 mins
-    // function checkSessionExpired() {
-    //     console.log('check for expired sessions');
-    //     var sessions = inventory.getAllSessions();
-    //     for (var key in sessions) {
-    //         if (sessions.hasOwnProperty(key)) {
-    //             if(sessions[key].status === 'Incomplete') {
-    //                 var sessionDate = new Date(sessions[key].start_time);
-    //                 var plusOneHour = sessionDate.getTime() + (3600000);
-    //                 var expireDate = new Date(plusOneHour);
-    //                 var currentDate = new Date();
-    //                 if (currentDate > expireDate) {
-    //                     console.log('Session with key:' + key + ' is expired');
-    //                     io.emit('android-session-expired', {'sessionId': key, 'device': sessions[key].device.serial_number});
-    //                     setTimeout(function(){
-    //                         finishSession(key, {'complete': false});
-    //                         io.emit('session-expired-confirmation', {});
-    //                     },5000);
-    //                 } else {
-    //                     console.log('No expired sessions.');
-    //                 }
-    //             }
-    //         }
-    //     }
-    // }
+    //check for expired sessions every 10 minutes
+    setInterval(function() {
+        checkSessionExpired();
+    }, 600000);
+    // 3600000 - hour 600000 - 10 mins
+    function checkSessionExpired() {
+        console.log('check for expired sessions');
+        sessions.getSessionsByParams(
+            {'device.item_number': {$exists: true, $ne: null}, 'status': 'Incomplete'}).
+        then(function(sessions) {
+            for (var i = 0; i < sessions.length; i++) {
+                var sessionId = sessions[i]._id;
+                var sessionDate = new Date(sessions[i].start_time);
+                var plusOneHour = sessionDate.getTime() + (3600000);
+                var expireDate = new Date(plusOneHour);
+                var currentDate = new Date();
+                if (currentDate > expireDate) {
+                    console.log('Session with key:' + sessionId + ' is expired');
+                    io.emit('android-session-expired', {
+                        'sessionId': sessions[i],
+                        'device': sessions[i].device.serial_number
+                    });
+                    setTimeout(function () {
+                        finishSession(sessionId, {'complete': false});
+                        io.emit('session-expired-confirmation', {});
+                    }, 5000);
+                }
+            }
+        }).catch(function(err) {
+            console.log(err);
+        })
+    }
     function getSerialLookup(imei) {
         console.log('Getting serial lookup for imei:' + imei);
         return new Promise(function(resolve, reject) {
@@ -318,6 +320,8 @@ function deviceBridge(io) {
                         appStartedDataJson.data.auto) {
                         updateSession(sessionDate, 'Info Test', 'Android auto',
                             {
+                                'passedManual': failedManualTests.length +
+                                passedManualTests.length,
                                 'passedAuto': failedAutoTests.length +
                                 passedAutoTests.length
                             });
@@ -327,7 +331,9 @@ function deviceBridge(io) {
                         updateSession(sessionDate, 'Info Test',
                             'Android manual', {
                                 'passedManual': failedManualTests.length +
-                                passedManualTests.length
+                                passedManualTests.length,
+                                'passedAuto': failedAutoTests.length +
+                                passedAutoTests.length
                             });
                     }
                     var message = testResultJson.commandName + ' ' +
