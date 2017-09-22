@@ -39,6 +39,7 @@ function deviceBridge(io) {
             sessions.getSessionByParams(
                 {'device.adb_serial': device.id, 'status': 'Incomplete'}).
                 then(function(session) {
+                    console.log(session);
                     finishSession(session._id, {'complete': false});
                 }).
                 catch(function(err) {
@@ -49,6 +50,7 @@ function deviceBridge(io) {
                 devices.splice(index, 1);
                 io.emit('android-remove', {});
             }
+
         });
     }).catch(function(err) {
         console.error('Something went wrong while connecting device:',

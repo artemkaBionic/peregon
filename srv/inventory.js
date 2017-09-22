@@ -412,7 +412,7 @@ function sendSession(session) {
 function resendSessions() {
     console.log('Attempting to resend unsent sessions');
     sessions.getSessionsByParams(
-        {'device.item_number': {$exists: true, $ne: null}, 'is_sent': false}).
+        {'device.item_number': {$exists: true, $ne: null}, 'is_sent': false, 'status': { $in: ["Fail", "Success"] }}).
         then(function(sessions) {
             for (var i = 0; i < sessions.length; i++) {
                 sendSession(sessions[i]);
