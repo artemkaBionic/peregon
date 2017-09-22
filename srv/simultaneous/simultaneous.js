@@ -37,9 +37,8 @@ function deviceBridge(io) {
             console.log('Device %s was unplugged', device.id);
             var index = devices.indexOf(device.id);
             sessions.getSessionByParams(
-                {'device.adb_serial': device.id, 'status': 'Incomplete'}).
+                {'tmp.adbSerial': device.id, 'status': 'Incomplete'}).
                 then(function(session) {
-                    console.log(session);
                     finishSession(session._id, {'complete': false});
                 }).
                 catch(function(err) {
@@ -103,36 +102,31 @@ function deviceBridge(io) {
         });
     }
 
-    function startSession(sessionId, item) {
+    function startSession(sessionId, item, tmp) {
         console.log('Starting session ' + sessionId);
         return new Promise(function(resolve) {
-            inventory.sessionStart(sessionId, item, function() {
-                resolve(sessionId);
+            inventory.sessionStart(sessionId, item, tmp, function(session) {
+                resolve(session);
             });
         });
     }
 
     function updateSession(sessionId, level, message, details) {
         console.log('Updating session ' + sessionId);
-        inventory.sessionUpdate(sessionId, level, message, details,
-            function(err) {
-                if (err) {
-                    console.error(err);
-                }
-            });
-    }
-
-    function finishSession(session, details) {
-        console.log('Finishing session with ID:' + session._id);
-        inventory.sessionFinish(session, details, function(result) {
-            console.log('Session is finished ' + result);
-        });
-    }
-
-    function getSession(date) {
-        console.log('Getting session ' + date);
         return new Promise(function(resolve) {
-            resolve(inventory.getSession(date));
+            inventory.sessionUpdate(sessionId, level, message, details,
+                function(session) {
+                   resolve(session);
+                });
+        });
+
+    }
+
+    function finishSession(sessionId, details) {
+        console.log('Finishing session with ID:' + sessionId);
+        inventory.sessionFinish(sessionId, details, function(session) {
+            console.log('Session is finished ' + session._id);
+            io.emit('android-reset', session);
         });
     }
 
@@ -216,19 +210,12 @@ function deviceBridge(io) {
         console.log('Reading logcat for device: ' + serial);
         var aaronsLogcat = spawn('adb',
             ['-s', serial, 'logcat', '-s', 'Aarons_Result']);
-        var passedTests = [];
         var failedTests = [];
-        var failedAutoTests = [];
-        var failedManualTests = [];
-        var passedAutoTests = [];
-        var passedManualTests = [];
-        var imei = '';
+        var passedAutoTests = 0;
+        var passedManualTests = 0;
+        var imei = null;
         var appStartedDataJson = {};
         var sessionDate = new Date().toISOString();
-        var unknownItem = {
-            Type: 'Android',
-            adbSerial: serial
-        };
         aaronsLogcat.stdout.on('data', function(data) {
             data = decoder.write(data);
             console.log('parsing logcat data: ' + data);
@@ -239,26 +226,26 @@ function deviceBridge(io) {
                         data.substring(data.indexOf('{')));
                     imei = appStartedDataJson.data.imei;
                     appStartedDataJson.sessionId = sessionDate;
+                    var tmp = {};
+                    tmp.numberOfAuto = appStartedDataJson.data.auto;
+                    tmp.numberOfManual = appStartedDataJson.data.manual;
+                    tmp.adbSerial = serial;
                     getSerialLookup(imei).then(function(res) {
-                        var item = res.item;
-                        console.log(res.item);
-                        item.numberOfAuto = appStartedDataJson.data.auto;
-                        item.numberOfManual = appStartedDataJson.data.manual;
-                        item.adbSerial = serial;
-                        startSession(sessionDate, item).then(function(res) {
-                            io.emit('app-start', appStartedDataJson);
+                        startSession(sessionDate, res.item, tmp).then(function(session) {
+                            io.emit('app-start', session);
                         }).catch(function(err) {
                             console.error(err);
                         });
                     }).catch(function(err) {
-                        console.log('Failed to get serial number because of: ' +
-                            err);
-                        unknownItem.Serial = imei;
-                        unknownItem.numberOfAuto = appStartedDataJson.data.auto;
-                        unknownItem.numberOfManual = appStartedDataJson.data.manual;
-                        startSession(sessionDate, unknownItem).
-                            then(function(res) {
-                                io.emit('app-start', appStartedDataJson);
+                        console.log('Failed to get serial number because of: ' + err);
+                        var unknownItem = {
+                            Type: 'Android',
+                            adbSerial: serial,
+                            serial_number: imei
+                        };
+                        startSession(sessionDate, unknownItem, tmp).
+                            then(function(session) {
+                                io.emit('app-start', session);
                                 updateSession(sessionDate, 'Info',
                                     'Android device is not found in Inventory');
                             }).
@@ -274,76 +261,44 @@ function deviceBridge(io) {
                         updateSession(sessionDate, 'Info', 'Android test fail',
                             {'failedTests': failedTests});
                         finishSession(sessionDate, {'complete': false});
-                        io.emit('android-reset', {
-                            'status': 'Refresh Failed',
-                            'imei': imei,
-                            'failed_tests': failedTests,
-                            'sessionId': sessionDate
-                        });
+
                     } else {
                         updateSession(sessionDate, 'Info',
                             'Android refresh app has initiated a factory reset.');
                         finishSession(sessionDate, {'complete': true});
-                        io.emit('android-reset', {
-                            'status': 'Refresh Successful',
-                            'imei': imei,
-                            'sessionId': sessionDate
-                        });
                     }
                 }
 
                 // tests progress indexOf === -1 means 'not includes'
                 else if (data.indexOf('beginning') === -1) {
-                    var testResultJson = JSON.parse(
-                        data.substring(data.indexOf('{')));
-                    testResultJson.sessionId = sessionDate;
-                    // add tests to arrays of tests
+                    var testResultJson = JSON.parse(data.substring(data.indexOf('{')));
+                    var isAutoTest = testResultJson.commandName.indexOf('AutoTestCommand') !== -1;
                     if (testResultJson.passed === true) {
-                        passedTests.push(testResultJson.commandName);
-                        if (testResultJson.commandName.indexOf(
-                                'AutoTestCommand') !== -1) {
-                            passedAutoTests.push(testResultJson.commandName);
+                        if (isAutoTest) {
+                            passedAutoTests++;
                         } else {
-                            passedManualTests.push(testResultJson.commandName);
+                            passedManualTests++;
                         }
-                        if (failedManualTests.length +
-                            passedManualTests.length <=
-                            appStartedDataJson.data.manual) {
-                            updateSession(sessionDate, 'Info Test',
-                                'Android manual', {
-                                    'passedManual': failedManualTests.length +
-                                    passedManualTests.length,
-                                    'passedAuto': failedAutoTests.length +
-                                    passedAutoTests.length
-                                });
+                    } else {
+                        failedTests.push(testResultJson.commandName);
+                    }
+                    sessions.getSessionByParams(
+                        {'_id': sessionDate}).then(function(session) {
+                        session.tmp.passed_auto = passedAutoTests;
+                        session.tmp.passed_manual = passedManualTests;
+                        session.failedTests = failedTests;
+                        if (isAutoTest) {
+                            session.tmp.currentStep = 'Auto Testing';
+                        } else {
+                            session.tmp.currentStep = 'Manual Testing';
                         }
-                    }
-                    if (failedAutoTests.length + passedAutoTests.length <=
-                        appStartedDataJson.data.auto) {
-                        updateSession(sessionDate, 'Info Test', 'Android auto',
-                            {
-                                'passedManual': failedManualTests.length +
-                                passedManualTests.length,
-                                'passedAuto': failedAutoTests.length +
-                                passedAutoTests.length
-                            });
-                    }
-                    if (failedManualTests.length + passedManualTests.length <=
-                        appStartedDataJson.data.manual) {
-                        updateSession(sessionDate, 'Info Test',
-                            'Android manual', {
-                                'passedManual': failedManualTests.length +
-                                passedManualTests.length,
-                                'passedAuto': failedAutoTests.length +
-                                passedAutoTests.length
-                            });
-                    }
-                    var message = testResultJson.commandName + ' ' +
-                        (testResultJson.passed ? 'passed' : 'failed') + '\n';
-                    updateSession(sessionDate, 'Info', message,
-                        testResultJson.data);
-                    io.emit('android-test', testResultJson);
+                        sessions.updateSession(session);
+                        io.emit('android-test', session);
+                    }).catch(function(err) {
+                        console.log('Something went wrong while getting data for device ' + serial + 'Error:' + err);
+                    });
                 }
+
             }
         });
     }

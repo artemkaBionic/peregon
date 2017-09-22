@@ -5,12 +5,13 @@
         .module('app.user')
         .controller('UserController', UserController);
 
-    UserController.$inject = ['$q', '$state', 'config', 'stationService', 'inventoryService', 'socketService', '$scope', 'toastr', '$http', 'popupLauncher', '$rootScope', '$timeout'];
+    UserController.$inject = ['$q', '$state', 'config', 'stationService', 'inventoryService', 'env', '$scope', 'toastr', '$http', 'popupLauncher', '$rootScope', '$timeout'];
 
-    function UserController($q, $state, config, stationService, inventoryService, socketService, $scope, toastr, $http, popupLauncher, $rootScope, $timeout) {
+    function UserController($q, $state, config, stationService, inventoryService, env, $scope, toastr, $http, popupLauncher, $rootScope, $timeout) {
         /*jshint validthis: true */
         var vm = this;
         vm.ready = false;
+        var socket = io.connect('http://' + env.baseUrl);
         vm.searchString = '';
         vm.lastValidSearchString = '';
         vm.item = null;
@@ -70,7 +71,7 @@
             vm.step = vm.steps.bootDevices;
             //console.log(vm.step);
         };
-        socketService.on('device-add', function() {
+        socket.on('device-add', function() {
             toastr.success('USB Drive connected to refresh station', {
                 'tapToDismiss': true,
                 'timeOut': 3000,
@@ -82,11 +83,11 @@
             vm.substep = vm.substeps.newBootDevice;
             getAllUsbDrives();
         });
-        socketService.on('usb-progress', function() {
+        socket.on('usb-progress', function() {
             console.log('in progress');
             getAllUsbDrives();
         });
-        socketService.on('usb-complete', function() {
+        socket.on('usb-complete', function() {
             getAllUsbDrives();
         });
         $scope.$on('$stateChangeSuccess', function() {
@@ -299,19 +300,18 @@
         };
 
         getSessions();
-        socketService.on('app-start', function(data) {
-            if ($state.current.name === 'root.user') {
-                getSessions().then(function() {
-                    toastr.info('Refresh started for device:' + data.data.imei, {
-                        'tapToDismiss': true,
-                        'timeOut': 3000,
-                        'closeButton': true
-                    });
+        socket.on('app-start', function(session) {
+            console.log(session);
+            getSessions().then(function() {
+                toastr.info('Refresh started for device:' + session.device.serial_number, {
+                    'tapToDismiss': true,
+                    'timeOut': 3000,
+                    'closeButton': true
                 });
-            }
+            })
         });
 
-        socketService.on('android-session-expired', function(data) {
+        socket.on('android-session-expired', function(data) {
             if ($state.current.name === 'root.user') {
                 getSessions().then(function() {
                     toastr.warning('Session expired for device:' + data.device, {
@@ -322,23 +322,22 @@
                 });
             }
         });
-        socketService.on('session-expired-confirmation', function() {
+        socket.on('session-expired-confirmation', function() {
             if ($state.current.name === 'root.user') {
                 getSessions();
             }
         });
-        socketService.on('android-reset', function(status) {
-            if ($state.current.name === 'root.user') {
+        socket.on('android-reset', function(session) {
+            console.log(session);
                 getSessions().then(function() {
-                    toastr.info('Refresh finished for device:' + status.imei, {
+                    toastr.info('Refresh finished for device:' + session.device.serial_number, {
                         'tapToDismiss': true,
                         'timeOut': 3000,
                         'closeButton': true
                     });
                 });
-            }
         });
-        socketService.on('android-remove', function() {
+        socket.on('android-remove', function() {
             if ($state.current.name === 'root.user') {
                 getSessions();
             }
@@ -421,20 +420,6 @@
         };
 
         //=========== Start Working on catching the Android Connect before ItemNumber entered==========
-        socketService.on('app-start', function(data) {
-            // if (!eventService.AndroidGuideInProcess) {
-            //    // =======Code for getting SKU when the Android EMEI is known========
-            //     vm.AndroidEmei = event.data.emei;
-            //     console.log(data.emei);
-            //     inventoryService.getItem(vm.AndroidEmei).then(function(item) {
-            //         vm.item = item;
-            //     });
-            //     vm.showGuide();
-            //     console.log('User.js Event app-start');
-            //
-            // }
-
-        });
         //=========== End Working on catching the Android Connect before ItemNumber entered==========
         activate();
         function activate() {

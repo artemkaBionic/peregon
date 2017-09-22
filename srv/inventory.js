@@ -134,7 +134,7 @@ function getLowestUsbProgress() {
     return usbDrives.getLowestUsbProgress();
 }
 
-function sessionStart(sessionId, device, callback) {
+function sessionStart(sessionId, device, tmp, callback) {
     console.log('Session:' + sessionId + ' started');
     var diagnose_only = false;
     var session_device = changeDeviceFormat(device);
@@ -151,11 +151,18 @@ function sessionStart(sessionId, device, callback) {
                 'service_tag': station_service_tag
             },
             'logs': [],
+            'tmp': tmp,
             'is_sent': false,
             '_id': sessionId
         };
-        sessions.set(sessionId, newSession);
-        callback();
+        sessions.set(sessionId, newSession).then(function(session) {
+            console.log('Session with ID:' + sessionId + ' was inserted succesfully');
+            callback(newSession);
+        }).catch(function(err) {
+            console.log('Error while inserting session with ID:' + sessionId + ' Error:' + err);
+            callback(null);
+        });
+
     });
 }
 
@@ -211,28 +218,12 @@ function sessionUpdate(sessionId, level, message, details, callback) {
                 'sessionUpdate attempted for a session that is not started.');
             console.warn('message: ' + message);
         } else {
-            if (message === 'Android auto') {
-                session.currentStep = 'Auto passed';
-                session.device.passed_auto = details.passedAuto;
-                sessions.updateSession(session);
-            } else if (message === 'Android manual') {
-                session.currentStep = 'Manual Testing';
-                session.device.passed_manual = details.passedManual;
-                session.device.passed_auto = details.passedAuto;
-                sessions.updateSession(session);
-
-            } else if (message === 'Android test fail') {
-                session.currentStep = 'Session Failed';
-                session.failedTests = details.failedTests;
-                sessions.updateSession(session);
-
-            } else {
-                logSession(session, level, message, details);
-            }
+            logSession(session, level, message, details);
         }
-        callback();
+        callback(session);
     }).catch(function(err) {
         console.log('Something went wrong while getting sessions of err' + err);
+        callback(null);
     });
 }
 
@@ -345,7 +336,7 @@ function closeSession(session, success, callback) {
         session.status = 'Fail';
         sessions.updateSession(session);
     }
-    callback(success);
+    callback(session);
     sendSession(session);
 }
 
@@ -379,13 +370,7 @@ function sendSession(session) {
     // deleting extra keys which added for client to continue session
     var sessionID = session._id;
     if (session.device.item_number ){
-        delete session.device.number_of_auto;
-        delete session.device.number_of_manual;
-        delete session.device.adb_serial;
-        delete session.device.passed_auto;
-        delete session.device.passed_manual;
-        delete session.currentStep;
-        delete session.failed_tests;
+        delete session.tmp;
         console.log('Sending session with this ID:' + sessionID + ' for device: ' + session.device.item_number);
         return request({
             method: 'POST',

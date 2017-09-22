@@ -70,7 +70,7 @@ module.exports = function(io, data) {
     });
 
     router.post('/data/inventory/sessions/:id/start', function(req, res) {
-        inventory.sessionStart(req.params.id, req.body, function(result) {
+        inventory.sessionStart(req.params.id, req.body, {}, function(result) {
             res.json(result);
         });
     });

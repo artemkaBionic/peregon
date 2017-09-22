@@ -15,9 +15,17 @@ exports.pushLogs = pushLogs;
 exports.sessionUpdateItem = sessionUpdateItem;
 function set(sessionId, session){
     console.log('Adding session with id:' + sessionId + ' to Tingo session storage');
-    sessions.insert(session, function(err) {
-        assert.equal(null, err);
-    });
+    return new Promise(function(resolve, reject) {
+        sessions.insert(session, function(err, result) {
+            assert.equal(null, err);
+            if (err) {
+                reject(err);
+            } else {
+                resolve(result);
+            }
+        });
+    })
+
 }
 
 function getSessionsByParams(params){
@@ -38,8 +46,6 @@ function getSessionByParams(params) {
         sessions.findOne(params, function(err, session) {
             if (err) {
                 reject(err);
-            } else if(!session.start_time){
-                reject({message:'did not found session'});
             } else {
                 resolve(session);
             }
