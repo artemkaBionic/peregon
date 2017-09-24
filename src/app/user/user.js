@@ -1,13 +1,25 @@
 (function() {
     'use strict';
 
-    angular
-        .module('app.user')
-        .controller('UserController', UserController);
+    angular.module('app.user').controller('UserController', UserController);
 
-    UserController.$inject = ['$q', '$state', 'config', 'stationService', 'inventoryService', 'env', '$scope', 'toastr', '$http', 'popupLauncher', '$rootScope', '$timeout'];
+    UserController.$inject = [
+        '$q',
+        '$state',
+        'config',
+        'stationService',
+        'inventoryService',
+        'env',
+        '$scope',
+        'toastr',
+        '$http',
+        'popupLauncher',
+        '$rootScope',
+        '$timeout'];
 
-    function UserController($q, $state, config, stationService, inventoryService, env, $scope, toastr, $http, popupLauncher, $rootScope, $timeout) {
+    function UserController(
+        $q, $state, config, stationService, inventoryService, env, $scope,
+        toastr, $http, popupLauncher, $rootScope, $timeout) {
         /*jshint validthis: true */
         var vm = this;
         vm.ready = false;
@@ -56,17 +68,20 @@
         };
         vm.step = vm.steps.sessions;
         vm.substep = vm.substeps.noBootDevices;
-        document.getElementById('sessions').style.borderBottom = '3px solid black';
-        vm.viewSessions = function(){
-            document.getElementById('sessions').style.borderBottom = '3px solid black';
+        document.getElementById(
+            'sessions').style.borderBottom = '3px solid black';
+        vm.viewSessions = function() {
+            document.getElementById(
+                'sessions').style.borderBottom = '3px solid black';
             document.getElementById('bootDevices').style.borderBottom = 'unset';
             vm.step = vm.steps.sessions;
             console.log(vm.step);
         };
         //getAllUsbDrives();
-        vm.viewBootDevices = function(){
+        vm.viewBootDevices = function() {
             getAllUsbDrives();
-            document.getElementById('bootDevices').style.borderBottom = '3px solid black';
+            document.getElementById(
+                'bootDevices').style.borderBottom = '3px solid black';
             document.getElementById('sessions').style.borderBottom = 'unset';
             vm.step = vm.steps.bootDevices;
             //console.log(vm.step);
@@ -77,7 +92,8 @@
                 'timeOut': 3000,
                 'closeButton': true
             });
-            document.getElementById('bootDevices').style.borderBottom = '3px solid black';
+            document.getElementById(
+                'bootDevices').style.borderBottom = '3px solid black';
             document.getElementById('sessions').style.borderBottom = 'unset';
             vm.step = vm.steps.bootDevices;
             vm.substep = vm.substeps.newBootDevice;
@@ -93,91 +109,97 @@
         $scope.$on('$stateChangeSuccess', function() {
             getSessions();
         });
-        function getAllUsbDrives(){
-            $http.get('/getAllUsbDrives')
-                .then(function(response) {
-                    vm.usbDrives = response.data;
-                    vm.numberOfDevices = 0;
-                    vm.notReadyDevices = 0;
-                    vm.inProgressDevices = 0;
-                    vm.readyDevices = 0;
-                    for (var key in vm.usbDrives) {
-                        if (vm.usbDrives.hasOwnProperty(key)) {
-                            vm.numberOfDevices++;
-                            if (vm.numberOfDevices !== 0 && vm.usbDrives[key].status === 'not_ready') {
-                                vm.notReadyDevices++;
-                            }
-                            if (vm.numberOfDevices !== 0 && vm.usbDrives[key].status === 'in_progress') {
-                                vm.inProgressDevices++;
-                            }
-                            if (vm.numberOfDevices !== 0 && vm.usbDrives[key].status === 'ready') {
-                                vm.readyDevices++;
-                            }
+
+        function getAllUsbDrives() {
+            $http.get('/getAllUsbDrives').then(function(response) {
+                vm.usbDrives = response.data;
+                vm.numberOfDevices = 0;
+                vm.notReadyDevices = 0;
+                vm.inProgressDevices = 0;
+                vm.readyDevices = 0;
+                for (var key in vm.usbDrives) {
+                    if (vm.usbDrives.hasOwnProperty(key)) {
+                        vm.numberOfDevices++;
+                        if (vm.numberOfDevices !== 0 &&
+                            vm.usbDrives[key].status === 'not_ready') {
+                            vm.notReadyDevices++;
+                        }
+                        if (vm.numberOfDevices !== 0 &&
+                            vm.usbDrives[key].status === 'in_progress') {
+                            vm.inProgressDevices++;
+                        }
+                        if (vm.numberOfDevices !== 0 &&
+                            vm.usbDrives[key].status === 'ready') {
+                            vm.readyDevices++;
                         }
                     }
+                }
 
-                    if (vm.notReadyDevices === 1) {
-                        vm.bootableUsb = 'Bootable USB drive';
-                        vm.usbDrive = 'USB drive';
-                        vm.usbDrivesText = 'Now you can create your Bootable USB drive.';
-                        vm.usbButtonText = 'Create Bootable USB drive';
-                        vm.usbDrivesTitle = vm.notReadyDevices + ' New USB drive is connected'
-                    } else if (vm.notReadyDevices > 1){
-                        vm.bootableUsb = 'Bootable USB drives';
-                        vm.usbDrive = 'USB drives';
-                        vm.usbText = 'Bootable USB drives';
-                        vm.usbDrivesTitle = vm.notReadyDevices + ' New USB drives are connected';
-                        vm.usbDrivesText = 'Now you can create your Bootable USB drives.';
-                        vm.usbButtonText = 'Create Bootable USB drives';
-                    }
-                    if (vm.inProgressDevices === 1) {
-                        vm.bootableUsb = 'Bootable USB drive';
-                        vm.usbDrive = 'USB drive';
-                    } else if (vm.inProgressDevices > 1){
-                        vm.bootableUsb = 'Bootable USB drives';
-                        vm.usbDrive = 'USB drives';
-                    }
+                if (vm.notReadyDevices === 1) {
+                    vm.bootableUsb = 'Bootable USB drive';
+                    vm.usbDrive = 'USB drive';
+                    vm.usbDrivesText = 'Now you can create your Bootable USB drive.';
+                    vm.usbButtonText = 'Create Bootable USB drive';
+                    vm.usbDrivesTitle = vm.notReadyDevices +
+                        ' New USB drive is connected';
+                } else if (vm.notReadyDevices > 1) {
+                    vm.bootableUsb = 'Bootable USB drives';
+                    vm.usbDrive = 'USB drives';
+                    vm.usbText = 'Bootable USB drives';
+                    vm.usbDrivesTitle = vm.notReadyDevices +
+                        ' New USB drives are connected';
+                    vm.usbDrivesText = 'Now you can create your Bootable USB drives.';
+                    vm.usbButtonText = 'Create Bootable USB drives';
+                }
+                if (vm.inProgressDevices === 1) {
+                    vm.bootableUsb = 'Bootable USB drive';
+                    vm.usbDrive = 'USB drive';
+                } else if (vm.inProgressDevices > 1) {
+                    vm.bootableUsb = 'Bootable USB drives';
+                    vm.usbDrive = 'USB drives';
+                }
 
-                    if (vm.readyDevices === 1) {
-                        vm.bootableUsb = 'Bootable USB drive';
-                        vm.bootableUsbReadyText = 'Bootable USB drive is ready';
-                    } else if (vm.readyDevices > 1){
-                        vm.bootableUsb = 'Bootable USB drive';
-                        vm.bootableUsbReadyText = 'Bootable USB drives are ready';
-                    }
+                if (vm.readyDevices === 1) {
+                    vm.bootableUsb = 'Bootable USB drive';
+                    vm.bootableUsbReadyText = 'Bootable USB drive is ready';
+                } else if (vm.readyDevices > 1) {
+                    vm.bootableUsb = 'Bootable USB drive';
+                    vm.bootableUsbReadyText = 'Bootable USB drives are ready';
+                }
 
-                    if (vm.notReadyDevices > 0) {
-                        vm.substep = vm.substeps.newBootDevice;
-                    } else if (vm.inProgressDevices > 0) {
-                        vm.substep = vm.substeps.bootDevicesProcessing;
-                    }  else if (vm.numberOfDevices === 0) {
-                        vm.substep = vm.substeps.noBootDevices;
-                    } else {
-                        vm.substep = vm.substeps.bootDevicesReady;
-                    }
+                if (vm.notReadyDevices > 0) {
+                    vm.substep = vm.substeps.newBootDevice;
+                } else if (vm.inProgressDevices > 0) {
+                    vm.substep = vm.substeps.bootDevicesProcessing;
+                } else if (vm.numberOfDevices === 0) {
+                    vm.substep = vm.substeps.noBootDevices;
+                } else {
+                    vm.substep = vm.substeps.bootDevicesReady;
+                }
 
-                });
+            });
         }
-        function getAllNotReadyUsbDrives(){
+
+        function getAllNotReadyUsbDrives() {
             console.log('here');
             var deferred = $q.defer();
             var usbIds = [];
-            $http.get('/getAllUsbDrives')
-                .then(function(response) {
-                    for (var key in response.data) {
-                        if (response.data.hasOwnProperty(key)) {
-                            if (vm.usbDrives[key].status === 'not_ready') {
-                                usbIds.push(key);
-                                deferred.resolve(usbIds);
-                            }
+            $http.get('/getAllUsbDrives').then(function(response) {
+                for (var key in response.data) {
+                    if (response.data.hasOwnProperty(key)) {
+                        if (vm.usbDrives[key].status === 'not_ready') {
+                            usbIds.push(key);
+                            deferred.resolve(usbIds);
                         }
                     }
-                });
+                }
+            });
             return deferred.promise;
         }
-        function prepareUsbDrives(data){
+
+        function prepareUsbDrives(data) {
             for (var i = 0; i < data.length; i++) {
-                console.log({usb:data[i],item: {}});
+                console.log({usb: data[i], item: {}});
                 // $http({
                 //     url: '/prepareUsb',
                 //     method: 'POST',
@@ -187,30 +209,33 @@
             }
 
         }
-        vm.createBootDrives = function(){
+
+        vm.createBootDrives = function() {
             getAllNotReadyUsbDrives().then(function(res) {
                 prepareUsbDrives(res);
             });
             vm.substep = vm.substeps.bootDevicesProcessing;
         };
-        vm.cancelBootDrive = function(){
+        vm.cancelBootDrive = function() {
             vm.substep = vm.substeps.bootDevicesReady;
         };
 
-        $scope.$watch('vm.textToFilter',function(newTextToFilter){
-             $scope.$watch('vm.sessionType', function(newDropdown, oldDropdown){
-                 var dropDownChoice = newDropdown ? newDropdown : oldDropdown;
-                 if (newTextToFilter) {
-                     vm.filterParam = dropDownChoice.replace(/\s/g, '').concat(' ').concat(newTextToFilter);
-                 } else {
-                     vm.filterParam = dropDownChoice.replace(/\s/g, '');
-                 }
-             });
+        $scope.$watch('vm.textToFilter', function(newTextToFilter) {
+            $scope.$watch('vm.sessionType', function(newDropdown, oldDropdown) {
+                var dropDownChoice = newDropdown ? newDropdown : oldDropdown;
+                if (newTextToFilter) {
+                    vm.filterParam = dropDownChoice.replace(/\s/g, '').
+                        concat(' ').
+                        concat(newTextToFilter);
+                } else {
+                    vm.filterParam = dropDownChoice.replace(/\s/g, '');
+                }
+            });
         });
         $scope.$on('updateList', function() {
             setTimeout(function() {
                 getSessions();
-            },500);
+            }, 500);
         });
 
         vm.increaseLimit = function() {
@@ -220,12 +245,13 @@
                     vm.sessionsLength++;
                 }
             }
-            if (vm.limit <  vm.sessionsLength) {
+            if (vm.limit < vm.sessionsLength) {
                 vm.limit += 20;
             }
         };
-        var container = angular.element(document.querySelector('.content-full-height-scroll'));
-        container.on('scroll', function(){
+        var container = angular.element(
+            document.querySelector('.content-full-height-scroll'));
+        container.on('scroll', function() {
             var divAnchor = document.querySelector('#Header-anchor');
             var divHeader = angular.element(document.getElementById('Header'));
             var col1 = angular.element(document.getElementById('col1'));
@@ -235,26 +261,36 @@
             var col5 = angular.element(document.getElementById('col5'));
             var col6 = angular.element(document.getElementById('col6'));
             var col7 = angular.element(document.getElementById('col7'));
-            var background = angular.element(document.getElementById('background'));
+            var background = angular.element(
+                document.getElementById('background'));
             var windowScrollTop = divHeader[0].getBoundingClientRect().top;
             if (windowScrollTop <= divAnchor.offsetTop) {
-                col1.attr('style','height:40px;position:fixed;top:0vh;z-index:400');
-                col2.attr('style','height:40px;position:fixed;top:0vh;z-index:400');
-                col3.attr('style','height:40px;position:fixed;top:0vh;z-index:400');
-                col4.attr('style','height:40px;position:fixed;top:0vh;z-index:400');
-                col5.attr('style','height:40px;position:fixed;top:0vh;z-index:400');
-                col6.attr('style','height:40px;position:fixed;top:0vh;z-index:400');
-                col7.attr('style','height:40px;position:fixed;top:0vh;z-index:400');
-                background.attr('style','background-color:#f5f5f5;position:fixed;top:0vh;z-index:390;left:0;width:95%;height:33px;margin-top:-7px');
+                col1.attr('style',
+                    'height:40px;position:fixed;top:0vh;z-index:400');
+                col2.attr('style',
+                    'height:40px;position:fixed;top:0vh;z-index:400');
+                col3.attr('style',
+                    'height:40px;position:fixed;top:0vh;z-index:400');
+                col4.attr('style',
+                    'height:40px;position:fixed;top:0vh;z-index:400');
+                col5.attr('style',
+                    'height:40px;position:fixed;top:0vh;z-index:400');
+                col6.attr('style',
+                    'height:40px;position:fixed;top:0vh;z-index:400');
+                col7.attr('style',
+                    'height:40px;position:fixed;top:0vh;z-index:400');
+                background.attr('style',
+                    'background-color:#f5f5f5;position:fixed;top:0vh;z-index:390;left:0;width:95%;height:33px;margin-top:-7px');
             } else {
-                col1.attr('style','position:"";top:"";z-index:300');
-                col2.attr('style','position:"";top:"";z-index:300');
-                col3.attr('style','position:"";top:"";z-index:300');
-                col4.attr('style','position:"";top:"";z-index:300');
-                col5.attr('style','position:"";top:"";z-index:300');
-                col6.attr('style','position:"";top:"";z-index:300');
-                col7.attr('style','position:"";top:"";z-index:300');
-                background.attr('style','background-color:"";position:"";top:"";z-index:300');
+                col1.attr('style', 'position:"";top:"";z-index:300');
+                col2.attr('style', 'position:"";top:"";z-index:300');
+                col3.attr('style', 'position:"";top:"";z-index:300');
+                col4.attr('style', 'position:"";top:"";z-index:300');
+                col5.attr('style', 'position:"";top:"";z-index:300');
+                col6.attr('style', 'position:"";top:"";z-index:300');
+                col7.attr('style', 'position:"";top:"";z-index:300');
+                background.attr('style',
+                    'background-color:"";position:"";top:"";z-index:300');
             }
         });
         //'Fail', 'Incomplete'
@@ -264,25 +300,30 @@
             if (vm.searchString !== vm.lastValidSearchString) {
                 vm.searchStringError = false;
                 vm.itemNumberError = false;
-                vm.searchStringSkuWarning = config.partialSkuRegEx.test(vm.searchString);
+                vm.searchStringSkuWarning = config.partialSkuRegEx.test(
+                    vm.searchString);
                 if (config.partialItemNumberRegEx.test(vm.searchString)) {
                     vm.lastValidSearchString = vm.searchString;
                     if (config.itemNumberRegEx.test(vm.searchString)) {
                         vm.item = null;
-                        inventoryService.getItem(vm.searchString).then(function(item) {
-                            vm.item = item;
-                            vm.itemNumberError = false;
-                            // enable keypad submit button
-                            $('.bc-keypad__key-button--submit').addClass('bc-keypad-submit-enabled');
-                        }, function() {
-                            if (vm.item === null) { // If vm.item is populated then a successful call to getItem was completed before this failure was returned.
-                                vm.itemNumberError = true;
-                            }
-                        });
+                        inventoryService.getItem(vm.searchString).
+                            then(function(item) {
+                                vm.item = item;
+                                vm.itemNumberError = false;
+                                // enable keypad submit button
+                                $('.bc-keypad__key-button--submit').
+                                    addClass('bc-keypad-submit-enabled');
+                            }, function() {
+                                if (vm.item === null) { // If vm.item is populated then a successful call to getItem was completed before this failure was returned.
+                                    vm.itemNumberError = true;
+                                }
+                            });
                     } else {
                         // disable keypad submit button
-                        if ($('.bc-keypad__key-button--submit').hasClass('bc-keypad-submit-enabled')) {
-                            $('.bc-keypad__key-button--submit').removeClass('bc-keypad-submit-enabled');
+                        if ($('.bc-keypad__key-button--submit').
+                                hasClass('bc-keypad-submit-enabled')) {
+                            $('.bc-keypad__key-button--submit').
+                                removeClass('bc-keypad-submit-enabled');
                         }
                         vm.item = null;
                     }
@@ -295,7 +336,7 @@
             }
         };
         $scope.$watch('vm.searchString', vm.searchStringChange);
-        vm.changeFilter = function(filter){
+        vm.changeFilter = function(filter) {
             vm.sessionType = filter;
         };
 
@@ -303,22 +344,26 @@
         socket.on('app-start', function(session) {
             console.log(session);
             getSessions().then(function() {
-                toastr.info('Refresh started for device:' + session.device.serial_number, {
+                // jscs:disable
+                toastr.info('Refresh started for device:' +
+                    session.device.serial_number, {
                     'tapToDismiss': true,
                     'timeOut': 3000,
                     'closeButton': true
                 });
-            })
+                // jscs:enable
+            });
         });
 
         socket.on('android-session-expired', function(data) {
             if ($state.current.name === 'root.user') {
                 getSessions().then(function() {
-                    toastr.warning('Session expired for device:' + data.device, {
-                        'tapToDismiss': true,
-                        'timeOut': 3000,
-                        'closeButton': true
-                    });
+                    toastr.warning('Session expired for device:' + data.device,
+                        {
+                            'tapToDismiss': true,
+                            'timeOut': 3000,
+                            'closeButton': true
+                        });
                 });
             }
         });
@@ -329,13 +374,16 @@
         });
         socket.on('android-reset', function(session) {
             console.log(session);
-                getSessions().then(function() {
-                    toastr.info('Refresh finished for device:' + session.device.serial_number, {
-                        'tapToDismiss': true,
-                        'timeOut': 3000,
-                        'closeButton': true
-                    });
+            getSessions().then(function() {
+                // jscs:disable
+                toastr.info('Refresh finished for device:' +
+                    session.device.serial_number, {
+                    'tapToDismiss': true,
+                    'timeOut': 3000,
+                    'closeButton': true
                 });
+                // jscs:enable
+            });
         });
         socket.on('android-remove', function() {
             if ($state.current.name === 'root.user') {
@@ -354,14 +402,15 @@
         // jscs:disable
 
         vm.showGuideForCards = function(session) {
-            var item = {'InventoryNumber': session.device.item_number,
+            var item = {
+                'InventoryNumber': session.device.item_number,
                 'start_time': session.start_time,
-                'serial':session.device.serial_number,
-                'id':session._id
+                'serial': session.device.serial_number,
+                'id': session._id
             };
-            if(session.device.item_number) {
-                inventoryService.getSessionByParams({'_id':session._id})
-                    .then(function(res) {
+            if (session.device.item_number) {
+                inventoryService.getSessionByParams({'_id': session._id}).
+                    then(function(res) {
                         if (res._id && session.status === 'Incomplete') {
                             var $stateParams = {};
                             $stateParams.itemNumber = session.device.item_number;
@@ -373,72 +422,85 @@
                             if (session.failedTests) {
                                 vm.failedTests = session.failedTests;
                                 if (vm.failedTests.length <= 4) {
-                                    openHelpModal('xxs',vm.failedTests);
+                                    openHelpModal('xxs', vm.failedTests);
                                 } else {
-                                    openHelpModal('sm-to-xs',vm.failedTests);
+                                    openHelpModal('sm-to-xs', vm.failedTests);
                                 }
                             } else {
-                                if (session.logs[0].message === 'Device is broken') {
+                                if (session.logs[0].message ===
+                                    'Device is broken') {
                                     vm.failedTests = ['Device is broken.'];
-                                    openHelpModal('xxs','Session failed because device is broken.');
+                                    openHelpModal('xxs',
+                                        'Session failed because device is broken.');
                                 } else {
-                                    openHelpModal('xxs','Session failed because Android device was unplugged.');
+                                    openHelpModal('xxs',
+                                        'Session failed because Android device was unplugged.');
                                 }
                             }
                         } else {
-                            openHelpModal('xxs','Device refreshed successfully.');
+                            openHelpModal('xxs',
+                                'Device refreshed successfully.');
                         }
                     });
             } else {
-                inventoryService.getSessionByParams({'_id':session._id})
-                    .then(function (res) {
-                        openHelpModal('sm-to-xs', 'Unrecognized Device', res._id, session);
+                inventoryService.getSessionByParams({'_id': session._id}).
+                    then(function(res) {
+                        openHelpModal('sm-to-xs', 'Unrecognized Device',
+                            res._id, session);
                     });
             }
         };
         // jscs: enable
         vm.unlockForService = function() {
             if (vm.item) {
-                inventoryService.unlock(vm.item.Serial, true).then(function(data) {
-                    if (data.error) {
-                        toastr.error('Failed to unlock device. Please try again. If the problem continues, contact support.', 'Device NOT Unlocked', {
-                            'tapToDismiss': true,
-                            'timeOut': 10000,
-                            'closeButton': true
-                        });
-                    } else {
-                        toastr.info('Device is unlocked by ' + data.result.service, 'Device Unlocked', {
-                            'tapToDismiss': true,
-                            'timeOut': 3000,
-                            'closeButton': true
-                        });
-                        vm.item = null;
-                        vm.searchString = '';
-                    }
-                });
+                inventoryService.unlock(vm.item.Serial, true).
+                    then(function(data) {
+                        if (data.error) {
+                            toastr.error(
+                                'Failed to unlock device. Please try again. If the problem continues, contact support.',
+                                'Device NOT Unlocked', {
+                                    'tapToDismiss': true,
+                                    'timeOut': 10000,
+                                    'closeButton': true
+                                });
+                        } else {
+                            toastr.info('Device is unlocked by ' +
+                                data.result.service, 'Device Unlocked', {
+                                'tapToDismiss': true,
+                                'timeOut': 3000,
+                                'closeButton': true
+                            });
+                            vm.item = null;
+                            vm.searchString = '';
+                        }
+                    });
             }
         };
 
         //=========== Start Working on catching the Android Connect before ItemNumber entered==========
         //=========== End Working on catching the Android Connect before ItemNumber entered==========
         activate();
+
         function activate() {
-            var queries = [stationService.isServiceCenter().then(function(isServiceCenter) {
-                vm.isServiceCenter = isServiceCenter;
-            })];
+            var queries = [
+                stationService.isServiceCenter().
+                    then(function(isServiceCenter) {
+                        vm.isServiceCenter = isServiceCenter;
+                    })];
             return $q.all(queries).then(function() {
                 vm.ready = true;
             });
         }
-        function getSessions(){
+
+        function getSessions() {
             var deferred = $q.defer();
-            $http.get('/data/getAllSessions/')
-                .then(function(response) {
-                    vm.sessions =  response.data;
-                    deferred.resolve(vm.sessions);
-                });
+            $http.get('/data/getAllSessions/').then(function(response) {
+                vm.sessions = response.data;
+                deferred.resolve(vm.sessions);
+            });
             return deferred.promise;
         }
+
         function openHelpModal(modalSize, data, sessionId, session) {
             if (typeof(data) === 'string') {
                 vm.data = {
@@ -456,7 +518,7 @@
                 controller: 'MessageModalController',
                 bindToController: true,
                 controllerAs: 'vm',
-                resolve: {data:vm.data},
+                resolve: {data: vm.data},
                 size: modalSize
             });
         }

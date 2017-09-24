@@ -59,34 +59,40 @@ function deviceBridge(io) {
     setInterval(function() {
         checkSessionExpired();
     }, 600000);
+
     // 3600000 - hour 600000 - 10 mins
     function checkSessionExpired() {
         console.log('check for expired sessions');
         sessions.getSessionsByParams(
-            {'device.item_number': {$exists: true, $ne: null}, 'status': 'Incomplete'}).
-        then(function(sessions) {
-            for (var i = 0; i < sessions.length; i++) {
-                var sessionId = sessions[i]._id;
-                var sessionDate = new Date(sessions[i].start_time);
-                var plusOneHour = sessionDate.getTime() + (3600000);
-                var expireDate = new Date(plusOneHour);
-                var currentDate = new Date();
-                if (currentDate > expireDate) {
-                    console.log('Session with key:' + sessionId + ' is expired');
-                    io.emit('android-session-expired', {
-                        'sessionId': sessions[i],
-                        'device': sessions[i].device.serial_number
-                    });
-                    setTimeout(function () {
-                        finishSession(sessionId, {'complete': false});
-                        io.emit('session-expired-confirmation', {});
-                    }, 5000);
+            {
+                'device.item_number': {$exists: true, $ne: null},
+                'status': 'Incomplete'
+            }).
+            then(function(sessions) {
+                for (var i = 0; i < sessions.length; i++) {
+                    var sessionId = sessions[i]._id;
+                    var sessionDate = new Date(sessions[i].start_time);
+                    var plusOneHour = sessionDate.getTime() + (3600000);
+                    var expireDate = new Date(plusOneHour);
+                    var currentDate = new Date();
+                    if (currentDate > expireDate) {
+                        console.log('Session with key:' + sessionId +
+                            ' is expired');
+                        io.emit('android-session-expired', {
+                            'sessionId': sessions[i],
+                            'device': sessions[i].device.serial_number
+                        });
+                        setTimeout(function() {
+                            finishSession(sessionId, {'complete': false});
+                            io.emit('session-expired-confirmation', {});
+                        }, 5000);
+                    }
                 }
-            }
-        }).catch(function(err) {
+            }).catch(function(err) {
             console.log(err);
-        })
+        });
     }
+
     function getSerialLookup(imei) {
         console.log('Getting serial lookup for imei:' + imei);
         return new Promise(function(resolve, reject) {
@@ -116,7 +122,7 @@ function deviceBridge(io) {
         return new Promise(function(resolve) {
             inventory.sessionUpdate(sessionId, level, message, details,
                 function(session) {
-                   resolve(session);
+                    resolve(session);
                 });
         });
 
@@ -126,6 +132,7 @@ function deviceBridge(io) {
         console.log('Finishing session with ID:' + sessionId);
         inventory.sessionFinish(sessionId, details, function(session) {
             console.log('Session is finished ' + session._id);
+            session.tmp.currentStep = 'finish' + session.status;
             io.emit('android-reset', session);
         });
     }
@@ -231,13 +238,17 @@ function deviceBridge(io) {
                     tmp.numberOfManual = appStartedDataJson.data.manual;
                     tmp.adbSerial = serial;
                     getSerialLookup(imei).then(function(res) {
-                        startSession(sessionDate, res.item, tmp).then(function(session) {
-                            io.emit('app-start', session);
-                        }).catch(function(err) {
-                            console.error(err);
-                        });
+                        startSession(sessionDate, res.item, tmp).
+                            then(function(session) {
+                                session.tmp.currentStep = 'autoTesting';
+                                io.emit('app-start', session);
+                            }).
+                            catch(function(err) {
+                                console.error(err);
+                            });
                     }).catch(function(err) {
-                        console.log('Failed to get serial number because of: ' + err);
+                        console.log('Failed to get serial number because of: ' +
+                            err);
                         var unknownItem = {
                             Type: 'Android',
                             adbSerial: serial,
@@ -271,8 +282,10 @@ function deviceBridge(io) {
 
                 // tests progress indexOf === -1 means 'not includes'
                 else if (data.indexOf('beginning') === -1) {
-                    var testResultJson = JSON.parse(data.substring(data.indexOf('{')));
-                    var isAutoTest = testResultJson.commandName.indexOf('AutoTestCommand') !== -1;
+                    var testResultJson = JSON.parse(
+                        data.substring(data.indexOf('{')));
+                    var isAutoTest = testResultJson.commandName.indexOf(
+                        'AutoTestCommand') !== -1;
                     if (testResultJson.passed === true) {
                         if (isAutoTest) {
                             passedAutoTests++;
@@ -284,18 +297,15 @@ function deviceBridge(io) {
                     }
                     sessions.getSessionByParams(
                         {'_id': sessionDate}).then(function(session) {
-                        session.tmp.passed_auto = passedAutoTests;
-                        session.tmp.passed_manual = passedManualTests;
+                        session.tmp.passedAuto = passedAutoTests;
+                        session.tmp.passedManual = passedManualTests;
                         session.failedTests = failedTests;
-                        if (isAutoTest) {
-                            session.tmp.currentStep = 'Auto Testing';
-                        } else {
-                            session.tmp.currentStep = 'Manual Testing';
-                        }
+                        session.tmp.currentStep = isAutoTest && passedAutoTests < session.tmp.numberOfAuto ? 'autoTesting' : 'manualTesting';
                         sessions.updateSession(session);
                         io.emit('android-test', session);
                     }).catch(function(err) {
-                        console.log('Something went wrong while getting data for device ' + serial + 'Error:' + err);
+                        console.log('Something went wrong while getting data for device ' +
+                            serial + 'Error:' + err);
                     });
                 }
 

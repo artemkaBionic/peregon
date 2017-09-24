@@ -5,23 +5,17 @@
         controller('GuideControllerAndroid', GuideControllerAndroid);
 
     GuideControllerAndroid.$inject = [
-        '$stateParams',
-        '$q',
         '$scope',
-        'config',
-        'socketService',
         '$state',
         'popupLauncher',
         'toastr',
         '$timeout',
         'inventoryService',
         'item',
-        'eventService',
         'env'];
 
-    function GuideControllerAndroid(
-        $stateParams, $q, $scope, config, socketService, $state, popupLauncher, toastr,
-        $timeout, inventoryService, item, eventService, env) {
+    function GuideControllerAndroid($scope, $state, popupLauncher, toastr,
+                                    $timeout, inventoryService, item, env) {
 
         /*jshint validthis: true */
         var vm = this;
@@ -29,7 +23,6 @@
         var socket = io.connect('http://' + env.baseUrl);
         vm.item = item;
         vm.step = null;
-        eventService.AndroidGuideInProcess = true;
         /*=================Checking for Android Refresh process finished to lock the device===============*/
         $scope.$on('$destroy', function() {
             vm.finishClosed();
@@ -66,9 +59,6 @@
             console.log(vm.sessionId);
             vm.step = vm.steps.startOne; //!!! Definition for first Guide Step
 
-            if (eventService.InternetConnection) {
-                toastr.clear(eventService.connectionNotification);
-            }
             inventoryService.getSessionByParams({
                 'device.item_number': vm.item.InventoryNumber,
                 'status': 'Incomplete'
@@ -132,13 +122,13 @@
                 number: 6,
                 title: 'Loading'
             },
-            diagnosticOne: {
-                name: 'diagnosticOne',
+            autoTesting: {
+                name: 'autoTesting',
                 number: 7,
                 title: 'Automatic Diagnostics'
             },
-            diagnosticTwo: {
-                name: 'diagnosticTwo',
+            manualTesting: {
+                name: 'manualTesting',
                 number: 8,
                 title: 'Manual Diagnostics'
             },
@@ -192,43 +182,29 @@
                 title: 'Enable USB Debugging'
             }
         };
+
         /*================= End Modal Tips Steps definition===============*/
         function updateSession(session) {
             // jscs:disable
-            if (session && (session._id === vm.sessionId || (vm.sessionId === null && session.status === 'Incomplete' && session.device.item_number === vm.item.InventoryNumber))) {
+            if (session && (session._id === vm.sessionId ||
+                    (vm.sessionId === null && session.status === 'Incomplete' &&
+                        session.device.item_number ===
+                        vm.item.InventoryNumber))) {
                 if (vm.sessionId === null) {
                     vm.sessionId = session._id;
                 }
-                if (session.tmp.currentStep === 'Auto Testing') {
-                    vm.step = vm.steps.diagnosticOne;
-                } else if (session.tmp.currentStep === 'Manual Testing') {
-                    vm.step = vm.steps.diagnosticTwo;
-                } else if (session.tmp.currentStep === 'Session Failed') {
-                    vm.step = vm.steps.finishFail;
-                    vm.failedTests = session.failedTests;
+                if (vm.steps[session.tmp.currentStep] !== undefined) {
+                    vm.step = vm.steps[session.tmp.currentStep];
                 }
-                vm.manualPassed = session.tmp.passed_manual ? session.tmp.passed_manual: 0;
-                vm.manualSize = session.tmp.number_of_manual;
-                vm.autoSize = session.tmp.number_of_auto;
-                vm.autoPassed = session.tmp.passed_auto ? session.tmp.passed_auto: 0;
+                vm.failedTests = session.failedTests;
+                vm.autoSize = session.tmp.numberOfAuto;
+                vm.autoPassed = session.tmp.passedAuto;
+                vm.manualSize = session.tmp.numberOfManual;
+                vm.manualPassed = session.tmp.passedManual;
+                $scope.$apply();
                 // jscs: enable
             }
-
         }
-
-        socket.on('android-session-expired', function(data) {
-            if ($state.current.name === 'root.user.guide') {
-                if (vm.sessionId === data.sessionId) {
-                    vm.sessionExpired();
-                    toastr.warning('Session expired for device:' + data.device,
-                        {
-                            'tapToDismiss': true,
-                            'timeOut': 3000,
-                            'closeButton': true
-                        });
-                }
-            }
-        });
 
         vm.openModal = function(modalSize) {
             popupLauncher.openModal({
@@ -275,18 +251,6 @@
                 vm.step = vm.steps.waitForAppStart;
             }
         }
-
-        vm.diagnosticOne = function() {
-            //vm.autoPassed = 0;
-            vm.step = vm.steps.diagnosticOne;
-            doesAppStarted();
-        };
-
-        vm.diagnosticTwo = function() {
-            vm.manualPassed = 0;
-            vm.step = vm.steps.diagnosticTwo;
-        };
-
         vm.sessionExpired = function() {
             lockDevice();
             vm.step = vm.steps.sessionExpired;
@@ -305,7 +269,6 @@
         };
 
         vm.finish = function() {
-            eventService.AndroidGuideInProcess = false;
             vm.androidFinished = true;
             if (vm.Broken) {
                 if (vm.sessionId === null) {
@@ -404,107 +367,63 @@
             vm.buttonBackShow = true;
         };
 
-        /*============================End Preparation====================*/
-
-        /*=================Diagnostics=================*/
-
-        function actionManual() {
-            if (vm.manualPassed === vm.manualSize) {
-                timeouts.push($timeout(makeActionManual, 1500));
+        socket.on('android-add', function() {
+            vm.AndroidDisconnected = false;
+            toastr.clear(vm.AndroidNotification);
+            vm.AndroidNotification = toastr.info(
+                'Follow the instructions on the Android Device',
+                'Android Device Connected', {
+                    'tapToDismiss': true,
+                    'timeOut': 3000,
+                    'closeButton': true
+                });//Toast Pop-Up notification parameters
+            if (vm.androidFinished) {
+                return;
+            } else {
+                waitForAppStart();
             }
-        }
+        });
 
-        function makeActionManual() {
-            vm.manualShowLastAction = true;
-        }
-
-        function makeAppNotStarted() {
-            if (vm.autoPassed === 0) {
-                vm.AppNotStarted = true;
+        socket.on('android-remove', function() {
+            toastr.clear(vm.AndroidNotification);
+            if (vm.androidFinished) {
+                vm.AndroidNotification = toastr.info(
+                    'Refresh completed',
+                    'Android Device has been Disconnected', {
+                        'tapToDismiss': true,
+                        'timeOut': 3000,
+                        'closeButton': true
+                    });//Toast Pop-Up notification parameters
+            } else {
+                vm.AndroidDisconnected = true;
+                vm.AndroidConnectionDoubleCheck();
             }
-        }
+        });
 
-        function doesAppStarted() {
-            timeouts.push($timeout(makeAppNotStarted, 30000));
-        }
+        socket.on('app-start', function(session) {
+            updateSession(session);
+        });
 
-        /*=================End Diagnostics=================*/
+        socket.on('android-test', function(session) {
+            updateSession(session);
+        });
 
-        /*=================Diagnostics Orbicular Progress Bar Definition=================*/
+        socket.on('android-reset', function(session) {
+            updateSession(session);
+        });
 
-        /*=================End Diagnostics Orbicular Progress Bar Definition=================*/
-        /*=================USB Connect end Events===============*/
-        waitForAndroidAdd();//Event listener
-        function waitForAndroidAdd() {
-            socketService.on('android-add', function() {
-                if ($state.current.name === 'root.user.guide') {
-                    //inventoryService.updateSession(vm.item.InventoryNumber, 'Info', 'Android device connected.');
-                    vm.AndroidDisconnected = false;
-                    toastr.clear(vm.AndroidNotification);
-                    vm.AndroidNotification = toastr.info(
-                        'Follow the instructions on the Android Device',
-                        'Android Device Connected', {
-                            'tapToDismiss': true,
-                            'timeOut': 3000,
-                            'closeButton': true
-                        });//Toast Pop-Up notification parameters
-                    if (vm.androidFinished) {
-                        return;
-                    } else {
-                        waitForAppStart();
-                    }
-                }
-            });
-            socket.on('android-remove', function() {
-                if ($state.current.name === 'root.user.guide') {
-                    toastr.clear(vm.AndroidNotification);
-                    if (vm.androidFinished) {
-                        vm.AndroidNotification = toastr.info(
-                            'Refresh completed',
-                            'Android Device has been Disconnected', {
-                                'tapToDismiss': true,
-                                'timeOut': 3000,
-                                'closeButton': true
-                            });//Toast Pop-Up notification parameters
-                    } else {
-                        vm.AndroidDisconnected = true;
-                        vm.AndroidConnectionDoubleCheck();
-                    }
-                }
-            });
-
-            socket.on('app-start', function(session) {
-                updateSession(session);
-            });
-
-            socket.on('android-test', function(session) {
-                updateSession(session);
-            });
-
-            socket.on('android-reset', function(data) {
-                    if (data.sessionId === vm.sessionId) {
-                        // jscs:disable
-
-                        vm.failedTests = data.failed_tests;
-                        if (data.status === 'Refresh Failed' && vm.failedTests.length > 0) {
-                            vm.TestsFault = true;
-                        }
-                        // jscs:enable
-                        vm.finish();
-                    }
-            });
-        }
-
-        /*=================End USB Connect end Events===============*/
-        /*=================Android Disconnected Actions===============*/
-        vm.AndroidConnectionDoubleCheck = function() {
-            if (vm.AndroidDisconnected) {
-                vm.TestsFault = true;
-                vm.finish();
+        socket.on('android-session-expired', function(data) {
+            if (vm.sessionId === data.sessionId) {
+                vm.sessionExpired();
+                toastr.warning('Session expired for device:' + data.device,
+                    {
+                        'tapToDismiss': true,
+                        'timeOut': 3000,
+                        'closeButton': true
+                    });
             }
-        };
-        vm.TestsFault = true;
+        });
+
         vm.activate();
-        /*=================Android Disconnected Actions===============*/
     }
 })();

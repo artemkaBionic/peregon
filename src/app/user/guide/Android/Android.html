@@ -228,7 +228,7 @@
           <h3>Choose <strong>Yes</strong> or <strong>OK</strong> on the device</h3>
         </div>
         <div ng-show="vm.buttonBackShow" class="row nav-btn">
-          <h3 class="text-align-center automated-anim"><strong>Something went wrong.<br/>Go back and check everything
+          <h3 class="text-align-center automated-anim"><strong>Is something wrong?<br/>Go back and check everything
             out</strong></h3>
           <button ng-click="vm.preparationOne()"
                   class="btn btn-primary btn-rounded center" type="submit">
@@ -249,7 +249,7 @@
         </div>
       </div>
 
-      <div class="anim-wizard-step" ng-switch-when="diagnosticOne">
+      <div class="anim-wizard-step" ng-switch-when="autoTesting">
         <div ng-hide="vm.AppNotStarted" class="step-header-diagnostic">
           <h2 class="text-align-center">
             <i class="fa fa-check check-green medium-icon"></i>
@@ -276,7 +276,7 @@
 
       </div>
 
-      <div class="anim-wizard-step" ng-switch-when="diagnosticTwo">
+      <div class="anim-wizard-step" ng-switch-when="manualTesting">
         <div ng-hide="vm.manualShowLastAction" class="step-header-diagnostic">
           <h2 class="text-align-center"><i class="fa fa-check check-green medium-icon"></i>
             Automatic diagnostics complete</h2>

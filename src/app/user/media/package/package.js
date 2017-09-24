@@ -1,11 +1,13 @@
 (function() {
     'use strict';
 
-    angular
-        .module('app.user')
-        .controller('MediaPackageController', MediaPackageController);
+    angular.module('app.user').
+        controller('MediaPackageController', MediaPackageController);
 
-    MediaPackageController.$inject = ['$scope', '$stateParams', 'socketService'];
+    MediaPackageController.$inject = [
+        '$scope',
+        '$stateParams',
+        'socketService'];
 
     function MediaPackageController($scope, $stateParams, socketService) {
         /*jshint validthis: true */
