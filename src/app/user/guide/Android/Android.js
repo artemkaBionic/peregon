@@ -186,6 +186,7 @@
         /*================= End Modal Tips Steps definition===============*/
         function updateSession(session) {
             // jscs:disable
+            console.log('here');
             if (session && (session._id === vm.sessionId ||
                     (vm.sessionId === null && session.status === 'Incomplete' &&
                         session.device.item_number ===
@@ -201,7 +202,7 @@
                 vm.autoPassed = session.tmp.passedAuto;
                 vm.manualSize = session.tmp.numberOfManual;
                 vm.manualPassed = session.tmp.passedManual;
-                // $scope.$apply();
+                //$scope.$apply();
                 // jscs: enable
             }
         }
@@ -399,7 +400,7 @@
                     });//Toast Pop-Up notification parameters
             } else {
                 vm.AndroidDisconnected = true;
-                vm.AndroidConnectionDoubleCheck();
+                vm.finish();
             }
         });
 
@@ -408,6 +409,7 @@
         });
 
         socket.on('android-test', function(session) {
+            console.log(session);
             updateSession(session);
         });
 

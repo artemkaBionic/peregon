@@ -109,7 +109,7 @@ function applyMacImage(device, macImageSize, totalSize, callback) {
     });
 }
 
-function createItemFile(device, item, callback) {
+exports.createItemFile = function(device, item, callback) {
     var usbItemFile = '/mnt/' + device + config.usbStatusPartition +
         '/item.json';
     try {
@@ -118,26 +118,19 @@ function createItemFile(device, item, callback) {
     } catch (err) {
         callback(err);
     }
-}
+};
 
-function finishApplyContent(device, item, callback) {
+function finishApplyContent(device, callback) {
     console.log('Device ' + device + ' content update is complete.');
     versions.createVersionsFile(device, function(err) {
         if (err) {
             console.error(err);
         }
-        if (item !== null) {
-            createItemFile(device, item, function(err) {
-                if (err) {
-                    console.error(err);
-                }
-            });
-        }
     });
 }
 
 function copyFilesAndApplyImages(
-    device, contentTemp, copyFilesSize, macImageSize, item, applyMac,
+    device, contentTemp, copyFilesSize, macImageSize, applyMac,
     callback) {
     var totalSize = macImageSize + copyFilesSize;
     //updateProgress(0, device);
@@ -150,17 +143,17 @@ function copyFilesAndApplyImages(
                     if (err) {
                         callback(err);
                     } else {
-                        finishApplyContent(device, item, callback);
+                        finishApplyContent(device, callback);
                     }
                 });
             } else {
-                finishApplyContent(device, item, callback);
+                finishApplyContent(device, callback);
             }
         }
     });
 }
 
-exports.updateContent = function(socket_io, device, item, callback) {
+exports.updateContent = function(socket_io, device, callback) {
     console.log('Updating content on ' + device);
     io = socket_io;
 
@@ -234,14 +227,13 @@ exports.updateContent = function(socket_io, device, item, callback) {
                                                         copyFilesAndApplyImages(
                                                             device, contentTemp,
                                                             copyFilesSize,
-                                                            macImageSize, item,
+                                                            macImageSize,
                                                             true, callback);
                                                     }
                                                 });
                                         } else {
                                             copyFilesAndApplyImages(device,
-                                                contentTemp, copyFilesSize, 0,
-                                                item, false, callback);
+                                                contentTemp, copyFilesSize, 0, false, callback);
                                         }
                                     }
                                 });

@@ -80,7 +80,6 @@ UsbCache.prototype.getAllUsbDrives = function(){
     }
     return usbDrives;
 };
-
 UsbCache.prototype.updateProgress = function(progress, device){
     for (var key in this._usbDrives) {
         if (this._usbDrives.hasOwnProperty(key)) {

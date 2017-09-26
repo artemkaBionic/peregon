@@ -195,16 +195,15 @@ module.exports = function(io, data) {
                 });
         } else if (event.name === 'device-remove') {
             usbDrives.delete(event.data.id);
-            console.log(usbDrives.getAllUsbDrives());
-            io.emit(event.name, event.data);
+            controller.clearItemFiles().then(function(){
+                io.emit(event.name, event.data);
+            });
         }
         else if (event.name === 'usb-complete') {
             usbDrives.finishProgress(event.data.id);
-            console.log(usbDrives.getAllUsbDrives());
             io.emit(event.name, event.data);
         } else if (event.name === 'usb-progress') {
             usbDrives.updateProgress(event.data.progress, event.data.id);
-            console.log(usbDrives.getAllUsbDrives());
             io.emit(event.name, event.data);
         }
         else {
@@ -275,6 +274,16 @@ module.exports = function(io, data) {
     });
     router.get('/getLowestUsbInProgress', function(req, res) {
         res.json(inventory.getLowestUsbInProgress());
+    });
+    router.post('/createItemFiles', function(req, res) {
+        controller.createItemFiles(req.body.item).then(function() {
+            res.status(200).send();
+        });
+    });
+    router.post('/clearItemFiles', function(req, res) {
+        controller.clearItemFiles().then(function() {
+            res.status(200).send();
+        });
     });
     return router;
 };

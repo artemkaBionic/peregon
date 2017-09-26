@@ -17,7 +17,7 @@
         vm.selectedDevice = null;
         vm.refreshMediaPackage = null;
         vm.sessionId = null;
-        vm.usbData = {};
+        vm.usbDrives = {};
         vm.session = {};
         vm.steps = {
             prepareRefreshUsbInsert: {
@@ -96,11 +96,18 @@
         }
         function checkUsbStatus() {
             inventoryService.getAllUsbDrives().then(function(usbDrives) {
-                vm.usbData = usbDrives.usbData;
+                vm.usbDrives = usbDrives;
                 if (usbDrives.usbData.status === 'newBootDevice') {
                     vm.step = vm.steps.newBootDevice;
                 } else if (usbDrives.usbData.status === 'bootDevicesReady') {
-                    prepareRefreshUsbComplete();
+                    $http({
+                        url: '/createItemFiles',
+                        method: 'POST',
+                        headers: {'content-type': 'application/json'},
+                        data: {item: item}
+                    }).then(function() {
+                        prepareRefreshUsbComplete();
+                    });
                 } else if (usbDrives.usbData.status === 'noBootDevices') {
                     prepareRefreshUsbStart();
                 } else {
@@ -119,6 +126,11 @@
             //waitForUsbAdd();
         }
         vm.createBootDrives = function(){
+            // $http({
+            //     url: '/prepareUsb',
+            //     method: 'POST',
+            //     headers: {'content-type': 'application/json'},
+            // });
             console.log('creating boot drive');
         };
         function waitForUsbAdd(callback) {
@@ -168,6 +180,9 @@
             checkSession();
         });
         socket.on('usb-complete', function() {
+            checkSession();
+        });
+        socket.on('usb-session-complete', function() {
             checkSession();
         });
         // function startSession(session) {

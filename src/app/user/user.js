@@ -138,24 +138,13 @@
             return deferred.promise;
         }
 
-        function prepareUsbDrives(data) {
-            for (var i = 0; i < data.length; i++) {
-                console.log({usb: data[i], item: {}});
-                // $http({
-                //     url: '/prepareUsb',
-                //     method: 'POST',
-                //     headers: {'content-type': 'application/json'},
-                //     data: {usb:data[i],item: {}}
-                // });
-            }
-        }
 
         vm.createBootDrives = function() {
-            getAllNotReadyUsbDrives().then(function(usbDrives) {
-                console.log(usbDrives);
-                //vm.usbData = usbDrives.usbData;
-                prepareUsbDrives(res);
-            });
+            // $http({
+            //     url: '/prepareUsb',
+            //     method: 'POST',
+            //     headers: {'content-type': 'application/json'},
+            // });
             vm.substep = vm.substeps.bootDevicesProcessing;
         };
         vm.cancelBootDrive = function() {
@@ -344,15 +333,14 @@
         // jscs:disable
 
         vm.showGuideForCards = function(session) {
-            var item = {
-                'InventoryNumber': session.device.item_number,
+            var item = {'InventoryNumber': session.device.item_number,
                 'start_time': session.start_time,
-                'serial': session.device.serial_number,
-                'id': session._id
+                'serial':session.device.serial_number,
+                'id':session._id
             };
-            if (session.device.item_number) {
-                inventoryService.getSessionByParams({'_id': session._id}).
-                    then(function(res) {
+            if(session.device.item_number) {
+                inventoryService.getSessionByParams({'_id':session._id})
+                    .then(function(res) {
                         if (res._id && session.status === 'Incomplete') {
                             var $stateParams = {};
                             $stateParams.itemNumber = session.device.item_number;
@@ -361,12 +349,12 @@
                             vm.searchString = '';
                             $state.go('root.user.guide', $stateParams);
                         } else if (session.status === 'Fail') {
-                            if (session.failedTests) {
+                            if (session.failedTests && session.failedTests.length > 0) {
                                 vm.failedTests = session.failedTests;
                                 if (vm.failedTests.length <= 4) {
-                                    openHelpModal('xxs', vm.failedTests);
+                                    openHelpModal('xxs',vm.failedTests);
                                 } else {
-                                    openHelpModal('sm-to-xs', vm.failedTests);
+                                    openHelpModal('sm-to-xs',vm.failedTests);
                                 }
                             } else {
                                 if (session.logs.length > 0) {
@@ -389,15 +377,13 @@
                                 }
                             }
                         } else {
-                            openHelpModal('xxs',
-                                'Device refreshed successfully.');
+                            openHelpModal('xxs','Device refreshed successfully.');
                         }
                     });
             } else {
-                inventoryService.getSessionByParams({'_id': session._id}).
-                    then(function(res) {
-                        openHelpModal('sm-to-xs', 'Unrecognized Device',
-                            res._id, session);
+                inventoryService.getSessionByParams({'_id':session._id})
+                    .then(function (res) {
+                        openHelpModal('sm-to-xs', 'Unrecognized Device', res._id, session);
                     });
             }
         };
@@ -444,9 +430,12 @@
         }
 
         function getSessions() {
+            var deferred = $q.defer();
             inventoryService.getAllSessionsByParams({}).then(function(sessions) {
                 vm.sessions =  sessions;
-            })
+                deferred.resolve(sessions);
+            });
+            return deferred.promise;
         }
 
         function openHelpModal(modalSize, data, sessionId, session) {

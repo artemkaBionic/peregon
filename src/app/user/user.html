@@ -99,15 +99,15 @@
                     </div>
                   </div>
                   <div class="boot-instruction-row boot-instruction-title-grey">
-                    <span>{{vm.usbData.usbDrivesTitle}} </span>
+                    <span>{{vm.usbDrives.usbData.usbDrivesTitle}} </span>
                   </div>
                   <div class="boot-instruction-row">
-                    <span style="color:grey">{{vm.usbData.usbDrivesText}}<br>
-                    <strong>Warning!</strong> This will wipe all information you have on {{vm.usbData.usbDrive}}.
+                    <span style="color:grey">{{vm.usbDrives.usbData.usbDrivesText}}<br>
+                    <strong>Warning!</strong> This will wipe all information you have on {{vm.usbDrives.usbData.usbDrive}}.
                     </span>
                   </div>
                   <div class="boot-instruction-row">
-                    <button class="btn btn-success btn-rounded" ng-click="vm.createBootDrives()">{{vm.usbData.usbButtonText}}</button>
+                    <button class="btn btn-success btn-rounded" ng-click="vm.createBootDrives()">{{vm.usbDrives.usbData.usbButtonText}}</button>
                     <!--<button class="btn btn-danger btn-rounded" ng-click="vm.cancelBootDrive()">Cancel</button>-->
                   </div>
                 </div>
@@ -116,11 +116,11 @@
                     <i class="fa fa-spinner fa-spin" style="font-size:50px"></i>
                   </div>
                   <div class="boot-instruction-row boot-instruction-title-grey">
-                    <span>Preparing {{vm.usbData.bootableUsb}}</span>
+                    <span>Preparing {{vm.usbDrives.usbData.bootableUsb}}</span>
                   </div>
                   <div class="boot-instruction-row">
-                    <span style="color:grey">Boot partitions are loading into connected {{vm.usbData.usbDrive}}.<br>
-                    <strong>Warning!</strong> Do not remove {{vm.usbData.usbDrive}} from Refresh Station until loading will be finished.
+                    <span style="color:grey">Boot partitions are loading into connected {{vm.usbDrives.usbData.usbDrive}}.<br>
+                    <strong>Warning!</strong> Do not remove {{vm.usbDrives.usbData.usbDrive}} from Refresh Station until loading will be finished.
                     </span>
                   </div>
                 </div>
@@ -129,11 +129,11 @@
                     <i style="color:forestgreen" class="fa fa-check-circle fa-5x" aria-hidden="true"></i>
                   </div>
                   <div class="boot-instruction-row boot-instruction-title-grey">
-                    <span>{{vm.usbData.bootableUsbReadyText}}</span>
+                    <span>{{vm.usbDrives.usbData.bootableUsbReadyText}}</span>
                   </div>
                   <div class="boot-instruction-row">
-                    <span style="color:grey">You can remove {{vm.usbData.bootableUsb}} from Refresh Station and start refresh.<br>
-                    <strong>Warning!</strong> Do not forget to insert {{vm.usbData.bootableUsb}} back to station once refreshes will be completed.
+                    <span style="color:grey">You can remove {{vm.usbDrives.usbData.bootableUsb}} from Refresh Station and start refresh.<br>
+                    <strong>Warning!</strong> Do not forget to insert {{vm.usbDrives.usbData.bootableUsb}} back to station once refreshes will be completed.
                     </span>
                   </div>
                 </div>

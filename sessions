@@ -1,3 +1,3 @@
-{"k":"0000000103","o":"0000000430","v":"001"}
-{"_id":"2017-09-26T13:04:46.656Z","_uid":1,"_dt":1506431086761,"_s":"7c075967445a430f74a63823c041a31a"}
-{"start_time":{"$wrap":"$date","v":1506431086735,"h":"2017-09-26T13:04:46.735Z"},"end_time":null,"status":"Incomplete","diagnose_only":false,"device":{"item_number":"1902588266","type":"XboxOne","sku":"7339XC2","manufacturer":"SYNNEX","model":"MCS-BD-XB1FH2-AA","serial_number":"055988751048"},"station":{"name":"station7446a09dac51","service_tag":"2UA3340ZS6"},"logs":[],"tmp":{},"is_sent":false,"_id":"2017-09-26T13:04:46.656Z"}
+{"k":"0000000103","o":"0000000537","v":"001"}
+{"_id":"2017-09-26T16:20:33.626Z","_uid":1,"_dt":1506442996318,"_s":"996e74f978f27e7afe2772bae8e0138d"}
+{"start_time":"2017-09-26T16:20:33.714Z","end_time":null,"status":"Incomplete","diagnose_only":false,"device":{"item_number":"1902588266","type":"XboxOne","sku":"7339XC2","manufacturer":"SYNNEX","model":"MCS-BD-XB1FH2-AA","serial_number":"055988751048"},"station":{"name":"station7446a09dac51","service_tag":"2UA3340ZS6"},"logs":[{"timestamp":{"$wrap":"$date","v":1506442996278,"h":"2017-09-26T16:23:16.278Z"},"level":"","message":"","details":""}],"tmp":{"currentStep":"refreshStarted"},"is_sent":false,"_id":"2017-09-26T16:20:33.626Z"}
