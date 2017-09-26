@@ -51,44 +51,20 @@ module.exports = function(io, data) {
             });
     });
 
-    router.get('/data/inventory/sessions', function(req, res) {
-        res.json(inventory.getSessions(req.body));
-    });
-
-    router.get('/getAllUsbDrives', function(req, res) {
-        res.json(inventory.getAllUsbDrives());
-    });
-    router.get('/getLowestUsbProgress', function(req, res) {
-        res.json(inventory.getLowestUsbProgress());
-    });
-    router.post('/data/checkSession', function(req, res) {
-        res.json(inventory.checkSessionInProgress(req.body));
-    });
-
-    router.get('/data/inventory/sessions/:id', function(req, res) {
-        res.json(inventory.getSession(req.params.id));
-    });
-
     router.post('/data/inventory/sessions/:id/start', function(req, res) {
         inventory.sessionStart(req.params.id, req.body, {}, function(result) {
             res.json(result);
         });
     });
-    router.get('/data/getAllSessionsByDevice/:id', function(req, res) {
-        res.json(inventory.getAllSessionsByDevice(req.params.id));
-    });
-    router.post('/data/inventory/sessions/:id/update', function(req, res) {
-
-        inventory.sessionUpdate(req.params.id, req.body.level, req.body.message,
+    router.post('/data/inventory/sessions/update', function(req, res) {
+        inventory.sessionUpdate(req.body.session, req.body.level, req.body.message,
             req.body.details, function(err, result) {
                 if (err) {
-                    console.log(err);
+                    console.log('Error while updating session:' + err);
                 }
                 res.json(result);
             });
     });
-
-
 
     router.post('/data/inventory/sessions/:id/finish', function(req, res) {
         inventory.sessionFinish(req.params.id, req.body.details,
@@ -205,13 +181,15 @@ module.exports = function(io, data) {
                             controller.prepareUsb(io,
                                 {usb: event.data, item: null});
                         } else {
-                            usbDrives.set(event.data.id, {
-                                id: event.data.id,
-                                status: 'not_ready',
-                                progress: 0
-                            });
-                            console.log(usbDrives.getAllUsbDrives());
-                            io.emit(event.name, event.data);
+                            if (event.data.size >= 20000000000) {
+                                usbDrives.set(event.data.id, {
+                                    id: event.data.id,
+                                    status: 'not_ready',
+                                    progress: 0
+                                });
+                                io.emit(event.name, event.data);
+                            }
+
                         }
                     }
                 });
@@ -283,7 +261,6 @@ module.exports = function(io, data) {
 
     router.post('/data/inventory/sessions/:id/updateSessionItem',
         function(req, res) {
-
             sessions.sessionUpdateItem(req.params.id, req.body).
             then(function(result) {
                 inventory.resendSessions();
@@ -293,5 +270,11 @@ module.exports = function(io, data) {
                 console.log('Something went wrong while updating session item for serial:' + req.params.id);
             });
         });
+    router.get('/getAllUsbDrives', function(req, res) {
+        res.json(inventory.getAllUsbDrives());
+    });
+    router.get('/getLowestUsbInProgress', function(req, res) {
+        res.json(inventory.getLowestUsbInProgress());
+    });
     return router;
 };

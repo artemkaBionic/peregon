@@ -108,21 +108,9 @@
             return deferred.promise;
         };
 
-        service.startSession = function(item) {
-            var url = '/data/inventory/sessions/' + item.InventoryNumber +
-                '/start';
-            var deferred = $q.defer();
-
-            $http.post(url, item).then(function(result) {
-                deferred.resolve(result.data);
-            });
-
-            return deferred.promise;
-        };
-
         // TODO: once we will be refactoring session reports for usb only
         // refreshes we'll remove this function and will create generic one
-        service.startAndroidSession = function(sessionDate, item) {
+        service.startSession = function(sessionDate, item) {
             var url = '/data/inventory/sessions/' + sessionDate + '/start';
             var deferred = $q.defer();
 
@@ -143,16 +131,16 @@
 
             return deferred.promise;
         };
-        service.updateSession = function(sessionId, level, message, details) {
-            var url = '/data/inventory/sessions/' + sessionId + '/update';
+        service.updateSession = function(session, level, message, details) {
+            var url = '/data/inventory/sessions/update';
             var deferred = $q.defer();
 
             console.log(message);
             $http.post(url,
-                {'level': level, 'message': message, 'details': details}).
-                then(function(result) {
-                    deferred.resolve(result.data);
-                });
+                {'session':session, 'level': level, 'message': message, 'details': details}).
+            then(function(result) {
+                deferred.resolve(result.data);
+            });
 
             return deferred.promise;
         };
@@ -191,7 +179,22 @@
             });
             return deferred.promise;
         };
-
+        service.getAllUsbDrives = function() {
+            var deferred = $q.defer();
+            $http.get('/getAllUsbDrives')
+                .then(function(result) {
+                    deferred.resolve(result.data);
+                });
+            return deferred.promise;
+        };
+        service.getLowestUsbInProgress = function() {
+            var deferred = $q.defer();
+            $http.get('/getLowestUsbInProgress')
+                .then(function(result) {
+                    deferred.resolve(result.data);
+                });
+            return deferred.promise;
+        };
         return service;
     }
 })();

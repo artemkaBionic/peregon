@@ -85,33 +85,29 @@
                     </div>
                   </div>
                   <div class="boot-instruction-row boot-instruction-title-grey">
-                    <span>Connect USB flash Drive to get started.</span>
+                    <span>Connect USB drive to get started.</span>
                   </div>
                   <div class="boot-instruction-row">
-                    <span style="color:grey">USB flash drive should be 32GB or larger.</span>
+                    <span style="color:grey">USB drive should be 32GB or larger.</span>
                   </div>
                 </div>
                 <div ng-show="vm.substep.name === 'newBootDevice'">
-                  <!--<div class="boot-instruction-row">-->
-                    <!--<div class="usb-icon">-->
-                      <!--<i style="font-style: normal;font-weight: bold">{{vm.notReadyDevices}}</i>-->
-                    <!--</div>-->
-                  <!--</div>-->
+
                   <div class="boot-instruction-row">
                     <div class="usb-icon">
                       <i class="fa fa-usb" aria-hidden="true"></i>
                     </div>
                   </div>
                   <div class="boot-instruction-row boot-instruction-title-grey">
-                    <span>{{vm.usbDrivesTitle}} </span>
+                    <span>{{vm.usbData.usbDrivesTitle}} </span>
                   </div>
                   <div class="boot-instruction-row">
-                    <span style="color:grey">{{vm.usbDrivesText}}<br>
-                    <strong>Warning!</strong> This will wipe all information you have on {{vm.usbDrive}}.
+                    <span style="color:grey">{{vm.usbData.usbDrivesText}}<br>
+                    <strong>Warning!</strong> This will wipe all information you have on {{vm.usbData.usbDrive}}.
                     </span>
                   </div>
                   <div class="boot-instruction-row">
-                    <button class="btn btn-success btn-rounded" ng-click="vm.createBootDrives()">{{vm.usbButtonText}}</button>
+                    <button class="btn btn-success btn-rounded" ng-click="vm.createBootDrives()">{{vm.usbData.usbButtonText}}</button>
                     <!--<button class="btn btn-danger btn-rounded" ng-click="vm.cancelBootDrive()">Cancel</button>-->
                   </div>
                 </div>
@@ -120,11 +116,11 @@
                     <i class="fa fa-spinner fa-spin" style="font-size:50px"></i>
                   </div>
                   <div class="boot-instruction-row boot-instruction-title-grey">
-                    <span>Preparing {{vm.bootableUsb}}</span>
+                    <span>Preparing {{vm.usbData.bootableUsb}}</span>
                   </div>
                   <div class="boot-instruction-row">
-                    <span style="color:grey">Boot partitions are loading into connected {{vm.usbDrive}}.<br>
-                    <strong>Warning!</strong> Do not remove {{vm.usbDrive}} from Refresh Station until loading will be finished.
+                    <span style="color:grey">Boot partitions are loading into connected {{vm.usbData.usbDrive}}.<br>
+                    <strong>Warning!</strong> Do not remove {{vm.usbData.usbDrive}} from Refresh Station until loading will be finished.
                     </span>
                   </div>
                 </div>
@@ -133,11 +129,11 @@
                     <i style="color:forestgreen" class="fa fa-check-circle fa-5x" aria-hidden="true"></i>
                   </div>
                   <div class="boot-instruction-row boot-instruction-title-grey">
-                    <span>{{vm.bootableUsbReadyText}}</span>
+                    <span>{{vm.usbData.bootableUsbReadyText}}</span>
                   </div>
                   <div class="boot-instruction-row">
-                    <span style="color:grey">You can remove {{vm.bootableUsb}} from Refresh Station and start refresh.<br>
-                    <strong>Warning!</strong> Do not forget to insert {{vm.bootableUsb}} back to station once refreshes will be completed.
+                    <span style="color:grey">You can remove {{vm.usbData.bootableUsb}} from Refresh Station and start refresh.<br>
+                    <strong>Warning!</strong> Do not forget to insert {{vm.usbData.bootableUsb}} back to station once refreshes will be completed.
                     </span>
                   </div>
                 </div>

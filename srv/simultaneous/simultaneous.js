@@ -305,7 +305,7 @@ function deviceBridge(io) {
                         io.emit('android-test', session);
                     }).catch(function(err) {
                         console.log('Something went wrong while getting data for device ' +
-                            serial + 'Error:' + err);
+                            serial + ' Error:' + err);
                     });
                 }
 
@@ -313,3 +313,4 @@ function deviceBridge(io) {
         });
     }
 }
+

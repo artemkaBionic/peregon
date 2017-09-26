@@ -993,6 +993,21 @@ button[disabled]:hover {
     font-size:15pt;
   }
 }
+.usb-icon-lg{
+  width:75px;
+  height:75px;
+  background-color:lightgrey;
+  border-radius:100%;
+  line-height:75px;
+  text-align:center;
+  vertical-align:middle;
+  display:inline-block;
+  margin: 0 auto;
+  i{
+    line-height: inherit;
+    font-size:20pt;
+  }
+}
 .usb-instruction-navbtn{
   font-size: 17pt;
 }

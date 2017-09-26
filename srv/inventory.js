@@ -25,8 +25,6 @@ var Promise = require('bluebird');
 Promise.config({
     warnings: false
 });
-//exports.getSessions = getSessions;
-//exports.getSession = getSession;
 exports.getSerialLookup = getSerialLookup;
 exports.sessionStart = sessionStart;
 exports.getItem = getItem;
@@ -37,7 +35,7 @@ exports.lockDevice = lockDevice;
 exports.unlockDevice = unlockDevice;
 exports.sessionUpdateItem = sessionUpdateItem;
 exports.getAllUsbDrives = getAllUsbDrives;
-exports.getLowestUsbProgress = getLowestUsbProgress;
+exports.getLowestUsbInProgress = getLowestUsbInProgress;
 //Periodically resend unsent sessions
 resendSessions();
 setInterval(function() {
@@ -115,23 +113,12 @@ function getSerialLookup(imei, callback) {
         }
     });
 }
-//
-// // function getSessions(filter) {
-// //     return sessions.getFiltered(filter);
-// // }
-// // function getAllSessions(){
-// //     return sessions.getAllSessions();
-// // }
-// function getSession(sessionId) {
-//     return sessions.get(sessionId);
-// }
-
 function getAllUsbDrives() {
     return usbDrives.getAllUsbDrives();
 }
 
-function getLowestUsbProgress() {
-    return usbDrives.getLowestUsbProgress();
+function getLowestUsbInProgress() {
+    return usbDrives.getLowestUsbInProgress();
 }
 
 function sessionStart(sessionId, device, tmp, callback) {
@@ -211,20 +198,16 @@ function lockDevice(imei, callback) {
     console.log('Lock request has been sent');
 }
 
-function sessionUpdate(sessionId, level, message, details, callback) {
-    sessions.getSessionByParams({'_id': sessionId}).then(function(session) {
+function sessionUpdate(session, level, message, details, callback) {
         if (typeof session === 'undefined') {
             console.warn(
                 'sessionUpdate attempted for a session that is not started.');
             console.warn('message: ' + message);
         } else {
+            sessions.updateSession(session);
             logSession(session, level, message, details);
         }
-        callback(session);
-    }).catch(function(err) {
-        console.log('Something went wrong while getting sessions of err' + err);
-        callback(null);
-    });
+        callback(null, session);
 }
 
 function sessionUpdateItem(serial, device) {

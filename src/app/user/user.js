@@ -37,6 +37,7 @@
         vm.sortType = 'start_time';
         vm.sortReverse = true;
         vm.numberToDisplay = 8;
+        vm.usbData = {};
         vm.limit = 20;
         vm.steps = {
             sessions: {
@@ -110,73 +111,11 @@
             getSessions();
         });
 
-        function getAllUsbDrives() {
-            $http.get('/getAllUsbDrives').then(function(response) {
-                vm.usbDrives = response.data;
-                vm.numberOfDevices = 0;
-                vm.notReadyDevices = 0;
-                vm.inProgressDevices = 0;
-                vm.readyDevices = 0;
-                for (var key in vm.usbDrives) {
-                    if (vm.usbDrives.hasOwnProperty(key)) {
-                        vm.numberOfDevices++;
-                        if (vm.numberOfDevices !== 0 &&
-                            vm.usbDrives[key].status === 'not_ready') {
-                            vm.notReadyDevices++;
-                        }
-                        if (vm.numberOfDevices !== 0 &&
-                            vm.usbDrives[key].status === 'in_progress') {
-                            vm.inProgressDevices++;
-                        }
-                        if (vm.numberOfDevices !== 0 &&
-                            vm.usbDrives[key].status === 'ready') {
-                            vm.readyDevices++;
-                        }
-                    }
-                }
-
-                if (vm.notReadyDevices === 1) {
-                    vm.bootableUsb = 'Bootable USB drive';
-                    vm.usbDrive = 'USB drive';
-                    vm.usbDrivesText = 'Now you can create your Bootable USB drive.';
-                    vm.usbButtonText = 'Create Bootable USB drive';
-                    vm.usbDrivesTitle = vm.notReadyDevices +
-                        ' New USB drive is connected';
-                } else if (vm.notReadyDevices > 1) {
-                    vm.bootableUsb = 'Bootable USB drives';
-                    vm.usbDrive = 'USB drives';
-                    vm.usbText = 'Bootable USB drives';
-                    vm.usbDrivesTitle = vm.notReadyDevices +
-                        ' New USB drives are connected';
-                    vm.usbDrivesText = 'Now you can create your Bootable USB drives.';
-                    vm.usbButtonText = 'Create Bootable USB drives';
-                }
-                if (vm.inProgressDevices === 1) {
-                    vm.bootableUsb = 'Bootable USB drive';
-                    vm.usbDrive = 'USB drive';
-                } else if (vm.inProgressDevices > 1) {
-                    vm.bootableUsb = 'Bootable USB drives';
-                    vm.usbDrive = 'USB drives';
-                }
-
-                if (vm.readyDevices === 1) {
-                    vm.bootableUsb = 'Bootable USB drive';
-                    vm.bootableUsbReadyText = 'Bootable USB drive is ready';
-                } else if (vm.readyDevices > 1) {
-                    vm.bootableUsb = 'Bootable USB drive';
-                    vm.bootableUsbReadyText = 'Bootable USB drives are ready';
-                }
-
-                if (vm.notReadyDevices > 0) {
-                    vm.substep = vm.substeps.newBootDevice;
-                } else if (vm.inProgressDevices > 0) {
-                    vm.substep = vm.substeps.bootDevicesProcessing;
-                } else if (vm.numberOfDevices === 0) {
-                    vm.substep = vm.substeps.noBootDevices;
-                } else {
-                    vm.substep = vm.substeps.bootDevicesReady;
-                }
-
+        function getAllUsbDrives(){
+            inventoryService.getAllUsbDrives().then(function(usbDrives){
+                vm.usbData = usbDrives.usbData;
+                console.log(vm.usbData);
+                vm.substep = vm.substeps[usbDrives.usbData.status];
             });
         }
 
@@ -185,6 +124,8 @@
             var deferred = $q.defer();
             var usbIds = [];
             $http.get('/getAllUsbDrives').then(function(response) {
+                vm.usbData = response.data.usbData;
+                console.log(vm.usbData);
                 for (var key in response.data) {
                     if (response.data.hasOwnProperty(key)) {
                         if (vm.usbDrives[key].status === 'not_ready') {
@@ -207,11 +148,12 @@
                 //     data: {usb:data[i],item: {}}
                 // });
             }
-
         }
 
         vm.createBootDrives = function() {
-            getAllNotReadyUsbDrives().then(function(res) {
+            getAllNotReadyUsbDrives().then(function(usbDrives) {
+                console.log(usbDrives);
+                //vm.usbData = usbDrives.usbData;
                 prepareUsbDrives(res);
             });
             vm.substep = vm.substeps.bootDevicesProcessing;
@@ -427,14 +369,23 @@
                                     openHelpModal('sm-to-xs', vm.failedTests);
                                 }
                             } else {
-                                if (session.logs[0].message ===
-                                    'Device is broken') {
-                                    vm.failedTests = ['Device is broken.'];
-                                    openHelpModal('xxs',
-                                        'Session failed because device is broken.');
+                                if (session.logs.length > 0) {
+                                    var isBroken = false;
+                                    var sessionExpired = false;
+                                    for (var i = 0; i < session.logs.length; i++) {
+                                        if (session.logs[i].message === 'Device is broken') {
+                                            isBroken = true;
+                                        } else if (session.logs[i].message === 'Session expired') {
+                                            sessionExpired = true;
+                                        }
+                                    }
+                                    if (isBroken) {
+                                        openHelpModal('xxs', 'Session failed because device is broken.');
+                                    } else if (sessionExpired) {
+                                        openHelpModal('xxs', 'Refresh is not successfull because session expired.');
+                                    }
                                 } else {
-                                    openHelpModal('xxs',
-                                        'Session failed because Android device was unplugged.');
+                                    openHelpModal('xxs', 'Session failed because Android device was unplugged.');
                                 }
                             }
                         } else {
@@ -493,12 +444,9 @@
         }
 
         function getSessions() {
-            var deferred = $q.defer();
-            $http.get('/data/getAllSessions/').then(function(response) {
-                vm.sessions = response.data;
-                deferred.resolve(vm.sessions);
-            });
-            return deferred.promise;
+            inventoryService.getAllSessionsByParams({}).then(function(sessions) {
+                vm.sessions =  sessions;
+            })
         }
 
         function openHelpModal(modalSize, data, sessionId, session) {

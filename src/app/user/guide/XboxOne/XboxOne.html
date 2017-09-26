@@ -24,11 +24,11 @@
   <div horizontal-ui-sheet-content>
     <div class="row">
       <ul id="progress-tracker" data-steps="3">
-        <li ng-class="{'active': vm.step.number >= 1 && vm.step.number <= 4, 'done': vm.step.number > 4}">
+        <li ng-class="{'active': vm.step.number >= 1 && vm.step.number <= 5, 'done': vm.step.number > 4}">
           <span>Prepare<br>Refresh</span></li>
-        <li ng-class="{'active': vm.step.number >= 5 && vm.step.number <= 6, 'done': vm.step.number > 6}">
+        <li ng-class="{'active': vm.step.number >= 6 && vm.step.number <= 7, 'done': vm.step.number > 6}">
           <span>Refresh<br>Xbox</span></li>
-        <li ng-class="{'active': vm.step.number == 7}"><span>Finish</span><i></i></li>
+        <li ng-class="{'active': vm.step.number == 8}"><span>Finish</span><i></i></li>
       </ul>
     </div>
 
@@ -36,23 +36,44 @@
 
       <div class="anim-wizard-step" ng-switch-when="prepareRefreshUsbInsert">
         <div class="row wizard-contents">
-          <h2>Please insert a 4GB or larger USB drive into the Refresh Station.</h2>
+          <h2>Please insert a 32GB or larger USB drive into the Refresh Station.</h2>
         </div>
         <div class="row wizard-graphics">
           <img src="/assets/images/InsertUsbDrive.png" class="wizard-image center">
         </div>
       </div>
 
-      <div class="anim-wizard-step" ng-switch-when="prepareRefreshUsbInProgress">
-        <div class="row wizard-graphics">
-          <div class="la-ball-clip-rotate-multiple la-2x spinner">
-            <div></div>
-            <div></div>
+      <div class="anim-wizard-step text-center" ng-switch-when="newBootDevice">
+        <div class="boot-instruction-row">
+          <div class="usb-icon-lg">
+            <i class="fa fa-usb" aria-hidden="true"></i>
           </div>
         </div>
-        <div class="row wizard-contents">
-          <h2>Preparing USB drive for Xbox refresh.</h2>
-          <h3>This should take a few seconds, please wait...</h3>
+        
+        <h2>{{vm.usbData.usbDrivesTitle}}</h2>
+        <div class="boot-instruction-row">
+          <span style="color:grey">{{vm.usbData.usbDrivesText}}<br>
+            <strong>Warning!</strong> This will wipe all information you have on {{vm.usbData.usbDrive}}.
+          </span>
+        </div>
+        <div class="boot-instruction-row">
+          <button class="btn btn-success btn-rounded" ng-click="vm.createBootDrives()">{{vm.usbData.usbButtonText}}</button>
+          <!--<button class="btn btn-danger btn-rounded" ng-click="vm.cancelBootDrive()">Cancel</button>-->
+        </div>
+      </div>
+
+      <div class="anim-wizard-step" ng-switch-when="prepareRefreshUsbInProgress">
+        <div class="row wizard-contents text-center">
+          <h2>Preparing USB drive for X-Box refresh</h2>
+          <h3>This may take up to 15 minutes...</h3>
+        </div>
+        <div class="row wizard-contents text-center">
+          <div class="center circle-bar">
+            <orbicular progression="vm.percentageComplete" total="100">{{vm.data.counter}}</orbicular>
+          </div>
+          <div>
+            <p>{{vm.percentageComplete}}% complete</p>
+          </div>
         </div>
       </div>
 

@@ -201,7 +201,7 @@
                 vm.autoPassed = session.tmp.passedAuto;
                 vm.manualSize = session.tmp.numberOfManual;
                 vm.manualPassed = session.tmp.passedManual;
-                $scope.$apply();
+                // $scope.$apply();
                 // jscs: enable
             }
         }
@@ -274,11 +274,14 @@
                 if (vm.sessionId === null) {
                     vm.sessionId = new Date().toISOString();
                 }
-                inventoryService.startAndroidSession(vm.sessionId, item).
-                    then(inventoryService.updateSession(vm.sessionId, 'Info',
-                        'Device is broken')).
-                    then(inventoryService.finishSession(vm.sessionId,
-                        {'complete': false}));
+                inventoryService.startSession(vm.sessionId, item).
+                    then(function(session){
+                        inventoryService.updateSession(session, 'Info',
+                            'Device is broken').then(function(session) {
+                            inventoryService.finishSession(session._id, {'complete': false});
+                        });
+                    }
+                );
                 vm.finishFail();
             } else if (vm.TestsFault || vm.AndroidDisconnected) {
                 vm.finishFail();
