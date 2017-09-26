@@ -199,26 +199,16 @@
         //         }
         //     });
         // }
-        //
-
-        //
         // vm.retry = function() {
         //     activate();
         // };
         //
-
-
         // function prepareRefreshUsbApply() {
         //     vm.step = vm.steps.prepareRefreshUsbInProgress;
         //     socketService.once('usb-progress', function(data) {
         //
         //     });
         // }
-        //
-
-        //
-
-        //
         // function verifyRefreshStart() {
         //     vm.step = vm.steps.verifyRefresh;
         //
