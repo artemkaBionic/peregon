@@ -110,8 +110,8 @@
         });
         function getAllUsbDrives(){
             inventoryService.getAllUsbDrives().then(function(usbDrives){
-                vm.usbData = usbDrives.usbData;
-                console.log(vm.usbData);
+                vm.usbDrives = usbDrives;
+                console.log(vm.usbDrives);
                 vm.substep = vm.substeps[usbDrives.usbData.status];
             });
         }

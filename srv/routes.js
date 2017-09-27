@@ -180,15 +180,12 @@ module.exports = function(io, data) {
                             controller.prepareUsb(io,
                                 {usb: event.data, item: null});
                         } else {
-                            if (event.data.size >= 20000000000) {
                                 usbDrives.set(event.data.id, {
                                     id: event.data.id,
                                     status: 'not_ready',
                                     progress: 0
                                 });
                                 io.emit(event.name, event.data);
-                            }
-
                         }
                     }
                 });
