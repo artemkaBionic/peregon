@@ -14,23 +14,23 @@ exports.prepareUsb = function(io) {
         if (devices.hasOwnProperty(key) && devices[key].id){
             var device = devices[key];
             console.log(device);
-            partitions.updatePartitions(device, function(err) {
+            partitions.updatePartitions(device.id, function(err) {
                 if (err) {
                     console.error(err);
-                    partitions.unmountPartitions(device, function() {
+                    partitions.unmountPartitions(device.id, function() {
                         console.log('Error updating partitions');
-                        usbDrives.completeUsb({err: err, device: device});
-                        io.emit('usb-complete', {err: err, device: device});
+                        usbDrives.completeUsb({err: err, device: device.id});
+                        io.emit('usb-complete', {err: err, device: device.id});
                     });
                 } else {
-                    content.updateContent(io, device, function(err) {
+                    content.updateContent(io, device.id, function(err) {
                         if (err) {
                             console.log('Error updating content');
                             console.log(err);
                         }
-                        partitions.unmountPartitions(device, function() {
-                            usbDrives.completeUsb({err: err, device: device});
-                            io.emit('usb-complete', {err: err, device: device});
+                        partitions.unmountPartitions(device.id, function() {
+                            usbDrives.completeUsb({err: err, device: device.id});
+                            io.emit('usb-complete', {err: err, device: device.id});
                         });
                     });
                 }
