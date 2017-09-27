@@ -1190,6 +1190,15 @@ button[disabled]:hover {
 
 // End Connection Check hover
 
+.guide-footer{
+  margin-top: 5px;
+  border-top:1px black solid;
+}
+.guide-footer-content{
+  font-size: 20px;
+  font-weight: 400;
+  margin-top: 1vh;
+}
 .guide-header {
   color: #eee;
   position: absolute;

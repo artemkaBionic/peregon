@@ -10,12 +10,16 @@
             </div>
             <img class="guide-logo" src="/assets/images/Logo.png">
           </div>
-          <div class="home-header">Xbox One Refresh</div>
+          <div ng-show="vm.item.Type==='XboxOne'" class="home-header">Xbox One Refresh</div>
+          <div ng-show="vm.item.Type==='Mac'" class="home-header">Mac Refresh</div>
+          <div ng-show="vm.item.Type==='WindowsUsb'" class="home-header">Windows Usb Refresh</div>
         </div>
       </div>
       <div class="col-sm-5 header-col">
         <div class="header-middle-col-right">
-          <img class="header-item-icon" src="/assets/images/xbox-logo.png">
+          <img ng-show="vm.item.Type==='XboxOne'" class="header-item-icon" src="/assets/images/xbox-logo.png">
+          <i ng-show="vm.item.Type==='WindowsUsb'" class="fa fa-windows header-item-icon"></i>
+          <i ng-show="vm.item.Type==='Mac'" class="fa fa-apple header-item-icon"></i>
           <div class="home-header-right">{{vm.item.Description}}</div>
         </div>
       </div>
@@ -25,15 +29,50 @@
     <div class="row">
       <ul id="progress-tracker" data-steps="3">
         <li ng-class="{'active': vm.step.number >= 1 && vm.step.number <= 5, 'done': vm.step.number > 4}">
-          <span>Prepare<br>Refresh</span></li>
+          <span>Prepare Refresh</span>
+        </li>
         <li ng-class="{'active': vm.step.number >= 6 && vm.step.number <= 7, 'done': vm.step.number > 6}">
-          <span>Refresh<br>Xbox</span></li>
+          <span ng-show="vm.item.Type==='WindowsUsb'">
+            Refresh the Windows laptop
+          </span>
+          <span ng-show="vm.item.Type==='Mac'">
+            Refresh Mac
+          </span>
+          <span ng-show="vm.item.Type==='XboxOne'">
+            Refresh X-Box
+          </span>
+        </li>
         <li ng-class="{'active': vm.step.number == 8}"><span>Finish</span><i></i></li>
       </ul>
     </div>
 
     <div ng-switch="vm.step.name" class="row wizard">
-
+      <div  ng-switch-when="checkCondition">
+        <div style="text-align: center">
+          <h2>Make sure that:</h2>
+          <div class="instruction-list-container" style="margin: 0 auto; text-align: left">
+            <ul class="instruction-list">
+              <li>
+                Device turns on;
+              </li>
+              <li>
+                Screen and casing are in good condition;
+              </li>
+              <li ng-hide="vm.item.Type === 'XboxOne'">
+                Keyboard and touchpad are working;
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="row text-center">
+          <button style="margin-right: 25px;margin-top:5px" class="instruction-btn btn btn-success btn-rounded" type="submit" ng-click="vm.startSession()">
+            Device is in good condition
+          </button>
+          <button style="margin-top:5px" class="instruction-btn btn btn-danger btn-rounded" type="submit" ng-click="vm.finishSession()">
+            Device is in poor condition or faulty
+          </button>
+        </div>
+      </div>
       <div class="anim-wizard-step" ng-switch-when="prepareRefreshUsbInsert">
         <div class="row wizard-contents">
           <h2>Please insert a 32GB or larger USB drive into the Refresh Station.</h2>
@@ -50,14 +89,14 @@
           </div>
         </div>
 
-        <h2>{{vm.usbData.usbDrivesTitle}}</h2>
+        <h2>{{vm.usbDrives.usbData.usbDrivesTitle}}</h2>
         <div class="boot-instruction-row">
           <span style="color:grey">{{vm.usbData.usbDrivesText}}<br>
-            <strong>Warning!</strong> This will wipe all information you have on {{vm.usbData.usbDrive}}.
+            <strong>Warning!</strong> This will wipe all information you have on {{vm.usbDrives.usbData.usbDrive}}.
           </span>
         </div>
         <div class="boot-instruction-row">
-          <button class="btn btn-success btn-rounded" ng-click="vm.createBootDrives()">{{vm.usbData.usbButtonText}}</button>
+          <button class="btn btn-success btn-rounded" ng-click="vm.createBootDrives()">{{vm.usbDrives.usbData.usbButtonText}}</button>
           <!--<button class="btn btn-danger btn-rounded" ng-click="vm.cancelBootDrive()">Cancel</button>-->
         </div>
       </div>
@@ -88,30 +127,15 @@
       </div>
 
       <div class="anim-wizard-step" ng-switch-when="refreshXbox">
-        <div class="row border-step">
-          <div class="col-sm-8 col-xs-12 text-center">
-            <video controls>
-              <source src="/assets/videos/XboxOneRefresh.webm" type='video/webm;codecs="vp9, vorbis"'>
-              <source src="/assets/videos/XboxOneRefresh.mp4" type="video/mp4">
-              <track label="English" kind="subtitles" srclang="en" src="/assets/videos/XboxOneRefresh-en.vtt" default>
-              Your browser does not support the video tag.
-            </video>
+        <usb-guide data-item="vm.item"></usb-guide>
+        <div class="guide-footer">
+          <div class="row text-center">
+            <div class="guide-footer-content" >When refresh is complete, reinsert USB drive to continue.
+              <span style="margin-left: -4px">
+                <span class="two">.</span><span class="three">.</span>
+              </span>
+            </div>
           </div>
-          <div class="col-sm-4 col-xs-12 ref-list">
-            <ol>
-              <li>If the Xbox is plugged in, unplug it and wait a few seconds.</li>
-              <li>Plug in the USB drive and power cord.</li>
-              <li>Press and hold the <b>BIND</b> and <b>EJECT</b> buttons while turning it on.</li>
-              <li>Listen for two "power-up" tones a couple of seconds apart.</li>
-              <li>Release the <b>BIND</b> and <b>EJECT</b> buttons.</li>
-              <li>Wait a few seconds for the Xbox button light to turn off, then unplug the Xbox and remove the USB
-                drive.
-              </li>
-            </ol>
-          </div>
-        </div>
-        <div class="row wizard-contents h3-todo">
-          <h3>Insert the USB drive into the Refresh Station to continue...</h3>
         </div>
       </div>
 

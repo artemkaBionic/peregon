@@ -3,35 +3,47 @@
 
     angular
         .module('app.user')
-        .component('windowsUsbGuide',
+        .component('usbGuide',
             {
                 bindings: {
                     item: '<'
                 },
-                controller: windowsUsbGuideController,
+                controller: usbGuideController,
                 controllerAs: 'vm',
-                templateUrl: 'app/user/guide/WindowsUsb/windowsUsb_guide/windowsUsbGuide.template.html'
+                templateUrl: 'app/user/guide/UsbGuides/Usb_guide/UsbGuide.template.html'
             }
         );
 
-    windowsUsbGuideController.$inject = [];
+    usbGuideController.$inject = ['$scope'];
 
-    function windowsUsbGuideController() {
+    function usbGuideController($scope) {
         var vm = this;
         vm.test = 'test';
         var modal = document.getElementById('myModal');
         var modalImg = document.getElementById('img01');
         vm.hp = false;
         vm.dell = false;
-        if (angular.lowercase(vm.item.Manufacturer) === 'hp') {
+        vm.mac = false;
+        vm.xBox = false;
+        if (!vm.item.CalledFromHome) {
+            vm.height = {'height':'70vh'};
+        }
+        if (angular.lowercase(vm.item.Manufacturer) === 'hp' && angular.lowercase(vm.item.Type) === 'windowsusb') {
             vm.hp = true;
         }
-        if (angular.lowercase(vm.item.Manufacturer) === 'dell') {
+        if (angular.lowercase(vm.item.Manufacturer) === 'dell' && angular.lowercase(vm.item.Type) === 'windowsusb') {
             vm.dell = true;
+        }
+        if (angular.lowercase(vm.item.Type) === 'mac') {
+            vm.mac = true;
+        }
+        if (angular.lowercase(vm.item.Type) === 'xboxone') {
+            vm.xbox = true;
         }
         vm.openModal = function(src) {
             modal.style.display = 'block';
             modalImg.src = src;
+
         };
         modal.onclick = function() {
             modal.style.display = 'none';
@@ -41,7 +53,7 @@
                 _el.style.transform = 'translateY(' + this.scrollTop + 'px)';
             });
         }
-        var el = document.querySelector('#relative > #myModal');
+        var el = document.querySelector('#instructions > #myModal');
         sticky(el);
     }
 })();

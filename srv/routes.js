@@ -72,7 +72,6 @@ module.exports = function(io, data) {
                 res.json(result);
             });
     });
-
     router.get('/data/packages/:contentType/:contentSubtype?',
         function(req, res) {
             try {
@@ -195,9 +194,10 @@ module.exports = function(io, data) {
                 });
         } else if (event.name === 'device-remove') {
             usbDrives.delete(event.data.id);
-            controller.clearItemFiles().then(function(){
-                io.emit(event.name, event.data);
-            });
+            // controller.clearItemFiles().then(function(){
+            //     io.emit(event.name, event.data);
+            // });
+            io.emit(event.name, event.data);
         }
         else if (event.name === 'usb-complete') {
             usbDrives.finishProgress(event.data.id);

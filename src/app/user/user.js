@@ -110,7 +110,6 @@
         $scope.$on('$stateChangeSuccess', function() {
             getSessions();
         });
-
         function getAllUsbDrives(){
             inventoryService.getAllUsbDrives().then(function(usbDrives){
                 vm.usbData = usbDrives.usbData;
@@ -118,33 +117,12 @@
                 vm.substep = vm.substeps[usbDrives.usbData.status];
             });
         }
-
-        function getAllNotReadyUsbDrives() {
-            console.log('here');
-            var deferred = $q.defer();
-            var usbIds = [];
-            $http.get('/getAllUsbDrives').then(function(response) {
-                vm.usbData = response.data.usbData;
-                console.log(vm.usbData);
-                for (var key in response.data) {
-                    if (response.data.hasOwnProperty(key)) {
-                        if (vm.usbDrives[key].status === 'not_ready') {
-                            usbIds.push(key);
-                            deferred.resolve(usbIds);
-                        }
-                    }
-                }
-            });
-            return deferred.promise;
-        }
-
-
         vm.createBootDrives = function() {
-            // $http({
-            //     url: '/prepareUsb',
-            //     method: 'POST',
-            //     headers: {'content-type': 'application/json'},
-            // });
+            $http({
+                url: '/prepareUsb',
+                method: 'POST',
+                headers: {'content-type': 'application/json'}
+            });
             vm.substep = vm.substeps.bootDevicesProcessing;
         };
         vm.cancelBootDrive = function() {
@@ -373,7 +351,7 @@
                                         openHelpModal('xxs', 'Refresh is not successfull because session expired.');
                                     }
                                 } else {
-                                    openHelpModal('xxs', 'Session failed because Android device was unplugged.');
+                                    openHelpModal('xxs', 'Session failed because device was unplugged.');
                                 }
                             }
                         } else {
@@ -451,8 +429,8 @@
                 };
             }
             popupLauncher.openModal({
-                templateUrl: 'app/user/guide/Modals/Message-modal.html',
-                controller: 'MessageModalController',
+                templateUrl: 'app/user/guide/Modals/Session-Status-modal.html',
+                controller: 'SessionStatusModalController',
                 bindToController: true,
                 controllerAs: 'vm',
                 resolve: {data: vm.data},

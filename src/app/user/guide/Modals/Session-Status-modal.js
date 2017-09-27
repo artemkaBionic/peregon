@@ -3,11 +3,11 @@
 
     angular
         .module('app.user')
-        .controller('MessageModalController', MessageModalController);
+        .controller('SessionStatusModalController', SessionStatusModalController);
 
-    MessageModalController.$inject = ['popupLauncher', 'data', 'config', 'stationService', 'inventoryService', '$scope', '$rootScope'];
+    SessionStatusModalController.$inject = ['popupLauncher', 'data', 'config', 'stationService', 'inventoryService', '$scope', '$rootScope'];
 
-    function MessageModalController(popupLauncher, data, config, stationService, inventoryService, $scope, $rootScope) {
+    function SessionStatusModalController(popupLauncher, data, config, stationService, inventoryService, $scope, $rootScope) {
         /*jshint validthis: true */
         var vm = this;
         vm.searchString = '';

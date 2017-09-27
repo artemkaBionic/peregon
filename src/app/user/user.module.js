@@ -34,9 +34,9 @@
             controller: 'MediaController',
             controllerAs: 'vm'
         }).state('root.usbGuides', {
-            url: '/usbGuides/:device',
-            templateUrl: 'app/user/guide/UsbGuides/UsbGuides.template.html',
-            controller: 'UsbGuidesController',
+            url: '/usbGuides/:type/:manufacturer',
+            templateUrl: 'app/user/guide/HomeUsbGuides/HomeUsbGuides.template.html',
+            controller: 'HomeUsbGuidesController',
             controllerAs: 'vm'
         }).state('root.media.package', {
             url: '/media/package/',
@@ -71,6 +71,8 @@
                 if (item.Type === 'Manual') {
                     templateUrl = 'app/user/guide/' + item.Type + '/' +
                         item.SubType + '.html';
+                } else if (item.Type === 'Mac' || item.Type === 'XboxOne' || item.Type === 'WindowsUsb') {
+                    templateUrl = 'app/user/guide/UsbGuides/UsbGuides.html';
                 } else {
                     templateUrl = 'app/user/guide/' + item.Type + '/' +
                         item.Type + '.html';
@@ -91,7 +93,12 @@
 
         function guideController(item) {
             var controllerName = 'GuideControllerUnsupported';
-            if (item.Type !== null) {
+            // if (item.Type !== null) {
+            //     controllerName = 'GuideController' + item.Type;
+            // }
+            if (item.Type === 'Mac' || item.Type === 'XboxOne' || item.Type === 'WindowsUsb') {
+                controllerName = 'GuideControllerUsb';
+            } else {
                 controllerName = 'GuideController' + item.Type;
             }
             return controllerName;

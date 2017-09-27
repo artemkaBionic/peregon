@@ -3,13 +3,11 @@
 
     angular
         .module('app.user')
-        .controller('GuideControllerXboxOne', GuideControllerXboxOne);
+        .controller('GuideControllerUsb', GuideControllerUsb);
 
-    GuideControllerXboxOne.$inject = ['$q', 'item', 'deviceService', 'packageService', 'env', 'eventService', 'inventoryService', '$state'];
+    GuideControllerUsb.$inject = ['$http', '$q', 'item', 'inventoryService', '$state', 'env'];
 
-    function GuideControllerXboxOne($q, item, deviceService, packageService, env, eventService, inventoryService, $state) {
-        var refreshMediaPackageName = 'Xbox One Refresh';
-        var usbDeviceMinSize = 4000000000;
+    function GuideControllerUsb($http, $q, item, inventoryService, $state, env) {
         var socket = io.connect('http://' + env.baseUrl);
         /*jshint validthis: true */
         var vm = this;
@@ -20,6 +18,11 @@
         vm.usbDrives = {};
         vm.session = {};
         vm.steps = {
+            checkCondition: {
+                name: 'checkCondition',
+                number: 1,
+                title: 'Check condition'
+            },
             prepareRefreshUsbInsert: {
                 name: 'prepareRefreshUsbInsert',
                 number: 2,
@@ -85,20 +88,17 @@
                         checkUsbStatus();
                     }
                 } else {
-                    vm.sessionId = new Date().toISOString();
-                    inventoryService.startSession(vm.sessionId, item).then(function(session){
-                        console.log(session);
-                        vm.session = session;
-                        checkUsbStatus();
-                    });
+                    checkCondition();
                 }
             });
         }
         function checkUsbStatus() {
             inventoryService.getAllUsbDrives().then(function(usbDrives) {
                 vm.usbDrives = usbDrives;
+                console.log(usbDrives);
                 if (usbDrives.usbData.status === 'newBootDevice') {
                     vm.step = vm.steps.newBootDevice;
+                    console.log('here');
                 } else if (usbDrives.usbData.status === 'bootDevicesReady') {
                     $http({
                         url: '/createItemFiles',
@@ -117,6 +117,27 @@
                 console.log(err);
             })
         }
+        vm.startSession = function() {
+            vm.sessionId = new Date().toISOString();
+            inventoryService.startSession(vm.sessionId, item).then(function(){
+                checkUsbStatus();
+            });
+        };
+        vm.finishSession = function() {
+            vm.sessionId = new Date().toISOString();
+            inventoryService.startSession(vm.sessionId, item).then(function(session){
+                    inventoryService.updateSession(session, 'Info',
+                        'Device is broken').then(function(session) {
+                        inventoryService.finishSession(session._id, {'complete': false}).then(function(){
+                            vm.refreshEnd();
+                        });
+                    });
+                }
+            );
+        };
+        function checkCondition() {
+            vm.step = vm.steps.checkCondition;
+        }
         function usbProgress(data) {
             console.log(data);
             vm.percentageComplete = data.progress;
@@ -126,16 +147,16 @@
             //waitForUsbAdd();
         }
         vm.createBootDrives = function(){
-            // $http({
-            //     url: '/prepareUsb',
-            //     method: 'POST',
-            //     headers: {'content-type': 'application/json'},
-            // });
+            $http({
+                url: '/prepareUsb',
+                method: 'POST',
+                headers: {'content-type': 'application/json'},
+            });
             console.log('creating boot drive');
         };
         function waitForUsbAdd(callback) {
             if (vm.selectedDevice === null) {
-                socket.once('device-add', function(data) {
+                socket.on('device-add', function(data) {
                     if (data.size >= minSize) {
                         vm.selectedDevice = data;
                         callback();
@@ -149,7 +170,8 @@
         }
 
         function waitForUsbRemove(callback) {
-            socket.once('device-remove', function() {
+            socket.on('device-remove', function() {
+                console.log('removing');
                 callback();
             });
         }
@@ -169,9 +191,11 @@
             //waitForUsbAdd(usbDeviceMinSize, prepareRefreshUsbApply);
         }
         function refreshXboxStart(){
+            console.log('xbox started');
             vm.step = vm.steps.refreshXbox;
             vm.session.tmp.currentStep = 'refreshStarted';
-            inventoryService.updateSession(vm.session,'','','')
+            console.log(vm.session);
+            inventoryService.updateSession(vm.session,'Info','Refresh Started','')
         }
         socket.on('device-add', function() {
             checkSession();
