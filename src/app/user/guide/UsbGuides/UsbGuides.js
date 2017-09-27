@@ -68,8 +68,9 @@
         checkSession();
         function isEmptyObject(obj) {
             for (var prop in obj) {
-                if (obj.hasOwnProperty(prop))
+                if (obj.hasOwnProperty(prop)) {
                     return false;
+                }
             }
             return true;
         }
@@ -150,23 +151,22 @@
             $http({
                 url: '/prepareUsb',
                 method: 'POST',
-                headers: {'content-type': 'application/json'},
+                headers: {'content-type': 'application/json'}
             });
-            console.log('creating boot drive');
         };
         function waitForUsbAdd(callback) {
-            if (vm.selectedDevice === null) {
-                socket.on('device-add', function(data) {
-                    if (data.size >= minSize) {
-                        vm.selectedDevice = data;
-                        callback();
-                    } else {
-                        waitForUsbAdd(callback);
-                    }
-                });
-            } else {
-                callback();
-            }
+            // if (vm.selectedDevice === null) {
+            //     socket.on('device-add', function(data) {
+            //         if (data.size >= minSize) {
+            //             vm.selectedDevice = data;
+            //             callback();
+            //         } else {
+            //             waitForUsbAdd(callback);
+            //         }
+            //     });
+            // } else {
+            //     callback();
+            // }
         }
 
         function waitForUsbRemove(callback) {
@@ -194,7 +194,6 @@
             console.log('xbox started');
             vm.step = vm.steps.refreshXbox;
             vm.session.tmp.currentStep = 'refreshStarted';
-            console.log(vm.session);
             inventoryService.updateSession(vm.session,'Info','Refresh Started','')
         }
         socket.on('device-add', function() {

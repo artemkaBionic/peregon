@@ -14,9 +14,9 @@
             }
         );
 
-    usbGuideController.$inject = ['$scope'];
+    usbGuideController.$inject = [];
 
-    function usbGuideController($scope) {
+    function usbGuideController() {
         var vm = this;
         vm.test = 'test';
         var modal = document.getElementById('myModal');

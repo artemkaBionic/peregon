@@ -191,19 +191,20 @@
                     (vm.sessionId === null && session.status === 'Incomplete' &&
                         session.device.item_number ===
                         vm.item.InventoryNumber))) {
-                if (vm.sessionId === null) {
-                    vm.sessionId = session._id;
-                }
-                if (vm.steps[session.tmp.currentStep] !== undefined) {
-                    vm.step = vm.steps[session.tmp.currentStep];
-                }
-                vm.failedTests = session.failedTests;
-                vm.autoSize = session.tmp.numberOfAuto;
-                vm.autoPassed = session.tmp.passedAuto;
-                vm.manualSize = session.tmp.numberOfManual;
-                vm.manualPassed = session.tmp.passedManual;
-                //$scope.$apply();
-                // jscs: enable
+                    $scope.$evalAsync(function(){
+                        if (vm.sessionId === null) {
+                            vm.sessionId = session._id;
+                        }
+                        if (vm.steps[session.tmp.currentStep] !== undefined) {
+                            vm.step = vm.steps[session.tmp.currentStep];
+                        }
+                        vm.failedTests = session.failedTests;
+                        vm.autoSize = session.tmp.numberOfAuto;
+                        vm.autoPassed = session.tmp.passedAuto;
+                        vm.manualSize = session.tmp.numberOfManual;
+                        vm.manualPassed = session.tmp.passedManual;
+                    });
+                // // jscs: enable
             }
         }
 
@@ -409,7 +410,6 @@
         });
 
         socket.on('android-test', function(session) {
-            console.log(session);
             updateSession(session);
         });
 

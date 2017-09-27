@@ -13,13 +13,11 @@
         '$scope',
         'toastr',
         '$http',
-        'popupLauncher',
-        '$rootScope',
-        '$timeout'];
+        'popupLauncher'];
 
     function UserController(
         $q, $state, config, stationService, inventoryService, env, $scope,
-        toastr, $http, popupLauncher, $rootScope, $timeout) {
+        toastr, $http, popupLauncher) {
         /*jshint validthis: true */
         var vm = this;
         vm.ready = false;
