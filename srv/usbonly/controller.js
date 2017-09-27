@@ -11,7 +11,7 @@ exports.prepareUsb = function(io) {
     console.log('prepareUsb');
     var devices = usbDrives.getAllUsbDrives();
     for (var key in devices) {
-        if (devices.hasOwnProperty(key)){
+        if (devices.hasOwnProperty(key) && devices[key].id){
             var device = devices[key];
             console.log(device);
             partitions.updatePartitions(device, function(err) {
@@ -153,7 +153,7 @@ exports.createItemFiles = function(item){
     var queue = new BlueBirdQueue({});
     var devices = usbDrives.getAllUsbDrives();
     for (var key in devices) {
-        if (devices.hasOwnProperty(key)) {
+        if (devices.hasOwnProperty(key) && devices[key].id) {
             queue.add(createItemFile(devices[key], item));
         }
     }
@@ -163,7 +163,7 @@ exports.clearItemFiles = function () {
     var queue = new BlueBirdQueue({});
     var devices = usbDrives.getAllUsbDrives();
     for (var key in devices) {
-        if (devices.hasOwnProperty(key)) {
+        if (devices.hasOwnProperty(key) && devices[key].id) {
             queue.add(clearItemFile(devices[key]));
         }
     }
