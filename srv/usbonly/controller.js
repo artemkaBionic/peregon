@@ -148,6 +148,11 @@ function readXboxSessions(device, callback){
                 callback(err);
             }
         } else {
+            console.log(data);
+            console.log('------------');
+            console.log(data.split(/\r\n|\r|\n/).length);
+            console.log(data.split(/\r\n|\r|\n/));
+            console.log('++++++++++++++')
             unreportedSessions = data.split(/\r\n|\r|\n/).length / 2;
             winston.info('There are ' + unreportedSessions + ' Xbox Sessions');
         }
