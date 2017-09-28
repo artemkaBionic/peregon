@@ -26,9 +26,7 @@ function set(sessionId, session){
             }
         });
     })
-
 }
-
 function getSessionsByParams(params){
     return new Promise(function(resolve, reject) {
         sessions.find(params).toArray(function(err, result) {
@@ -75,10 +73,10 @@ function pushLogs(sessionId, log){
     )
 }
 
-function sessionUpdateItem(serialNumber, item) {
-    winston.log('info', 'Updating all sessons in Tingo with this serial:' + serialNumber);
+function sessionUpdateItem(params, item) {
+    winston.log('info', 'Updating all sessons in Tingo with this params:' + params);
     return new Promise(function(resolve, reject) {
-        sessions.update({'device.serial_number': serialNumber},
+        sessions.update(params,
             {$set: {
                 'device.sku': item.Sku,
                 'device.item_number': item.InventoryNumber,

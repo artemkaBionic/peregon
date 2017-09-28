@@ -121,14 +121,16 @@
             return deferred.promise;
         };
 
-        service.updateSessionItem = function(serial, item) {
-            var url = '/data/inventory/sessions/' + serial + '/updateSessionItem';
+        service.updateSessionItem = function(params, item) {
             var deferred = $q.defer();
-
-            $http.post(url, item).then(function(result) {
+            $http({
+                url: '/updateSessionItem',
+                method: 'POST',
+                headers: {'content-type': 'application/json'},
+                data: {params: params, item: item}
+            }).then(function(result) {
                 deferred.resolve(result.data);
             });
-
             return deferred.promise;
         };
         service.updateSession = function(session, level, message, details) {

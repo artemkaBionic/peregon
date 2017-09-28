@@ -23,6 +23,7 @@
         vm.sessionAlreadyInProgress = false;
         vm.wrongDeviceType = false;
         vm.showUnrecoginzedDeviceFooter = false;
+        vm.serialNo = null;
         // jscs:disable
         if (data.errors) {
             vm.errors = data.errors;
@@ -41,10 +42,18 @@
                     if (sessions.length > 0) {
                         vm.sessionAlreadyInProgress = true;
                     } else {
-                        inventoryService.updateSessionItem(vm.serialNo, vm.item).then(function() {
-                            $rootScope.$broadcast('updateList');
-                            vm.closeModal();
-                        });
+                        if (data.session.device.serial_number !== undefined) {
+                            inventoryService.updateSessionItem({'device.serial_number': vm.serialNo}, vm.item).then(function() {
+                                $rootScope.$broadcast('updateList');
+                                vm.closeModal();
+                            });
+                        } else {
+                            inventoryService.updateSessionItem({'_id': data.session._id}, vm.item).then(function() {
+                                $rootScope.$broadcast('updateList');
+                                vm.closeModal();
+                            });
+                        }
+
                     }
                  });
             };

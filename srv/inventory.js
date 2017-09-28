@@ -209,9 +209,9 @@ function sessionUpdate(session, level, message, details, callback) {
         callback(null, session);
 }
 
-function sessionUpdateItem(serial, device) {
+function sessionUpdateItem(params, device) {
     return new Promise(function(resolve, reject) {
-        sessions.sessionUpdateItem(serial, device).then(function(err, result) {
+        sessions.sessionUpdateItem(params, device).then(function(err, result) {
             if (err) {
                 reject(err);
             } else {

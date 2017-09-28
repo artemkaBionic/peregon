@@ -1,18 +1,3 @@
-{"k":"0000000103","o":"0000000504","v":"001"}
-{"_id":"2017-09-27T13:26:35.809Z","_uid":1,"_dt":1506518841823,"_s":"189e1104a3d2c68706883c39118c894a"}
-{"start_time":{"$wrap":"$date","v":1506518796747,"h":"2017-09-27T13:26:36.747Z"},"end_time":{"$wrap":"$date","v":1506518840941,"h":"2017-09-27T13:27:20.941Z"},"status":"Fail","diagnose_only":false,"device":{"item_number":"0000000000","type":"Android","sku":"7393SN4","manufacturer":"WSA DISTRIBUTING","model":"Samsung Note 4","serial_number":"352149076335834"},"station":{"name":"station7446a09dac51","service_tag":"2UA3340ZS6"},"logs":[],"is_sent":true,"_id":"2017-09-27T13:26:35.809Z","failedTests":[]}
-{"k":"0000000103","o":"0000000566","v":"001"}
-{"_id":"2017-09-27T13:29:14.978Z","_uid":1,"_dt":1506519396319,"_s":"cd9719b68f0d4bf728d818e69254cf3c"}
-{"start_time":{"$wrap":"$date","v":1506518955917,"h":"2017-09-27T13:29:15.917Z"},"end_time":{"$wrap":"$date","v":1506519395422,"h":"2017-09-27T13:36:35.422Z"},"status":"Fail","diagnose_only":false,"device":{"item_number":"0000000000","type":"Android","sku":"7393SN4","manufacturer":"WSA DISTRIBUTING","model":"Samsung Note 4","serial_number":"352149076335834"},"station":{"name":"station7446a09dac51","service_tag":"2UA3340ZS6"},"logs":[],"is_sent":true,"_id":"2017-09-27T13:29:14.978Z","failedTests":["CompassTestCommand","VibrationTestCommand","FlashTestCommand"]}
-{"k":"0000000103","o":"0000000507","v":"001"}
-{"_id":"2017-09-27T13:36:52.623Z","_uid":1,"_dt":1506519482482,"_s":"403e931d95837d361bac0e89b4914d25"}
-{"start_time":{"$wrap":"$date","v":1506519413610,"h":"2017-09-27T13:36:53.610Z"},"end_time":{"$wrap":"$date","v":1506519481641,"h":"2017-09-27T13:38:01.641Z"},"status":"Success","diagnose_only":false,"device":{"item_number":"0000000000","type":"Android","sku":"7393SN4","manufacturer":"WSA DISTRIBUTING","model":"Samsung Note 4","serial_number":"352149076335834"},"station":{"name":"station7446a09dac51","service_tag":"2UA3340ZS6"},"logs":[],"is_sent":true,"_id":"2017-09-27T13:36:52.623Z","failedTests":[]}
-{"k":"0000000103","o":"0000000464","v":"001"}
-{"_id":"2017-09-27T15:49:58.360Z","_uid":1,"_dt":1506531535679,"_s":"7e1508b2e19034b5fd87ba64c9d9071b"}
-{"start_time":{"$wrap":"$date","v":1506527398373,"h":"2017-09-27T15:49:58.373Z"},"end_time":{"$wrap":"$date","v":1506531534715,"h":"2017-09-27T16:58:54.715Z"},"status":"Fail","diagnose_only":false,"device":{"item_number":"0000000300","type":"Mac","sku":"7360ABM","manufacturer":"APPLE","model":"MD965LL/A","serial_number":"C02RL0NXGTJ2"},"station":{"name":"station7446a09dac51","service_tag":"2UA3340ZS6"},"logs":[],"is_sent":true,"_id":"2017-09-27T15:49:58.360Z"}
-{"k":"0000000103","o":"0000000487","v":"001"}
-{"_id":"2017-09-28T10:46:59.344Z","_uid":1,"_dt":1506595857217,"_s":"e1d658f0ae8e0dd4328b441501641ba0"}
-{"start_time":{"$wrap":"$date","v":1506595681608,"h":"2017-09-28T10:48:01.608Z"},"end_time":{"$wrap":"$date","v":1506595856272,"h":"2017-09-28T10:50:56.272Z"},"status":"Fail","diagnose_only":false,"device":{"item_number":"0000000000","type":"Android","sku":"7393SN4","manufacturer":"WSA DISTRIBUTING","model":"Samsung Note 4","serial_number":"352149076335834"},"station":{"name":"station7446a09dac51","service_tag":"2UA3340ZS6"},"logs":[],"is_sent":true,"_id":"2017-09-28T10:46:59.344Z"}
-{"k":"0000000103","o":"0000000504","v":"001"}
-{"_id":"2017-09-28T10:51:18.269Z","_uid":1,"_dt":1506600040768,"_s":"41b06083d00afcaa8692daa99d33e2a5"}
-{"start_time":{"$wrap":"$date","v":1506595879214,"h":"2017-09-28T10:51:19.214Z"},"end_time":{"$wrap":"$date","v":1506600039860,"h":"2017-09-28T12:00:39.860Z"},"status":"Fail","diagnose_only":false,"device":{"item_number":"0000000000","type":"Android","sku":"7393SN4","manufacturer":"WSA DISTRIBUTING","model":"Samsung Note 4","serial_number":"352149076335834"},"station":{"name":"station7446a09dac51","service_tag":"2UA3340ZS6"},"logs":[],"is_sent":true,"_id":"2017-09-28T10:51:18.269Z","failedTests":[]}
+{"k":"0000000093","o":"0000000279","v":"001"}
+{"_id":"22288888822790","_uid":1,"_dt":1506612371824,"_s":"ae9698156673864d31aaf70bebb055db"}
+{"start_time":{"$wrap":"$date","v":1506612371821,"h":"2017-09-28T15:26:11.821Z"},"end_time":null,"status":"Incomplete","diagnose_only":false,"device":{},"station":{"name":"station7446a09dac51","service_tag":"2UA3340ZS6"},"logs":[],"tmp":{},"is_sent":false,"_id":"22288888822790"}

@@ -249,9 +249,10 @@ module.exports = function(io, data) {
         });
     });
 
-    router.post('/data/inventory/sessions/:id/updateSessionItem',
+    router.post('/updateSessionItem',
         function(req, res) {
-            sessions.sessionUpdateItem(req.params.id, req.body).
+        console.log(req.body);
+            sessions.sessionUpdateItem(req.body.params, req.body.item).
             then(function(result) {
                 inventory.resendSessions();
                 res.json({sessionUpdated: result});

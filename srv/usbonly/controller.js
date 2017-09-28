@@ -64,20 +64,18 @@ function readSessions(io, device, callback){
             winston.info(err);
             io.emit('session-error', err);
         }
-        winston.info('read session files');
         readXboxSessions(device, function(err) {
             if (err) {
                 winston.info(err);
                 io.emit('session-error', err);
             }
-            winston.info('read xbox files');
             content.clearStatus(device);
             callback();
         });
     })
 }
 function readSessionFiles(io, device, callback) {
-    winston.info('readSession');
+    winston.info('Reading session files');
     partitions.mountPartitions(device, function(err) {
 
         var sessionsDirectory = '/mnt/' + device + config.usbStatusPartition + 'sessions/';
@@ -126,7 +124,7 @@ function readSessionFiles(io, device, callback) {
                                 } catch (err) {
                                     winston.info('Error finalizing reading sessions');
                                     winston.log('error',err);
-                                    io.emit('session-complete');
+                                    io.emit('session-complete', {session:{device:{Type:''}}});
                                     callback(err);
                                 }
                             }
@@ -139,6 +137,7 @@ function readSessionFiles(io, device, callback) {
     });
 }
 function readXboxSessions(device, callback){
+    winston.info('Reading xbox sessions');
     var systemUpdateDir = '/mnt/' + device + '1/$SystemUpdate';
     var usbItemFile = '/mnt/' + device + config.usbStatusPartition +
         '/item.json';
@@ -150,6 +149,7 @@ function readXboxSessions(device, callback){
             }
         } else {
             unreportedSessions = data.split(/\r\n|\r|\n/).length / 2;
+            winston.info('There are ' + unreportedSessions + ' Xbox Sessions');
         }
             fs.readFile(usbItemFile, 'utf8', function (err, item) {
                 if (err) {
@@ -185,7 +185,9 @@ function readXboxSessions(device, callback){
             });
     });
 }
+
 function reportXboxSessions(count) {
+    winston.info('Reporting ' + count + ' xbox sessions');
     for (var i = 0; i < count; i++){
         inventory.sessionStart(new Date().toISOString(), {Type: 'XboxOne'}, null, function(session){
             inventory.sessionFinish(session._id, {complete: true}, function(session){

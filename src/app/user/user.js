@@ -261,7 +261,17 @@
                 // jscs:enable
             });
         });
-
+        socket.on('session-complete', function(session){
+            getSessions().then(function() {
+                // jscs:disable
+                toastr.info(session.device.Type + ' refresh finished', {
+                    'tapToDismiss': true,
+                    'timeOut': 3000,
+                    'closeButton': true
+                });
+                // jscs:enable
+            });
+        });
         socket.on('android-session-expired', function(data) {
             if ($state.current.name === 'root.user') {
                 getSessions().then(function() {
