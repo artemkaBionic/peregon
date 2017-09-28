@@ -79,53 +79,54 @@ function readSessionFiles(io, device, callback) {
 
         var sessionsDirectory = '/mnt/' + device + config.usbStatusPartition + 'sessions/';
         fs.readdir(sessionsDirectory, function(err, files){
-            for (var i = 0; i < files.length; i++) {
-                fs.readFile(sessionsDirectory + files[i], 'utf8', function (err, data) {
-                    if (err) {
-                        if (err.code === 'ENOENT') {
-                            callback(null);
-                        } else {
-                            callback(err);
-                        }
-                    } else {
-                        try {
-                            // Remove non-printable characters
-                            data = data.replace(/[^\x20-\x7E]+/g, '');
-
-                            var usbSession = JSON.parse(data);
-                            console.log('Refresh Session details:');
-                            console.log(usbSession);
-                            sessions.getSessionByParams({'device.item_number': usbSession.device.item_number, 'status': 'Incomplete'}).then(function(session) {
-                                if (session === null){
-                                    usbSession._id = usbSession.start_time;
-                                    sessions.set(usbSession._id, usbSession);
-                                } else {
-                                    usbSession._id = session._id;
-                                    sessions.updateSession(usbSession);
-                                }
-                                inventory.sessionFinish(usbSession._id, {complete: usbSession.status === 'Success'}, function(session){
-                                    io.emit('session-complete', session);
-                                    callback(null);
-                                });
-                            });
-                        } catch (err) {
-                            console.log('Error reading session');
-                            console.error(err);
-                            callback(err);
-                        } finally {
-                            try {
-                                content.clearStatus(device);
-                                //Disable EFI boot to prevent Refresh Station booting to USB
-                            } catch (err) {
-                                console.log('Error finalizing reading sessions');
-                                console.error(err);
-                                io.emit('session-complete');
-                                callback(err);
-                            }
-                        }
-                    }
-                });
-            }
+            console.log(files);
+            // for (var i = 0; i < files.length; i++) {
+            //     fs.readFile(sessionsDirectory + files[i], 'utf8', function (err, data) {
+            //         if (err) {
+            //             if (err.code === 'ENOENT') {
+            //                 callback(null);
+            //             } else {
+            //                 callback(err);
+            //             }
+            //         } else {
+            //             try {
+            //                 // Remove non-printable characters
+            //                 data = data.replace(/[^\x20-\x7E]+/g, '');
+            //
+            //                 var usbSession = JSON.parse(data);
+            //                 console.log('Refresh Session details:');
+            //                 console.log(usbSession);
+            //                 sessions.getSessionByParams({'device.item_number': usbSession.device.item_number, 'status': 'Incomplete'}).then(function(session) {
+            //                     if (session === null){
+            //                         usbSession._id = usbSession.start_time;
+            //                         sessions.set(usbSession._id, usbSession);
+            //                     } else {
+            //                         usbSession._id = session._id;
+            //                         sessions.updateSession(usbSession);
+            //                     }
+            //                     inventory.sessionFinish(usbSession._id, {complete: usbSession.status === 'Success'}, function(session){
+            //                         io.emit('session-complete', session);
+            //                         callback(null);
+            //                     });
+            //                 });
+            //             } catch (err) {
+            //                 console.log('Error reading session');
+            //                 console.error(err);
+            //                 callback(err);
+            //             } finally {
+            //                 try {
+            //                     content.clearStatus(device);
+            //                     //Disable EFI boot to prevent Refresh Station booting to USB
+            //                 } catch (err) {
+            //                     console.log('Error finalizing reading sessions');
+            //                     console.error(err);
+            //                     io.emit('session-complete');
+            //                     callback(err);
+            //                 }
+            //             }
+            //         }
+            //     });
+            // }
         });
 
     });
