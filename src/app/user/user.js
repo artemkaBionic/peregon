@@ -35,7 +35,7 @@
         vm.sortType = 'start_time';
         vm.sortReverse = true;
         vm.numberToDisplay = 8;
-        vm.usbData = {};
+        vm.usbDrives = {};
         vm.limit = 20;
         vm.steps = {
             sessions: {
@@ -262,9 +262,10 @@
             });
         });
         socket.on('session-complete', function(session){
+            console.log(session);
             getSessions().then(function() {
                 // jscs:disable
-                toastr.info(session.device.Type + ' refresh finished', {
+                toastr.info('Refresh finished', {
                     'tapToDismiss': true,
                     'timeOut': 3000,
                     'closeButton': true

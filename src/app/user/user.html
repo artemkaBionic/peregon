@@ -43,7 +43,7 @@
           <span>Sessions</span>
         </span>
         <span id="bootDevices" class="simultaneous-nav-btn text-uppercase" ng-click="vm.viewBootDevices()">
-          <span>Boot drives <span ng-show="vm.notReadyDevices !== 0 && vm.step.name === 'sessions'" class="badge" style="background-color:#6cab1c">{{vm.notReadyDevices}}</span></span>
+          <span>Boot drives <span ng-show="vm.usbDrives.usbData.notReadyDevices !== 0 && vm.step.name === 'sessions'" class="badge" style="background-color:#6cab1c">{{vm.usbDrives.usbData.notReadyDevices }}</span></span>
         </span>
         <br>
       </div>
