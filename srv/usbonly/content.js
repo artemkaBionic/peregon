@@ -10,7 +10,7 @@ var fs = require('fs');
 var StringDecoder = require('string_decoder').StringDecoder;
 var usbDrive = require('./usbCache');
 var decoder = new StringDecoder('utf8');
-
+var winston = require('winston');
 // The Windows package contains an unused image file (install.wim) and inefficient driver collections.
 // We need to remove and replace these large files.
 // In the meantime, we use the --exclude parameter to make sure we don't copy them to the USB drive

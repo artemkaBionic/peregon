@@ -2,7 +2,7 @@
 var config = require('../config');
 var os = require('os');
 var shell = require('shelljs');
-
+var winston = require('winston');
 
 function doesMbrExist(device, callback) {
     shell.exec('parted --script /dev/' + device + ' --machine print', {silent: true}, function(code, stdout, stderr) {
