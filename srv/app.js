@@ -14,7 +14,7 @@ var station = require('./station');
 var simultaneous = require('./simultaneous/simultaneous');
 // Express
 var app = express();
-
+var winston = require('./log');
 // Socket.io
 var io = socket_io();
 app.io = io;
@@ -23,11 +23,11 @@ simultaneous.deviceBridge(io);
 var isDevelopment = process.env.NODE_ENV === 'development';
 
 var routes = require('./routes')(io);
-
+var winston = require('winston');
 // Create data directory
 fs.mkdir(config.kioskDataPath, function(err) {
     if (err && err.code !== 'EEXIST') {
-        console.error('Failed to create directory ' + config.kioskDataPath, err);
+        winston.log('error', 'Failed to create directory ' + config.kioskDataPath, err);
     }
 });
 
@@ -68,7 +68,7 @@ if (isDevelopment) {
 // production error handler
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
-    console.log(err);
+    winston.log('error', err);
     res.status(err.status || 500);
     res.render('error', {
         message: err.message,
@@ -78,22 +78,21 @@ app.use(function(err, req, res, next) {
 
 // socket.io events
 io.on('connection', function(socket) {
-    console.log('A client connected');
+    winston.log('info', 'A client connected');
     socket.on('device-apply', function(data) {
         if (isDevelopment) {
-            console.log('A client requested to apply media to device.');
-            console.log(data);
-            console.log('Simulating applying a device in a development environment by waiting 3 seconds.');
+            winston.log('info', 'A client requested to apply media to device.');
+            winston.log('info', data);
+            winston.log('info', 'Simulating applying a device in a development environment by waiting 3 seconds.');
             setTimeout(function() {
                 io.emit('device-apply-progress', {progress: 100, device: data.device});
             }, 3000);
         } else {
             if (typeof data.media === 'undefined' || data.media === null) {
-                console.error('A client requested to apply an undefined media package.');
+                winston.log('error', 'A client requested to apply an undefined media package.');
                 io.emit('device-apply-failed', {message: 'Media package is missing.', device: data.device});
             } else {
-                console.log('A client requested to apply "' + data.media.name + '" to the ' + data.device.type + ' device ' + data.device.id);
-
+                winston.log('info', 'A client requested to apply "' + data.media.name + '" to the ' + data.device.type + ' device ' + data.device.id);
                 var mediaPackagePath = path.join(config.mediaPackagePath, data.media.id);
                 var mediaPackageFile = path.join(mediaPackagePath, '.package.json');
                 fs.readFile(mediaPackageFile, 'utf8', function(err, packageFileData) {

@@ -100,18 +100,11 @@ UsbCache.prototype.finishProgress = function(device){
         }
     }
 };
-UsbCache.prototype.completeUsb = function(data){
+UsbCache.prototype.setStatus = function(device, status){
     for (var key in this._usbDrives) {
-        if (this._usbDrives.hasOwnProperty(key)) {
-            if (!data.err) {
-                if (key === data.device){
-                    this._usbDrives[key].status = 'complete';
-                    this._usbDrives[key].progress = 100;
-                } else {
-                    this._usbDrives[key].status = 'failed';
-                    this._usbDrives[key].progress = 0;
-                }
-            }
+        if (this._usbDrives.hasOwnProperty(key) && device === key) {
+            this._usbDrives[key].status = status;
+            this._usbDrives[key].progress = 0;
         }
     }
 };

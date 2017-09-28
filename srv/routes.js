@@ -8,6 +8,7 @@ var controller = require('./usbonly/controller');
 var simultaneous = require('./simultaneous/simultaneous');
 var usbDrives = require('./usbonly/usbCache');
 var sessions = require('./session_storage/sessions');
+var winston = require('winston');
 module.exports = function(io, data) {
 // Express Router
     var router = express.Router();
@@ -33,7 +34,7 @@ module.exports = function(io, data) {
     });
 
     router.get('/data/inventory/:id', function(req, res) {
-        console.log('request for get item was sent');
+        winston.log('info', 'Request for get item which was sent');
         inventory.getItem(req.params.id, function(item) {
             res.json(item);
         });
@@ -60,7 +61,7 @@ module.exports = function(io, data) {
         inventory.sessionUpdate(req.body.session, req.body.level, req.body.message,
             req.body.details, function(err, result) {
                 if (err) {
-                    console.log('Error while updating session:' + err);
+                    winston.log('error', 'Error while updating session:' + err);
                 }
                 res.json(result);
             });
@@ -75,8 +76,7 @@ module.exports = function(io, data) {
     router.get('/data/packages/:contentType/:contentSubtype?',
         function(req, res) {
             try {
-                console.log('Client requests ' + req.params.contentSubtype +
-                    ' ' + req.params.contentType + ' packages');
+                winston.log('info', 'Client requests ' + req.params.contentSubtype + ' ' + req.params.contentType + ' packages');
                 switch (req.params.contentType) {
                     case 'media':
                         if (isDevelopment) {
@@ -98,8 +98,7 @@ module.exports = function(io, data) {
                             ]);
                         } else {
                             var packages = [];
-                            console.log('Searching for media packages in ' +
-                                config.mediaPackagePath);
+                            winston.log('info', 'Searching for media packages in ' + config.mediaPackagePath);
                             var dirs = getDirectories(config.mediaPackagePath);
                             var len = dirs.length;
                             for (var i = 0; i < len; ++i) {
@@ -107,7 +106,7 @@ module.exports = function(io, data) {
                                     dirs[i]);
                                 var packageFile = path.join(fullDir,
                                     '.package.json');
-                                console.log('Attempting to parse ' +
+                                winston.log('info', 'Attempting to parse ' +
                                     packageFile);
                                 try {
                                     var package = JSON.parse(
@@ -123,9 +122,8 @@ module.exports = function(io, data) {
                                         packages.push(package);
                                     }
                                 } catch (e) {
-                                    console.log('Error trying to read ' +
-                                        packageFile);
-                                    console.log(e);
+                                    winston.log('error', 'Error trying to read ' + packageFile);
+                                    winston.log('error', e);
                                 }
                             }
                             res.json(packages);
@@ -136,9 +134,8 @@ module.exports = function(io, data) {
                         break;
                 }
             } catch (e) {
-                console.log('Unable to get ' + req.params.contentType +
-                    ' packages.');
-                console.log(e);
+                winston.log('error', 'Unable to get ' + req.params.contentType + ' packages.');
+                winston.log('error', e);
             }
         });
 
@@ -159,9 +156,8 @@ module.exports = function(io, data) {
         var event = {};
         event.name = req.params.name;
         event.data = req.body;
-
-        console.log(event.name + ' event has been reported.');
-        console.log(event.data);
+        winston.log('info', event.name + ' event has been reported.');
+        winston.log('info', event.data);
 
         if (event.name === 'connection-status') {
             var connectionState = event.data;
@@ -171,29 +167,27 @@ module.exports = function(io, data) {
             }
             io.emit(event.name, event.data);
         } else if (event.name === 'device-add') {
+            usbDrives.set(event.data.id, {
+                id: event.data.id,
+                status: 'not_ready',
+                progress: 0
+            });
+            io.emit(event.name, event.data);
             controller.isRefreshUsb(event.data.id,
                 function(err, isInitialized) {
                     if (err) {
-                        console.error(err);
+                        winston.log('error', err);
                     } else {
                         if (isInitialized) {
-                            controller.prepareUsb(io,
-                                {usb: event.data, item: null});
-                        } else {
-                                usbDrives.set(event.data.id, {
-                                    id: event.data.id,
-                                    status: 'not_ready',
-                                    progress: 0
-                                });
-                                io.emit(event.name, event.data);
+                            controller.prepareUsb(io);
                         }
                     }
                 });
         } else if (event.name === 'device-remove') {
             usbDrives.delete(event.data.id);
-            // controller.clearItemFiles().then(function(){
-            //     io.emit(event.name, event.data);
-            // });
+            controller.clearItemFiles().then(function(){
+                io.emit(event.name, event.data);
+            });
             io.emit(event.name, event.data);
         }
         else if (event.name === 'usb-complete') {
@@ -211,12 +205,12 @@ module.exports = function(io, data) {
     });
 
     router.post('/system/reboot', function(req, res) {
-        console.log('Rebooting...');
+        winston.log('info', 'Rebooting...');
         station.reboot();
     });
 
     router.post('/system/shutdown', function(req, res) {
-        console.log('Shutting down...');
+        winston.log('info', 'Shutting down...');
         station.shutdown();
     });
 
@@ -239,7 +233,7 @@ module.exports = function(io, data) {
         sessions.getSessionsByParams({}).then(function(response) {
             res.json(response);
         }).catch(function(err) {
-            console.log(err);
+            winston.log('error', err);
         });
     });
 
@@ -263,7 +257,7 @@ module.exports = function(io, data) {
                 res.json({sessionUpdated: result});
             }).
             catch(function(err) {
-                console.log('Something went wrong while updating session item for serial:' + req.params.id);
+                winston.log('error', 'Something went wrong while updating session item for serial:' + req.params.id);
             });
         });
     router.get('/getAllUsbDrives', function(req, res) {

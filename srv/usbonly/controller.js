@@ -7,33 +7,37 @@ var versions = require('./versions');
 var usbDrives = require('./usbCache');
 var Promise = require('bluebird');
 var BlueBirdQueue = require('bluebird-queue');
+var sessions = require('../session_storage/sessions');
+var inventory = require('../inventory');
 exports.prepareUsb = function(io) {
     console.log('prepareUsb');
     var devices = usbDrives.getAllUsbDrives();
     for (var key in devices) {
-        if (devices.hasOwnProperty(key) && devices[key].id){
+        if (devices.hasOwnProperty(key) && devices[key].status === 'not_ready'){
             var device = devices[key];
-            console.log(device);
-            partitions.updatePartitions(device.id, function(err) {
-                if (err) {
-                    console.error(err);
-                    partitions.unmountPartitions(device.id, function() {
-                        console.log('Error updating partitions');
-                        usbDrives.completeUsb({err: err, device: device.id});
-                        io.emit('usb-complete', {err: err, device: device.id});
-                    });
-                } else {
-                    content.updateContent(io, device.id, function(err) {
-                        if (err) {
-                            console.log('Error updating content');
-                            console.log(err);
-                        }
+            usbDrives.setStatus(device, 'in_progress');
+            readSessions(io, device.id, function(){
+               partitions.updatePartitions(device.id, function(err) {
+                    if (err) {
+                        console.error(err);
                         partitions.unmountPartitions(device.id, function() {
+                            console.log('Error updating partitions');
                             usbDrives.completeUsb({err: err, device: device.id});
                             io.emit('usb-complete', {err: err, device: device.id});
                         });
-                    });
-                }
+                    } else {
+                        content.updateContent(io, device.id, function(err) {
+                            if (err) {
+                                console.log('Error updating content');
+                                console.log(err);
+                            }
+                            partitions.unmountPartitions(device.id, function() {
+                                usbDrives.completeUsb({err: err, device: device.id});
+                                io.emit('usb-complete', {err: err, device: device.id});
+                            });
+                        });
+                    }
+                });
             });
         }
     }
@@ -53,102 +57,135 @@ exports.isRefreshUsb = function(device, callback){
         }
     });
 };
-exports.readSession = function(io, data, callback) {
-    console.log('readSession');
-    var device = data.usb;
-    var isSessionComplete = false;
-
-    partitions.mountPartitions(device, function(err) {
-        // if (isDevelopment) {
-        //     logSession(session, 'Info', 'Checking ' + data.device.id +
-        //         ' for evidence that the refresh completed successfully.');
-        //     logSession(session, 'Info',
-        //         'Simulating verifying a refresh in a development environment by waiting 3 seconds.');
-        //     console.log(
-        //         'Simulating verifying a refresh in a development environment by waiting 3 seconds.');
-        //     setTimeout(function() {
-        //         closeSession(session, true, callback);
-        //     }, 3000);
-        // } else {
-        //     logSession(session, 'Info', 'Checking ' + data.device.id +
-        //         ' for evidence that the refresh completed successfully.');
-        //     var mountSource = '/dev/' + data.device.id + '1';
-        //     var mountTarget = '/mnt/' + data.device.id + '1';
-        //     fs.mkdir(mountTarget, function(err) {
-        //         if (err && err.code !== 'EEXIST') {
-        //             logSession(session, 'Error', 'Error creating directory ' +
-        //                 mountTarget, err);
-        //         } else {
-        //             logSession(session, 'Info', 'Attempting to mount ' +
-        //                 mountSource + ' to ' + mountTarget);
-        //             var mount = childProcess.spawn('mount',
-        //                 [mountSource, mountTarget]);
-        //             mount.on('close', function(code) {
-        //                 var systemUpdateDir = path.join(mountTarget,
-        //                     '$SystemUpdate');
-        //                 if (code !== 0) {
-        //                     logSession(session,
-        //                         'Error', 'Error, failed to mount ' +
-        //                         mountSource + ' to ' +
-        //                         mountTarget, 'Mount command failed with error code ' +
-        //                         code);
-        //                 } else {
-        //                     logSession(session,
-        //                         'Info', 'Successfully mounted ' + mountSource +
-        //                         ' to ' + mountTarget);
-        //                     var success = filesExist(systemUpdateDir, [
-        //                         'smcerr.log',
-        //                         'update.cfg',
-        //                         'update.log',
-        //                         'update2.cfg']);
-        //                     rimraf(path.join(mountTarget, '*'), function(err) {
-        //                         childProcess.spawn('umount', [mountTarget]);
-        //                         closeSession(session, success, callback);
-        //                     });
-        //                 }
-        //             });
-        //         }
-        //     });
-        // }
-        fs.readFile('/mnt/' + device + config.usbStatusPartition + 'sessions/' + '/*.json', 'utf8', function (err, data) {
+function readSessions(io, device, callback){
+    readSessionFiles(io, device, function(err){
+        if (err) {
+            console.log(err);
+            io.emit('session-error', err);
+        }
+        readXboxSessions(device, function(err) {
             if (err) {
-                if (err.code === 'ENOENT') {
-                    callback(null, false);
-                } else {
-                    callback(err, null);
-                }
-            } else {
-                try {
-                    // Remove non-printable characters
-                    data = data.replace(/[^\x20-\x7E]+/g, '');
+                console.log(err);
+                io.emit('session-error', err);
+            }
+            content.clearStatus(device);
+            callback();
+        });
+    })
+}
+function readSessionFiles(io, device, callback) {
+    console.log('readSession');
+    partitions.mountPartitions(device, function(err) {
 
-                    var usbSession = JSON.parse(data);
-                    console.log('Refresh Session details:');
-                    console.log(usbSession);
-                    isSessionComplete = usbSession.status === 'Success';
-                } catch (err) {
-                    console.log('Error reading session');
-                    console.error(err);
-                    callback(err, null);
-                } finally {
-                    try {
-                        content.clearStatus(device);
-                        //Disable EFI boot to prevent Refresh Station booting to USB
-                        content.prepareRefreshType(device, 'none', function() {
-                            partitions.unmountPartitions(device, function() {
-                                callback(null, isSessionComplete);
+        var sessionsDirectory = '/mnt/' + device + config.usbStatusPartition + 'sessions/';
+        fs.readdir(sessionsDirectory, function(err, files){
+            for (var i = 0; i < files.length; i++) {
+                fs.readFile(sessionsDirectory + files[i], 'utf8', function (err, data) {
+                    if (err) {
+                        if (err.code === 'ENOENT') {
+                            callback(null);
+                        } else {
+                            callback(err);
+                        }
+                    } else {
+                        try {
+                            // Remove non-printable characters
+                            data = data.replace(/[^\x20-\x7E]+/g, '');
+
+                            var usbSession = JSON.parse(data);
+                            console.log('Refresh Session details:');
+                            console.log(usbSession);
+                            sessions.getSessionByParams({'device.item_number': usbSession.device.item_number, 'status': 'Incomplete'}).then(function(session) {
+                                if (session === null){
+                                    usbSession._id = usbSession.start_time;
+                                    sessions.set(usbSession._id, usbSession);
+                                } else {
+                                    usbSession._id = session._id;
+                                    sessions.updateSession(usbSession);
+                                }
+                                inventory.sessionFinish(usbSession._id, {complete: usbSession.status === 'Success'}, function(session){
+                                    io.emit('session-complete', session);
+                                    callback(null);
+                                });
                             });
-                        });
-                    } catch (err) {
-                        console.log('Error finalizing reading sessions');
-                        console.error(err);
-                        callback(err, isSessionComplete);
+                        } catch (err) {
+                            console.log('Error reading session');
+                            console.error(err);
+                            callback(err);
+                        } finally {
+                            try {
+                                content.clearStatus(device);
+                                //Disable EFI boot to prevent Refresh Station booting to USB
+                            } catch (err) {
+                                console.log('Error finalizing reading sessions');
+                                console.error(err);
+                                io.emit('session-complete');
+                                callback(err);
+                            }
+                        }
                     }
-                }
+                });
             }
         });
+
     });
-};
+}
+function readXboxSessions(device, callback){
+    var systemUpdateDir = '/mnt/' + device + '1/$SystemUpdate';
+    var usbItemFile = '/mnt/' + device + config.usbStatusPartition +
+        '/item.json';
+    var unreportedSessions = 0;
+    fs.readFile(systemUpdateDir + '/update.log', 'utf8', function (err, data) {
+        if (err) {
+            if (err.code !== 'ENOENT') {
+                callback(err);
+            }
+        } else {
+            unreportedSessions = data.split(/\r\n|\r|\n/).length / 2;
+        }
+            fs.readFile(usbItemFile, 'utf8', function (err, item) {
+                if (err) {
+                    if (err.code === 'ENOENT') {
+                        reportXboxSessions(unreportedSessions);
+                    }  else {
+                        callback(err);
+                    }
+                } else {
+                    item = JSON.parse(item);
+                    if (item.Type === 'XboxOne') {
+                        var sessionComplete = unreportedSessions > 0;
+                        sessions.getSessionByParams({'device.item_number': item.InventoryNumber, 'status': 'Incomplete'}).then(function(session) {
+                            if (session === null){
+                                inventory.sessionStart(new Date().toISOString(), item, null, function(session){
+                                    inventory.sessionFinish(session._id, {complete: sessionComplete}, function(session){
+                                        io.emit('session-complete', session);
+                                    });
+                                });
+                            } else {
+                                inventory.sessionFinish(session._id, {complete: sessionComplete}, function(session){
+                                    io.emit('session-complete', session);
+                                });
+
+                            }
+                            unreportedSessions--;
+                            reportXboxSessions(unreportedSessions);
+                        });
+                    } else {
+                        reportXboxSessions(unreportedSessions);
+                    }
+                }
+            });
+    });
+}
+function reportXboxSessions(count) {
+    for (var i = 0; i < count; i++){
+        inventory.sessionStart(new Date().toISOString(), {Type: 'XboxOne'}, null, function(session){
+            inventory.sessionFinish(session._id, {complete: true}, function(session){
+                io.emit('session-complete', session);
+            });
+        });
+    }
+}
 exports.createItemFiles = function(item){
     var queue = new BlueBirdQueue({});
     var devices = usbDrives.getAllUsbDrives();

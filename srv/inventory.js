@@ -25,6 +25,7 @@ var Promise = require('bluebird');
 Promise.config({
     warnings: false
 });
+var winston = require('winston');
 exports.getSerialLookup = getSerialLookup;
 exports.sessionStart = sessionStart;
 exports.getItem = getItem;
@@ -44,7 +45,7 @@ setInterval(function() {
 
 // Reverse lookup to Azure in case if not found in our Mongo DB
 function getItemFromAzure(id, callback) {
-    console.log('Getting item from azure with Item Id: ' + id);
+    winston.log('info', 'Getting item from azure with Item Id: ' + id);
     request({
         url: INVENTORY_LOOKUP_URL + id,
         headers: {
@@ -54,12 +55,12 @@ function getItemFromAzure(id, callback) {
         json: true
     }, function(error, response, body) {
         if (error) {
-            console.error(error);
+            winston.log('error', error);
             callback({error: error, item: null});
         }
         else {
-            console.log('Azure server returned: ');
-            console.log(body);
+            winston.log('info', 'Azure server returned: ');
+            winston.log('info', body);
             callback({error: null, item: body});
         }
     });
@@ -67,7 +68,7 @@ function getItemFromAzure(id, callback) {
 
 // Item lookup from our Mongo DB
 function getItem(id, callback) {
-    console.log(API_URL + '/aarons/inventorylookup' + id);
+    winston.log('info', API_URL + '/aarons/inventorylookup' + id);
     request({
         rejectUnauthorized: false,
         uri: API_URL + '/aarons/inventorylookup' + id,
@@ -76,16 +77,16 @@ function getItem(id, callback) {
         }
     }, function(error, response) {
         if (error) {
-            console.error(error);
+            winston.log('error', error);
             callback({error: error, item: null});
         }
         else {
-            console.log('NodeJS server returned: ');
-            console.log(response.body);
+            winston.log('info', 'NodeJS server returned: ');
+            winston.log('info', response.body);
             if (!JSON.parse(response.body).message) {
                 callback({error: null, item: JSON.parse(response.body)});
             } else {
-                console.log('Calling reverse lookup from Azure with Id: ' + id);
+                winston.log('info', 'Calling reverse lookup from Azure with Id: ' + id);
                 getItemFromAzure(id, callback);
             }
 
@@ -103,12 +104,12 @@ function getSerialLookup(imei, callback) {
         json: true
     }, function(error, response, body) {
         if (error) {
-            console.error(error);
+            winston.log('error', error);
             callback({error: error, item: null});
         }
         else {
-            console.log('Server returned: ');
-            console.log(body);
+            winston.log('info', 'Server returned: ');
+            winston.log('info', body);
             callback({error: null, item: body});
         }
     });
@@ -122,7 +123,7 @@ function getLowestUsbInProgress() {
 }
 
 function sessionStart(sessionId, device, tmp, callback) {
-    console.log('Session:' + sessionId + ' started');
+    winston.log('info', 'Session:' + sessionId + ' started');
     var diagnose_only = false;
     var session_device = changeDeviceFormat(device);
     var station_name = station.getName();
@@ -143,10 +144,10 @@ function sessionStart(sessionId, device, tmp, callback) {
             '_id': sessionId
         };
         sessions.set(sessionId, newSession).then(function(session) {
-            console.log('Session with ID:' + sessionId + ' was inserted succesfully');
+            winston.log('info', 'Session with ID:' + sessionId + ' was inserted succesfully');
             callback(newSession);
         }).catch(function(err) {
-            console.log('Error while inserting session with ID:' + sessionId + ' Error:' + err);
+            winston.log('error', 'Error while inserting session with ID:' + sessionId + ' Error:' + err);
             callback(null);
         });
 
@@ -154,7 +155,7 @@ function sessionStart(sessionId, device, tmp, callback) {
 }
 
 function unlockDevice(imei, forService, callback) {
-    console.log('Unlocking imei ' + imei);
+    winston.log('info', 'Unlocking imei ' + imei);
     request({
         method: 'POST',
         url: API_URL + '/unlockapi/unlock',
@@ -166,14 +167,14 @@ function unlockDevice(imei, forService, callback) {
         json: true
     }, function(error, response, body) {
         if (error) {
-            console.error(error);
+            winston.log('error', error);
             callback({error: error, result: null});
         }
         else {
             callback({error: null, result: body});
         }
     });
-    console.log('Unlock request has been sent');
+    winston.log('info', 'Unlock request has been sent');
 }
 
 function lockDevice(imei, callback) {
@@ -188,21 +189,19 @@ function lockDevice(imei, callback) {
         json: true
     }, function(error, response, body) {
         if (error) {
-            console.error(error);
+            winston.log('error', error);
             callback({error: error, result: null});
         }
         else {
             callback({error: null, result: body});
         }
     });
-    console.log('Lock request has been sent');
+    winston.log('info', 'Lock request has been sent');
 }
 
 function sessionUpdate(session, level, message, details, callback) {
         if (typeof session === 'undefined') {
-            console.warn(
-                'sessionUpdate attempted for a session that is not started.');
-            console.warn('message: ' + message);
+            winston.log('warn', 'sessionUpdate attempted for a session that is not started.');
         } else {
             sessions.updateSession(session);
             logSession(session, level, message, details);
@@ -220,8 +219,7 @@ function sessionUpdateItem(serial, device) {
                 //resendSessions();
             }
         }).catch(function(err) {
-            console.log('Something went wrong while updating session item for serial:' +
-                err);
+            winston.log('error', 'Something went wrong while updating session item for serial:' + err);
         });
     });
 
@@ -230,16 +228,14 @@ function sessionUpdateItem(serial, device) {
 function sessionFinish(sessionId, data, callback) {
     //var session = sessions.get(sessionId);
     sessions.getSessionByParams({'_id':sessionId}).then(function(session) {
-        console.log('A client requested to finish an ' + session.device.type +
-            ' refresh of session id ' + session._id);
+        winston.log('info', 'A client requested to finish an ' + session.device.type + ' refresh of session id ' + session._id);
         if (session.device.type === 'XboxOne') {
             if (isDevelopment) {
                 logSession(session, 'Info', 'Checking ' + data.device.id +
                     ' for evidence that the refresh completed successfully.');
                 logSession(session, 'Info',
                     'Simulating verifying a refresh in a development environment by waiting 3 seconds.');
-                console.log(
-                    'Simulating verifying a refresh in a development environment by waiting 3 seconds.');
+                winston.log('info', 'Simulating verifying a refresh in a development environment by waiting 3 seconds.');
                 setTimeout(function() {
                     closeSession(session, true, callback);
                 }, 3000);
@@ -288,7 +284,7 @@ function sessionFinish(sessionId, data, callback) {
             closeSession(session, data.complete, callback);
         }
     }).catch(function(err){
-        console.log('Session with:' + sessionId + ' was not found in Tingo');
+        winston.log('info', 'Session with:' + sessionId + ' was not found in Tingo');
     });
 
 }
@@ -308,7 +304,7 @@ function logSession(session, level, message, details) {
 }
 //
 function closeSession(session, success, callback) {
-    console.log('Closing session');
+    winston.log('info', 'Closing session');
     session.end_time = new Date();
     if (success) {
         logSession(session, 'Info', 'Refresh completed successfully.');
@@ -323,38 +319,38 @@ function closeSession(session, success, callback) {
     sendSession(session);
 }
 
-function timeoutExpired(startTime) {
-    var timeoutTime = startTime + config.deviceUnlockTimeout;
-    console.log(startTime);
-    console.log(timeoutTime);
-    console.log(new Date());
-    return timeoutTime > new Date();
-}
-
-function lockDeviceAndSendSession(content, file) {
-    if (!content.state.deviceLocked &&
-        !timeoutExpired(content.session.start_time)) {
-        lockDevice(content.session.item_number, function(data) {
-            if (data.error === null) {
-                content.state.deviceLocked = true;
-                fs.writeFile(file, JSON.stringify(content), function(err) {
-                    sendSession(content, file);
-                });
-            } else {
-                sendSession(content, file);
-            }
-        });
-    } else {
-        sendSession(content, file);
-    }
-}
+// function timeoutExpired(startTime) {
+//     var timeoutTime = startTime + config.deviceUnlockTimeout;
+//     console.log(startTime);
+//     console.log(timeoutTime);
+//     console.log(new Date());
+//     return timeoutTime > new Date();
+// }
+//
+// function lockDeviceAndSendSession(content, file) {
+//     if (!content.state.deviceLocked &&
+//         !timeoutExpired(content.session.start_time)) {
+//         lockDevice(content.session.item_number, function(data) {
+//             if (data.error === null) {
+//                 content.state.deviceLocked = true;
+//                 fs.writeFile(file, JSON.stringify(content), function(err) {
+//                     sendSession(content, file);
+//                 });
+//             } else {
+//                 sendSession(content, file);
+//             }
+//         });
+//     } else {
+//         sendSession(content, file);
+//     }
+// }
 
 function sendSession(session) {
     // deleting extra keys which added for client to continue session
     var sessionID = session._id;
     if (session.device.item_number ){
         delete session.tmp;
-        console.log('Sending session with this ID:' + sessionID + ' for device: ' + session.device.item_number);
+        winston.log('info', 'Sending session with this ID:' + sessionID + ' for device: ' + session.device.item_number);
         return request({
             method: 'POST',
             url: API_URL + '/session',
@@ -368,17 +364,17 @@ function sendSession(session) {
             // update status is sent
             session.is_sent = true;
             sessions.updateSession(session);
-            console.log('Session with this this ID:' + sessionID + ' was sent.' );
+            winston.log('info', 'Session with this this ID:' + sessionID + ' was sent.');
         }).catch(function(error) {
-            console.log('ERROR: Unable to send session.');
-            console.log(error);
+            winston.log('error', 'ERROR: Unable to send session.');
+            winston.log('error', error);
         });
     } else {
-        console.log('Session with this ID not sent:' + sessionID)
+        winston.log('info', 'Session with this ID not sent:' + sessionID);
     }
 }
 function resendSessions() {
-    console.log('Attempting to resend unsent sessions');
+    winston.log('info', 'Attempting to resend unsent sessions');
     sessions.getSessionsByParams(
         {'device.item_number': {$exists: true, $ne: null}, 'is_sent': false, 'status': { $in: ["Fail", "Success"] }}).
         then(function(sessions) {
@@ -387,7 +383,7 @@ function resendSessions() {
             }
         }).
         catch(function(err) {
-            console.log(err);
+            winston.log('error', err);
         });
 }
 

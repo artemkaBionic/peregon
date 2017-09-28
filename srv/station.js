@@ -8,7 +8,7 @@ var isDevelopment = process.env.NODE_ENV === 'development';
 var connectionState = null;
 var service_tag = null;
 var name = null;
-
+var winston = require('winston');
 exports.getServiceTag = function(callback) {
     if (service_tag === null) {
         if (isDevelopment) {
@@ -18,7 +18,7 @@ exports.getServiceTag = function(callback) {
             shell.exec('dmidecode -s system-serial-number',
                 function(code, stdout, stderr) {
                     if (code !== 0) {
-                        console.error(stderr);
+                        winston.log('error', stderr);
                     } else {
                         service_tag = stdout.substr(0, stdout.indexOf('\n')); // First line
                     }
@@ -68,7 +68,7 @@ exports.getUsbDrives = function(callback) {
 };
 
 exports.getUsbDrive = function(id, callback) {
-    console.log('Getting USB drive information for ' + id);
+    winston.log('info', 'Getting USB drive information for ' + id);
     shell.exec('udevadm info --query=property --path=/sys/block/' + id,
         {silent: true}, function(code, stdout, stderr) {
             if (code !== 0) {
@@ -111,21 +111,18 @@ exports.getConnectionState = function() {
 
 exports.getIsServiceCenter = function(callback) {
     if (isDevelopment) {
-        console.log(
-            'Simulating service center check in a Windows development environment.');
+        winston.log('info', 'Simulating service center check in a Windows development environment.');
         callback(true);
     } else {
         fs.stat('/srv/packages/ServiceCenter.mode', function(err, stat) {
             if (err == null) {
-                console.log('isServiceCenter = true');
+                winston.log('info', 'isServiceCenter = true');
                 callback(true);
             } else if (err.code == 'ENOENT') {
-                console.log('isServiceCenter = false');
+                winston.log('info', 'isServiceCenter = false');
                 callback(false);
             } else {
-                console.log(
-                    'Error while checking if /srv/packages/ServiceCenter.mode exists: ',
-                    err.code);
+                winston.log('error', 'Error while checking if /srv/packages/ServiceCenter.mode exists: ', err.code);
                 callback(null);
             }
         });
@@ -137,20 +134,19 @@ exports.getPackage = function(sku, callback) {
         isDownloaded: null
     };
     if (isDevelopment) {
-        console.log(
-            'Simulating package download check in a Windows development environment.');
+        winston.log('info', 'Simulating package download check in a Windows development environment.');
         package.isDownloaded = true;
         callback(package);
     } else {
         fs.stat('/srv/packages/' + sku + '/.complete', function(err, stat) {
             if (err == null) {
-                console.log('Package for sku ' + sku + ' is downloaded.');
+                winston.log('info', 'Package for sku ' + sku + ' is downloaded.');
                 package.isDownloaded = true;
             } else if (err.code == 'ENOENT') {
-                console.log('Package for sku ' + sku + ' is NOT downloaded.');
+                winston.log('info', 'Package for sku ' + sku + ' is NOT downloaded.');
                 package.isDownloaded = false;
             } else {
-                console.log('Error while checking if /srv/packages/' + sku +
+                winston.log('error', 'Error while checking if /srv/packages/' + sku +
                     '/.complete exists: ', err.code);
             }
             callback(package);
@@ -159,14 +155,14 @@ exports.getPackage = function(sku, callback) {
 };
 
 exports.reboot = function() {
-    console.log('Reboot requested.');
+    winston.log('info', 'Reboot requested.');
     if (!isDevelopment) {
         childProcess.spawn('python', ['/opt/powercontrol.py', '--reboot']);
     }
 };
 
 exports.shutdown = function() {
-    console.log('Shutdown requested.');
+    winston.log('info', 'Shutdown requested.');
     if (!isDevelopment) {
         childProcess.spawn('python', ['/opt/powercontrol.py', '--poweroff']);
     }
