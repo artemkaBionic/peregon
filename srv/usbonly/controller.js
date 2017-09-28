@@ -11,7 +11,7 @@ var sessions = require('../session_storage/sessions');
 var inventory = require('../inventory');
 var winston = require('winston');
 exports.prepareUsb = function(io) {
-    console.log('prepareUsb');
+    winston.info('prepareUsb');
     var devices = usbDrives.getAllUsbDrives();
     for (var key in devices) {
         if (devices.hasOwnProperty(key) && devices[key].status === 'not_ready'){
@@ -20,17 +20,17 @@ exports.prepareUsb = function(io) {
             readSessions(io, device.id, function(){
                partitions.updatePartitions(device.id, function(err) {
                     if (err) {
-                        console.error(err);
+                        winston.log('error', err);
                         partitions.unmountPartitions(device.id, function() {
-                            console.log('Error updating partitions');
+                            winston.info('Error updating partitions');
                             usbDrives.completeUsb({err: err, device: device.id});
                             io.emit('usb-complete', {err: err, device: device.id});
                         });
                     } else {
                         content.updateContent(io, device.id, function(err) {
                             if (err) {
-                                console.log('Error updating content');
-                                console.log(err);
+                                winston.info('Error updating content');
+                                winston.info(err);
                             }
                             partitions.unmountPartitions(device.id, function() {
                                 usbDrives.completeUsb({err: err, device: device.id});
@@ -47,7 +47,7 @@ exports.isRefreshUsb = function(device, callback){
     //var device = data.usb.id;
     versions.getUsbVersions(device, function(err, res){
         if(err) {
-            console.error(err);
+            winston.log('error', err);
             callback(err, null);
         } else {
             if (res === null) {
@@ -61,27 +61,30 @@ exports.isRefreshUsb = function(device, callback){
 function readSessions(io, device, callback){
     readSessionFiles(io, device, function(err){
         if (err) {
-            console.log(err);
+            winston.info(err);
             io.emit('session-error', err);
         }
+        winston.info('read session files');
         readXboxSessions(device, function(err) {
             if (err) {
-                console.log(err);
+                winston.info(err);
                 io.emit('session-error', err);
             }
+            winston.info('read xbox files');
             content.clearStatus(device);
             callback();
         });
     })
 }
 function readSessionFiles(io, device, callback) {
-    console.log('readSession');
+    winston.info('readSession');
     partitions.mountPartitions(device, function(err) {
 
         var sessionsDirectory = '/mnt/' + device + config.usbStatusPartition + 'sessions/';
         fs.readdir(sessionsDirectory, function(err, files){
             if (err) {
                winston.log('info', err);
+               callback(err);
             } else {
                 for (var i = 0; i < files.length; i++) {
                     fs.readFile(sessionsDirectory + files[i], 'utf8', function (err, data) {
@@ -97,8 +100,8 @@ function readSessionFiles(io, device, callback) {
                                 data = data.replace(/[^\x20-\x7E]+/g, '');
 
                                 var usbSession = JSON.parse(data);
-                                console.log('Refresh Session details:');
-                                console.log(usbSession);
+                                winston.info('Refresh Session details:');
+                                winston.info(usbSession);
                                 sessions.getSessionByParams({'device.item_number': usbSession.device.item_number, 'status': 'Incomplete'}).then(function(session) {
                                     if (session === null){
                                         usbSession._id = usbSession.start_time;
@@ -113,16 +116,16 @@ function readSessionFiles(io, device, callback) {
                                     });
                                 });
                             } catch (err) {
-                                console.log('Error reading session');
-                                console.error(err);
+                                winston.info('Error reading session');
+                                winston.log('error',err);
                                 callback(err);
                             } finally {
                                 try {
                                     content.clearStatus(device);
                                     //Disable EFI boot to prevent Refresh Station booting to USB
                                 } catch (err) {
-                                    console.log('Error finalizing reading sessions');
-                                    console.error(err);
+                                    winston.info('Error finalizing reading sessions');
+                                    winston.log('error',err);
                                     io.emit('session-complete');
                                     callback(err);
                                 }

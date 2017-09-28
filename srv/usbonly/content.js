@@ -21,20 +21,20 @@ var io = null;
 //var totalProgress = null;
 
 function updateProgress(value, device) {
-    console.log('Progress for device: ' + device + ' is: ' + value + '%');
+    winston.info('Progress for device: ' + device + ' is: ' + value + '%');
     usbDrive.updateProgress(value, device);
     io.emit('usb-progress', {progress: value, device: device});
 }
 
 function copyFiles(contentTemp, copyFilesSize, totalSize, device, callback) {
-    console.log('Copying files to USB');
+    winston.info('Copying files to USB');
     var err = '';
     var sentProgress = 0;
     var progressRatio = copyFilesSize / totalSize;
 
     var rsyncCommand = 'rsync ' + rsyncParameters + ' --info=progress2 ' +
         path.join(contentTemp, '*') + ' /mnt/';
-    console.log('Running command "' + rsyncCommand + '"');
+    winston.info('Running command "' + rsyncCommand + '"');
     var rsync = spawn('script', ['-c', rsyncCommand]);
 
     rsync.stdout.on('data', function(data) {
@@ -57,8 +57,8 @@ function copyFiles(contentTemp, copyFilesSize, totalSize, device, callback) {
     });
 
     rsync.on('exit', function(code) {
-        console.log('rsync process exited with code ' + code.toString());
-        console.log(err);
+        winston.info('rsync process exited with code ' + code.toString());
+        winston.info(err);
         if (code !== 0) {
             callback(new Error(err));
         } else {
@@ -68,7 +68,7 @@ function copyFiles(contentTemp, copyFilesSize, totalSize, device, callback) {
 }
 
 function applyMacImage(device, macImageSize, totalSize, callback) {
-    console.log('Applying Mac image');
+    winston.info('Applying Mac image');
     var err = '';
     var sentProgress = 0;
     var progressRatio = macImageSize / totalSize;
@@ -76,7 +76,7 @@ function applyMacImage(device, macImageSize, totalSize, callback) {
     var ddCommand = 'dd bs=4M if=' + config.macContent +
         ' | pv --numeric --size ' + macImageSize + ' | dd bs=4M of=/dev/' +
         device + config.usbMacPartition;
-    console.log('Running command "' + ddCommand + '"');
+    winston.info('Running command "' + ddCommand + '"');
     var dd = spawn('script', ['-c', ddCommand]);
 
     dd.stdout.on('data', function(data) {
@@ -99,8 +99,8 @@ function applyMacImage(device, macImageSize, totalSize, callback) {
     dd.on('exit', function(code) {
         shell.exec('sync', function() {
             if (code !== 0) {
-                console.log('dd process exited with code ' + code.toString());
-                console.log(err);
+                winston.info('dd process exited with code ' + code.toString());
+                winston.info(err);
                 callback(new Error(err));
             } else {
                 callback(null);
@@ -121,10 +121,10 @@ exports.createItemFile = function(device, item, callback) {
 };
 
 function finishApplyContent(device, callback) {
-    console.log('Device ' + device + ' content update is complete.');
+    winston.info('Device ' + device + ' content update is complete.');
     versions.createVersionsFile(device, function(err) {
         if (err) {
-            console.error(err);
+            console.log('error', err);
         }
     });
 }
@@ -154,21 +154,21 @@ function copyFilesAndApplyImages(
 }
 
 exports.updateContent = function(socket_io, device, callback) {
-    console.log('Updating content on ' + device);
+    winston.info('Updating content on ' + device);
     io = socket_io;
 
     versions.getCurrentVersions(function(err, currentVersions) {
         if (err) {
             callback(err);
         } else {
-            console.log('Current Versions:');
-            console.log(currentVersions);
+            winston.info('Current Versions:');
+            winston.info(currentVersions);
             versions.getUsbVersions(device, function(err, usbVersions) {
                 if (err) {
                     callback(err);
                 } else {
-                    console.log('USB Versions:');
-                    console.log(usbVersions);
+                    winston.info('USB Versions:');
+                    winston.info(usbVersions);
                     // Prepare files to copy
                     var contentTemp = path.join(os.tmpdir(), 'tmp', uuid());
                     shell.mkdir('-p', [

@@ -53,8 +53,8 @@ function checkPartitioning(device, callback) {
 }
 
 function unmountPartitions(device, callback) {
-    console.log('unmountPartitions');
-    console.log('Unmounting USB device ' + device);
+    winston.info('unmountPartitions');
+    winston.info('Unmounting USB device ' + device);
     shell.exec('sync && umount /mnt/' + device + '?', {silent: true}, function(code, stdout, stderr) {
         shell.rm('-rf', '/mnt/' + device + '?');
         if (code !== 0) {
@@ -66,9 +66,9 @@ function unmountPartitions(device, callback) {
 }
 
 function mountPartitions(device, callback) {
-    console.log('mountPartitions');
+    winston.info('mountPartitions');
     unmountPartitions(device, function() {
-        console.log('Mounting USB device ' + device);
+        winston.info('Mounting USB device ' + device);
         shell.mkdir('-p', [
             '/mnt/' + device + config.usbXboxPartition,
             '/mnt/' + device + config.usbWindowsPartition,
@@ -84,13 +84,13 @@ function mountPartitions(device, callback) {
 }
 
 function updatePartitions(device, callback) {
-    console.log('updatePartitions');
+    winston.info('updatePartitions');
     checkPartitioning(device, function(err, isPartitioned) {
         if (err) {
             callback(err)
         } else {
             if (isPartitioned) {
-                console.log('USB device ' + device + ' already partitioned correctly');
+                winston.info('USB device ' + device + ' already partitioned correctly');
                 mountPartitions(device, function(err) {
                     callback(err);
                 });
@@ -105,7 +105,7 @@ function updatePartitions(device, callback) {
                         var partitionStart = 0;
                         var partitionEnd = 0;
 
-                        console.log('Initializing new USB device ' + device);
+                        winston.info('Initializing new USB device ' + device);
                         // Initialize MBR
                         var script = 'mklabel msdos \\';
                         // Create Xbox Partition
