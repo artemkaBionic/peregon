@@ -229,60 +229,7 @@ function sessionFinish(sessionId, data, callback) {
     //var session = sessions.get(sessionId);
     sessions.getSessionByParams({'_id':sessionId}).then(function(session) {
         winston.log('info', 'A client requested to finish an ' + session.device.type + ' refresh of session id ' + session._id);
-        if (session.device.type === 'XboxOne') {
-            if (isDevelopment) {
-                logSession(session, 'Info', 'Checking ' + data.device.id +
-                    ' for evidence that the refresh completed successfully.');
-                logSession(session, 'Info',
-                    'Simulating verifying a refresh in a development environment by waiting 3 seconds.');
-                winston.log('info', 'Simulating verifying a refresh in a development environment by waiting 3 seconds.');
-                setTimeout(function() {
-                    closeSession(session, true, callback);
-                }, 3000);
-            } else {
-                logSession(session, 'Info', 'Checking ' + data.device.id +
-                    ' for evidence that the refresh completed successfully.');
-                var mountSource = '/dev/' + data.device.id + '1';
-                var mountTarget = '/mnt/' + data.device.id + '1';
-                fs.mkdir(mountTarget, function(err) {
-                    if (err && err.code !== 'EEXIST') {
-                        logSession(session, 'Error', 'Error creating directory ' +
-                            mountTarget, err);
-                    } else {
-                        logSession(session, 'Info', 'Attempting to mount ' +
-                            mountSource + ' to ' + mountTarget);
-                        var mount = childProcess.spawn('mount',
-                            [mountSource, mountTarget]);
-                        mount.on('close', function(code) {
-                            var systemUpdateDir = path.join(mountTarget,
-                                '$SystemUpdate');
-                            if (code !== 0) {
-                                logSession(session,
-                                    'Error', 'Error, failed to mount ' +
-                                    mountSource + ' to ' +
-                                    mountTarget, 'Mount command failed with error code ' +
-                                    code);
-                            } else {
-                                logSession(session,
-                                    'Info', 'Successfully mounted ' + mountSource +
-                                    ' to ' + mountTarget);
-                                var success = filesExist(systemUpdateDir, [
-                                    'smcerr.log',
-                                    'update.cfg',
-                                    'update.log',
-                                    'update2.cfg']);
-                                rimraf(path.join(mountTarget, '*'), function(err) {
-                                    childProcess.spawn('umount', [mountTarget]);
-                                    closeSession(session, success, callback);
-                                });
-                            }
-                        });
-                    }
-                });
-            }
-        } else {
-            closeSession(session, data.complete, callback);
-        }
+        closeSession(session, data.complete, callback);
     }).catch(function(err){
         winston.log('info', 'Session with:' + sessionId + ' was not found in Tingo');
     });
