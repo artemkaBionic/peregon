@@ -133,7 +133,7 @@ function deviceBridge(io) {
 
     function installApp(serial) {
         client.uninstall(serial,
-            'com.basechord.aarons.androidrefresh.basechord').then(function() {
+            'com.basechord.aarons.androidrefresh').then(function() {
             winston.log('info', 'Uninstalled previous version of app successfully for device: ' + serial);
             client.install(serial, apk).then(function() {
                 winston.log('info', 'App is installed for device ' + serial);
@@ -172,7 +172,7 @@ function deviceBridge(io) {
     function startApp(serial) {
         winston.log('info', 'Starting refresh app for device:' + serial);
         return client.shell(serial,
-            'am start -n com.basechord.aarons.androidrefresh.basechord/com.basechord.aarons.androidrefresh.basechord.app.MainActivity -a android.intent.action.MAIN -c android.intent.category.LAUNCHER').
+            'am start -n com.basechord.aarons.androidrefresh/com.basechord.aarons.androidrefresh.app.MainActivity -a android.intent.action.MAIN -c android.intent.category.LAUNCHER').
             then(adb.util.readAll).
             then(function(output) {
                 winston.log('info', '[%s] %s', serial, output.toString().trim());
