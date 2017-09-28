@@ -64,7 +64,7 @@ function readSessions(io, device, callback){
             winston.info(err);
             io.emit('session-error', err);
         }
-        readXboxSessions(device, function(err) {
+        readXboxSessions(io, device, function(err) {
             if (err) {
                 winston.info(err);
                 io.emit('session-error', err);
@@ -136,7 +136,7 @@ function readSessionFiles(io, device, callback) {
 
     });
 }
-function readXboxSessions(device, callback){
+function readXboxSessions(io, device, callback){
     winston.info('Reading xbox sessions');
     var systemUpdateDir = '/mnt/' + device + '1/$SystemUpdate';
     var usbItemFile = '/mnt/' + device + config.usbStatusPartition +
