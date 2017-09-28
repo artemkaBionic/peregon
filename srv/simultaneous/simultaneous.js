@@ -19,7 +19,6 @@ exports.deviceBridge = deviceBridge;
 function deviceBridge(io) {
     var devices = [];
     winston.log('info', 'Device bridge started');
-
     client.trackDevices().then(function(tracker) {
         tracker.on('add', function(device) {
             io.emit('android-add', {});
