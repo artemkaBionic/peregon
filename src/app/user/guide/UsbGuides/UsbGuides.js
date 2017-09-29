@@ -43,10 +43,10 @@
                 number: 5,
                 title: 'New Boot Device'
             },
-            refreshXbox: {
-                name: 'refreshXbox',
+            refreshDevice: {
+                name: 'refreshDevice',
                 number: 6,
-                title: 'Refresh the Xbox'
+                title: 'Refresh the Device'
             },
             verifyRefresh: {
                 name: 'verifyRefresh',
@@ -83,7 +83,7 @@
                     vm.session = session;
                     if (!isEmptyObject(session.tmp)) {
                         if (session.tmp.currentStep === 'refreshStarted') {
-                            refreshXboxStarted();
+                            refreshDevicesStarted();
                         }
                     } else {
                         checkUsbStatus(session);
@@ -146,9 +146,8 @@
         function usbProgress(data) {
             vm.percentageComplete = data.progress;
         }
-        function refreshXboxStarted() {
-            vm.step = vm.steps.refreshXbox;
-            waitForUsbAdd(readSession);
+        function refreshDevicesStarted() {
+            vm.step = vm.steps.refreshDevice;
         }
         vm.createBootDrives = function(){
             $http({
@@ -168,9 +167,6 @@
                 headers: {'content-type': 'application/json'}
             }).then(function(){
                 socket.on('session-complete', function(session){
-                    console.log(session._id);
-                    console.log(vm.session._id);
-                    console.log(session);
                     if (session._id === vm.session._id) {
                         if (session.status === 'Success') {
                             vm.step = vm.steps.complete;
@@ -182,7 +178,6 @@
             });
         }
         function waitForUsbAdd(callback) {
-
             socket.on('device-add', function() {
                 console.log(callback);
                 callback();
@@ -197,7 +192,7 @@
 
         function prepareRefreshUsbComplete() {
             vm.step = vm.steps.prepareRefreshUsbComplete;
-            waitForUsbRemove(refreshXboxStart);
+            waitForUsbRemove(refreshDevicesStart);
         }
         function showBootDeviceProgress() {
             vm.step = vm.steps.prepareRefreshUsbInProgress;
@@ -209,11 +204,12 @@
             vm.step = vm.steps.prepareRefreshUsbInsert;
             waitForUsbAdd(newBootDevice);
         }
-        function refreshXboxStart(){
+        function refreshDevicesStart(){
             console.log('xbox started');
-            vm.step = vm.steps.refreshXbox;
+            vm.step = vm.steps.refreshDevice;
             vm.session.tmp.currentStep = 'refreshStarted';
             inventoryService.updateSession(vm.session,'Info','Refresh Started','')
+            waitForUsbAdd(readSession);
         }
         socket.on('usb-progress', function() {
             checkSession();
@@ -221,62 +217,6 @@
         socket.on('usb-complete', function() {
             checkSession();
         });
-        // socket.on('usb-session-complete', function() {
-        //     checkSession();
-        // });
-        // function startSession(session) {
-        //     if (!session) {
-        //         vm.sessionId = new Date().toISOString();
-        //         inventoryService.startSession(vm.sessionId, item);
-        //     } else {
-        //         checkStep();
-        //     }
-        // }
-        // vm.step = vm.steps.prepareRefreshUsbInsert;
-        // vm.errorMessage = '';
-        //
-        // vm.$onDestroy = function() {
-        //     eventService.EnableDeviceNotification();
-        // };
-        //
-        // function checkDevicesStatus() {
-        //     inventoryService.getLowestUsbInProgress().then(function(usbDrives){
-        //         if (usbDrives.message === 'No usb drives were added to refresh station') {
-        //           //  vm.step = vm.steps.prepareRefreshUsbInsert;
-        //         } else if (usbDrives.message === 'All usb drives are ready') {
-        //            //checkStep('prepareRefreshUsbComplete');
-        //             prepareRefreshUsbComplete();
-        //             waitForUsbRemove(prepareRefreshUsbApply)
-        //         } else {
-        //             vm.selectedDevice = usbDrives;
-        //          // vm.step = vm.steps.prepareRefreshUsbInProgress;
-        //         }
-        //     });
-        // }
-        // vm.retry = function() {
-        //     activate();
-        // };
-        //
-        // function prepareRefreshUsbApply() {
-        //     vm.step = vm.steps.prepareRefreshUsbInProgress;
-        //     socketService.once('usb-progress', function(data) {
-        //
-        //     });
-        // }
-        // function verifyRefreshStart() {
-        //     vm.step = vm.steps.verifyRefresh;
-        //
-        //     var data = {};
-        //     data.device = vm.selectedDevice;
-        //     inventoryService.finishSession(vm.item.InventoryNumber, data).then(function(success) {
-        //         if (success) {
-        //             vm.step = vm.steps.complete;
-        //         } else {
-        //             vm.errorMessage = 'Factory reset did not complete correctly.';
-        //             vm.step = vm.steps.failed;
-        //         }
-        //     });
-        // }
         vm.refreshEnd = function() {
             $state.go('root.user');
         };

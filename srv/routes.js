@@ -282,7 +282,7 @@ module.exports = function(io, data) {
         res.json({success:true});
     });
     router.post('/readSessions', function(req, res) {
-        controller.readSessions().then(function() {
+        controller.onlyReadSessions(io).then(function() {
             res.status(200).send();
         });
     });

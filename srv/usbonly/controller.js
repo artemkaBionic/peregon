@@ -10,7 +10,17 @@ var BlueBirdQueue = require('bluebird-queue');
 var sessions = require('../session_storage/sessions');
 var inventory = require('../inventory');
 var winston = require('winston');
-exports.readSessions = readSessions;
+exports.onlyReadSessions = function(io){
+    var devices = usbDrives.getAllUsbDrives();
+    for (var key in devices) {
+        if (devices.hasOwnProperty(key) && devices[key].status === 'not_ready') {
+            var device = devices[key];
+            readSessions(io, device.id).then(function(status) {
+
+            });
+        }
+    }
+};
 exports.prepareUsb = function(io) {
     winston.info('Prepearing usb');
     var devices = usbDrives.getAllUsbDrives();
