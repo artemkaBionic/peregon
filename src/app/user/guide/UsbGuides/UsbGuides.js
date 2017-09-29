@@ -200,6 +200,8 @@
         }
         function refreshDevicesStart(){
             vm.step = vm.steps.refreshDevice;
+            socket.off('usb-complete');
+            socket.off('usb-progress');
             vm.session.tmp.currentStep = 'refreshStarted';
             inventoryService.updateSession(vm.session,'Info','Refresh Started','')
         }
