@@ -20,6 +20,9 @@ exports.prepareUsb = function(io) {
            // console.log(device);
            // console.log(usbDrives.getAllUsbDrives());
             //readSessions(io, device.id, function(){
+            readSessions(io, device.id).then(function(status) {
+                console.log(status);
+            });
                partitions.updatePartitions(device.id, function(err) {
                    if (err) {
                        winston.info('Error while updating partitions');
@@ -63,23 +66,25 @@ exports.isRefreshUsb = function(device, callback){
         }
     });
 };
-function readSessions(io, device, callback){
-    readSessionFiles(io, device, function(err){
-        if (err) {
-            winston.info('Error reading session files');
-            winston.log('error', err);
-            io.emit('session-error', err);
-        }
-        readXboxSessions(io, device, function(err) {
+function readSessions(io, device){
+    return new Promise(function(resolves) {
+        readSessionFiles(io, device, function(err){
             if (err) {
-                winston.info('Error reading xbox files');
+                winston.info('Error reading session files');
                 winston.log('error', err);
                 io.emit('session-error', err);
             }
-            content.clearStatus(device);
-            callback();
-        });
-    })
+            readXboxSessions(io, device, function(err) {
+                if (err) {
+                    winston.info('Error reading xbox files');
+                    winston.log('error', err);
+                    io.emit('session-error', err);
+                }
+                content.clearStatus(device);
+                resolve({success:true});
+            });
+        })
+    });
 }
 function readSessionFiles(io, device, callback) {
     winston.info('Reading session files');
