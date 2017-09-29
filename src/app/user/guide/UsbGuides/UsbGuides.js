@@ -79,6 +79,7 @@
                 'device.item_number': vm.item.InventoryNumber,
                 'status': 'Incomplete'
             }).then(function(session) {
+                console.log(session);
                 if (session){
                     vm.session = session;
                     if (!isEmptyObject(session.tmp)) {
@@ -101,15 +102,14 @@
                     vm.step = vm.steps.newBootDevice;
                     console.log('here');
                 } else if (usbDrives.usbData.status === 'bootDevicesReady') {
-                    // $http({
-                    //     url: '/createItemFiles',
-                    //     method: 'POST',
-                    //     headers: {'content-type': 'application/json'},
-                    //     data: {item: item}
-                    // }).then(function() {
-                    //     prepareRefreshUsbComplete();
-                    // });
-                    prepareRefreshUsbComplete();
+                    $http({
+                        url: '/createItemFiles',
+                        method: 'POST',
+                        headers: {'content-type': 'application/json'},
+                        data: {item: item}
+                    }).then(function() {
+                        prepareRefreshUsbComplete();
+                    });
                 } else if (usbDrives.usbData.status === 'noBootDevices') {
                     prepareRefreshUsbStart();
                 } else {
