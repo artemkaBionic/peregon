@@ -16,3 +16,12 @@
 {"k":"0000000103","o":"0000000507","v":"001"}
 {"_id":"2017-09-28T16:58:34.756Z","_uid":1,"_dt":1506618247457,"_s":"0d6835acbdd3b917cad31ad185d7f2a1"}
 {"start_time":{"$wrap":"$date","v":1506617916059,"h":"2017-09-28T16:58:36.059Z"},"end_time":{"$wrap":"$date","v":1506618246572,"h":"2017-09-28T17:04:06.572Z"},"status":"Success","diagnose_only":false,"device":{"item_number":"0000000000","type":"Android","sku":"7393SN4","manufacturer":"WSA DISTRIBUTING","model":"Samsung Note 4","serial_number":"352149076335834"},"station":{"name":"station7446a09dac51","service_tag":"2UA3340ZS6"},"logs":[],"is_sent":true,"_id":"2017-09-28T16:58:34.756Z","failedTests":[]}
+{"k":"0000000103","o":"0000000430","v":"001"}
+{"_id":"2017-09-29T12:28:49.030Z","_uid":1,"_dt":1506688129045,"_s":"00e9e4af6edd44cc7a9ef587c7f19297"}
+{"start_time":{"$wrap":"$date","v":1506688129042,"h":"2017-09-29T12:28:49.042Z"},"end_time":null,"status":"Incomplete","diagnose_only":false,"device":{"item_number":"1902588266","type":"XboxOne","sku":"7339XC2","manufacturer":"SYNNEX","model":"MCS-BD-XB1FH2-AA","serial_number":"055988751048"},"station":{"name":"station7446a09dac51","service_tag":"2UA3340ZS6"},"logs":[],"tmp":{},"is_sent":false,"_id":"2017-09-29T12:28:49.030Z"}
+{"k":"0000000103","o":"0000000420","v":"001"}
+{"_id":"2017-09-29T12:28:49.030Z","_uid":1,"_dt":1506688465889,"_s":"21140f51f1b7474fdc2b764f629e6e10"}
+{"start_time":"2017-09-29T12:28:49.042Z","end_time":null,"status":"Incomplete","diagnose_only":false,"device":{"item_number":"1902588266","type":"XboxOne","sku":"7339XC2","manufacturer":"SYNNEX","model":"MCS-BD-XB1FH2-AA","serial_number":"055988751048"},"station":{"name":"station7446a09dac51","service_tag":"2UA3340ZS6"},"logs":[],"tmp":{"currentStep":"refreshStarted"},"is_sent":false,"_id":"2017-09-29T12:28:49.030Z"}
+{"k":"0000000103","o":"0000000556","v":"001"}
+{"_id":"2017-09-29T12:28:49.030Z","_uid":1,"_dt":1506688465894,"_s":"4b82272cb3e687c70cc71061eeb2557e"}
+{"start_time":"2017-09-29T12:28:49.042Z","end_time":null,"status":"Incomplete","diagnose_only":false,"device":{"item_number":"1902588266","type":"XboxOne","sku":"7339XC2","manufacturer":"SYNNEX","model":"MCS-BD-XB1FH2-AA","serial_number":"055988751048"},"station":{"name":"station7446a09dac51","service_tag":"2UA3340ZS6"},"logs":[{"timestamp":{"$wrap":"$date","v":1506688465882,"h":"2017-09-29T12:34:25.882Z"},"level":"Info","message":"Refresh Started","details":""}],"tmp":{"currentStep":"refreshStarted"},"is_sent":false,"_id":"2017-09-29T12:28:49.030Z"}

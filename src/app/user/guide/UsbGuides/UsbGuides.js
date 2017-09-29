@@ -101,14 +101,15 @@
                     vm.step = vm.steps.newBootDevice;
                     console.log('here');
                 } else if (usbDrives.usbData.status === 'bootDevicesReady') {
-                    $http({
-                        url: '/createItemFiles',
-                        method: 'POST',
-                        headers: {'content-type': 'application/json'},
-                        data: {item: item}
-                    }).then(function() {
-                        prepareRefreshUsbComplete();
-                    });
+                    // $http({
+                    //     url: '/createItemFiles',
+                    //     method: 'POST',
+                    //     headers: {'content-type': 'application/json'},
+                    //     data: {item: item}
+                    // }).then(function() {
+                    //     prepareRefreshUsbComplete();
+                    // });
+                    prepareRefreshUsbComplete();
                 } else if (usbDrives.usbData.status === 'noBootDevices') {
                     prepareRefreshUsbStart();
                 } else {
@@ -154,17 +155,20 @@
                 method: 'POST',
                 headers: {'content-type': 'application/json'}
             }).then(function(){
-                refreshXboxStarted();
+                prepareRefreshUsbComplete();
             });
         };
         function readSession() {
             vm.step = vm.steps.verifyRefresh;
+            console.log(vm.session._id);
             $http({
                 url: '/prepareUsb',
                 method: 'POST',
                 headers: {'content-type': 'application/json'}
             }).then(function(){
                 socket.on('session-complete', function(session){
+                    console.log(session._id);
+                    console.log(vm.session._id);
                     console.log(session);
                     if (session._id === vm.session._id) {
                         if (session.status === 'Success') {
