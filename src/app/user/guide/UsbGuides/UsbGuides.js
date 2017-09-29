@@ -86,7 +86,7 @@
                             refreshXboxStarted();
                         }
                     } else {
-                        checkUsbStatus();
+                        checkUsbStatus(session);
                     }
                 } else {
                     checkCondition();
@@ -99,17 +99,17 @@
                 vm.usbDrives = usbDrives;
                 console.log(usbDrives);
                 if (usbDrives.usbData.status === 'newBootDevice') {
-                    vm.step = vm.steps.newBootDevice;
-                    console.log('here');
+                    newBootDevice();
                 } else if (usbDrives.usbData.status === 'bootDevicesReady') {
-                    $http({
-                        url: '/createItemFiles',
-                        method: 'POST',
-                        headers: {'content-type': 'application/json'},
-                        data: {item: item}
-                    }).then(function() {
-                        prepareRefreshUsbComplete();
-                    });
+                    // $http({
+                    //     url: '/createItemFiles',
+                    //     method: 'POST',
+                    //     headers: {'content-type': 'application/json'},
+                    //     data: {item: item}
+                    // }).then(function() {
+                    //     prepareRefreshUsbComplete();
+                    // });
+                    prepareRefreshUsbComplete();
                 } else if (usbDrives.usbData.status === 'noBootDevices') {
                     prepareRefreshUsbStart();
                 } else {
@@ -118,6 +118,9 @@
             }).catch(function(err) {
                 console.log(err);
             })
+        }
+        function newBootDevice(){
+            vm.step = vm.steps.newBootDevice;
         }
         vm.startSession = function() {
             vm.sessionId = new Date().toISOString();
@@ -142,7 +145,6 @@
             vm.step = vm.steps.checkCondition;
         }
         function usbProgress(data) {
-            console.log(data);
             vm.percentageComplete = data.progress;
         }
         function refreshXboxStarted() {
@@ -160,28 +162,30 @@
         };
         function readSession() {
             vm.step = vm.steps.verifyRefresh;
-            console.log(vm.session._id);
-            $http({
-                url: '/readSessions',
-                method: 'POST',
-                headers: {'content-type': 'application/json'}
-            }).then(function(){
-                socket.on('session-complete', function(session){
-                    console.log(session._id);
-                    console.log(vm.session._id);
-                    console.log(session);
-                    if (session._id === vm.session._id) {
-                        if (session.status === 'Success') {
-                            vm.step = vm.steps.complete;
-                        } else {
-                            vm.step = vm.steps.failed;
-                        }
-                    }
-                });
-            });
+            console.log('reading sessions');
+            // $http({
+            //     url: '/readSessions',
+            //     method: 'POST',
+            //     headers: {'content-type': 'application/json'}
+            // }).then(function(){
+            //     socket.on('session-complete', function(session){
+            //         console.log(session._id);
+            //         console.log(vm.session._id);
+            //         console.log(session);
+            //         if (session._id === vm.session._id) {
+            //             if (session.status === 'Success') {
+            //                 vm.step = vm.steps.complete;
+            //             } else {
+            //                 vm.step = vm.steps.failed;
+            //             }
+            //         }
+            //     });
+            // });
         }
         function waitForUsbAdd(callback) {
+
             socket.on('device-add', function() {
+                console.log(callback);
                 callback();
             });
         }
@@ -204,7 +208,7 @@
         }
         function prepareRefreshUsbStart() {
             vm.step = vm.steps.prepareRefreshUsbInsert;
-            //waitForUsbAdd(usbDeviceMinSize, prepareRefreshUsbApply);
+            waitForUsbAdd(newBootDevice);
         }
         function refreshXboxStart(){
             console.log('xbox started');
@@ -212,17 +216,11 @@
             vm.session.tmp.currentStep = 'refreshStarted';
             inventoryService.updateSession(vm.session,'Info','Refresh Started','')
         }
-        socket.on('device-add', function() {
-            checkSession();
-            console.log('device=adddededed')
-        });
         socket.on('usb-progress', function() {
             checkSession();
-            console.log('usb progressasdasd')
         });
         socket.on('usb-complete', function() {
             checkSession();
-            console.log('usb completetetet')
         });
         // socket.on('usb-session-complete', function() {
         //     checkSession();
