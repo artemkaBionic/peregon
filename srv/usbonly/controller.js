@@ -22,31 +22,32 @@ exports.prepareUsb = function(io) {
             //readSessions(io, device.id, function(){
             readSessions(io, device.id).then(function(status) {
                 console.log(status);
+                partitions.updatePartitions(device.id, function(err) {
+                    if (err) {
+                        winston.info('Error while updating partitions');
+                         winston.log('error', err);
+                         partitions.unmountPartitions(device.id, function() {
+                             winston.info('Unmounting partitions from if.');
+                             usbDrives.completeUsb({err: err, device: device.id});
+                             io.emit('usb-complete', {err: err, device: device.id});
+                         });
+                     } else {
+                         content.updateContent(io, device.id, function(err) {
+                             winston.info('Update content from else statement');
+                             if (err) {
+                                 winston.info('Error updating content');
+                                 winston.info(err);
+                             }
+                             partitions.unmountPartitions(device.id, function() {
+                                 winston.info('unmountPartitions from else statement');
+                                 usbDrives.completeUsb({err: err, device: device.id});
+                                 io.emit('usb-complete', {err: err, device: device.id});
+                             });
+                         });
+                     }
+                 });
             });
-               partitions.updatePartitions(device.id, function(err) {
-                   if (err) {
-                       winston.info('Error while updating partitions');
-                        winston.log('error', err);
-                        partitions.unmountPartitions(device.id, function() {
-                            winston.info('Unmounting partitions from if.');
-                            usbDrives.completeUsb({err: err, device: device.id});
-                            io.emit('usb-complete', {err: err, device: device.id});
-                        });
-                    } else {
-                        content.updateContent(io, device.id, function(err) {
-                            winston.info('Update content from else statement');
-                            if (err) {
-                                winston.info('Error updating content');
-                                winston.info(err);
-                            }
-                            partitions.unmountPartitions(device.id, function() {
-                                winston.info('unmountPartitions from else statement');
-                                usbDrives.completeUsb({err: err, device: device.id});
-                                io.emit('usb-complete', {err: err, device: device.id});
-                            });
-                        });
-                    }
-                });
+
            // });
         }
     }
@@ -67,7 +68,7 @@ exports.isRefreshUsb = function(device, callback){
     });
 };
 function readSessions(io, device){
-    return new Promise(function(resolves) {
+    return new Promise(function(resolve) {
         readSessionFiles(io, device, function(err){
             if (err) {
                 winston.info('Error reading session files');
@@ -89,7 +90,6 @@ function readSessions(io, device){
 function readSessionFiles(io, device, callback) {
     winston.info('Reading session files');
     partitions.mountPartitions(device, function(err) {
-
         var sessionsDirectory = '/mnt/' + device + config.usbStatusPartition + 'sessions/';
         fs.readdir(sessionsDirectory, function(err, files){
             if (err) {
@@ -168,7 +168,7 @@ function readXboxSessions(io, device, callback){
             fs.readFile(usbItemFile, 'utf8', function (err, item) {
                 if (err) {
                     if (err.code === 'ENOENT') {
-                        reportXboxSessions(io, unreportedSessions);
+                        reportXboxSessions(io, unreportedSessions, callback);
                     }  else {
                         callback(err);
                     }
@@ -190,27 +190,30 @@ function readXboxSessions(io, device, callback){
 
                             }
                             unreportedSessions--;
-                            reportXboxSessions(io, unreportedSessions);
+                            reportXboxSessions(io, unreportedSessions, callback);
                         });
                     } else {
-                        reportXboxSessions(io, unreportedSessions);
+                        reportXboxSessions(io, unreportedSessions, callback);
                     }
                 }
             });
     });
 }
 
-function reportXboxSessions(io, count) {
+function reportXboxSessions(io, count, callback) {
     winston.info('Reporting ' + count + ' xbox sessions');
     for (var i = 0; i < count; i++){
         inventory.sessionStart(new Date().toISOString(), {Type: 'XboxOne'}, null, function(session){
             inventory.sessionFinish(session._id, {complete: true}, function(session){
                 io.emit('session-complete', session);
+
             });
         });
     }
+    callback();
 }
 exports.createItemFiles = function(item){
+    console.log('Creating item files');
     var queue = new BlueBirdQueue({});
     var devices = usbDrives.getAllUsbDrives();
     for (var key in devices) {
@@ -221,6 +224,7 @@ exports.createItemFiles = function(item){
     return queue.start();
 };
 exports.clearItemFiles = function () {
+    console.log('Clearing item files');
     var queue = new BlueBirdQueue({});
     var devices = usbDrives.getAllUsbDrives();
     for (var key in devices) {

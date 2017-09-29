@@ -126,6 +126,7 @@ function finishApplyContent(device, callback) {
         if (err) {
             console.log('error', err);
         }
+        callback();
     });
 }
 
