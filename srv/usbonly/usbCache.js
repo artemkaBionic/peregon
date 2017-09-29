@@ -1,13 +1,14 @@
 'use strict';
-
+var winston = require('winston');
 function UsbCache() {
     this._usbDrives = {};
 }
 
 Object.setPrototypeOf(UsbCache.prototype, Object.prototype);
 
-UsbCache.prototype.set = function(key, session) {
-    this._usbDrives[key] = session;
+UsbCache.prototype.set = function(key, device) {
+    winston.info('Adding this device to usb cache:' + key);
+    this._usbDrives[key] = device;
 };
 
 UsbCache.prototype.delete = function(key) {
@@ -81,6 +82,7 @@ UsbCache.prototype.getAllUsbDrives = function(){
     return usbDrives;
 };
 UsbCache.prototype.updateProgress = function(progress, device){
+    winston.info('Updating progress for device:' + device);
     for (var key in this._usbDrives) {
         if (this._usbDrives.hasOwnProperty(key)) {
             if (key === device){
@@ -91,6 +93,7 @@ UsbCache.prototype.updateProgress = function(progress, device){
     }
 };
 UsbCache.prototype.finishProgress = function(device){
+    winston.info('Finishing progress for device:' + device);
     for (var key in this._usbDrives) {
         if (this._usbDrives.hasOwnProperty(key)) {
             if (key === device){
@@ -101,6 +104,7 @@ UsbCache.prototype.finishProgress = function(device){
     }
 };
 UsbCache.prototype.setStatus = function(device, status){
+    winston.info('Setting status:' + status + ' for device:' + device);
     for (var key in this._usbDrives) {
         if (this._usbDrives.hasOwnProperty(key) && device === key) {
             this._usbDrives[key].status = status;
@@ -109,6 +113,7 @@ UsbCache.prototype.setStatus = function(device, status){
     }
 };
 UsbCache.prototype.getLowestUsbInProgress = function(){
+    winston.info('Getting lowest usb in progress');
     var obj = this._usbDrives;
     if (!isEmptyObject(obj)) {
         // convert object to array to use reduce method;

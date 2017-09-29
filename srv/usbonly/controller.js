@@ -16,7 +16,7 @@ exports.prepareUsb = function(io) {
     for (var key in devices) {
         if (devices.hasOwnProperty(key) && devices[key].status === 'not_ready'){
             var device = devices[key];
-            usbDrives.setStatus(device, 'in_progress');
+            usbDrives.setStatus(device.id, 'in_progress');
             console.log(device);
             console.log(usbDrives.getAllUsbDrives());
             readSessions(io, device.id, function(){
@@ -163,7 +163,7 @@ function readXboxSessions(io, device, callback){
             fs.readFile(usbItemFile, 'utf8', function (err, item) {
                 if (err) {
                     if (err.code === 'ENOENT') {
-                        reportXboxSessions(unreportedSessions);
+                        reportXboxSessions(io, unreportedSessions);
                     }  else {
                         callback(err);
                     }
@@ -185,17 +185,17 @@ function readXboxSessions(io, device, callback){
 
                             }
                             unreportedSessions--;
-                            reportXboxSessions(unreportedSessions);
+                            reportXboxSessions(io, unreportedSessions);
                         });
                     } else {
-                        reportXboxSessions(unreportedSessions);
+                        reportXboxSessions(io, unreportedSessions);
                     }
                 }
             });
     });
 }
 
-function reportXboxSessions(count) {
+function reportXboxSessions(io, count) {
     winston.info('Reporting ' + count + ' xbox sessions');
     for (var i = 0; i < count; i++){
         inventory.sessionStart(new Date().toISOString(), {Type: 'XboxOne'}, null, function(session){

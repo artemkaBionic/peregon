@@ -277,5 +277,9 @@ module.exports = function(io, data) {
             res.status(200).send();
         });
     });
+    router.post('/updateStatus', function(req, res) {
+        usbDrives.setStatus('sdc', 'in_progress');
+        res.json({success:true});
+    });
     return router;
 };
