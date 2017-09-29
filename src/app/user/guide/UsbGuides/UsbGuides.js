@@ -169,8 +169,6 @@
                 prepareRefreshUsbComplete();
             });
         };
-
-
         function waitForUsbAdd(callback) {
             socket.on('device-add', function() {
                 console.log(callback);
