@@ -218,7 +218,7 @@ exports.createItemFiles = function(item){
     var devices = usbDrives.getAllUsbDrives();
     for (var key in devices) {
         if (devices.hasOwnProperty(key) && devices[key].id) {
-            queue.add(createItemFile(devices[key], item));
+            queue.add(createItemFile(devices[key].id, item));
         }
     }
     return queue.start();
@@ -229,7 +229,7 @@ exports.clearItemFiles = function () {
     var devices = usbDrives.getAllUsbDrives();
     for (var key in devices) {
         if (devices.hasOwnProperty(key) && devices[key].id) {
-            queue.add(clearItemFile(devices[key]));
+            queue.add(clearItemFile(devices[key].id));
         }
     }
     return queue.start();
