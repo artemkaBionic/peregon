@@ -421,6 +421,7 @@
         }
 
         function getSessions() {
+            getAllUsbDrives();
             var deferred = $q.defer();
             inventoryService.getAllSessionsByParams({}).then(function(sessions) {
                 vm.sessions =  sessions;
