@@ -16,10 +16,10 @@ exports.prepareUsb = function(io) {
     for (var key in devices) {
         if (devices.hasOwnProperty(key) && devices[key].status === 'not_ready'){
             var device = devices[key];
-            usbDrives.setStatus(device.id, 'in_progress');
-            console.log(device);
-            console.log(usbDrives.getAllUsbDrives());
-            readSessions(io, device.id, function(){
+            //usbDrives.setStatus(device.id, 'in_progress');
+           // console.log(device);
+           // console.log(usbDrives.getAllUsbDrives());
+            //readSessions(io, device.id, function(){
                partitions.updatePartitions(device.id, function(err) {
                    if (err) {
                        winston.info('Error while updating partitions');
@@ -44,7 +44,7 @@ exports.prepareUsb = function(io) {
                         });
                     }
                 });
-            });
+           // });
         }
     }
 };
