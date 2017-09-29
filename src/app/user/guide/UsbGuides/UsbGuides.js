@@ -168,7 +168,7 @@
             vm.step = vm.steps.verifyRefresh;
             console.log(vm.session._id);
             $http({
-                url: '/prepareUsb',
+                url: '/readSessions',
                 method: 'POST',
                 headers: {'content-type': 'application/json'}
             }).then(function(){

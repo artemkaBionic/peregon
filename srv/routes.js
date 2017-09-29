@@ -281,5 +281,10 @@ module.exports = function(io, data) {
         usbDrives.setStatus('sdc', 'in_progress');
         res.json({success:true});
     });
+    router.post('/readSessions', function(req, res) {
+        controller.readSessions().then(function() {
+            res.status(200).send();
+        });
+    });
     return router;
 };
