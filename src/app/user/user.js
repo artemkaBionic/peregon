@@ -91,10 +91,7 @@
                 'timeOut': 3000,
                 'closeButton': true
             });
-            document.getElementById(
-                'bootDevices').style.borderBottom = '3px solid black';
-            document.getElementById('sessions').style.borderBottom = 'unset';
-            vm.step = vm.steps.bootDevices;
+            vm.viewBootDevices();
             vm.substep = vm.substeps.newBootDevice;
             getAllUsbDrives();
         });
@@ -103,6 +100,9 @@
             getAllUsbDrives();
         });
         socket.on('usb-complete', function() {
+            getAllUsbDrives();
+        });
+        socket.on('device-remove', function() {
             getAllUsbDrives();
         });
         $scope.$on('$stateChangeSuccess', function() {
@@ -264,9 +264,9 @@
         socket.on('session-error', function(err){
             console.log(err);
         });
-        socket.on('session-complete', function(session){
-            console.log(session);
+        socket.on('session-complete', function(){
             getSessions().then(function() {
+                vm.viewSessions();
                 // jscs:disable
                 toastr.info('Refresh finished', {
                     'tapToDismiss': true,
@@ -274,6 +274,7 @@
                     'closeButton': true
                 });
                 // jscs:enable
+
             });
         });
         socket.on('android-session-expired', function(data) {

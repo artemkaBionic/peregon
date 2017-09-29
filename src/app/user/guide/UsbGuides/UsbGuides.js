@@ -56,12 +56,12 @@
             complete: {
                 name: 'complete',
                 number: 8,
-                title: 'Xbox Refresh is Complete'
+                title: 'Refresh is Complete'
             },
             failed: {
                 name: 'failed',
                 number: 0,
-                title: 'Xbox Refresh Failed'
+                title: 'Refresh Failed'
             }
 
         };
@@ -120,7 +120,8 @@
         }
         vm.startSession = function() {
             vm.sessionId = new Date().toISOString();
-            inventoryService.startSession(vm.sessionId, item).then(function(){
+            inventoryService.startSession(vm.sessionId, item).then(function(session){
+                vm.session = session;
                 checkUsbStatus();
             });
         };
@@ -145,30 +146,41 @@
         }
         function refreshXboxStarted() {
             vm.step = vm.steps.refreshXbox;
-            //waitForUsbAdd();
+            waitForUsbAdd(readSession);
         }
         vm.createBootDrives = function(){
             $http({
                 url: '/prepareUsb',
                 method: 'POST',
                 headers: {'content-type': 'application/json'}
+            }).then(function(){
+                refreshXboxStarted();
             });
         };
-        function waitForUsbAdd(callback) {
-            // if (vm.selectedDevice === null) {
-            //     socket.on('device-add', function(data) {
-            //         if (data.size >= minSize) {
-            //             vm.selectedDevice = data;
-            //             callback();
-            //         } else {
-            //             waitForUsbAdd(callback);
-            //         }
-            //     });
-            // } else {
-            //     callback();
-            // }
+        function readSession() {
+            vm.step = vm.steps.verifyRefresh;
+            $http({
+                url: '/prepareUsb',
+                method: 'POST',
+                headers: {'content-type': 'application/json'}
+            }).then(function(){
+                socket.on('session-complete', function(session){
+                    console.log(session);
+                    if (session._id === vm.session._id) {
+                        if (session.status === 'Success') {
+                            vm.step = vm.steps.complete;
+                        } else {
+                            vm.step = vm.steps.failed;
+                        }
+                    }
+                });
+            });
         }
-
+        function waitForUsbAdd(callback) {
+            socket.on('device-add', function() {
+                callback();
+            });
+        }
         function waitForUsbRemove(callback) {
             socket.on('device-remove', function() {
                 console.log('removing');
