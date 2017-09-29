@@ -90,7 +90,8 @@ function readSessions(io, device){
 function readSessionFiles(io, device, callback) {
     winston.info('Reading session files');
     partitions.mountPartitions(device, function(err) {
-        var sessionsDirectory = '/mnt/' + device + config.usbStatusPartition + 'sessions/';
+        //var systemUpdateDir = '/mnt/' + device + '1/$SystemUpdate';
+        var sessionsDirectory = '/mnt/' + device + config.usbStatusPartition + 'sessions';
         fs.readdir(sessionsDirectory, function(err, files){
             if (err) {
                winston.log('info', err);
