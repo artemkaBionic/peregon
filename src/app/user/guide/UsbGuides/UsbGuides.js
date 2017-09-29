@@ -80,18 +80,27 @@
                 'status': 'Incomplete'
             }).then(function(session) {
                 if (session){
-                    vm.session = session;
-                    if (!isEmptyObject(session.tmp)) {
-                        if (session.tmp.currentStep === 'refreshStarted') {
-                            refreshDevicesStarted();
-                        }
-                    } else {
-                        checkUsbStatus(session);
-                    }
+                    updateSession(session)
                 } else {
                     checkCondition();
                 }
             });
+        }
+        function updateSession(session) {
+            vm.session = session;
+            if (session.status === 'Success') {
+                vm.step = vm.steps.complete;
+            } else if (session.status === 'Incomplete') {
+                if (!isEmptyObject(session.tmp)) {
+                    if (session.tmp.currentStep === 'refreshStarted') {
+                        refreshDevicesStarted();
+                    }
+                } else {
+                    checkUsbStatus(session);
+                }
+            } else {
+                vm.step = vm.steps.failed;
+            }
         }
         function checkUsbStatus() {
             console.log('here');
@@ -128,7 +137,7 @@
                 checkUsbStatus();
             });
         };
-        vm.finishSession = function() {
+        vm.deviceBroken = function() {
             vm.sessionId = new Date().toISOString();
             inventoryService.startSession(vm.sessionId, item).then(function(session){
                     inventoryService.updateSession(session, 'Info',
@@ -148,6 +157,8 @@
         }
         function refreshDevicesStarted() {
             vm.step = vm.steps.refreshDevice;
+            socket.off('usb-complete');
+            socket.off('usb-progress');
         }
         vm.createBootDrives = function(){
             $http({
@@ -158,25 +169,8 @@
                 prepareRefreshUsbComplete();
             });
         };
-        function readSession() {
-            vm.step = vm.steps.verifyRefresh;
-            console.log('reading sessions');
-            $http({
-                url: '/readSessions',
-                method: 'POST',
-                headers: {'content-type': 'application/json'}
-            }).then(function(){
-                socket.on('session-complete', function(session){
-                    if (session._id === vm.session._id) {
-                        if (session.status === 'Success') {
-                            vm.step = vm.steps.complete;
-                        } else {
-                            vm.step = vm.steps.failed;
-                        }
-                    }
-                });
-            });
-        }
+
+
         function waitForUsbAdd(callback) {
             socket.on('device-add', function() {
                 console.log(callback);
@@ -205,17 +199,20 @@
             waitForUsbAdd(newBootDevice);
         }
         function refreshDevicesStart(){
-            console.log('xbox started');
             vm.step = vm.steps.refreshDevice;
             vm.session.tmp.currentStep = 'refreshStarted';
             inventoryService.updateSession(vm.session,'Info','Refresh Started','')
-            waitForUsbAdd(readSession);
         }
         socket.on('usb-progress', function() {
             checkSession();
         });
         socket.on('usb-complete', function() {
             checkSession();
+        });
+        socket.on('session-complete', function(session){
+            if (session._id === vm.session._id) {
+                updateSession(session);
+            }
         });
         vm.refreshEnd = function() {
             $state.go('root.user');
