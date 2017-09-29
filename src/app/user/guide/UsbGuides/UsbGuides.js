@@ -166,7 +166,7 @@
                 method: 'POST',
                 headers: {'content-type': 'application/json'}
             }).then(function(){
-                prepareRefreshUsbComplete();
+                showBootDeviceProgress();
             });
         };
         function waitForUsbAdd(callback) {
