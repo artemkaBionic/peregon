@@ -65,11 +65,7 @@
             }
 
         };
-
-        $scope.$on('$viewContentLoaded', function() {
-            checkSession();
-            console.log('checking sessions');
-        });
+        checkSession();
         function isEmptyObject(obj) {
             for (var prop in obj) {
                 if (obj.hasOwnProperty(prop)) {
@@ -98,6 +94,7 @@
             });
         }
         function checkUsbStatus() {
+            console.log('here');
             inventoryService.getAllUsbDrives().then(function(usbDrives) {
                 vm.usbDrives = usbDrives;
                 console.log(usbDrives);
@@ -126,10 +123,7 @@
             vm.sessionId = new Date().toISOString();
             inventoryService.startSession(vm.sessionId, item).then(function(session){
                 vm.session = session;
-                vm.session.tmp.currentStep = 'sessionStarted';
-                inventoryService.updateSession(vm.session,'Info','Session Started','').then(function(){
-                    checkUsbStatus();
-                });
+                checkUsbStatus();
             });
         };
         vm.finishSession = function() {

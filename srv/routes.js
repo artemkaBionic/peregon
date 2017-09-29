@@ -286,5 +286,6 @@ module.exports = function(io, data) {
             res.status(200).send();
         });
     });
+
     return router;
 };
