@@ -5,9 +5,9 @@
         .module('app.user')
         .controller('GuideControllerUsb', GuideControllerUsb);
 
-    GuideControllerUsb.$inject = ['$http', '$q', 'item', 'inventoryService', '$state', 'env'];
+    GuideControllerUsb.$inject = ['$http', '$scope', 'item', 'inventoryService', '$state', 'env'];
 
-    function GuideControllerUsb($http, $q, item, inventoryService, $state, env) {
+    function GuideControllerUsb($http, $scope, item, inventoryService, $state, env) {
         var socket = io.connect('http://' + env.baseUrl);
         /*jshint validthis: true */
         var vm = this;
@@ -65,7 +65,11 @@
             }
 
         };
-        checkSession();
+
+        $scope.$on('$viewContentLoaded', function() {
+            checkSession();
+            console.log('checking sessions');
+        });
         function isEmptyObject(obj) {
             for (var prop in obj) {
                 if (obj.hasOwnProperty(prop)) {
@@ -79,7 +83,6 @@
                 'device.item_number': vm.item.InventoryNumber,
                 'status': 'Incomplete'
             }).then(function(session) {
-                console.log(session);
                 if (session){
                     vm.session = session;
                     if (!isEmptyObject(session.tmp)) {
@@ -123,7 +126,10 @@
             vm.sessionId = new Date().toISOString();
             inventoryService.startSession(vm.sessionId, item).then(function(session){
                 vm.session = session;
-                checkUsbStatus();
+                vm.session.tmp.currentStep = 'sessionStarted';
+                inventoryService.updateSession(vm.session,'Info','Session Started','').then(function(){
+                    checkUsbStatus();
+                });
             });
         };
         vm.finishSession = function() {
@@ -214,16 +220,19 @@
         }
         socket.on('device-add', function() {
             checkSession();
+            console.log('device=adddededed')
         });
         socket.on('usb-progress', function() {
             checkSession();
+            console.log('usb progressasdasd')
         });
         socket.on('usb-complete', function() {
             checkSession();
+            console.log('usb completetetet')
         });
-        socket.on('usb-session-complete', function() {
-            checkSession();
-        });
+        // socket.on('usb-session-complete', function() {
+        //     checkSession();
+        // });
         // function startSession(session) {
         //     if (!session) {
         //         vm.sessionId = new Date().toISOString();
