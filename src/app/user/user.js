@@ -261,6 +261,9 @@
                 // jscs:enable
             });
         });
+        socket.on('session-error', function(err){
+            console.log(err);
+        });
         socket.on('session-complete', function(session){
             console.log(session);
             getSessions().then(function() {

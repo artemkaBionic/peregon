@@ -84,7 +84,7 @@ function mountPartitions(device, callback) {
 }
 
 function updatePartitions(device, callback) {
-    winston.info('updatePartitions');
+    winston.info('Updating partitions for device:' + device);
     checkPartitioning(device, function(err, isPartitioned) {
         if (err) {
             callback(err)
@@ -95,6 +95,7 @@ function updatePartitions(device, callback) {
                     callback(err);
                 });
             } else {
+                winston.info('Partitions update process started for device:' + device);
                 // Get disk size
                 shell.exec('parted --machine --script /dev/' + device + ' unit MiB print | awk -F: \'FNR==2{print $2}\'', function(code, stdout, stderr) {
                     if (code !== 0) {

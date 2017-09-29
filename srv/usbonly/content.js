@@ -246,6 +246,7 @@ exports.updateContent = function(socket_io, device, callback) {
 };
 
 exports.clearStatus = function(device) {
+    winston.info('Clearing status for device:' + device);
     //Remove Xbox Refresh status files
     shell.rm([
         '/mnt/' + device + config.usbXboxPartition +

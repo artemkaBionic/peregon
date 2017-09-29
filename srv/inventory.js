@@ -231,7 +231,7 @@ function sessionFinish(sessionId, data, callback) {
         winston.log('info', 'A client requested to finish an ' + session.device.type + ' refresh of session id ' + session._id);
         closeSession(session, data.complete, callback);
     }).catch(function(err){
-        winston.log('info', 'Session with:' + sessionId + ' was not found in Tingo');
+        winston.log('error', err);
     });
 
 }

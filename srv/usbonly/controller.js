@@ -11,28 +11,33 @@ var sessions = require('../session_storage/sessions');
 var inventory = require('../inventory');
 var winston = require('winston');
 exports.prepareUsb = function(io) {
-    winston.info('prepareUsb');
+    winston.info('Prepearing usb');
     var devices = usbDrives.getAllUsbDrives();
     for (var key in devices) {
         if (devices.hasOwnProperty(key) && devices[key].status === 'not_ready'){
             var device = devices[key];
             usbDrives.setStatus(device, 'in_progress');
+            console.log(device);
+            console.log(usbDrives.getAllUsbDrives());
             readSessions(io, device.id, function(){
                partitions.updatePartitions(device.id, function(err) {
-                    if (err) {
+                   if (err) {
+                       winston.info('Error while updating partitions');
                         winston.log('error', err);
                         partitions.unmountPartitions(device.id, function() {
-                            winston.info('Error updating partitions');
+                            winston.info('Unmounting partitions from if.');
                             usbDrives.completeUsb({err: err, device: device.id});
                             io.emit('usb-complete', {err: err, device: device.id});
                         });
                     } else {
                         content.updateContent(io, device.id, function(err) {
+                            winston.info('Update content from else statement');
                             if (err) {
                                 winston.info('Error updating content');
                                 winston.info(err);
                             }
                             partitions.unmountPartitions(device.id, function() {
+                                winston.info('unmountPartitions from else statement');
                                 usbDrives.completeUsb({err: err, device: device.id});
                                 io.emit('usb-complete', {err: err, device: device.id});
                             });
@@ -61,12 +66,14 @@ exports.isRefreshUsb = function(device, callback){
 function readSessions(io, device, callback){
     readSessionFiles(io, device, function(err){
         if (err) {
-            winston.info(err);
+            winston.info('Error reading session files');
+            winston.log('error', err);
             io.emit('session-error', err);
         }
         readXboxSessions(io, device, function(err) {
             if (err) {
-                winston.info(err);
+                winston.info('Error reading xbox files');
+                winston.log('error', err);
                 io.emit('session-error', err);
             }
             content.clearStatus(device);
