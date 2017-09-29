@@ -16,7 +16,7 @@ exports.prepareUsb = function(io) {
     for (var key in devices) {
         if (devices.hasOwnProperty(key) && devices[key].status === 'not_ready'){
             var device = devices[key];
-            //usbDrives.setStatus(device.id, 'in_progress');
+            usbDrives.setStatus(device.id, 'in_progress');
            // console.log(device);
            // console.log(usbDrives.getAllUsbDrives());
             //readSessions(io, device.id, function(){
@@ -28,7 +28,7 @@ exports.prepareUsb = function(io) {
                          winston.log('error', err);
                          partitions.unmountPartitions(device.id, function() {
                              winston.info('Unmounting partitions from if.');
-                             usbDrives.completeUsb({err: err, device: device.id});
+                             usbDrives.finishProgress(device.id);
                              io.emit('usb-complete', {err: err, device: device.id});
                          });
                      } else {
@@ -40,7 +40,7 @@ exports.prepareUsb = function(io) {
                              }
                              partitions.unmountPartitions(device.id, function() {
                                  winston.info('unmountPartitions from else statement');
-                                 usbDrives.completeUsb({err: err, device: device.id});
+                                 usbDrives.finishProgress(device.id);
                                  io.emit('usb-complete', {err: err, device: device.id});
                              });
                          });
