@@ -101,15 +101,14 @@
                 if (usbDrives.usbData.status === 'newBootDevice') {
                     newBootDevice();
                 } else if (usbDrives.usbData.status === 'bootDevicesReady') {
-                    // $http({
-                    //     url: '/createItemFiles',
-                    //     method: 'POST',
-                    //     headers: {'content-type': 'application/json'},
-                    //     data: {item: item}
-                    // }).then(function() {
-                    //     prepareRefreshUsbComplete();
-                    // });
-                    prepareRefreshUsbComplete();
+                    $http({
+                        url: '/createItemFiles',
+                        method: 'POST',
+                        headers: {'content-type': 'application/json'},
+                        data: {item: item}
+                    }).then(function() {
+                        prepareRefreshUsbComplete();
+                    });
                 } else if (usbDrives.usbData.status === 'noBootDevices') {
                     prepareRefreshUsbStart();
                 } else {
@@ -163,24 +162,24 @@
         function readSession() {
             vm.step = vm.steps.verifyRefresh;
             console.log('reading sessions');
-            // $http({
-            //     url: '/readSessions',
-            //     method: 'POST',
-            //     headers: {'content-type': 'application/json'}
-            // }).then(function(){
-            //     socket.on('session-complete', function(session){
-            //         console.log(session._id);
-            //         console.log(vm.session._id);
-            //         console.log(session);
-            //         if (session._id === vm.session._id) {
-            //             if (session.status === 'Success') {
-            //                 vm.step = vm.steps.complete;
-            //             } else {
-            //                 vm.step = vm.steps.failed;
-            //             }
-            //         }
-            //     });
-            // });
+            $http({
+                url: '/readSessions',
+                method: 'POST',
+                headers: {'content-type': 'application/json'}
+            }).then(function(){
+                socket.on('session-complete', function(session){
+                    console.log(session._id);
+                    console.log(vm.session._id);
+                    console.log(session);
+                    if (session._id === vm.session._id) {
+                        if (session.status === 'Success') {
+                            vm.step = vm.steps.complete;
+                        } else {
+                            vm.step = vm.steps.failed;
+                        }
+                    }
+                });
+            });
         }
         function waitForUsbAdd(callback) {
 
