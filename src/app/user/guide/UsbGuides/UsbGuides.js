@@ -125,7 +125,7 @@
                 }
             }).catch(function(err) {
                 console.log(err);
-            })
+            });
         }
         function newBootDevice(){
             vm.step = vm.steps.newBootDevice;
@@ -201,7 +201,7 @@
             socket.off('usb-complete');
             socket.off('usb-progress');
             vm.session.tmp.currentStep = 'refreshStarted';
-            inventoryService.updateSession(vm.session,'Info','Refresh Started','')
+            inventoryService.updateSession(vm.session,'Info','Refresh Started','');
         }
         socket.on('usb-progress', function() {
             checkSession();

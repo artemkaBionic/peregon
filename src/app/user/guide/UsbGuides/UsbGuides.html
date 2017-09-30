@@ -47,7 +47,7 @@
     </div>
 
     <div ng-switch="vm.step.name" class="row wizard">
-      <div  ng-switch-when="checkCondition">
+      <div ng-switch-when="checkCondition">
         <div style="text-align: center">
           <h2>Make sure that:</h2>
           <div class="instruction-list-container" style="margin: 0 auto; text-align: left">
@@ -89,14 +89,22 @@
           </div>
         </div>
 
-        <h2>{{vm.usbDrives.usbData.usbDrivesTitle}}</h2>
+        <h2>
+          <ng-pluralize count="vm.usbDrives.usbData.notReadyDevices"
+                        when="{'0': 'No New USB drives are connected',
+                     'one': '1 New USB drive is connected',
+                     'other': '{} New USB drives are connected'}">
+          </ng-pluralize>
+        </h2>
         <div class="boot-instruction-row">
-          <span style="color:grey">{{vm.usbData.usbDrivesText}}<br>
-            <strong>Warning!</strong> This will wipe all information you have on {{vm.usbDrives.usbData.usbDrive}}.
+          <span style="color:grey">Now you can create your Bootable <ng-pluralize count="vm.usbDrives.usbData.notReadyDevices" when="{'one': 'USB drive', 'other': 'USB drives'}"></ng-pluralize><br>
+            <strong>Warning!</strong> This will wipe all information you have on <ng-pluralize count="vm.usbDrives.usbData.notReadyDevices" when="{'one': 'USB drive', 'other': 'USB drives'}"></ng-pluralize>.
           </span>
         </div>
         <div class="boot-instruction-row">
-          <button class="btn btn-success btn-rounded" ng-click="vm.createBootDrives()">{{vm.usbDrives.usbData.usbButtonText}}</button>
+          <button class="btn btn-success btn-rounded" ng-click="vm.createBootDrives()">
+            Create Bootable <ng-pluralize count="vm.usbDrives.usbData.notReadyDevices" when="{'one': 'USB drive', 'other': 'USB drives'}"></ng-pluralize>
+          </button>
           <!--<button class="btn btn-danger btn-rounded" ng-click="vm.cancelBootDrive()">Cancel</button>-->
         </div>
       </div>
@@ -130,7 +138,7 @@
         <usb-guide data-item="vm.item"></usb-guide>
         <div class="guide-footer">
           <div class="row text-center">
-            <div class="guide-footer-content" >When refresh is complete, reinsert USB drive to continue.
+            <div class="guide-footer-content">When refresh is complete, reinsert USB drive to continue.
               <span style="margin-left: -4px">
                 <span class="two">.</span><span class="three">.</span>
               </span>

@@ -25,7 +25,7 @@ UsbCache.prototype.getAllUsbDrives = function(){
     usbDrives.usbData.readyDevices = 0;
     for (var key in usbDrives) {
         if (usbDrives.hasOwnProperty(key)) {
-            if(usbDrives[key].status){
+            if (usbDrives[key].status){
                 usbDrives.usbData.numberOfDevices++;
             }
             if (usbDrives.usbData.numberOfDevices !== 0 && usbDrives[key].status === 'not_ready') {
@@ -48,36 +48,6 @@ UsbCache.prototype.getAllUsbDrives = function(){
         usbDrives.usbData.status = 'noBootDevices';
     } else {
         usbDrives.usbData.status = 'bootDevicesReady';
-    }
-    // text plural vs single for front-end
-    if (usbDrives.usbData.notReadyDevices === 1) {
-        usbDrives.usbData.bootableUsb = 'Bootable USB drive';
-        usbDrives.usbData.usbDrive = 'USB drive';
-        usbDrives.usbData.usbDrivesText = 'Now you can create your Bootable USB drive.';
-        usbDrives.usbData.usbButtonText = 'Create Bootable USB drive';
-        usbDrives.usbData.usbDrivesTitle = usbDrives.usbData.notReadyDevices + ' New USB drive is connected'
-    } else {
-        usbDrives.usbData.bootableUsb = 'Bootable USB drives';
-        usbDrives.usbData.usbDrive = 'USB drives';
-        usbDrives.usbData.usbText = 'Bootable USB drives';
-        usbDrives.usbData.usbDrivesTitle = usbDrives.usbData.notReadyDevices + ' New USB drives are connected';
-        usbDrives.usbData.usbDrivesText = 'Now you can create your Bootable USB drives.';
-        usbDrives.usbData.usbButtonText = 'Create Bootable USB drives';
-    }
-    if (usbDrives.usbData.inProgressDevices === 1) {
-        usbDrives.usbData.bootableUsb = 'Bootable USB drive';
-        usbDrives.usbData.usbDrive = 'USB drive';
-    } else {
-        usbDrives.usbData.bootableUsb = 'Bootable USB drives';
-        usbDrives.usbData.usbDrive = 'USB drives';
-    }
-
-    if (usbDrives.usbData.readyDevices === 1) {
-        usbDrives.usbData.bootableUsb = 'Bootable USB drive';
-        usbDrives.usbData.bootableUsbReadyText = 'Bootable USB drive is ready';
-    } else {
-        usbDrives.usbData.bootableUsb = 'Bootable USB drives';
-        usbDrives.usbData.bootableUsbReadyText = 'Bootable USB drives are ready';
     }
     return usbDrives;
 };
