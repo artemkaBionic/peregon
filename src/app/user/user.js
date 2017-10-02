@@ -111,6 +111,13 @@
         function getAllUsbDrives(){
             inventoryService.getAllUsbDrives().then(function(usbDrives){
                 vm.usbDrives = usbDrives;
+                if (usbDrives.usbData.status === 'bootDevicesReady') {
+                    toastr.info('All USB drives are ready', {
+                        'tapToDismiss': true,
+                        'timeOut': 3000,
+                        'closeButton': true
+                    });
+                }
                 console.log(vm.usbDrives);
                 vm.substep = vm.substeps[usbDrives.usbData.status];
             });
