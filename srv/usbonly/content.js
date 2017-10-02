@@ -262,6 +262,6 @@ exports.clearStatus = function(device) {
     shell.rm([
         '/mnt/' + device + config.usbStatusPartition + '/item.json',
         '/mnt/' + device + config.usbStatusPartition + '/refresh.log',
-        '/mnt/' + device + config.usbStatusPartition + '/sessions',
+        '/mnt/' + device + config.usbStatusPartition + '/sessions/*.json',
         '/mnt/' + device + config.usbStatusPartition + '/system-info.txt']);
 };

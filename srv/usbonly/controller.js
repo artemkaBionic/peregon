@@ -156,7 +156,8 @@ function readSessionFiles(io, device, callback) {
                                 callback(err);
                             } finally {
                                 try {
-                                    content.clearStatus(device);
+                                    // content.clearStatus(device);
+                                    winston.info('Successfully read Mac and Windows sessions for device:' + device);
                                     //Disable EFI boot to prevent Refresh Station booting to USB
                                 } catch (err) {
                                     winston.info('Error finalizing reading sessions');
