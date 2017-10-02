@@ -120,6 +120,7 @@ function readSessionFiles(io, device, callback) {
                winston.log('info', err);
                callback(err);
             } else {
+                console.log(files);
                 for (var i = 0; i < files.length; i++) {
                     fs.readFile(sessionsDirectory + files[i], 'utf8', function (err, data) {
                         if (err) {

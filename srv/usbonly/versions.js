@@ -55,14 +55,7 @@ exports.createVersionsFile = function(device, callback) {
 
 exports.getUsbVersions = function(device, callback) {
     var usbVersionsFile = '/mnt/' + device + config.usbStatusPartition + '/versions.json';
-    console.log(usbVersionsFile);
-    console.log(device);
-    console.log('Checking what is in status folder');
-    shell.ls('/mnt/' + device + config.usbStatusPartition+'/*.json');
-    console.log(shell.ls('/mnt/' + device + config.usbStatusPartition+'/*.json'));
     fs.readFile(usbVersionsFile, 'utf8', function(err, data) {
-        console.log(err);
-        console.log(data);
         if (err) {
             if (err.code === 'ENOENT') {
                 callback(null, null);

@@ -155,11 +155,7 @@
         function usbProgress(data) {
             vm.percentageComplete = data.progress;
         }
-        function refreshDevicesStarted() {
-            vm.step = vm.steps.refreshDevice;
-            socket.off('usb-complete');
-            socket.off('usb-progress');
-        }
+
         vm.createBootDrives = function(){
             $http({
                 url: '/prepareUsb',
@@ -203,10 +199,12 @@
             vm.session.tmp.currentStep = 'refreshStarted';
             inventoryService.updateSession(vm.session,'Info','Refresh Started','');
         }
+        function refreshDevicesStarted() {
+            vm.step = vm.steps.refreshDevice;
+            socket.off('usb-complete');
+            socket.off('usb-progress');
+        }
         socket.on('usb-progress', function() {
-            checkSession();
-        });
-        socket.on('device-add', function() {
             checkSession();
         });
         socket.on('usb-complete', function() {
