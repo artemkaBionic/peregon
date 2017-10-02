@@ -65,19 +65,28 @@ exports.prepareUsb = function(io) {
 };
 exports.isRefreshUsb = function(device, callback){
     //var device = data.usb.id;
-    versions.getUsbVersions(device, function(err, res){
-        if(err) {
+    partitions.mountPartitions(device, function(err){
+        if (err) {
             winston.log('error', err);
-            callback(err, null);
-        } else {
-            console.log('Is refresh usb response');
-            console.log(res);
-            if (res === null) {
-                callback(null, false);
-            } else {
-                callback(null, true);
-            }
         }
+        versions.getUsbVersions(device, function(err, res){
+            if(err) {
+                winston.log('error', err);
+                partitions.unmountPartitions(device, function(){
+                    callback(err, null);
+                });
+            } else {
+                console.log('Is refresh usb response');
+                console.log(res);
+                partitions.unmountPartitions(device, function(){
+                    if (res === null) {
+                        callback(null, false);
+                    } else {
+                        callback(null, true);
+                    }
+                });
+            }
+        });
     });
 };
 

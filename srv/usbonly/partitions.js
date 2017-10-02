@@ -61,6 +61,7 @@ function unmountPartitions(device, callback) {
     shell.exec('sync && umount /mnt/' + device + '?', {silent: true}, function(code, stdout, stderr) {
         shell.rm('-rf', '/mnt/' + device + '?');
         if (code !== 0) {
+            winston.log('error', 'Unmounting failed because of err code:' + code);
             callback(new Error(stderr));
         } else {
             callback(null);
@@ -81,7 +82,9 @@ function mountPartitions(device, callback) {
             + ' && mount /dev/' + device + config.usbStatusPartition + ' /mnt/' + device + config.usbStatusPartition,
             function(code, stdout, stderr) {
             if (code !== 0) {
-                callback(new Error(stderr));
+                unmountPartitions(device, function(){
+                    callback(new Error(stderr));
+                });
             } else {
                 callback(null);
             }
