@@ -72,8 +72,13 @@ function mountPartitions(device, callback) {
         shell.mkdir('-p', [
             '/mnt/' + device + config.usbXboxPartition,
             '/mnt/' + device + config.usbWindowsPartition,
+            '/mnt/' + device + config.usbMacPartition,
             '/mnt/' + device + config.usbStatusPartition]);
-        shell.exec('mount /dev/' + device + config.usbXboxPartition + ' /mnt/' + device + config.usbXboxPartition + ' && mount /dev/' + device + config.usbWindowsPartition + ' /mnt/' + device + config.usbWindowsPartition + ' && mount /dev/' + device + config.usbStatusPartition + ' /mnt/' + device + config.usbStatusPartition, function(code, stdout, stderr) {
+        shell.exec('mount /dev/' + device + config.usbXboxPartition + ' /mnt/' + device + config.usbXboxPartition
+            + ' && mount /dev/' + device + config.usbWindowsPartition + ' /mnt/' + device + config.usbWindowsPartition
+            + ' && mount /dev/' + device + config.usbMacPartition + ' /mnt/' + device + config.usbMacPartition
+            + ' && mount /dev/' + device + config.usbStatusPartition + ' /mnt/' + device + config.usbStatusPartition,
+            function(code, stdout, stderr) {
             if (code !== 0) {
                 callback(new Error(stderr));
             } else {
