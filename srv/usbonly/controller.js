@@ -122,7 +122,8 @@ function readSessionFiles(io, device, callback) {
             } else {
                 console.log(files);
                 for (var i = 0; i < files.length; i++) {
-                    fs.readFile(sessionsDirectory + files[i], 'utf8', function (err, data) {
+                    console.log('File found:' + files[i]);
+                    fs.readFile(sessionsDirectory + '/' + files[i], 'utf8', function (err, data) {
                         if (err) {
                             if (err.code === 'ENOENT') {
                                 callback(null);
@@ -133,7 +134,6 @@ function readSessionFiles(io, device, callback) {
                             try {
                                 // Remove non-printable characters
                                 data = data.replace(/[^\x20-\x7E]+/g, '');
-
                                 var usbSession = JSON.parse(data);
                                 winston.info('Refresh Session details:');
                                 winston.info(usbSession);
