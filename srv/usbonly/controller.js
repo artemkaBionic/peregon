@@ -70,6 +70,8 @@ exports.isRefreshUsb = function(device, callback){
             winston.log('error', err);
             callback(err, null);
         } else {
+            console.log('Is refresh usb response');
+            console.log(res);
             if (res === null) {
                 callback(null, false);
             } else {
@@ -78,6 +80,7 @@ exports.isRefreshUsb = function(device, callback){
         }
     });
 };
+
 function readSessions(io, device){
     return new Promise(function(resolve) {
         readSessionFiles(io, device, function(err){

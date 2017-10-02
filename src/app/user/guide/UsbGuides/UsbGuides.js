@@ -206,6 +206,9 @@
         socket.on('usb-progress', function() {
             checkSession();
         });
+        socket.on('device-add', function() {
+            checkSession();
+        });
         socket.on('usb-complete', function() {
             checkSession();
         });
