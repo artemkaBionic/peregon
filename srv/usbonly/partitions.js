@@ -22,11 +22,14 @@ function doPartitionsExist(device, callback) {
             callback(new Error(stderr), null);
         } else {
             var partitionsInfo = stdout.trim().split(os.EOL);
+            console.log('Partitions info:');
+            console.log(partitionsInfo);
             var correctPartitionsExist = partitionsInfo.length === 5
                 && partitionsInfo[1].indexOf('LABEL="XboxRefresh"') >= 0
                 && partitionsInfo[2].indexOf('LABEL="WinRefresh"') >= 0
                 && partitionsInfo[3].indexOf('LABEL="MacRefresh"') >= 0
                 && partitionsInfo[4].indexOf('LABEL="Status"') >= 0;
+
             callback(null, correctPartitionsExist);
         }
     });
@@ -72,11 +75,9 @@ function mountPartitions(device, callback) {
         shell.mkdir('-p', [
             '/mnt/' + device + config.usbXboxPartition,
             '/mnt/' + device + config.usbWindowsPartition,
-            '/mnt/' + device + config.usbMacPartition,
             '/mnt/' + device + config.usbStatusPartition]);
         shell.exec('mount /dev/' + device + config.usbXboxPartition + ' /mnt/' + device + config.usbXboxPartition
             + ' && mount /dev/' + device + config.usbWindowsPartition + ' /mnt/' + device + config.usbWindowsPartition
-            + ' && mount /dev/' + device + config.usbMacPartition + ' /mnt/' + device + config.usbMacPartition
             + ' && mount /dev/' + device + config.usbStatusPartition + ' /mnt/' + device + config.usbStatusPartition,
             function(code, stdout, stderr) {
             if (code !== 0) {
