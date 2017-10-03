@@ -17,61 +17,36 @@ exports.prepareUsb = function(io) {
         if (devices.hasOwnProperty(key) && devices[key].status === 'not_ready'){
             var device = devices[key];
             usbDrives.setStatus(device.id, 'in_progress');
-            readSessions(io, device.id).then(function(status) {
-                console.log(status);
                 partitions.updatePartitions(device.id, function(err) {
                     if (err) {
-                        winston.info('Error while updating partitions');
+                         winston.info('Error while updating partitions');
                          winston.log('error', err);
                          partitions.unmountPartitions(device.id, function() {
-                             winston.info('Unmounting partitions from if.');
                              usbDrives.finishProgress(device.id);
                              io.emit('usb-complete', {err: err, device: device.id});
                          });
                      } else {
-                         content.updateContent(io, device.id, function(err) {
-                             winston.info('Update content from else statement');
-                             if (err) {
-                                 winston.info('Error updating content');
-                                 winston.info(err);
-                             }
-                             partitions.unmountPartitions(device.id, function() {
-                                 winston.info('unmountPartitions from else statement');
-                                 usbDrives.finishProgress(device.id);
-                                 io.emit('usb-complete', {err: err, device: device.id});
-                             });
-                         });
+                        readSessions(io, device.id).then(function() {
+                            content.updateContent(io, device.id, function(err) {
+                                winston.info('Update content from else statement');
+                                if (err) {
+                                    winston.info('Error updating content');
+                                    winston.info(err);
+                                }
+                                partitions.unmountPartitions(device.id, function() {
+                                    usbDrives.finishProgress(device.id);
+                                    io.emit('usb-complete', {err: err, device: device.id});
+                                });
+                            });
+                        });
+
                      }
                  });
-            });
+            }
         }
-    }
 };
 exports.isRefreshUsb = function(device, callback){
-    //var device = data.usb.id;
-    partitions.mountPartitions(device, function(err){
-        if (err) {
-            winston.log('error', err);
-        }
-        versions.getUsbVersions(device, function(err, res){
-            if(err) {
-                winston.log('error', err);
-                partitions.unmountPartitions(device, function(){
-                    callback(err, null);
-                });
-            } else {
-                console.log('Is refresh usb response');
-                console.log(res);
-                partitions.unmountPartitions(device, function(){
-                    if (res === null) {
-                        callback(null, false);
-                    } else {
-                        callback(null, true);
-                    }
-                });
-            }
-        });
-    });
+    partitions.doPartitionsExist(device, callback);
 };
 
 function readSessions(io, device){
@@ -96,11 +71,6 @@ function readSessions(io, device){
 }
 function readSessionFiles(io, device, callback) {
     winston.info('Reading session files');
-    partitions.mountPartitions(device, function(err) {
-        if (err) {
-            winston.info('Failed to unmount partitions on read session files');
-        }
-        //var systemUpdateDir = '/mnt/' + device + '1/$SystemUpdate';
         var sessionsDirectory = '/mnt/' + device + config.usbStatusPartition + '/sessions';
         fs.readdir(sessionsDirectory, function(err, files){
             if (err) {
@@ -158,8 +128,6 @@ function readSessionFiles(io, device, callback) {
                 }
             }
         });
-
-    });
 }
 function readXboxSessions(io, device, callback){
     winston.info('Reading xbox sessions');

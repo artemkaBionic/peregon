@@ -70,8 +70,11 @@ function unmountPartitions(device, callback) {
 }
 
 function mountPartitions(device, callback) {
-    winston.info('mountPartitions');
-    unmountPartitions(device, function() {
+    winston.info('Mounting partitions for device:' + device);
+    unmountPartitions(device, function(err) {
+        if (err) {
+            console.log('Unmounting failed because of:' + err);
+        }
         winston.info('Mounting USB device ' + device);
         shell.mkdir('-p', [
             '/mnt/' + device + config.usbXboxPartition,
@@ -166,5 +169,6 @@ function updatePartitions(device, callback) {
 module.exports = {
     unmountPartitions: unmountPartitions,
     mountPartitions: mountPartitions,
-    updatePartitions: updatePartitions
+    updatePartitions: updatePartitions,
+    doPartitionsExist: doPartitionsExist
 };
