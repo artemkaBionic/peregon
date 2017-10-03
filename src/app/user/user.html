@@ -92,71 +92,7 @@
             <div class="col-xs-1">
             </div>
             <div class="col-xs-6 text-center">
-              <div ng-show="vm.substep.name === 'noBootDevices'">
-                <div class="boot-instruction-row">
-                  <div class="usb-icon">
-                    <i class="fa fa-usb" aria-hidden="true"></i>
-                  </div>
-                </div>
-                <div class="boot-instruction-row boot-instruction-title-grey">
-                  <span>Connect USB drive to get started.</span>
-                </div>
-                <div class="boot-instruction-row">
-                  <span style="color:grey">USB drive should be 32GB or larger.</span>
-                </div>
-              </div>
-              <div ng-show="vm.substep.name === 'newBootDevice'">
-
-                <div class="boot-instruction-row">
-                  <div class="usb-icon">
-                    <i class="fa fa-usb" aria-hidden="true"></i>
-                  </div>
-                </div>
-                <div class="boot-instruction-row boot-instruction-title-grey">
-                    <span><ng-pluralize count="vm.usbDrives.usbData.notReadyDevices"
-                                        when="{'0': 'No New USB drives are connected',
-                     'one': '1 New USB drive is connected',
-                     'other': '{} New USB drives are connected'}">
-                    </ng-pluralize></span>
-                </div>
-                <div class="boot-instruction-row">
-                    <span style="color:grey">Now you can create your Bootable <ng-pluralize count="vm.usbDrives.usbData.notReadyDevices" when="{'one': 'USB drive', 'other': 'USB drives'}"></ng-pluralize><br>
-                    <strong>Warning!</strong> This will wipe all information you have on <ng-pluralize count="vm.usbDrives.usbData.notReadyDevices" when="{'one': 'USB drive', 'other': 'USB drives'}"></ng-pluralize>.
-                    </span>
-                </div>
-                <div class="boot-instruction-row">
-                  <button class="btn btn-success btn-rounded" ng-click="vm.createBootDrives()">
-                    Create Bootable <ng-pluralize count="vm.usbDrives.usbData.notReadyDevices" when="{'one': 'USB drive', 'other': 'USB drives'}"></ng-pluralize>
-                  </button>
-                  <!--<button class="btn btn-danger btn-rounded" ng-click="vm.cancelBootDrive()">Cancel</button>-->
-                </div>
-              </div>
-              <div ng-show="vm.substep.name === 'bootDevicesProcessing'">
-                <div class="boot-instruction-row">
-                  <i class="fa fa-spinner fa-spin" style="font-size:50px"></i>
-                </div>
-                <div class="boot-instruction-row boot-instruction-title-grey">
-                  <span>Preparing Bootable <ng-pluralize count="vm.usbDrives.usbData.inProgressDevices" when="{'one': 'USB drive', 'other': 'USB drives'}"></ng-pluralize></span>
-                </div>
-                <div class="boot-instruction-row">
-                    <span style="color:grey">Boot partitions are loading into connected <ng-pluralize count="vm.usbDrives.usbData.inProgressDevices" when="{'one': 'USB drive', 'other': 'USB drives'}"></ng-pluralize>.<br>
-                    <strong>Warning!</strong> Do not remove <ng-pluralize count="vm.usbDrives.usbData.inProgressDevices" when="{'one': 'USB drive', 'other': 'USB drives'}"></ng-pluralize> from Refresh Station until loading will be finished.
-                    </span>
-                </div>
-              </div>
-              <div ng-show="vm.substep.name === 'bootDevicesReady'">
-                <div class="boot-instruction-row">
-                  <i style="color:forestgreen" class="fa fa-check-circle fa-5x" aria-hidden="true"></i>
-                </div>
-                <div class="boot-instruction-row boot-instruction-title-grey">
-                  <span><ng-pluralize count="vm.usbDrives.usbData.readyDevices" when="{'one': 'Bootable USB drive is ready', 'other': 'Bootable USB drives are ready'}"></span>
-                </div>
-                <div class="boot-instruction-row">
-                    <span style="color:grey">You can remove <ng-pluralize count="vm.usbDrives.usbData.readyDevices" when="{'one': 'Bootable USB drive', 'other': 'Bootable USB drives'}"> from Refresh Station and start refresh.<br>
-                    <strong>Warning!</strong> Do not forget to insert <ng-pluralize count="vm.usbDrives.usbData.readyDevices" when="{'one': 'Bootable USB drive', 'other': 'Bootable USB drives'}"> back to station once refreshes will be completed.
-                    </span>
-                </div>
-              </div>
+             <usb-control></usb-control>
             </div>
           </div>
         </div>

@@ -23,39 +23,24 @@
                 number: 1,
                 title: 'Check condition'
             },
-            prepareRefreshUsbInsert: {
-                name: 'prepareRefreshUsbInsert',
+            usbControl: {
+                name: 'usbControl',
                 number: 2,
-                title: 'Prepare USB Drive for Refresh (Insert Drive)'
-            },
-            prepareRefreshUsbInProgress: {
-                name: 'prepareRefreshUsbInProgress',
-                number: 3,
-                title: 'Prepare USB Drive for Refresh (Preparing Drive)'
-            },
-            prepareRefreshUsbComplete: {
-                name: 'prepareRefreshUsbComplete',
-                number: 4,
-                title: 'Prepare USB Drive for Refresh (Drive is Ready)'
-            },
-            newBootDevice: {
-                name: 'newBootDevice',
-                number: 5,
-                title: 'New Boot Device'
+                title: 'Control of usb drives'
             },
             refreshDevice: {
                 name: 'refreshDevice',
-                number: 6,
+                number: 3,
                 title: 'Refresh the Device'
             },
             verifyRefresh: {
                 name: 'verifyRefresh',
-                number: 7,
+                number: 4,
                 title: 'Verify Refresh'
             },
             complete: {
                 name: 'complete',
-                number: 8,
+                number: 5,
                 title: 'Refresh is Complete'
             },
             failed: {
@@ -63,8 +48,8 @@
                 number: 0,
                 title: 'Refresh Failed'
             }
-
         };
+        console.log(vm.item);
         checkSession();
         function isEmptyObject(obj) {
             for (var prop in obj) {
@@ -96,45 +81,18 @@
                         refreshDevicesStarted();
                     }
                 } else {
-                    checkUsbStatus(session);
+                    vm.step = vm.steps.usbControl;
                 }
             } else {
                 vm.step = vm.steps.failed;
             }
         }
-        function checkUsbStatus() {
-            console.log('here');
-            inventoryService.getAllUsbDrives().then(function(usbDrives) {
-                vm.usbDrives = usbDrives;
-                console.log(usbDrives);
-                if (usbDrives.usbData.status === 'newBootDevice') {
-                    newBootDevice();
-                } else if (usbDrives.usbData.status === 'bootDevicesReady') {
-                    $http({
-                        url: '/createItemFiles',
-                        method: 'POST',
-                        headers: {'content-type': 'application/json'},
-                        data: {item: item}
-                    }).then(function() {
-                        prepareRefreshUsbComplete();
-                    });
-                } else if (usbDrives.usbData.status === 'noBootDevices') {
-                    prepareRefreshUsbStart();
-                } else {
-                    showBootDeviceProgress();
-                }
-            }).catch(function(err) {
-                console.log(err);
-            });
-        }
-        function newBootDevice(){
-            vm.step = vm.steps.newBootDevice;
-        }
         vm.startSession = function() {
             vm.sessionId = new Date().toISOString();
             inventoryService.startSession(vm.sessionId, item).then(function(session){
                 vm.session = session;
-                checkUsbStatus();
+               // checkUsbStatus();
+                vm.step = vm.steps.usbControl;
             });
         };
         vm.deviceBroken = function() {
@@ -152,64 +110,17 @@
         function checkCondition() {
             vm.step = vm.steps.checkCondition;
         }
-        function usbProgress(data) {
-            vm.percentageComplete = data.progress;
-        }
-
-        vm.createBootDrives = function(){
-            $http({
-                url: '/prepareUsb',
-                method: 'POST',
-                headers: {'content-type': 'application/json'}
-            }).then(function(){
-                showBootDeviceProgress();
-            });
-        };
-        function waitForUsbAdd(callback) {
-            socket.on('device-add', function() {
-                console.log(callback);
-                callback();
-            });
-        }
-        function waitForUsbRemove(callback) {
-            socket.on('device-remove', function() {
-                console.log('removing');
-                callback();
-            });
-        }
-
-        function prepareRefreshUsbComplete() {
-            vm.step = vm.steps.prepareRefreshUsbComplete;
-            waitForUsbRemove(refreshDevicesStart);
-        }
-        function showBootDeviceProgress() {
-            vm.step = vm.steps.prepareRefreshUsbInProgress;
-            inventoryService.getLowestUsbInProgress().then(function(usbDrive){
-                usbProgress(usbDrive);
-            });
-        }
-        function prepareRefreshUsbStart() {
-            vm.step = vm.steps.prepareRefreshUsbInsert;
-            waitForUsbAdd(newBootDevice);
-        }
+        $scope.$on('bootDevicesReady', function(){
+            refreshDevicesStart();
+        });
         function refreshDevicesStart(){
             vm.step = vm.steps.refreshDevice;
-            socket.off('usb-complete');
-            socket.off('usb-progress');
             vm.session.tmp.currentStep = 'refreshStarted';
             inventoryService.updateSession(vm.session,'Info','Refresh Started','');
         }
         function refreshDevicesStarted() {
             vm.step = vm.steps.refreshDevice;
-            socket.off('usb-complete');
-            socket.off('usb-progress');
         }
-        socket.on('usb-progress', function() {
-            checkSession();
-        });
-        socket.on('usb-complete', function() {
-            checkSession();
-        });
         socket.on('session-complete', function(session){
             if (session._id === vm.session._id) {
                 updateSession(session);

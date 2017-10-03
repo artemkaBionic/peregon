@@ -47,93 +47,30 @@
                 number: 2
             }
         };
-        vm.substeps = {
-            noBootDevices: {
-                name: 'noBootDevices',
-                number: 1
-            },
-            newBootDevice: {
-                name: 'newBootDevice',
-                number: 2
-            },
-            bootDevicesProcessing: {
-                name: 'bootDevicesProcessing',
-                number: 3
-            },
-            bootDevicesReady: {
-                name: 'bootDevicesReady',
-                number: 4
-            }
-        };
         vm.step = vm.steps.sessions;
-        vm.substep = vm.substeps.noBootDevices;
-        document.getElementById(
-            'sessions').style.borderBottom = '3px solid black';
+        getSessions();
+        function getSessions() {
+            var deferred = $q.defer();
+            inventoryService.getAllSessionsByParams({}).then(function(sessions) {
+                vm.sessions =  sessions;
+                deferred.resolve(sessions);
+            });
+            return deferred.promise;
+        }
         vm.viewSessions = function() {
-            document.getElementById(
-                'sessions').style.borderBottom = '3px solid black';
+            document.getElementById('sessions').style.borderBottom = '3px solid black';
             document.getElementById('bootDevices').style.borderBottom = 'unset';
             vm.step = vm.steps.sessions;
-            console.log(vm.step);
         };
-        //getAllUsbDrives();
         vm.viewBootDevices = function() {
-            getAllUsbDrives();
-            document.getElementById(
-                'bootDevices').style.borderBottom = '3px solid black';
+            document.getElementById('bootDevices').style.borderBottom = '3px solid black';
             document.getElementById('sessions').style.borderBottom = 'unset';
             vm.step = vm.steps.bootDevices;
-            //console.log(vm.step);
         };
-        socket.on('device-add', function() {
-            toastr.success('USB Drive connected to refresh station', {
-                'tapToDismiss': true,
-                'timeOut': 3000,
-                'closeButton': true
-            });
-            vm.viewBootDevices();
-            vm.substep = vm.substeps.newBootDevice;
-            getAllUsbDrives();
-        });
-        socket.on('usb-progress', function() {
-            console.log('in progress');
-            getAllUsbDrives();
-        });
-        socket.on('usb-complete', function() {
-            getAllUsbDrives();
-        });
-        socket.on('device-remove', function() {
-            getAllUsbDrives();
-        });
+        vm.viewSessions();
         $scope.$on('$stateChangeSuccess', function() {
             getSessions();
         });
-        function getAllUsbDrives(){
-            inventoryService.getAllUsbDrives().then(function(usbDrives){
-                vm.usbDrives = usbDrives;
-                if (usbDrives.usbData.status === 'bootDevicesReady') {
-                    toastr.info('All USB drives are ready', {
-                        'tapToDismiss': true,
-                        'timeOut': 3000,
-                        'closeButton': true
-                    });
-                }
-                console.log(vm.usbDrives);
-                vm.substep = vm.substeps[usbDrives.usbData.status];
-            });
-        }
-        vm.createBootDrives = function() {
-            $http({
-                url: '/prepareUsb',
-                method: 'POST',
-                headers: {'content-type': 'application/json'}
-            });
-            vm.substep = vm.substeps.bootDevicesProcessing;
-        };
-        vm.cancelBootDrive = function() {
-            vm.substep = vm.substeps.bootDevicesReady;
-        };
-
         $scope.$watch('vm.textToFilter', function(newTextToFilter) {
             $scope.$watch('vm.sessionType', function(newDropdown, oldDropdown) {
                 var dropDownChoice = newDropdown ? newDropdown : oldDropdown;
@@ -151,7 +88,7 @@
                 getSessions();
             }, 500);
         });
-
+        // used for infinite scroll
         vm.increaseLimit = function() {
             vm.sessionsLength = 0;
             for (var key in vm.sessions) {
@@ -163,8 +100,8 @@
                 vm.limit += 20;
             }
         };
-        var container = angular.element(
-            document.querySelector('.content-full-height-scroll'));
+        // this used make header of sessions table fixed on top is scroll
+        var container = angular.element(document.querySelector('.content-full-height-scroll'));
         container.on('scroll', function() {
             var divAnchor = document.querySelector('#Header-anchor');
             var divHeader = angular.element(document.getElementById('Header'));
@@ -207,8 +144,12 @@
                     'background-color:"";position:"";top:"";z-index:300');
             }
         });
-        //'Fail', 'Incomplete'
+        // filtering session data
         vm.filterParam = vm.textToFilter;
+        vm.changeFilter = function(filter) {
+            vm.sessionType = filter;
+        };
+        // get item number
         vm.searchStringChange = function() {
             vm.searchString = vm.searchString.toUpperCase();
             if (vm.searchString !== vm.lastValidSearchString) {
@@ -250,75 +191,7 @@
             }
         };
         $scope.$watch('vm.searchString', vm.searchStringChange);
-        vm.changeFilter = function(filter) {
-            vm.sessionType = filter;
-        };
-
-        getSessions();
-        socket.on('app-start', function(session) {
-            console.log(session);
-            getSessions().then(function() {
-                // jscs:disable
-                toastr.info('Refresh started for device:' +
-                    session.device.serial_number, {
-                    'tapToDismiss': true,
-                    'timeOut': 3000,
-                    'closeButton': true
-                });
-                // jscs:enable
-            });
-        });
-        socket.on('session-error', function(err){
-            console.log(err);
-        });
-        socket.on('session-complete', function(){
-            getSessions().then(function() {
-                vm.viewSessions();
-                // jscs:disable
-                toastr.info('Refresh finished', {
-                    'tapToDismiss': true,
-                    'timeOut': 3000,
-                    'closeButton': true
-                });
-                // jscs:enable
-
-            });
-        });
-        socket.on('android-session-expired', function(data) {
-            if ($state.current.name === 'root.user') {
-                getSessions().then(function() {
-                    toastr.warning('Session expired for device:' + data.device,
-                        {
-                            'tapToDismiss': true,
-                            'timeOut': 3000,
-                            'closeButton': true
-                        });
-                });
-            }
-        });
-        socket.on('session-expired-confirmation', function() {
-            if ($state.current.name === 'root.user') {
-                getSessions();
-            }
-        });
-        socket.on('android-reset', function(session) {
-            console.log(session);
-            getSessions().then(function() {
-                // jscs:disable
-                toastr.info('Refresh finished for device:' +
-                    session.device.serial_number, {
-                    'tapToDismiss': true,
-                    'timeOut': 3000,
-                    'closeButton': true
-                });
-                // jscs:enable
-            });
-        });
-        socket.on('android-remove', function() {
-            if ($state.current.name === 'root.user') {
-                getSessions();
-            }
-        });
+        // show guides
         vm.showGuide = function() {
             if (vm.item !== null) {
                 var $stateParams = {};
@@ -329,13 +202,8 @@
             }
         };
         // jscs:disable
-
+        // show modal for successful/failed sessions + enter item number for unrecognized devices
         vm.showGuideForCards = function(session) {
-            var item = {'InventoryNumber': session.device.item_number,
-                'start_time': session.start_time,
-                'serial':session.device.serial_number,
-                'id':session._id
-            };
             if(session.device.item_number) {
                 inventoryService.getSessionByParams({'_id':session._id})
                     .then(function(res) {
@@ -385,6 +253,27 @@
                     });
             }
         };
+        function openHelpModal(modalSize, data, sessionId, session) {
+            if (typeof(data) === 'string') {
+                vm.data = {
+                    message: data,
+                    sessionId: sessionId,
+                    session: session
+                };
+            } else {
+                vm.data = {
+                    errors: data
+                };
+            }
+            popupLauncher.openModal({
+                templateUrl: 'app/user/guide/Modals/Session-Status-modal.html',
+                controller: 'SessionStatusModalController',
+                bindToController: true,
+                controllerAs: 'vm',
+                resolve: {data: vm.data},
+                size: modalSize
+            });
+        }
         // jscs: enable
         vm.unlockForService = function() {
             if (vm.item) {
@@ -415,7 +304,6 @@
         //=========== Start Working on catching the Android Connect before ItemNumber entered==========
         //=========== End Working on catching the Android Connect before ItemNumber entered==========
         activate();
-
         function activate() {
             var queries = [
                 stationService.isServiceCenter().
@@ -426,37 +314,65 @@
                 vm.ready = true;
             });
         }
-
-        function getSessions() {
-            getAllUsbDrives();
-            var deferred = $q.defer();
-            inventoryService.getAllSessionsByParams({}).then(function(sessions) {
-                vm.sessions =  sessions;
-                deferred.resolve(sessions);
+        socket.on('device-add', function() {
+            vm.viewBootDevices();
+        });
+        socket.on('app-start', function(session) {
+            getSessions().then(function() {
+                // jscs:disable
+                toastr.info('Refresh started for device:' +
+                    session.device.serial_number, {
+                    'tapToDismiss': true,
+                    'timeOut': 3000,
+                    'closeButton': true
+                });
+                // jscs:enable
             });
-            return deferred.promise;
-        }
+        });
+        socket.on('session-error', function(err){
+            console.log(err);
+        });
+        socket.on('session-complete', function(){
+            getSessions().then(function() {
+                vm.viewSessions();
+                // jscs:disable
+                toastr.info('Refresh finished', {
+                    'tapToDismiss': true,
+                    'timeOut': 3000,
+                    'closeButton': true
+                });
+                // jscs:enable
 
-        function openHelpModal(modalSize, data, sessionId, session) {
-            if (typeof(data) === 'string') {
-                vm.data = {
-                    message: data,
-                    sessionId: sessionId,
-                    session: session
-                };
-            } else {
-                vm.data = {
-                    errors: data
-                };
+            });
+        });
+        socket.on('android-session-expired', function(data) {
+            if ($state.current.name === 'root.user') {
+                getSessions().then(function() {
+                    toastr.warning('Session expired for device:' + data.device,
+                        {
+                            'tapToDismiss': true,
+                            'timeOut': 3000,
+                            'closeButton': true
+                        });
+                });
             }
-            popupLauncher.openModal({
-                templateUrl: 'app/user/guide/Modals/Session-Status-modal.html',
-                controller: 'SessionStatusModalController',
-                bindToController: true,
-                controllerAs: 'vm',
-                resolve: {data: vm.data},
-                size: modalSize
+        });
+        socket.on('android-reset', function(session) {
+            getSessions().then(function() {
+                // jscs:disable
+                toastr.info('Refresh finished for device:' +
+                    session.device.serial_number, {
+                    'tapToDismiss': true,
+                    'timeOut': 3000,
+                    'closeButton': true
+                });
+                // jscs:enable
             });
-        }
+        });
+        socket.on('android-remove', function() {
+            if ($state.current.name === 'root.user') {
+                getSessions();
+            }
+        });
     }
 })();

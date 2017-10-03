@@ -28,10 +28,10 @@
   <div horizontal-ui-sheet-content>
     <div class="row">
       <ul id="progress-tracker" data-steps="3">
-        <li ng-class="{'active': vm.step.number >= 1 && vm.step.number <= 5, 'done': vm.step.number > 4}">
+        <li ng-class="{'active': vm.step.number >= 1 && vm.step.number <= 2, 'done': vm.step.number > 4}">
           <span>Prepare Refresh</span>
         </li>
-        <li ng-class="{'active': vm.step.number >= 6 && vm.step.number <= 7, 'done': vm.step.number > 6}">
+        <li ng-class="{'active': vm.step.number === 3, 'done': vm.step.number > 6}">
           <span ng-show="vm.item.Type==='WindowsUsb'">
             Refresh the Windows laptop
           </span>
@@ -42,7 +42,7 @@
             Refresh X-Box
           </span>
         </li>
-        <li ng-class="{'active': vm.step.number == 8}"><span>Finish</span><i></i></li>
+        <li ng-class="{'active': vm.step.number >= 4}"><span>Finish</span><i></i></li>
       </ul>
     </div>
 
@@ -73,67 +73,9 @@
           </button>
         </div>
       </div>
-      <div class="anim-wizard-step" ng-switch-when="prepareRefreshUsbInsert">
-        <div class="row wizard-contents">
-          <h2>Please insert a 32GB or larger USB drive into the Refresh Station.</h2>
-        </div>
-        <div class="row wizard-graphics">
-          <img src="/assets/images/InsertUsbDrive.png" class="wizard-image center">
-        </div>
+      <div class="anim-wizard-step text-center" ng-switch-when="usbControl">
+        <usb-control data-item="vm.item"></usb-control>
       </div>
-
-      <div class="anim-wizard-step text-center" ng-switch-when="newBootDevice">
-        <div class="boot-instruction-row">
-          <div class="usb-icon-lg">
-            <i class="fa fa-usb" aria-hidden="true"></i>
-          </div>
-        </div>
-
-        <h2>
-          <ng-pluralize count="vm.usbDrives.usbData.notReadyDevices"
-                        when="{'0': 'No New USB drives are connected',
-                     'one': '1 New USB drive is connected',
-                     'other': '{} New USB drives are connected'}">
-          </ng-pluralize>
-        </h2>
-        <div class="boot-instruction-row">
-          <span style="color:grey">Now you can create your Bootable <ng-pluralize count="vm.usbDrives.usbData.notReadyDevices" when="{'one': 'USB drive', 'other': 'USB drives'}"></ng-pluralize><br>
-            <strong>Warning!</strong> This will wipe all information you have on <ng-pluralize count="vm.usbDrives.usbData.notReadyDevices" when="{'one': 'USB drive', 'other': 'USB drives'}"></ng-pluralize>.
-          </span>
-        </div>
-        <div class="boot-instruction-row">
-          <button class="btn btn-success btn-rounded" ng-click="vm.createBootDrives()">
-            Create Bootable <ng-pluralize count="vm.usbDrives.usbData.notReadyDevices" when="{'one': 'USB drive', 'other': 'USB drives'}"></ng-pluralize>
-          </button>
-          <!--<button class="btn btn-danger btn-rounded" ng-click="vm.cancelBootDrive()">Cancel</button>-->
-        </div>
-      </div>
-
-      <div class="anim-wizard-step" ng-switch-when="prepareRefreshUsbInProgress">
-        <div class="row wizard-contents text-center">
-          <h2>Preparing USB drive</h2>
-          <h3>This may take up to 15 minutes...</h3>
-        </div>
-        <div class="row wizard-contents text-center">
-          <div class="center circle-bar">
-            <orbicular progression="vm.percentageComplete" total="100">{{vm.data.counter}}</orbicular>
-          </div>
-          <div>
-            <p>{{vm.percentageComplete}}% complete</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="anim-wizard-step" ng-switch-when="prepareRefreshUsbComplete">
-        <div class="row wizard-graphics">
-          <i class="fa fa-check-circle success-icon"></i>
-        </div>
-        <div class="row wizard-contents">
-          <h2>The USB drive is ready.</h2>
-          <h3>Remove it from the Refresh Station to continue.</h3>
-        </div>
-      </div>
-
       <div class="anim-wizard-step" ng-switch-when="refreshDevice">
         <usb-guide data-item="vm.item"></usb-guide>
         <div class="guide-footer">

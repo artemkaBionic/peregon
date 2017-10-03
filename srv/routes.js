@@ -231,6 +231,7 @@ module.exports = function(io, data) {
             }
         });
     });
+
     router.get('/data/getAllSessions', function(req, res) {
         sessions.getSessionsByParams({}).then(function(response) {
             res.json(response);
@@ -283,11 +284,5 @@ module.exports = function(io, data) {
         usbDrives.setStatus('sdc', 'in_progress');
         res.json({success:true});
     });
-    router.post('/readSessions', function(req, res) {
-        controller.onlyReadSessions(io).then(function() {
-            res.status(200).send();
-        });
-    });
-
     return router;
 };

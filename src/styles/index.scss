@@ -1924,7 +1924,7 @@ button[disabled]:hover {
   $barBg: #EEE, // The remaining progress color
   $barWidth: 8, // The bar width is defined as a percentage of the width of the circle
   $contentBg: #ffffff, // The circle center
-  $fontSize: 8, // Content font-size as a percentage of the circle size
+  //$fontSize: 8, // Content font-size as a percentage of the circle size
   $fontColor: #FFF, // Content text color
   $transTime: 0.3s, // Time to animate the movement
   $transFunc: linear, // transition timing
@@ -1951,6 +1951,9 @@ button[disabled]:hover {
 orbicular i {
   color: #775D9F;
 }
+orbicular {
+   font-size: 230px!important;
+ }
 
 .android-video h3 {
   margin: 60px;
