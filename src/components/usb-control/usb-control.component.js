@@ -11,7 +11,7 @@
                 },
                 controller: usbControlController,
                 controllerAs: 'vm',
-                templateUrl: '../components/usb-control/usb-control.template.html'
+                templateUrl: 'components/usb-control/usb-control.template.html'
             }
         );
 
