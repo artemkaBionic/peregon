@@ -1,11 +1,11 @@
-<div class="row">
+<div class="row" ng-style="vm.guideStyle">
   <div ng-show="vm.step.name === 'noBootDevices'">
     <div class="boot-instruction-row">
-      <div class="usb-icon">
-        <i class="fa fa-usb" aria-hidden="true"></i>
+      <div class="usb-icon" ng-style="vm.iconStyle">
+        <i class="fa fa-usb"  aria-hidden="true"></i>
       </div>
     </div>
-    <div class="boot-instruction-row boot-instruction-title-grey">
+    <div class="boot-instruction-row boot-instruction-title-grey" ng-style="vm.guideTitle">
       <span>Connect USB drive to get started.</span>
     </div>
     <div class="boot-instruction-row">
@@ -14,11 +14,11 @@
   </div>
   <div ng-show="vm.step.name === 'newBootDevice'">
     <div class="boot-instruction-row">
-      <div class="usb-icon">
+      <div class="usb-icon" ng-style="vm.iconStyle">
         <i class="fa fa-usb" aria-hidden="true"></i>
       </div>
     </div>
-    <div class="boot-instruction-row boot-instruction-title-grey">
+    <div class="boot-instruction-row boot-instruction-title-grey" ng-style="vm.guideTitle">
       <span><ng-pluralize count="vm.usbDrives.usbData.notReadyDevices" when="{'0': 'No New USB drives are connected',
             'one': '1 New USB drive is connected',
             'other': '{} New USB drives are connected'}">
@@ -37,7 +37,7 @@
     </div>
   </div>
   <div ng-show="vm.step.name === 'bootDevicesProcessing'">
-    <div class="row wizard-contents text-center">
+    <div class="row wizard-contents text-center" ng-style="vm.guideTitle">
       <div>Preparing USB drive</div>
       <div>This may take up to 15 minutes...</div>
     </div>
@@ -52,9 +52,9 @@
   </div>
   <div ng-show="vm.step.name === 'bootDevicesReady'">
     <div class="boot-instruction-row">
-      <i style="color:forestgreen" class="fa fa-check-circle fa-5x" aria-hidden="true"></i>
+      <i style="color:forestgreen" class="fa fa-check-circle fa-5x" ng-style="vm.iconStyle" aria-hidden="true"></i>
     </div>
-    <div class="boot-instruction-row boot-instruction-title-grey">
+    <div class="boot-instruction-row boot-instruction-title-grey" ng-style="vm.guideTitle">
       <span><ng-pluralize count="vm.usbDrives.usbData.readyDevices" when="{'one': 'Bootable USB drive is ready', 'other': 'Bootable USB drives are ready'}"></span>
     </div>
     <div class="boot-instruction-row">

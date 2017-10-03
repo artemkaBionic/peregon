@@ -39,6 +39,15 @@
             }
         };
         console.log(vm.item);
+        if (vm.item) {
+            vm.iconStyle = {
+                'width': '80px',
+                'height': '80px',
+                'line-height': '80px'
+            };
+            vm.guideStyle = {'font-size': '16pt','margin-top':'20vh'};
+            vm.guideTitle = {'font-size': '18pt'};
+        }
         checkUsbStatus();
         function checkUsbStatus() {
             inventoryService.getAllUsbDrives().then(function(usbDrives) {
@@ -48,14 +57,15 @@
                     newBootDevice();
                 } else if (usbDrives.usbData.status === 'bootDevicesReady') {
                     if (vm.item !== undefined) {
-                        $http({
-                            url: '/createItemFiles',
-                            method: 'POST',
-                            headers: {'content-type': 'application/json'},
-                            data: {item: vm.item}
-                        }).then(function() {
-                            prepareRefreshUsbComplete();
-                        });
+                        // $http({
+                        //     url: '/createItemFiles',
+                        //     method: 'POST',
+                        //     headers: {'content-type': 'application/json'},
+                        //     data: {item: vm.item}
+                        // }).then(function() {
+                        //     prepareRefreshUsbComplete();
+                        // });
+                        prepareRefreshUsbComplete();
                     } else {
                         prepareRefreshUsbComplete();
                     }
