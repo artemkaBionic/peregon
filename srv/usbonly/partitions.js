@@ -56,7 +56,6 @@ function checkPartitioning(device, callback) {
 }
 
 function unmountPartitions(device, callback) {
-    winston.info('unmountPartitions');
     winston.info('Unmounting USB device ' + device);
     shell.exec('sync && umount /mnt/' + device + '?', {silent: true}, function(code, stdout, stderr) {
         shell.rm('-rf', '/mnt/' + device + '?');

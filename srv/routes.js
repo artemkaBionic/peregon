@@ -172,11 +172,11 @@ module.exports = function(io, data) {
                 status: 'not_ready',
                 progress: 0
             });
-
             controller.isRefreshUsb(event.data.id,
                 function(err, isInitialized) {
                     if (err) {
                         winston.log('error', err);
+                        io.emit(event.name, event.data);
                     } else {
                         if (isInitialized) {
                             controller.prepareUsb(io);
@@ -254,7 +254,6 @@ module.exports = function(io, data) {
 
     router.post('/updateSessionItem',
         function(req, res) {
-        console.log(req.body);
             sessions.sessionUpdateItem(req.body.params, req.body.item).
             then(function(result) {
                 inventory.resendSessions();

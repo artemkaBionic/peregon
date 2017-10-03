@@ -65,8 +65,6 @@ exports.getUsbVersions = function(device, callback) {
         } else {
             try {
                 var json = JSON.parse(data);
-                console.log('Versions file:');
-                console.log(json);
                 callback(null, json);
             } catch (err) {
                 console.log('Error reading versions file');
