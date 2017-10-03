@@ -45,7 +45,7 @@
                 'height': '80px',
                 'line-height': '80px'
             };
-            vm.guideStyle = {'font-size': '16pt','margin-top':'20vh'};
+            vm.guideStyle = {'font-size': '16pt','margin-top':'5vh'};
             vm.guideTitle = {'font-size': '18pt'};
         }
         checkUsbStatus();
@@ -57,15 +57,14 @@
                     newBootDevice();
                 } else if (usbDrives.usbData.status === 'bootDevicesReady') {
                     if (vm.item !== undefined) {
-                        // $http({
-                        //     url: '/createItemFiles',
-                        //     method: 'POST',
-                        //     headers: {'content-type': 'application/json'},
-                        //     data: {item: vm.item}
-                        // }).then(function() {
-                        //     prepareRefreshUsbComplete();
-                        // });
-                        prepareRefreshUsbComplete();
+                        $http({
+                            url: '/createItemFiles',
+                            method: 'POST',
+                            headers: {'content-type': 'application/json'},
+                            data: {item: vm.item}
+                        }).then(function() {
+                            prepareRefreshUsbComplete();
+                        });
                     } else {
                         prepareRefreshUsbComplete();
                     }
