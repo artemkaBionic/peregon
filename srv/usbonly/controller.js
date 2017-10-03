@@ -26,9 +26,9 @@ exports.prepareUsb = function(io) {
                              io.emit('usb-complete', {err: err, device: device.id});
                          });
                      } else {
-                        readSessions(io, device.id).then(function() {
+                        readSessions(io, device.id).then(function(status) {
+                            console.log(status);
                             content.updateContent(io, device.id, function(err) {
-                                winston.info('Update content from else statement');
                                 if (err) {
                                     winston.info('Error updating content');
                                     winston.info(err);
@@ -77,54 +77,57 @@ function readSessionFiles(io, device, callback) {
                winston.log('info', err);
                callback(err);
             } else {
-                console.log(files);
-                for (var i = 0; i < files.length; i++) {
-                    console.log('File found:' + files[i]);
-                    fs.readFile(sessionsDirectory + '/' + files[i], 'utf8', function (err, data) {
-                        if (err) {
-                            if (err.code === 'ENOENT') {
-                                callback(null);
-                            } else {
-                                callback(err);
-                            }
-                        } else {
-                            try {
-                                // Remove non-printable characters
-                                data = data.replace(/[^\x20-\x7E]+/g, '');
-                                var usbSession = JSON.parse(data);
-                                winston.info('Refresh Session details:');
-                                winston.info(usbSession);
-                                sessions.getSessionByParams({'device.item_number': usbSession.device.item_number, 'status': 'Incomplete'}).then(function(session) {
-                                    if (session === null){
-                                        usbSession._id = usbSession.start_time;
-                                        sessions.set(usbSession._id, usbSession);
-                                    } else {
-                                        usbSession._id = session._id;
-                                        sessions.updateSession(usbSession);
-                                    }
-                                    inventory.sessionFinish(usbSession._id, {complete: usbSession.status === 'Success'}, function(session){
-                                        io.emit('session-complete', session);
-                                        callback(null);
-                                    });
-                                });
-                            } catch (err) {
-                                winston.info('Error reading session');
-                                winston.log('error',err);
-                                callback(err);
-                            } finally {
-                                try {
-                                    // content.clearStatus(device);
-                                    winston.info('Successfully read Mac and Windows sessions for device:' + device);
-                                    //Disable EFI boot to prevent Refresh Station booting to USB
-                                } catch (err) {
-                                    winston.info('Error finalizing reading sessions');
-                                    winston.log('error',err);
-                                    io.emit('session-complete', {session:{device:{Type:''}}});
+                if (files.length > 0) {
+                    for (var i = 0; i < files.length; i++) {
+                        console.log('File found:' + files[i]);
+                        fs.readFile(sessionsDirectory + '/' + files[i], 'utf8', function (err, data) {
+                            if (err) {
+                                if (err.code === 'ENOENT') {
+                                    callback(null);
+                                } else {
                                     callback(err);
                                 }
+                            } else {
+                                try {
+                                    // Remove non-printable characters
+                                    data = data.replace(/[^\x20-\x7E]+/g, '');
+                                    var usbSession = JSON.parse(data);
+                                    winston.info('Refresh Session details:');
+                                    winston.info(usbSession);
+                                    sessions.getSessionByParams({'device.item_number': usbSession.device.item_number, 'status': 'Incomplete'}).then(function(session) {
+                                        if (session === null){
+                                            usbSession._id = usbSession.start_time;
+                                            sessions.set(usbSession._id, usbSession);
+                                        } else {
+                                            usbSession._id = session._id;
+                                            sessions.updateSession(usbSession);
+                                        }
+                                        inventory.sessionFinish(usbSession._id, {complete: usbSession.status === 'Success'}, function(session){
+                                            io.emit('session-complete', session);
+                                            callback(null);
+                                        });
+                                    });
+                                } catch (err) {
+                                    winston.info('Error reading session');
+                                    winston.log('error',err);
+                                    callback(err);
+                                } finally {
+                                    try {
+                                        // content.clearStatus(device);
+                                        winston.info('Successfully read Mac and Windows sessions for device:' + device);
+                                        //Disable EFI boot to prevent Refresh Station booting to USB
+                                    } catch (err) {
+                                        winston.info('Error finalizing reading sessions');
+                                        winston.log('error',err);
+                                        io.emit('session-complete', {session:{device:{Type:''}}});
+                                        callback(err);
+                                    }
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
+                } else {
+                    callback(null);
                 }
             }
         });
