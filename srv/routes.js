@@ -172,7 +172,6 @@ module.exports = function(io, data) {
                 status: 'not_ready',
                 progress: 0
             });
-            io.emit(event.name, event.data);
             controller.isRefreshUsb(event.data.id,
                 function(err, isInitialized) {
                     if (err) {
@@ -180,6 +179,8 @@ module.exports = function(io, data) {
                     } else {
                         if (isInitialized) {
                             controller.prepareUsb(io);
+                        } else {
+                            io.emit(event.name, event.data);
                         }
                     }
                 });
