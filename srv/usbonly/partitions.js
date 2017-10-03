@@ -63,6 +63,7 @@ function unmountPartitions(device, callback) {
             winston.log('error', 'Unmounting failed because of err code:' + code);
             callback(new Error(stderr));
         } else {
+            winston.info('Unmounted device:' + device + ' successfully');
             callback(null);
         }
     });
