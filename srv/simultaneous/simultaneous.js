@@ -36,7 +36,7 @@ function deviceBridge(io) {
             sessions.getSessionByParams(
                 {'tmp.adbSerial': device.id, 'status': 'Incomplete'}).
                 then(function(session) {
-                    finishSession(session._id, {'complete': false});
+                    finishSession(session._id, {complete: false});
                 }).
                 catch(function(err) {
                     winston.log('error', 'Something went wrong while disconnecting device' + device.id + 'Error:' + err);
@@ -77,7 +77,7 @@ function deviceBridge(io) {
                             'device': sessions[i].device.serial_number
                         });
                         setTimeout(function() {
-                            finishSession(sessionId, {'complete': false});
+                            finishSession(sessionId, {complete: false});
                             io.emit('session-expired-confirmation', {});
                         }, 5000);
                     }
@@ -111,10 +111,10 @@ function deviceBridge(io) {
         });
     }
 
-    function updateSession(sessionId, level, message, details) {
-        winston.log('info', 'Updating session ' + sessionId);
+    function updateSession(session, level, message, details) {
+        winston.log('info', 'Updating session ' + session._id);
         return new Promise(function(resolve) {
-            inventory.sessionUpdate(sessionId, level, message, details,
+            inventory.sessionUpdate(session, level, message, details,
                 function(session) {
                     resolve(session);
                 });
@@ -229,46 +229,40 @@ function deviceBridge(io) {
                     tmp.numberOfAuto = appStartedDataJson.data.auto;
                     tmp.numberOfManual = appStartedDataJson.data.manual;
                     tmp.adbSerial = serial;
-                    getSerialLookup(imei).then(function(res) {
-                        startSession(sessionDate, res.item, tmp).
-                            then(function(session) {
-                                session.tmp.currentStep = 'autoTesting';
-                                io.emit('app-start', session);
-                            }).
-                            catch(function(err) {
-                                winston.log('error', err);
-                            });
+                    var unknownItem = {
+                        Type: 'Android',
+                        adbSerial: serial,
+                        serial_number: imei
+                    };
+                    startSession(sessionDate, unknownItem, tmp).then(function(session) {
+                        getSerialLookup(imei).then(function(res) {
+                            session.device = inventory.changeDeviceFormat(res.item);
+                            sessions.updateSession(session);
+                            io.emit('app-start', session);
+                        }).catch(function(err) {
+                            winston.log('error', 'Failed to get serial number because of: ' + err);
+                            io.emit('app-start', session);
+                        });
                     }).catch(function(err) {
-                        winston.log('error', 'Failed to get serial number because of: ' + err);
-                        var unknownItem = {
-                            Type: 'Android',
-                            adbSerial: serial,
-                            serial_number: imei
-                        };
-                        startSession(sessionDate, unknownItem, tmp).
-                            then(function(session) {
-                                io.emit('app-start', session);
-                                updateSession(sessionDate, 'Info',
-                                    'Android device is not found in Inventory');
-                            }).
-                            catch(function(err) {
-                                winston.log('error', err);
-                            });
+                        winston.log('error', err);
                     });
                 }
 
                 // check if wipe started indexOf !== -1 means 'includes'
                 else if (data.indexOf('WipeStarted') !== -1) {
-                    if (failedTests.length > 0) {
-                        updateSession(sessionDate, 'Info', 'Android test fail',
-                            {'failedTests': failedTests});
-                        finishSession(sessionDate, {'complete': false});
-
-                    } else {
-                        updateSession(sessionDate, 'Info',
-                            'Android refresh app has initiated a factory reset.');
-                        finishSession(sessionDate, {'complete': true});
-                    }
+                    sessions.getSessionByParams(
+                        {'_id': sessionDate}).then(function(session) {
+                        if (failedTests.length > 0) {
+                            updateSession(session, 'Info', 'Android test fail',
+                                {'failedTests': failedTests}).then(function(){
+                                finishSession(session._id, {complete: false});
+                            });
+                        } else {
+                            updateSession(session, 'Info', 'Android refresh app has initiated a factory reset.').then(function(){
+                                finishSession(session._id, {complete: true});
+                            });
+                        }
+                    });
                 }
 
                 // tests progress indexOf === -1 means 'not includes'
@@ -298,7 +292,6 @@ function deviceBridge(io) {
                         winston.log('error', 'Something went wrong while getting data for device ' + serial + ' Error:' + err);
                     });
                 }
-
             }
         });
     }

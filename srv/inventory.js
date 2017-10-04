@@ -37,6 +37,7 @@ exports.unlockDevice = unlockDevice;
 exports.sessionUpdateItem = sessionUpdateItem;
 exports.getAllUsbDrives = getAllUsbDrives;
 exports.getLowestUsbInProgress = getLowestUsbInProgress;
+exports.changeDeviceFormat = changeDeviceFormat;
 //Periodically resend unsent sessions
 resendSessions();
 setInterval(function() {
@@ -227,7 +228,7 @@ function sessionUpdateItem(params, device) {
 
 function sessionFinish(sessionId, data, callback) {
     //var session = sessions.get(sessionId);
-    sessions.getSessionByParams({'_id':sessionId}).then(function(session) {
+    sessions.getSessionByParams({_id:sessionId}).then(function(session) {
         winston.log('info', 'A client requested to finish an ' + session.device.type + ' refresh of session id ' + session._id);
         closeSession(session, data.complete, callback);
     }).catch(function(err){
