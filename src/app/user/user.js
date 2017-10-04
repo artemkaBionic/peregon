@@ -342,9 +342,6 @@
                 // jscs:enable
             });
         });
-        socket.on('session-error', function(err){
-            console.log(err);
-        });
         socket.on('session-complete', function(session){
             getSessions().then(function() {
                 if (session !== null) {
@@ -373,6 +370,23 @@
                 'timeOut': 3000,
                 'closeButton': true
             });
+        });
+        socket.on('usb-complete', function(status) {
+            if (status.err) {
+                // jscs:disable
+                toastr.error('Something went wrong while creating USB drive', {
+                    'tapToDismiss': true,
+                    'timeOut': 3000,
+                    'closeButton': true
+                });
+                // jscs:enable
+            } else {
+                toastr.error('Bootable USB drive is ready', {
+                    'tapToDismiss': true,
+                    'timeOut': 3000,
+                    'closeButton': true
+                });
+            }
         });
         socket.on('android-session-expired', function(data) {
             if ($state.current.name === 'root.user') {

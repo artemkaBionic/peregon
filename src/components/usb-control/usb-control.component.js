@@ -129,21 +129,6 @@
             checkUsbStatus();
         });
         socket.on('usb-complete', function(status) {
-            if (status.err) {
-                // jscs:disable
-                toastr.error('Something went wrong while creating USB drive', {
-                    'tapToDismiss': true,
-                    'timeOut': 3000,
-                    'closeButton': true
-                });
-                // jscs:enable
-            } else {
-                toastr.error('Bootable USB drive ready', {
-                    'tapToDismiss': true,
-                    'timeOut': 3000,
-                    'closeButton': true
-                });
-            }
             checkUsbStatus();
         });
     }
