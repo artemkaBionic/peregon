@@ -315,6 +315,19 @@
             });
         }
         socket.on('device-add', function() {
+            toastr.info('New USB drive was inserted into station', {
+                'tapToDismiss': true,
+                'timeOut': 3000,
+                'closeButton': true
+            });
+            vm.viewBootDevices();
+        });
+        socket.on('device-remove', function() {
+            toastr.info('USB drive was removed from station', {
+                'tapToDismiss': true,
+                'timeOut': 3000,
+                'closeButton': true
+            });
             vm.viewBootDevices();
         });
         socket.on('app-start', function(session) {
@@ -333,6 +346,7 @@
             console.log(err);
         });
         socket.on('session-complete', function(session){
+            console.log(session);
             getSessions().then(function() {
                 if (session !== null) {
                     // jscs:disable

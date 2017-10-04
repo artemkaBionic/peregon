@@ -122,11 +122,6 @@
             });
         }
         socket.on('device-add', function() {
-            toastr.info('USB drive was inserted into station', {
-                'tapToDismiss': true,
-                'timeOut': 3000,
-                'closeButton': true
-            });
             checkUsbStatus();
         });
         socket.on('device-remove', function() {
@@ -136,15 +131,16 @@
             checkUsbStatus();
         });
         socket.on('usb-complete', function(status) {
-            if (status.err !== null) {
-                // jscs:disable
-                toastr.error('Something went wrong while creating USB drive', {
-                    'tapToDismiss': true,
-                    'timeOut': 3000,
-                    'closeButton': true
-                });
-                // jscs:enable
-            }
+            console.log(status);
+            // if (status.err !== null) {
+            //     // jscs:disable
+            //     toastr.error('Something went wrong while creating USB drive', {
+            //         'tapToDismiss': true,
+            //         'timeOut': 3000,
+            //         'closeButton': true
+            //     });
+            //     // jscs:enable
+            // }
             checkUsbStatus();
         });
     }
