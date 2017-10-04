@@ -39,10 +39,14 @@
             }
         };
         if (vm.item) {
-            vm.iconStyle = {
-                'width': '80px',
-                'height': '80px',
-                'line-height': '80px'
+            vm.iconBackground = {
+                'width': '16vh',
+                'height': '16vh',
+                'line-height': '16vh',
+                'font-size': '22pt'
+            };
+            vm.usbIcon ={
+                'font-size': '25pt'
             };
             vm.guideStyle = {
                 'font-size': '16pt',

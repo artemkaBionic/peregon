@@ -334,8 +334,7 @@
         });
         socket.on('session-complete', function(){
             getSessions().then(function(session) {
-                if(session !== null) {
-                    vm.viewSessions();
+                if (session !== null) {
                     // jscs:disable
                     toastr.info('Refresh finished', {
                         'tapToDismiss': true,
@@ -343,7 +342,6 @@
                         'closeButton': true
                     });
                     // jscs:enable
-
                 } else {
                     // jscs:disable
                     toastr.error('Something went wrong while reading sessions', {
@@ -353,7 +351,7 @@
                     });
                     // jscs:enable
                 }
-
+                vm.viewSessions();
             });
         });
         socket.on('android-session-expired', function(data) {

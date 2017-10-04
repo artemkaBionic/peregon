@@ -26,7 +26,7 @@
         vm.mac = false;
         vm.xBox = false;
         if (!vm.item.CalledFromHome) {
-            vm.height = {'height':'70vh'};
+            vm.height = {'height':'72vh'};
         }
         if (angular.lowercase(vm.item.Manufacturer) === 'hp' && angular.lowercase(vm.item.Type) === 'windowsusb') {
             vm.hp = true;

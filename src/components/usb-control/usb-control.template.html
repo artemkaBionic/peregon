@@ -1,7 +1,7 @@
 <div class="row" ng-style="vm.guideStyle">
   <div ng-show="vm.step.name === 'noBootDevices'">
     <div class="boot-instruction-row">
-      <div class="usb-icon" ng-style="vm.iconStyle">
+      <div class="usb-icon" ng-style="vm.iconBackground">
         <i class="fa fa-usb"  aria-hidden="true"></i>
       </div>
     </div>
@@ -14,8 +14,8 @@
   </div>
   <div ng-show="vm.step.name === 'newBootDevice'">
     <div class="boot-instruction-row">
-      <div class="usb-icon" ng-style="vm.iconStyle">
-        <i class="fa fa-usb" aria-hidden="true"></i>
+      <div class="usb-icon" ng-style="vm.iconBackground">
+        <i class="fa fa-usb" aria-hidden="true" ng-style="vm.usbIcon"></i>
       </div>
     </div>
     <div class="boot-instruction-row boot-instruction-title-grey" ng-style="vm.guideTitle">
@@ -52,7 +52,7 @@
   </div>
   <div ng-show="vm.step.name === 'bootDevicesReady'">
     <div class="boot-instruction-row">
-      <i style="color:forestgreen" class="fa fa-check-circle fa-5x" ng-style="vm.iconStyle" aria-hidden="true"></i>
+      <i style="color:forestgreen" class="fa fa-check-circle fa-5x" ng-style="vm.iconBackground"  aria-hidden="true"></i>
     </div>
     <div class="boot-instruction-row boot-instruction-title-grey" ng-style="vm.guideTitle">
       <span><ng-pluralize count="vm.usbDrives.usbData.readyDevices" when="{'one': 'Bootable USB drive is ready', 'other': 'Bootable USB drives are ready'}"></span>

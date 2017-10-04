@@ -4,3 +4,12 @@
 {"k":"0000000103","o":"0000000464","v":"001"}
 {"_id":"2017-10-03T16:20:10.368Z","_uid":1,"_dt":1507053691266,"_s":"69fdbd5aaaa3a0494d1f2ec652abff96"}
 {"start_time":{"$wrap":"$date","v":1507047610387,"h":"2017-10-03T16:20:10.387Z"},"end_time":{"$wrap":"$date","v":1507052891616,"h":"2017-10-03T17:48:11.616Z"},"status":"Fail","diagnose_only":false,"device":{"item_number":"0000000300","type":"Mac","sku":"7360ABM","manufacturer":"APPLE","model":"MD965LL/A","serial_number":"C02RL0NXGTJ2"},"station":{"name":"station7446a09dac51","service_tag":"2UA3340ZS6"},"logs":[],"is_sent":true,"_id":"2017-10-03T16:20:10.368Z"}
+{"k":"0000000103","o":"0000000418","v":"001"}
+{"_id":"2017-10-04T10:01:58.731Z","_uid":1,"_dt":1507111318750,"_s":"15712b547074bfcfda11e7bcdcf8e20a"}
+{"start_time":{"$wrap":"$date","v":1507111318746,"h":"2017-10-04T10:01:58.746Z"},"end_time":null,"status":"Incomplete","diagnose_only":false,"device":{"item_number":"0000000300","type":"Mac","sku":"7360ABM","manufacturer":"APPLE","model":"MD965LL/A","serial_number":"C02RL0NXGTJ2"},"station":{"name":"station7446a09dac51","service_tag":"2UA3340ZS6"},"logs":[],"tmp":{},"is_sent":false,"_id":"2017-10-04T10:01:58.731Z"}
+{"k":"0000000103","o":"0000000408","v":"001"}
+{"_id":"2017-10-04T10:01:58.731Z","_uid":1,"_dt":1507111575827,"_s":"5247e00e4b5e0cec666f63aa0972bb53"}
+{"start_time":"2017-10-04T10:01:58.746Z","end_time":null,"status":"Incomplete","diagnose_only":false,"device":{"item_number":"0000000300","type":"Mac","sku":"7360ABM","manufacturer":"APPLE","model":"MD965LL/A","serial_number":"C02RL0NXGTJ2"},"station":{"name":"station7446a09dac51","service_tag":"2UA3340ZS6"},"logs":[],"tmp":{"currentStep":"refreshStarted"},"is_sent":false,"_id":"2017-10-04T10:01:58.731Z"}
+{"k":"0000000103","o":"0000000544","v":"001"}
+{"_id":"2017-10-04T10:01:58.731Z","_uid":1,"_dt":1507111575832,"_s":"b8cdcd34f9b33c13bfc16edd42ace86c"}
+{"start_time":"2017-10-04T10:01:58.746Z","end_time":null,"status":"Incomplete","diagnose_only":false,"device":{"item_number":"0000000300","type":"Mac","sku":"7360ABM","manufacturer":"APPLE","model":"MD965LL/A","serial_number":"C02RL0NXGTJ2"},"station":{"name":"station7446a09dac51","service_tag":"2UA3340ZS6"},"logs":[{"timestamp":{"$wrap":"$date","v":1507111575805,"h":"2017-10-04T10:06:15.805Z"},"level":"Info","message":"Refresh Started","details":""}],"tmp":{"currentStep":"refreshStarted"},"is_sent":false,"_id":"2017-10-04T10:01:58.731Z"}
