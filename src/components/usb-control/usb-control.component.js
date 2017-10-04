@@ -38,15 +38,19 @@
                 number: 4
             }
         };
-        console.log(vm.item);
         if (vm.item) {
             vm.iconStyle = {
                 'width': '80px',
                 'height': '80px',
                 'line-height': '80px'
             };
-            vm.guideStyle = {'font-size': '16pt','margin-top':'5vh'};
-            vm.guideTitle = {'font-size': '18pt'};
+            vm.guideStyle = {
+                'font-size': '16pt',
+                'margin-top':'5vh'
+            };
+            vm.guideTitle = {
+                'font-size': '18pt'
+            };
         }
         checkUsbStatus();
         function checkUsbStatus() {
@@ -114,6 +118,11 @@
             });
         }
         socket.on('device-add', function() {
+            toastr.info('USB drive was inserted into station', {
+                'tapToDismiss': true,
+                'timeOut': 3000,
+                'closeButton': true
+            });
             checkUsbStatus();
         });
         socket.on('device-remove', function() {
@@ -122,7 +131,16 @@
         socket.on('usb-progress', function() {
             checkUsbStatus();
         });
-        socket.on('usb-complete', function() {
+        socket.on('usb-complete', function(status) {
+            if (status.err !== null) {
+                // jscs:disable
+                toastr.error('Something went wrong while creating USB drive', {
+                    'tapToDismiss': true,
+                    'timeOut': 3000,
+                    'closeButton': true
+                });
+                // jscs:enable
+            }
             checkUsbStatus();
         });
     }

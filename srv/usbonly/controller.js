@@ -117,7 +117,7 @@ function readSessionFiles(io, device, callback) {
                                     } catch (err) {
                                         winston.info('Error finalizing reading sessions');
                                         winston.log('error',err);
-                                        io.emit('session-complete', {session:{device:{Type:''}}});
+                                        io.emit('session-complete', null);
                                         callback(err);
                                     }
                                 }

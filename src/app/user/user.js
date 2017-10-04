@@ -333,15 +333,26 @@
             console.log(err);
         });
         socket.on('session-complete', function(){
-            getSessions().then(function() {
-                vm.viewSessions();
-                // jscs:disable
-                toastr.info('Refresh finished', {
-                    'tapToDismiss': true,
-                    'timeOut': 3000,
-                    'closeButton': true
-                });
-                // jscs:enable
+            getSessions().then(function(session) {
+                if(session !== null) {
+                    vm.viewSessions();
+                    // jscs:disable
+                    toastr.info('Refresh finished', {
+                        'tapToDismiss': true,
+                        'timeOut': 3000,
+                        'closeButton': true
+                    });
+                    // jscs:enable
+
+                } else {
+                    // jscs:disable
+                    toastr.error('Something went wrong while reading sessions', {
+                        'tapToDismiss': true,
+                        'timeOut': 3000,
+                        'closeButton': true
+                    });
+                    // jscs:enable
+                }
 
             });
         });
