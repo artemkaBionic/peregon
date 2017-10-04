@@ -40,10 +40,9 @@
         };
         if (vm.item) {
             vm.iconBackground = {
-                'width': '16vh',
-                'height': '16vh',
-                'line-height': '16vh',
-                'font-size': '22pt'
+                'width': '100px',
+                'height': '100px',
+                'line-height': '100px',
             };
             vm.usbIcon ={
                 'font-size': '25pt'
@@ -60,7 +59,6 @@
         function checkUsbStatus() {
             inventoryService.getAllUsbDrives().then(function(usbDrives) {
                 vm.usbDrives = usbDrives;
-                console.log(usbDrives);
                 if (usbDrives.usbData.status === 'newBootDevice') {
                     newBootDevice();
                 } else if (usbDrives.usbData.status === 'bootDevicesReady') {
@@ -131,16 +129,21 @@
             checkUsbStatus();
         });
         socket.on('usb-complete', function(status) {
-            console.log(status);
-            // if (status.err !== null) {
-            //     // jscs:disable
-            //     toastr.error('Something went wrong while creating USB drive', {
-            //         'tapToDismiss': true,
-            //         'timeOut': 3000,
-            //         'closeButton': true
-            //     });
-            //     // jscs:enable
-            // }
+            if (status.err) {
+                // jscs:disable
+                toastr.error('Something went wrong while creating USB drive', {
+                    'tapToDismiss': true,
+                    'timeOut': 3000,
+                    'closeButton': true
+                });
+                // jscs:enable
+            } else {
+                toastr.error('Bootable USB drive ready', {
+                    'tapToDismiss': true,
+                    'timeOut': 3000,
+                    'closeButton': true
+                });
+            }
             checkUsbStatus();
         });
     }
