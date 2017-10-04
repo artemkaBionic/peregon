@@ -42,7 +42,7 @@
             vm.iconBackground = {
                 'width': '100px',
                 'height': '100px',
-                'line-height': '100px',
+                'line-height': '100px'
             };
             vm.usbIcon ={
                 'font-size': '25pt'
