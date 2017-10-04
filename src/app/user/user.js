@@ -332,8 +332,8 @@
         socket.on('session-error', function(err){
             console.log(err);
         });
-        socket.on('session-complete', function(){
-            getSessions().then(function(session) {
+        socket.on('session-complete', function(session){
+            getSessions().then(function() {
                 if (session !== null) {
                     // jscs:disable
                     toastr.info('Refresh finished', {
