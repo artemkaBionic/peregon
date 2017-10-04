@@ -381,7 +381,7 @@
                 });
                 // jscs:enable
             } else {
-                toastr.error('Bootable USB drive is ready', {
+                toastr.info('Bootable USB drive is ready', {
                     'tapToDismiss': true,
                     'timeOut': 3000,
                     'closeButton': true
