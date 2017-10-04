@@ -26,8 +26,7 @@ exports.prepareUsb = function(io) {
                              io.emit('usb-complete', {err: err, device: device.id});
                          });
                      } else {
-                        readSessions(io, device.id).then(function(status) {
-                            console.log(status);
+                        readSessions(io, device.id).then(function() {
                             content.updateContent(io, device.id, function(err) {
                                 if (err) {
                                     winston.info('Error updating content');
@@ -70,7 +69,7 @@ function readSessions(io, device){
     });
 }
 function readSessionFiles(io, device, callback) {
-    winston.info('Reading session files');
+        winston.info('Reading session files');
         var sessionsDirectory = '/mnt/' + device + config.usbStatusPartition + '/sessions';
         fs.readdir(sessionsDirectory, function(err, files){
             if (err) {
@@ -104,7 +103,6 @@ function readSessionFiles(io, device, callback) {
                                         }
                                         inventory.sessionFinish(usbSession._id, {complete: usbSession.status === 'Success'}, function(session){
                                             io.emit('session-complete', session);
-                                            callback(null);
                                         });
                                     });
                                 } catch (err) {
@@ -126,6 +124,7 @@ function readSessionFiles(io, device, callback) {
                             }
                         });
                     }
+                    callback(null);
                 } else {
                     callback(null);
                 }
@@ -135,8 +134,7 @@ function readSessionFiles(io, device, callback) {
 function readXboxSessions(io, device, callback){
     winston.info('Reading xbox sessions');
     var systemUpdateDir = '/mnt/' + device + '1/$SystemUpdate';
-    var usbItemFile = '/mnt/' + device + config.usbStatusPartition +
-        '/item.json';
+    var usbItemFile = '/mnt/' + device + config.usbStatusPartition + '/item.json';
     var unreportedSessions = 0;
     fs.readFile(systemUpdateDir + '/update.log', 'utf8', function (err, data) {
         if (err) {

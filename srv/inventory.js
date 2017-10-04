@@ -266,32 +266,6 @@ function closeSession(session, success, callback) {
     sendSession(session);
 }
 
-// function timeoutExpired(startTime) {
-//     var timeoutTime = startTime + config.deviceUnlockTimeout;
-//     console.log(startTime);
-//     console.log(timeoutTime);
-//     console.log(new Date());
-//     return timeoutTime > new Date();
-// }
-//
-// function lockDeviceAndSendSession(content, file) {
-//     if (!content.state.deviceLocked &&
-//         !timeoutExpired(content.session.start_time)) {
-//         lockDevice(content.session.item_number, function(data) {
-//             if (data.error === null) {
-//                 content.state.deviceLocked = true;
-//                 fs.writeFile(file, JSON.stringify(content), function(err) {
-//                     sendSession(content, file);
-//                 });
-//             } else {
-//                 sendSession(content, file);
-//             }
-//         });
-//     } else {
-//         sendSession(content, file);
-//     }
-// }
-
 function sendSession(session) {
     // deleting extra keys which added for client to continue session
     var sessionID = session._id;
