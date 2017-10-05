@@ -1,13 +1,10 @@
-var logger = require('morgan'),
-    winston = require('winston');
+var winston = require('winston');
+require('winston-syslog').Syslog;
+var station = require('./station');
 
-require('winston-loggly');
-
-winston.add(winston.transports.Loggly, {
-    token: '264392d7-c070-4884-87cd-ed0331e191ec',
-    subdomain: 'basechord',
-    tags: ['Winston-NodeJS'],
-    json: true
+winston.add(winston.transports.Syslog, {
+    localhost: station.getName(),
+    appName: 'kiosk'
 });
 
 module.exports = function (level, msg, metadata) {

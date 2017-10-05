@@ -32,11 +32,7 @@ exports.getServiceTag = function(callback) {
 
 exports.getName = function() {
     if (name === null) {
-        if (isDevelopment) {
-            name = 'station7446a09dac51'; // Lab Station
-        } else {
-            name = os.hostname();
-        }
+        name = os.hostname();
     }
     return name;
 };
