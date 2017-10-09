@@ -49,6 +49,7 @@
         };
         vm.step = vm.steps.sessions;
         getSessions();
+        displayBanner();
         function getSessions() {
             var deferred = $q.defer();
             inventoryService.getAllSessionsByParams({}).then(function(sessions) {
@@ -87,6 +88,9 @@
             setTimeout(function() {
                 getSessions();
             }, 500);
+        });
+        $scope.$on('showModal', function() {
+            vm.openFeedbackModal();
         });
         // used for infinite scroll
         vm.increaseLimit = function() {
@@ -253,6 +257,15 @@
                     });
             }
         };
+        vm.openFeedbackModal = function(){
+            popupLauncher.openModal({
+                templateUrl: 'app/user/guide/Modals/Station-Feedback-modal.html',
+                controller: 'SessionFeedbackController',
+                bindToController: true,
+                controllerAs: 'vm',
+                size: 'sm-to-lg'
+            });
+        };
         function openHelpModal(modalSize, data, sessionId, session) {
             if (typeof(data) === 'string') {
                 vm.data = {
@@ -417,5 +430,13 @@
                 getSessions();
             }
         });
+        function displayBanner(){
+            //604800000 - 7 days
+            vm.lastSurveyTime = new Date(localStorage.getItem('surveyPassedDate'));
+            vm.currentDate = new Date();
+            if ((vm.currentDate - vm.lastSurveyTime) > 604800000) {
+                vm.showBanner = true;
+            }
+        }
     }
 })();

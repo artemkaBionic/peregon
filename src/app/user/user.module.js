@@ -38,6 +38,11 @@
             templateUrl: 'app/user/guide/HomeUsbGuides/HomeUsbGuides.template.html',
             controller: 'HomeUsbGuidesController',
             controllerAs: 'vm'
+        }).state('root.user.productFeedback', {
+            url: '/productFeedback',
+            templateUrl: 'app/user/guide/Feedback/Feedback.template.html',
+            controller: 'FeedbackController',
+            controllerAs: 'vm'
         }).state('root.media.package', {
             url: '/media/package/',
             params: {

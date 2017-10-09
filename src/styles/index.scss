@@ -399,6 +399,54 @@ figcaption {
   height: 90vh;
   width: 75vw;
 }
+.modal-form{
+  margin-left: 1vw;
+  margin-right: 1vw;
+}
+.submit-modal-btn {
+  background-color: #507f15;
+  color:white;
+  height: 48px;
+  min-width: 156px;
+  border-radius: 7px;
+  text-transform: uppercase;
+  font-weight: 400;
+  padding: 6px 24px;
+  border:none;
+}
+.submit-modal-btn:hover {
+  background-color: #3d6010;
+}
+.submit-modal-list {
+  list-style-type: none;
+  margin-left: -2vw;
+}
+.submit-modal-success{
+  padding-top: 45px;
+}
+.modal-textarea {
+  height: 60px;
+  width: 100%;
+  border-radius:5px;
+  resize: none;
+}
+
+.submit-modal-content{
+  width: 75vh;
+}
+.modal-sm-to-lg {
+  .modal-content {
+    width: 500px;
+    border: 0;
+    border-radius: 16px;
+    height: 570px!important;
+    position: fixed !important;
+    z-index: 999 !important;
+    top: 25% !important;
+    margin-left: 50px !important;
+    margin-top: -100px !important;
+  }
+}
 .modal-xs {
   width: 35vw;
   .modal-content {
@@ -3856,4 +3904,22 @@ orbicular {
   border-radius: 5px;
   font-size: 0.7vw;
   padding: 3px 10px 3px 10px;
+}
+.banner{
+  background-color: #17468F;
+  height: 150px;
+  position:absolute;
+  bottom:0;
+  left:0;
+  width: 100%;
+  z-index: 2000
+}
+.closeButton{
+  cursor: pointer;
+  color:white;
+}
+.bannerText{
+  margin-top: 15px;
+  color:white;
+  cursor: pointer;
 }
