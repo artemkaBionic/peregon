@@ -5,9 +5,9 @@
         .module('app.user')
         .controller('GuideControllerUsb', GuideControllerUsb);
 
-    GuideControllerUsb.$inject = ['$http', '$scope', 'item', 'inventoryService', '$state', 'env'];
+    GuideControllerUsb.$inject = ['$http', '$scope', 'item', 'inventoryService', '$state', 'env', 'popupLauncher'];
 
-    function GuideControllerUsb($http, $scope, item, inventoryService, $state, env) {
+    function GuideControllerUsb($http, $scope, item, inventoryService, $state, env, popupLauncher) {
         var socket = io.connect('http://' + env.baseUrl);
         /*jshint validthis: true */
         var vm = this;
@@ -45,11 +45,24 @@
             },
             failed: {
                 name: 'failed',
-                number: 0,
+                number: 6,
                 title: 'Refresh Failed'
+            },
+            broken: {
+                name: 'broken',
+                number: 7,
+                title: 'Device Broken'
             }
         };
-        console.log(vm.item);
+        vm.openFeedbackModal = function(){
+            popupLauncher.openModal({
+                templateUrl: 'app/user/guide/Modals/Station-Feedback-modal.html',
+                controller: 'SessionFeedbackController',
+                bindToController: true,
+                controllerAs: 'vm',
+                size: 'sm-to-lg'
+            });
+        };
         checkSession();
         function isEmptyObject(obj) {
             for (var prop in obj) {
@@ -101,7 +114,7 @@
                     inventoryService.updateSession(session, 'Info',
                         'Device is broken').then(function(session) {
                         inventoryService.finishSession(session._id, {'complete': false}).then(function(){
-                            vm.refreshEnd();
+                            vm.step = vm.steps.broken;
                         });
                     });
                 }

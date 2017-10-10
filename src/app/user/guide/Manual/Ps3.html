@@ -43,7 +43,7 @@
           </div>
         </div>
       </form>
-      <div id="relative">
+      <div id="instructions" class="instructions-manual">
         <h2 class="text-center">Follow this steps to refresh Playstation 3:</h2>
         <div class="instruction-list-container-lg " style="margin: 0 auto; text-align: left;">
           <div class="instruction-list">
@@ -133,6 +133,10 @@
               <button class="btn btn-primary btn-rounded center" ng-click="vm.refreshEnd()">
                 Finish <i class="fa fa-caret-right"></i>
               </button>
+              <div class="text-center" style="margin-top: 15px">
+                <div>Help us to improve Device Refresh Station</div>
+                <button class="feedback-button" ng-click="vm.openFeedbackModal()"><i class="fa fa-comment-o" aria-hidden="true"></i> Leave feedback</button>
+              </div>
             </div>
           </div>
         </div>
@@ -145,6 +149,10 @@
               <h2>Success</h2>
               <h3>You have successfully refreshed Playstation 3.</h3>
               <button style="margin-top: 1%" class="btn-primary btn-rounded" ng-click="vm.refreshEnd()">Finish</button>
+              <div class="text-center" style="margin-top: 15px">
+                <div>Help us to improve Device Refresh Station</div>
+                <button class="feedback-button" ng-click="vm.openFeedbackModal()"><i class="fa fa-comment-o" aria-hidden="true"></i> Leave feedback</button>
+              </div>
             </div>
           </div>
           <div ng-switch-when="rerfeshFailed">
@@ -154,6 +162,10 @@
               <h4 style="margin-top: 2%">Ship device to Aaron's service center or retry going through steps.</h4>
               <button style="margin-top: 1%" class="btn-primary btn-rounded" ng-click="vm.retry()">Retry</button>
               <button style="margin-top: 1%" class="btn-danger btn-rounded" ng-click="vm.refreshEnd()">Finish</button>
+              <div class="text-center" style="margin-top: 15px">
+                <div>Help us to improve Device Refresh Station</div>
+                <button class="feedback-button" ng-click="vm.openFeedbackModal()"><i class="fa fa-comment-o" aria-hidden="true"></i> Leave feedback</button>
+              </div>
             </div>
           </div>
         </div>

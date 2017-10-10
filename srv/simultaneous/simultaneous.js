@@ -26,6 +26,7 @@ function deviceBridge(io) {
         tracker.on('change', function(device) {
             winston.log('info', 'Device type:' + device.type + ' for device:' + device.id);
             if (device.type === 'device') {
+                io.emit('installation-started', {});
                 winston.log('info', 'Device ' + device.id + ' is ready to install app.');
                 installApp(device.id);
             }

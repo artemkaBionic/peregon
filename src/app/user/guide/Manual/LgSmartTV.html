@@ -124,6 +124,10 @@
               <button class="btn btn-primary btn-rounded center" ng-click="vm.refreshEnd()">
                 Finish <i class="fa fa-caret-right"></i>
               </button>
+              <div class="text-center" style="margin-top: 15px">
+                <div>Help us to improve Device Refresh Station</div>
+                <button class="feedback-button" ng-click="vm.openFeedbackModal()"><i class="fa fa-comment-o" aria-hidden="true"></i> Leave feedback</button>
+              </div>
             </div>
           </div>
         </div>
@@ -136,6 +140,10 @@
               <h2>Success</h2>
               <h3>You have successfully refreshed LG Television.</h3>
               <button style="margin-top: 1%" class="btn-primary btn-rounded" ng-click="vm.refreshEnd()">Finish</button>
+              <div class="text-center" style="margin-top: 15px">
+                <div>Help us to improve Device Refresh Station</div>
+                <button class="feedback-button" ng-click="vm.openFeedbackModal()"><i class="fa fa-comment-o" aria-hidden="true"></i> Leave feedback</button>
+              </div>
             </div>
           </div>
           <div id="sixthSubstate" ng-switch-when="rerfeshFailed">
@@ -145,6 +153,10 @@
               <h4 style="margin-top: 2%">Ship device to Aaron's service center or retry going through steps.</h4>
               <button style="margin-top: 1%" class="btn-primary btn-rounded" ng-click="vm.retry()">Retry</button>
               <button style="margin-top: 1%" class="btn-danger btn-rounded" ng-click="vm.refreshEnd()">Finish</button>
+              <div class="text-center" style="margin-top: 15px">
+                <div>Help us to improve Device Refresh Station</div>
+                <button class="feedback-button" ng-click="vm.openFeedbackModal()"><i class="fa fa-comment-o" aria-hidden="true"></i> Leave feedback</button>
+              </div>
             </div>
           </div>
         </div>

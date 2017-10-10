@@ -25,7 +25,8 @@
         vm.dell = false;
         vm.mac = false;
         vm.xBox = false;
-        if (!vm.item.CalledFromHome) {
+        vm.android = false;
+        if (!vm.item.CalledFromHome && !angular.lowercase(vm.item.Type) === 'android') {
             vm.height = {'height':'72vh'};
         }
         if (angular.lowercase(vm.item.Manufacturer) === 'hp' && angular.lowercase(vm.item.Type) === 'windowsusb') {
@@ -39,6 +40,9 @@
         }
         if (angular.lowercase(vm.item.Type) === 'xboxone') {
             vm.xbox = true;
+        }
+        if (angular.lowercase(vm.item.Type) === 'android') {
+            vm.android = true;
         }
         vm.openModal = function(src) {
             modal.style.display = 'block';

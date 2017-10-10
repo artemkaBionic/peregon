@@ -62,7 +62,15 @@
         vm.deviceGood = function() {
             vm.step = vm.steps.refresh;
             vm.substep = vm.substeps.instruction;
-
+        };
+        vm.openFeedbackModal = function(){
+            popupLauncher.openModal({
+                templateUrl: 'app/user/guide/Modals/Station-Feedback-modal.html',
+                controller: 'SessionFeedbackController',
+                bindToController: true,
+                controllerAs: 'vm',
+                size: 'sm-to-lg'
+            });
         };
         vm.deviceBad = function() {
             vm.substep = vm.substeps.deviceBroken;
@@ -92,16 +100,16 @@
             modalImg = document.getElementById('img01');
             modal.css('display', 'block');
             modalImg.src = src;
-            var el = document.querySelector('#relative > #myModal');
+            var el = document.querySelector('#instructions > #myModal');
             sticky(el);
         };
         vm.close = function() {
             modal = angular.element('#myModal');
             modal.css('display', 'none');
         };
-        var container = angular.element(document.querySelector('#relative'));
+        var container = angular.element(document.querySelector('#instructions'));
         var footer = angular.element(document.querySelector('.content-finish'));
-        var lastStep = angular.element(document.querySelector('#relative > #lastStep'));
+        var lastStep = angular.element(document.querySelector('#instructions > #lastStep'));
         container.on('scroll', function(){
             if (parseInt(container[0].offsetHeight + container[0].scrollTop + 1)  >= container[0].scrollHeight) {
                 console.log('here1');

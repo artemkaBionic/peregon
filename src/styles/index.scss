@@ -425,7 +425,7 @@ figcaption {
   padding-top: 45px;
 }
 .modal-textarea {
-  height: 60px;
+  height: 160px;
   width: 100%;
   border-radius:5px;
   resize: none;
@@ -1649,6 +1649,11 @@ button[disabled]:hover {
 /*=========Checkbox========*/
 //you can find original uncompiled Checkbox SCSS here http://codepen.io/chiefman/pen/NbgJNQ
 @media (min-width: 991px) {
+  .modal-sm-to-lg {
+    .modal-content {
+      top: 18% !important;
+    }
+  }
   /* Checkmark style starts */
   @-moz-keyframes dothabottomcheck {
     0% {
@@ -3293,43 +3298,6 @@ orbicular {
   .modal-content-guide {
     width: 350px;
   }
-  @media screen and ( min-height: 300px ){
-    /* The Modal (background) */
-    .modal-instruction {
-      height: calc(100vh - 190px) !important;
-    }
-    #relative{
-      height: calc(100vh - 190px)!important;
-    }
-  }
-
-  @media screen and ( min-height: 730px ){
-    /* The Modal (background) */
-    .modal-instruction {
-      height: calc(100vh - 208px) !important;
-    }
-    #relative{
-      height: calc(100vh - 208px)!important;
-    }
-  }
-  @media screen and ( min-height: 930px ){
-    /* The Modal (background) */
-    .modal-instruction {
-      height: calc(100vh - 245px) !important;
-    }
-    #relative{
-      height: calc(100vh - 245px)!important;
-    }
-  }
-  @media screen and ( min-height: 1100px ){
-    /* The Modal (background) */
-    .modal-instruction {
-      height: calc(100vh - 260px) !important;
-    }
-    #relative{
-      height: calc(100vh - 260px)!important;
-    }
-  }
   .simultaneous-table-header span {
     font-size: 10px !important;
   }
@@ -3370,74 +3338,37 @@ orbicular {
     margin-left: 15.5%;
     font-size: 20px;
   }
-  .instruction-row{
+  .instruction-row {
     margin-top: 20px;
     margin-left: 10%;
     font-weight: 500;
     font-size: 12px;
     color: black;
   }
-  .instruction-last{
+  .instruction-last {
     margin-top: 10px;
     margin-left: 10%;
     font-weight: 500;
     font-size: 12px;
     color: black;
   }
-  .instruction-img-border{
-    width:200px;
+  .instruction-img-border {
+    width: 200px;
     border: 1px solid #dcdcdc;
     padding: 6px;
-    box-shadow: 0 0 3px rgba(0,0,0,0.1);
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
   }
   .instruction-img {
     max-width: 100%;
     max-height: 100%;
   }
-  .guide-caption{
+  .guide-caption {
     font-size: 18px;
   }
   /* Modal Content (image) */
   .modal-content-guide {
     width: 400px;
   }
-    @media screen and ( min-height: 300px ){
-      /* The Modal (background) */
-      .modal-instruction {
-        height: calc(100vh - 190px) !important;
-      }
-      #relative{
-        height: calc(100vh - 190px)!important;
-      }
-    }
-
-    @media screen and ( min-height: 730px ){
-      /* The Modal (background) */
-      .modal-instruction {
-        height: calc(100vh - 208px) !important;
-      }
-      #relative{
-        height: calc(100vh - 208px)!important;
-      }
-    }
-    @media screen and ( min-height: 930px ){
-      /* The Modal (background) */
-      .modal-instruction {
-        height: calc(100vh - 245px) !important;
-      }
-      #relative{
-        height: calc(100vh - 245px)!important;
-      }
-    }
-    @media screen and ( min-height: 1100px ){
-      /* The Modal (background) */
-      .modal-instruction {
-        height: calc(100vh - 260px) !important;
-      }
-      #relative{
-        height: calc(100vh - 260px)!important;
-      }
-    }
 }
 @media only screen and (min-width: 700px) {
   .simultaneous-table-header span{
@@ -3493,44 +3424,9 @@ orbicular {
   .modal-content-guide {
     width: 500px;
   }
-  @media screen and ( min-height: 300px ){
-    /* The Modal (background) */
-    .modal-instruction {
-      height: calc(100vh - 190px) !important;
-    }
-    #relative{
-      height: calc(100vh - 190px)!important;
-    }
+  .instructions-manual{
+    height: 68vh!important;
   }
-
-  @media screen and ( min-height: 730px ){
-    /* The Modal (background) */
-    .modal-instruction {
-      height: calc(100vh - 208px) !important;
-    }
-    #relative{
-      height: calc(100vh - 208px)!important;
-    }
-  }
-  @media screen and ( min-height: 930px ){
-    /* The Modal (background) */
-    .modal-instruction {
-      height: calc(100vh - 245px) !important;
-    }
-    #relative{
-      height: calc(100vh - 245px)!important;
-    }
-  }
-  @media screen and ( min-height: 1100px ){
-    /* The Modal (background) */
-    .modal-instruction {
-      height: calc(100vh - 260px) !important;
-    }
-    #relative{
-      height: calc(100vh - 260px)!important;
-    }
-  }
-
 }
 
 @media only screen and (min-width: 1200px) {
@@ -3586,42 +3482,8 @@ orbicular {
   .modal-content-guide {
     width: 600px;
   }
-  @media screen and ( min-height: 300px ){
-    /* The Modal (background) */
-    .modal-instruction {
-      height: calc(100vh - 195px) !important;
-    }
-    #relative{
-      height: calc(100vh - 195px)!important;
-    }
-  }
-
-  @media screen and ( min-height: 730px ){
-    /* The Modal (background) */
-    .modal-instruction {
-      height: calc(100vh - 208px) !important;
-    }
-    #relative{
-      height: calc(100vh - 208px)!important;
-    }
-  }
-  @media screen and ( min-height: 930px ){
-    /* The Modal (background) */
-    .modal-instruction {
-      height: calc(100vh - 245px) !important;
-    }
-    #relative{
-      height: calc(100vh - 245px)!important;
-    }
-  }
-  @media screen and ( min-height: 1100px ){
-    /* The Modal (background) */
-    .modal-instruction {
-      height: calc(100vh - 260px) !important;
-    }
-    #relative{
-      height: calc(100vh - 260px)!important;
-    }
+  .instructions-manual{
+    height: 69vh!important;
   }
 }
 @media only screen and (min-width: 1600px) {
@@ -3669,43 +3531,8 @@ orbicular {
   .modal-content-guide {
     width: 700px;
   }
-
-  @media screen and ( min-height: 300px ){
-    /* The Modal (background) */
-    .modal-instruction {
-      height: calc(100vh - 190px) !important;
-    }
-    #relative{
-      height: calc(100vh - 190px)!important;
-    }
-  }
-
-  @media screen and ( min-height: 730px ){
-    /* The Modal (background) */
-    .modal-instruction {
-      height: calc(100vh - 208px) !important;
-    }
-    #relative{
-      height: calc(100vh - 208px)!important;
-    }
-  }
-  @media screen and ( min-height: 930px ){
-    /* The Modal (background) */
-    .modal-instruction {
-      height: calc(100vh - 245px) !important;
-    }
-    #relative{
-      height: calc(100vh - 245px)!important;
-    }
-  }
-  @media screen and ( min-height: 1100px ){
-    /* The Modal (background) */
-    .modal-instruction {
-      height: calc(100vh - 260px) !important;
-    }
-    #relative{
-      height: calc(100vh - 260px)!important;
-    }
+  .instructions-manual{
+    height: 73vh!important;
   }
 }
 
@@ -3746,29 +3573,13 @@ orbicular {
 
 #myImg:hover {opacity: 0.2;}
 
-
-#relative{
-  position:relative;
-  overflow-x: hidden;
-  overflow-y: auto;
-  b{
-    font-weight: 400;
-  }
-  .instruction-list{
-    margin-top: 0px !important;
-    margin-bottom: 0px!important;
-  }
-  a {
-    color:blue;
-  }
-}
 .heading-instructions{
   font-size: 18pt;
   color: black;
   font-weight: 400;
 }
 #instructions{
-  height:84vh;
+  height:80vh;
   position:relative;
   overflow-x: hidden;
   overflow-y: auto;
@@ -3783,6 +3594,7 @@ orbicular {
     color:blue;
   }
 }
+
 #guide-no-images-sm{
   height: calc(100vh - 135px)!important;
   position:relative;
@@ -3801,10 +3613,6 @@ orbicular {
 }
 #checkButtons{
   margin-top: -20px;
-}
-#relative > #myModal{
-  position:absolute;
-  white-space: nowrap;
 }
 #instructions > #myModal{
   position:absolute;
@@ -3922,4 +3730,15 @@ orbicular {
   margin-top: 15px;
   color:white;
   cursor: pointer;
+}
+.feedback-button{
+  border:none;
+  background: none;
+  margin-right: 20px;
+}
+.feedback-button:hover{
+  border:none;
+  background: none;
+  margin-right: 20px;
+  color:#17468F
 }

@@ -186,6 +186,58 @@
       </div>
     </div>
   </div>
+  <!--Android-->
+  <div style="font-size: 18px; color:black" ng-show="vm.android">
+    <div class="guide-caption text-center heading-instructions">Prepare Android device for refresh:</div>
+    <div class="row instruction-row" >
+      <div class="col-xs-4">
+        <ul>
+          <li>Connect to Wi-fi</li>
+        </ul>
+      </div>
+      <div class="col-xs-4 text-center">
+        <div class="instruction-img-border">
+          <img class="instruction-img" ng-click="vm.openModal('../../../../../assets/images/enable-wifi.png')" src="../../../../../assets/images/enable-wifi.png">
+        </div>
+      </div>
+    </div>
+    <div class="row instruction-row" >
+      <div class="col-xs-4">
+        <ul>
+          <li>Disable screen lock</li>
+        </ul>
+      </div>
+      <div class="col-xs-4 text-center">
+        <div class="instruction-img-border">
+          <img class="instruction-img" ng-click="vm.openModal('../../../../../assets/images/screen-lock.png')" src="../../../../../assets/images/screen-lock.png">
+        </div>
+      </div>
+    </div>
+    <div class="row instruction-row">
+      <div class="col-xs-4">
+        <ul>
+          <li>Enable developer options</li>
+        </ul>
+      </div>
+      <div class="col-xs-4 text-center">
+        <div class="instruction-img-border">
+          <img class="instruction-img" ng-click="vm.openModal('../../../../../assets/images/dev-options.png')" src="../../../../../assets/images/dev-options.png">
+        </div>
+      </div>
+    </div>
+    <div class="row instruction-row">
+      <div class="col-xs-4">
+        <ul>
+          <li>Connect Android device to refresh session</li>
+        </ul>
+      </div>
+      <div class="col-xs-4 text-center">
+        <div>
+          <img class="instruction-img"  src="../../../../../assets/images/android-connect.gif">
+        </div>
+      </div>
+    </div>
+  </div>
   <!-- The Modal -->
   <div id="myModal" class="modal-instruction absolute block" ng-style="vm.height">
     <img class="modal-content-guide centered" id="img01">
