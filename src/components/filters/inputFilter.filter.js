@@ -27,13 +27,11 @@
                     var values = Object.keys(obj.device).map(function(key) {
                         return obj.device[key].toString().toLowerCase();
                     });
-                    // jscs:disable
                     for (var i = 0; i < values.length; i++) {
                         if (values[i] === obj.device.item_number) {
                             values.push(obj.status.toLowerCase());
                         }
                     }
-                    // jscs:enable
                     // checks if values from items includes tokens
                     var keysExistsInObj = tokens.filter(function(key) {
                         return values.some(function(v) {

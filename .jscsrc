@@ -22,7 +22,7 @@
   "disallowSpacesInsideParentheses": true,
   "disallowTrailingComma": true,
   "disallowTrailingWhitespace": true,
-  "requireCamelCaseOrUpperCaseIdentifiers": true,
+  "requireCamelCaseOrUpperCaseIdentifiers": "ignoreProperties",
   "requireCommaBeforeLineBreak": true,
   "requireLineFeedAtFileEnd": true,
   "requireSpaceAfterBinaryOperators": ["?", ":", "+", "-", "/", "*", "%", "==", "===", "!=", "!==", ">", ">=", "<", "<=", "&&", "||"],

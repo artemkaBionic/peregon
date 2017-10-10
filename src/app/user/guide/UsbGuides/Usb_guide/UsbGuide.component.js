@@ -29,16 +29,16 @@
         if (!vm.item.CalledFromHome && !angular.lowercase(vm.item.Type) === 'android') {
             vm.height = {'height':'72vh'};
         }
-        if (angular.lowercase(vm.item.Manufacturer) === 'hp' && angular.lowercase(vm.item.Type) === 'windowsusb') {
+        if (angular.lowercase(vm.item.manufacturer) === 'hp' && angular.lowercase(vm.item.type) === 'windowsusb') {
             vm.hp = true;
         }
-        if (angular.lowercase(vm.item.Manufacturer) === 'dell' && angular.lowercase(vm.item.Type) === 'windowsusb') {
+        if (angular.lowercase(vm.item.manufacturer) === 'dell' && angular.lowercase(vm.item.type) === 'windowsusb') {
             vm.dell = true;
         }
-        if (angular.lowercase(vm.item.Type) === 'mac') {
+        if (angular.lowercase(vm.item.type) === 'mac') {
             vm.mac = true;
         }
-        if (angular.lowercase(vm.item.Type) === 'xboxone') {
+        if (angular.lowercase(vm.item.type) === 'xboxone') {
             vm.xbox = true;
         }
         if (angular.lowercase(vm.item.Type) === 'android') {

@@ -45,7 +45,7 @@ setInterval(function() {
 }, RESEND_SESSIONS_INTERVAL);
 
 // Reverse lookup to Azure in case if not found in our Mongo DB
-function getItemFromAzure(id, callback) {
+/*function getItemFromAzure(id, callback) {
     winston.log('info', 'Getting item from azure with Item Id: ' + id);
     request({
         url: INVENTORY_LOOKUP_URL + id,
@@ -65,7 +65,7 @@ function getItemFromAzure(id, callback) {
             callback({error: null, item: body});
         }
     });
-}
+}*/
 
 // Item lookup from our Mongo DB
 function getItem(id, callback) {
@@ -84,13 +84,12 @@ function getItem(id, callback) {
         else {
             winston.log('info', 'NodeJS server returned: ');
             winston.log('info', response.body);
-            if (!JSON.parse(response.body).message) {
-                callback({error: null, item: JSON.parse(response.body)});
+            var data = JSON.parse(response.body);
+            if (data.message) {
+                callback({error: data.message, item: null});
             } else {
-                winston.log('info', 'Calling reverse lookup from Azure with Id: ' + id);
-                getItemFromAzure(id, callback);
+                callback({error: null, item: changeDeviceFormat(data)});
             }
-
         }
     });
 }
@@ -126,7 +125,6 @@ function getLowestUsbInProgress() {
 function sessionStart(sessionId, device, tmp, callback) {
     winston.log('info', 'Session:' + sessionId + ' started');
     var diagnose_only = false;
-    var session_device = changeDeviceFormat(device);
     var station_name = station.getName();
     station.getServiceTag(function(station_service_tag) {
         var newSession = {
@@ -270,7 +268,7 @@ function closeSession(session, success, callback) {
 function sendSession(session) {
     // deleting extra keys which added for client to continue session
     var sessionID = session._id;
-    if (session.device.item_number ){
+    if (session.device.item_number){
         delete session.tmp;
         winston.log('info', 'Sending session with this ID:' + sessionID + ' for device: ' + session.device.item_number);
         return request({
@@ -346,6 +344,9 @@ function changeDeviceFormat(device) {
                     break;
                 case 'Type':
                     session_device.type = device.Type;
+                    break;
+                case 'Description':
+                    session_device.description = device.Description;
                     break;
                 case 'numberOfAuto':
                     session_device.number_of_auto = device.numberOfAuto;

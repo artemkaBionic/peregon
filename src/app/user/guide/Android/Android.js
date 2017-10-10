@@ -51,7 +51,7 @@
             vm.step = vm.steps.startOne; //!!! Definition for first Guide Step
 
             inventoryService.getSessionByParams({
-                'device.item_number': vm.item.InventoryNumber,
+                'device.item_number': vm.item.item_number,
                 'status': 'Incomplete'
             }).then(function(session) {
                 updateSession(session);
@@ -61,7 +61,7 @@
 
         function unlockDevice() {
             if (vm.item) {
-                inventoryService.unlock(vm.item.Serial, false).
+                inventoryService.unlock(vm.item.serial_number, false).
                     then(function(data) {
                         if (!data.error) {
                             vm.deviceLockService = data.result.service;
@@ -76,7 +76,7 @@
 
         function lockDevice() {
             if (vm.item) {
-                inventoryService.lock(vm.item.Serial);
+                inventoryService.lock(vm.item.serial_number);
             }
         }
         vm.openFeedbackModal = function(){
@@ -139,12 +139,11 @@
         };
         /*================= End Modal Tips Steps definition===============*/
         function updateSession(session) {
-            // jscs:disable
             console.log(session);
             if (session && (session._id === vm.sessionId ||
                     (vm.sessionId === null && session.status === 'Incomplete' &&
                         session.device.item_number ===
-                        vm.item.InventoryNumber))) {
+                        vm.item.item_number))) {
                     $scope.$evalAsync(function(){
                         if (vm.sessionId === null) {
                             vm.sessionId = session._id;
@@ -158,7 +157,6 @@
                         vm.manualSize = session.tmp.numberOfManual;
                         vm.manualPassed = session.tmp.passedManual;
                     });
-                // // jscs: enable
             }
         }
         /*=================Guide Steps functions===============*/

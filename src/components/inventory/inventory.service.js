@@ -16,7 +16,7 @@
         service.items = {};
 
         function isValidItem(item) {
-            return item && item.Sku;
+            return item && item.sku;
         }
 
         var canceller = $q.defer();
@@ -139,10 +139,15 @@
 
             console.log(message);
             $http.post(url,
-                {'session':session, 'level': level, 'message': message, 'details': details}).
-            then(function(result) {
-                deferred.resolve(result.data);
-            });
+                {
+                    'session': session,
+                    'level': level,
+                    'message': message,
+                    'details': details
+                }).
+                then(function(result) {
+                    deferred.resolve(result.data);
+                });
 
             return deferred.promise;
         };
@@ -183,18 +188,16 @@
         };
         service.getAllUsbDrives = function() {
             var deferred = $q.defer();
-            $http.get('/getAllUsbDrives')
-                .then(function(result) {
-                    deferred.resolve(result.data);
-                });
+            $http.get('/getAllUsbDrives').then(function(result) {
+                deferred.resolve(result.data);
+            });
             return deferred.promise;
         };
         service.getLowestUsbInProgress = function() {
             var deferred = $q.defer();
-            $http.get('/getLowestUsbInProgress')
-                .then(function(result) {
-                    deferred.resolve(result.data);
-                });
+            $http.get('/getLowestUsbInProgress').then(function(result) {
+                deferred.resolve(result.data);
+            });
             return deferred.promise;
         };
         return service;
