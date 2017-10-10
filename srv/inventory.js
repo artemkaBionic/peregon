@@ -16,7 +16,7 @@ const INVENTORY_LOOKUP_URL = 'https://' + config.apiHost +
     '/api/inventorylookup/';
 const SERIAL_LOOKUP_URL = 'https://' + config.apiHost + '/api/seriallookup/';
 const API_URL = 'https://api2.basechord.com';
-const API_URL2 = 'http://localhost:3000';
+//const API_URL2 = 'http://localhost:3000';
 const RESEND_SESSIONS_INTERVAL = 900000; // 15 minutes
 var isDevelopment = process.env.NODE_ENV === 'development';
 var result = null;
@@ -69,10 +69,10 @@ function getItemFromAzure(id, callback) {
 
 // Item lookup from our Mongo DB
 function getItem(id, callback) {
-    winston.log('info', API_URL2 + '/aarons/inventorylookup' + id);
+    winston.log('info', API_URL + '/aarons/inventorylookup' + id);
     request({
         rejectUnauthorized: false,
-        uri: API_URL2 + '/aarons/inventorylookup' + id,
+        uri: API_URL + '/aarons/inventorylookup' + id,
         headers: {
             'Authorization': config.api2Authorization
         }
