@@ -327,7 +327,6 @@
             });
         }
         socket.on('device-add', function() {
-            console.log('event done');
             toastr.info('New USB drive was inserted into station', {
                 'tapToDismiss': true,
                 'timeOut': 3000,

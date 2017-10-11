@@ -10,8 +10,8 @@
     function HomeUsbGuidesController($stateParams) {
         var vm = this;
         vm.item = {
-            Type: $stateParams.type,
-            Manufacturer: $stateParams.manufacturer,
+            type: $stateParams.type,
+            manufacturer: $stateParams.manufacturer,
             CalledFromHome: true
         };
         if ($stateParams.manufacturer === 'hp') {

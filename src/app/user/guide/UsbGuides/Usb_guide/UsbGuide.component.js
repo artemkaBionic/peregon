@@ -26,7 +26,8 @@
         vm.mac = false;
         vm.xBox = false;
         vm.android = false;
-        if (!vm.item.CalledFromHome && !angular.lowercase(vm.item.Type) === 'android') {
+        console.log(vm.item);
+        if (!vm.item.CalledFromHome && !angular.lowercase(vm.item.type) === 'android') {
             vm.height = {'height':'72vh'};
         }
         if (angular.lowercase(vm.item.manufacturer) === 'hp' && angular.lowercase(vm.item.type) === 'windowsusb') {
@@ -41,7 +42,7 @@
         if (angular.lowercase(vm.item.type) === 'xboxone') {
             vm.xbox = true;
         }
-        if (angular.lowercase(vm.item.Type) === 'android') {
+        if (angular.lowercase(vm.item.type) === 'android') {
             vm.android = true;
         }
         vm.openModal = function(src) {
