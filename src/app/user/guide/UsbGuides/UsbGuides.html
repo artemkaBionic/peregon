@@ -3,7 +3,7 @@
     <div class="row header-row">
       <div class="col-sm-7 header-col">
         <div class="header-middle-col">
-          <div class="home-link" ng-click="vm.refreshEnd()">
+          <div id="go-home-usb" class="home-link" ng-click="vm.refreshEnd()">
             <div class="home-button">
               <i class="fa fa-home home-button-icon"></i>
               <span class="home-button-text">Home</span>
@@ -65,10 +65,10 @@
           </div>
         </div>
         <div class="row text-center">
-          <button style="margin-right: 25px;margin-top:5px" class="instruction-btn btn btn-success btn-rounded" type="submit" ng-click="vm.startSession()">
+          <button id="usb-device-good" style="margin-right: 25px;margin-top:5px" class="instruction-btn btn btn-success btn-rounded" type="submit" ng-click="vm.startSession()">
             Device is in good condition
           </button>
-          <button style="margin-top:5px" class="instruction-btn btn btn-danger btn-rounded" type="submit" ng-click="vm.deviceBroken()">
+          <button id="usb-device-bad" style="margin-top:5px" class="instruction-btn btn btn-danger btn-rounded" type="submit" ng-click="vm.deviceBroken()">
             Device is in poor condition or faulty
           </button>
         </div>
@@ -108,7 +108,7 @@
           <h3>You have successfully refreshed device</h3>
         </div>
         <div class="row finish-success-button">
-          <button class="btn btn-primary btn-rounded center" ui-sref="^" href="#/user/home">
+          <button id="usb-session-finish" class="btn btn-primary btn-rounded center" ui-sref="^" href="#/user/home">
             Finish <i class="fa fa-caret-right"></i>
           </button>
           <div class="text-center" style="margin-top: 15px">
@@ -125,13 +125,20 @@
           <h3>Please try again.<br/> If error persists, contact support.</h3>
         </div>
         <div class="row nav-btn">
-          <button class="btn btn-primary btn-rounded center" ng-click="vm.retry()">
-            <i class="fa fa-repeat"></i> Retry
-          </button>
-          <div class="text-center" style="margin-top: 15px">
-            <div>Help us to improve Device Refresh Station</div>
-            <button class="feedback-button" ng-click="vm.openFeedbackModal()"><i class="fa fa-comment-o" aria-hidden="true"></i> Leave feedback</button>
+          <div class="col-md-6 col-sm-6">
+            <button id="usb-failed-session-retry" class="btn btn-primary btn-rounded center pull-right" ng-click="vm.retry()">
+              <i class="fa fa-repeat"></i> Retry
+            </button>
           </div>
+          <div class="col-md-6 col-sm-6">
+            <button id="usb-failed-session-finish" class="btn btn-danger btn-rounded center pull-left" ui-sref="^" href="#/user/home">
+              Finish <i class="fa fa-caret-right"></i>
+            </button>
+          </div>
+        </div>
+        <div class="text-center" style="margin-top: 15px">
+          <div>Help us to improve Device Refresh Station</div>
+          <button class="feedback-button" ng-click="vm.openFeedbackModal()"><i class="fa fa-comment-o" aria-hidden="true"></i> Leave feedback</button>
         </div>
       </div>
       <div class="anim-wizard-step" ng-switch-when="broken">
@@ -141,7 +148,7 @@
           <h3>Please ship it to Aarons Service Center.</h3>
         </div>
         <div class="row nav-btn">
-          <button class="btn btn-primary btn-rounded center" ui-sref="^" href="#/user/home">
+          <button id="usb-device-broken" class="btn btn-primary btn-rounded center" ui-sref="^" href="#/user/home">
             Finish <i class="fa fa-caret-right"></i>
           </button>
           <div class="text-center" style="margin-top: 15px">

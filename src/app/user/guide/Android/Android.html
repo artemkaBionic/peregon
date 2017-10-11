@@ -3,7 +3,7 @@
     <div class="row header-row">
       <div class="col-sm-7 header-col">
         <div class="header-middle-col">
-          <div class="home-link" ng-click="vm.goHome()">
+          <div id="go-home-android" class="home-link" ng-click="vm.goHome()">
             <div class="home-button">
               <i class="fa fa-home home-button-icon"></i>
               <span class="home-button-text">Home</span>
@@ -21,6 +21,7 @@
       </div>
     </div>
   </header>
+
   <div horizontal-ui-sheet-content>
     <div class="row" ng-hide="vm.step.number > 8">
       <ul id="progress-tracker" data-steps="3">
@@ -55,10 +56,10 @@
           </div>
         </div>
         <div class="row text-center">
-          <button style="margin-right: 25px;margin-top:5px" class="instruction-btn btn btn-success btn-rounded" type="submit" ng-click="vm.deviceGood()">
+          <button id="android-good" style="margin-right: 25px;margin-top:5px" class="instruction-btn btn btn-success btn-rounded" type="submit" ng-click="vm.deviceGood()">
             Device is in good condition
           </button>
-          <button style="margin-top:5px" class="instruction-btn btn btn-danger btn-rounded" type="submit" ng-click="vm.deviceBroken()">
+          <button id="android-bad" style="margin-top:5px" class="instruction-btn btn btn-danger btn-rounded" type="submit" ng-click="vm.deviceBroken()">
             Device is in poor condition or faulty
           </button>
         </div>
@@ -158,7 +159,7 @@
           <h3>You have successfully refreshed the Android device</h3>
         </div>
         <div class="row finish-success-button">
-          <button class="btn btn-primary btn-rounded center" ng-click="vm.refreshEnd()">
+          <button id="android-finish-success" class="btn btn-primary btn-rounded center" ng-click="vm.refreshEnd()">
             Finish <i class="fa fa-caret-right"></i>
           </button>
           <div class="text-center" style="margin-top: 15px">
@@ -179,11 +180,11 @@
         </div>
         <div class="row nav-btn">
           <div class="col-md-6 col-sm-6">
-            <button ng-click="vm.activate()" class="btn btn-choose-med btn-info pull-right">Restart
+            <button id="android-failed-restart" ng-click="vm.activate()" class="btn btn-choose-med btn-info pull-right">Restart
             </button>
           </div>
           <div class="col-md-6 col-sm-6">
-            <button ng-click="vm.refreshEnd()" class="btn btn-choose-med btn-danger pull-left">Finish
+            <button id="android-failed-finish" ng-click="vm.refreshEnd()" class="btn btn-choose-med btn-danger pull-left">Finish
             </button>
           </div>
           <div class="text-center">
@@ -204,11 +205,11 @@
         </div>
         <div class="row nav-btn">
           <div class="col-md-6 col-sm-6">
-            <button ng-click="vm.activate()" class="btn btn-choose-med btn-info pull-right">Restart
+            <button id="android-expired-restart" ng-click="vm.activate()" class="btn btn-choose-med btn-info pull-right">Restart
             </button>
           </div>
           <div class="col-md-6 col-sm-6">
-            <button ng-click="vm.refreshEnd()" class="btn btn-choose-med btn-danger pull-left">Cancel
+            <button id="android-expired-cancel" ng-click="vm.refreshEnd()" class="btn btn-choose-med btn-danger pull-left">Finish
             </button>
           </div>
         </div>

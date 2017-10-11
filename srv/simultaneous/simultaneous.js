@@ -235,9 +235,10 @@ function deviceBridge(io) {
                         adbSerial: serial,
                         serial_number: imei
                     };
+
                     startSession(sessionDate, unknownItem, tmp).then(function(session) {
                         getSerialLookup(imei).then(function(res) {
-                            session.device = res.item;
+                            session.device = inventory.changeDeviceFormat(res.item);
                             sessions.updateSession(session);
                             io.emit('app-start', session);
                         }).catch(function(err) {
