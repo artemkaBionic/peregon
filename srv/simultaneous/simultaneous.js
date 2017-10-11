@@ -237,7 +237,7 @@ function deviceBridge(io) {
                     };
                     startSession(sessionDate, unknownItem, tmp).then(function(session) {
                         getSerialLookup(imei).then(function(res) {
-                            session.device = inventory.changeDeviceFormat(res.item);
+                            session.device = res.item;
                             sessions.updateSession(session);
                             io.emit('app-start', session);
                         }).catch(function(err) {

@@ -72,15 +72,15 @@
 
         function guideTemplate($templateCache, $http, item) {
             var templateUrl = 'app/user/guide/unsupported.html';
-            if (item.Type !== null) {
-                if (item.Type === 'Manual') {
-                    templateUrl = 'app/user/guide/' + item.Type + '/' +
+            if (item.type !== null) {
+                if (item.type === 'Manual') {
+                    templateUrl = 'app/user/guide/' + item.type + '/' +
                         item.SubType + '.html';
-                } else if (item.Type === 'Mac' || item.Type === 'XboxOne' || item.Type === 'WindowsUsb') {
+                } else if (item.type === 'Mac' || item.type === 'XboxOne' || item.type === 'WindowsUsb') {
                     templateUrl = 'app/user/guide/UsbGuides/UsbGuides.html';
                 } else {
-                    templateUrl = 'app/user/guide/' + item.Type + '/' +
-                        item.Type + '.html';
+                    templateUrl = 'app/user/guide/' + item.type + '/' +
+                        item.type + '.html';
                 }
             }
             var templateContent = $templateCache.get(templateUrl);
@@ -98,13 +98,13 @@
 
         function guideController(item) {
             var controllerName = 'GuideControllerUnsupported';
-            // if (item.Type !== null) {
-            //     controllerName = 'GuideController' + item.Type;
+            // if (item.type !== null) {
+            //     controllerName = 'GuideController' + item.type;
             // }
-            if (item.Type === 'Mac' || item.Type === 'XboxOne' || item.Type === 'WindowsUsb') {
+            if (item.type === 'Mac' || item.type === 'XboxOne' || item.type === 'WindowsUsb') {
                 controllerName = 'GuideControllerUsb';
             } else {
-                controllerName = 'GuideController' + item.Type;
+                controllerName = 'GuideController' + item.type;
             }
             return controllerName;
         }
@@ -161,14 +161,10 @@
                         ' hour ');
                 }
                 if (minutes !== 0) {
-                    timeString += (minutes !== 1)
-                        ? (minutes + ' minutes ')
-                        : (minutes + ' minute ');
+                    timeString += (minutes !== 1) ? (minutes + ' minutes ') : (minutes + ' minute ');
                 }
                 if (days === 0 && hours === 0 && minutes < 5) {
-                    timeString += (seconds !== 1)
-                        ? (seconds + ' seconds ')
-                        : (seconds + ' second ');
+                    timeString += (seconds !== 1) ? (seconds + ' seconds ') : (seconds + ' second ');
                 }
 
                 return timeString;

@@ -74,11 +74,11 @@
         }
         function checkSession(){
             inventoryService.getSessionByParams({
-                'device.item_number': vm.item.InventoryNumber,
+                'device.item_number': vm.item.item_number,
                 'status': 'Incomplete'
             }).then(function(session) {
                 if (session){
-                    updateSession(session)
+                    updateSession(session);
                 } else {
                     checkCondition();
                 }

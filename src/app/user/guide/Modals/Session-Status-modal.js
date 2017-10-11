@@ -24,7 +24,6 @@
         vm.wrongDeviceType = false;
         vm.showUnrecoginzedDeviceFooter = false;
         vm.serialNo = null;
-        // jscs:disable
         if (data.errors) {
             vm.errors = data.errors;
         } else {
@@ -38,7 +37,7 @@
                 vm.deviceType = data.session.device.type;
             }
             vm.authorize = function(){
-                inventoryService.getAllSessionsByParams({'device.item_number': vm.item.InventoryNumber, status:'Incomplete'}).then(function(sessions) {
+                inventoryService.getAllSessionsByParams({'device.item_number': vm.item.item_number, status:'Incomplete'}).then(function(sessions) {
                     if (sessions.length > 0) {
                         vm.sessionAlreadyInProgress = true;
                     } else {
@@ -79,7 +78,7 @@
                                 vm.item = null;
                                 inventoryService.getItem(vm.searchString).then(function(item) {
                                     vm.item = item;
-                                    if (item !== null && item.Type !== vm.deviceType) {
+                                    if (item !== null && item.type !== vm.deviceType) {
                                         vm.wrongDeviceType = true;
                                     }
                                     vm.itemNumberError = false;
@@ -102,7 +101,6 @@
                 $scope.$watch('vm.searchString', vm.searchStringChange);
             }
         }
-        // jscs:enable
         vm.closeModal = popupLauncher.closeModal;//Close modal window by pressing on Dismiss button
     }
 })();

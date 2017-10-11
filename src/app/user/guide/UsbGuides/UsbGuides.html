@@ -10,16 +10,16 @@
             </div>
             <img class="guide-logo" src="/assets/images/Logo.png">
           </div>
-          <div ng-show="vm.item.Type==='XboxOne'" class="home-header">Xbox One Refresh</div>
-          <div ng-show="vm.item.Type==='Mac'" class="home-header">Mac Refresh</div>
-          <div ng-show="vm.item.Type==='WindowsUsb'" class="home-header">Windows Usb Refresh</div>
+          <div ng-show="vm.item.type==='XboxOne'" class="home-header">Xbox One Refresh</div>
+          <div ng-show="vm.item.type==='Mac'" class="home-header">Mac Refresh</div>
+          <div ng-show="vm.item.type==='WindowsUsb'" class="home-header">Windows Usb Refresh</div>
         </div>
       </div>
       <div class="col-sm-5 header-col">
         <div class="header-middle-col-right">
-          <img ng-show="vm.item.Type==='XboxOne'" class="header-item-icon" src="/assets/images/xbox-logo.png">
-          <i ng-show="vm.item.Type==='WindowsUsb'" class="fa fa-windows header-item-icon"></i>
-          <i ng-show="vm.item.Type==='Mac'" class="fa fa-apple header-item-icon"></i>
+          <img ng-show="vm.item.type==='XboxOne'" class="header-item-icon" src="/assets/images/xbox-logo.png">
+          <i ng-show="vm.item.type==='WindowsUsb'" class="fa fa-windows header-item-icon"></i>
+          <i ng-show="vm.item.type==='Mac'" class="fa fa-apple header-item-icon"></i>
           <div class="home-header-right">{{vm.item.Description}}</div>
         </div>
       </div>
@@ -32,13 +32,13 @@
           <span>Prepare Refresh</span>
         </li>
         <li ng-class="{'active': vm.step.number === 3, 'done': vm.step.number > 4}">
-          <span ng-show="vm.item.Type==='WindowsUsb'">
+          <span ng-show="vm.item.type==='WindowsUsb'">
             Refresh the Windows laptop
           </span>
-          <span ng-show="vm.item.Type==='Mac'">
+          <span ng-show="vm.item.type==='Mac'">
             Refresh Mac
           </span>
-          <span ng-show="vm.item.Type==='XboxOne'">
+          <span ng-show="vm.item.type==='XboxOne'">
             Refresh X-Box
           </span>
         </li>
@@ -58,7 +58,7 @@
               <li>
                 Screen and casing are in good condition;
               </li>
-              <li ng-hide="vm.item.Type === 'XboxOne'">
+              <li ng-hide="vm.item.type === 'XboxOne'">
                 Keyboard and touchpad are working;
               </li>
             </ul>

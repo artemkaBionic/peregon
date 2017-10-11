@@ -33,13 +33,13 @@
             <i class="fa fa-spinner fa-spin" style="font-size:90px"></i>
           </div>
           <div ng-hide="vm.item === null || vm.wrongDeviceType || vm.showAuthCheck || vm.sessionAlreadyInProgress">
-            <span  type="submit"><strong>{{'SKU: '+vm.item.Sku}}</strong><br/>{{vm.item.Description}}
+            <span  type="submit"><strong>{{'SKU: '+vm.item.sku}}</strong><br/>{{vm.item.description}}
             </span>
           </div>
           <div class="item-button-error" ng-show="vm.itemNumberError"><strong>Item not found</strong><br/>Check
             the ItemNumber
           </div>
-          <div class="item-button-error" ng-show="vm.wrongDeviceType"><strong>Item Number entered is for {{vm.item.Type}}</strong>
+          <div class="item-button-error" ng-show="vm.wrongDeviceType"><strong>Item Number entered is for {{vm.item.type}}</strong>
             <br/> Make sure you are typing Item Number for {{vm.deviceType}}
           </div>
           <div class="item-button-error" ng-show="vm.searchStringSkuWarning">
@@ -49,7 +49,7 @@
             sure you are typing a valid Item Number, not a SKU
           </div>
           <div class="item-button-error" ng-show="vm.sessionAlreadyInProgress">
-            <strong>Session for <strong>{{'SKU: '+vm.item.Sku}}</strong> {{vm.item.Description}} already started.
+            <strong>Session for <strong>{{'SKU: '+vm.item.sku}}</strong> {{vm.item.description}} already started.
             </strong><br/>Make sure you are typing right Item Number.
           </div>
         </div>

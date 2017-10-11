@@ -12,9 +12,9 @@
         var vm = this;
         vm.isPackageReady = null;
         vm.item = item;
-        vm.guideUrl = config.guidesPath + '/' + item.Sku + '/' + config.guidesIndexFile;
+        vm.guideUrl = config.guidesPath + '/' + item.sku + '/' + config.guidesIndexFile;
         //Support Progressive SKUs
-        if (item.Sku.startsWith('73608')) {
+        if (item.sku.startsWith('73608')) {
             vm.guideUrl = config.guidesPath + '/73608__/' + config.guidesIndexFile;
         }
         vm.ready = false;
@@ -32,7 +32,7 @@
         }
 
         function checkIsPackageReady() {
-            packageService.isPackageReady(item.Sku).then(function(result) {
+            packageService.isPackageReady(item.sku).then(function(result) {
                 vm.isPackageReady = result;
             });
         }

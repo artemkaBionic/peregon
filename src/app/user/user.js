@@ -199,16 +199,15 @@
         vm.showGuide = function() {
             if (vm.item !== null) {
                 var $stateParams = {};
-                $stateParams.itemNumber = vm.item.InventoryNumber;
+                $stateParams.itemNumber = vm.item.item_number;
                 vm.item = null;
                 vm.searchString = '';
                 $state.go('root.user.guide', $stateParams);
             }
         };
-        // jscs:disable
         // show modal for successful/failed sessions + enter item number for unrecognized devices
         vm.showGuideForCards = function(session) {
-            if(session.device.item_number) {
+            if (session.device.item_number) {
                 inventoryService.getSessionByParams({'_id':session._id})
                     .then(function(res) {
                         if (res._id && session.status === 'Incomplete') {
@@ -252,7 +251,7 @@
                     });
             } else {
                 inventoryService.getSessionByParams({'_id':session._id})
-                    .then(function (res) {
+                    .then(function(res) {
                         openHelpModal('sm-to-xs', 'Unrecognized Device', res._id, session);
                     });
             }
@@ -290,7 +289,7 @@
         // jscs: enable
         vm.unlockForService = function() {
             if (vm.item) {
-                inventoryService.unlock(vm.item.Serial, true).
+                inventoryService.unlock(vm.item.serial_number, true).
                     then(function(data) {
                         if (data.error) {
                             toastr.error(
@@ -346,34 +345,28 @@
         });
         socket.on('app-start', function(session) {
             getSessions().then(function() {
-                // jscs:disable
                 toastr.info('Refresh started for device:' +
                     session.device.serial_number, {
                     'tapToDismiss': true,
                     'timeOut': 3000,
                     'closeButton': true
                 });
-                // jscs:enable
             });
         });
         socket.on('session-complete', function(session){
             getSessions().then(function() {
                 if (session !== null) {
-                    // jscs:disable
                     toastr.info('Refresh finished', {
                         'tapToDismiss': true,
                         'timeOut': 3000,
                         'closeButton': true
                     });
-                    // jscs:enable
                 } else {
-                    // jscs:disable
                     toastr.error('Something went wrong while reading sessions', {
                         'tapToDismiss': true,
                         'timeOut': 3000,
                         'closeButton': true
                     });
-                    // jscs:enable
                 }
                 vm.viewSessions();
             });
@@ -387,13 +380,11 @@
         });
         socket.on('usb-complete', function(status) {
             if (status.err) {
-                // jscs:disable
                 toastr.error('Something went wrong while creating USB drive', {
                     'tapToDismiss': true,
                     'timeOut': 3000,
                     'closeButton': true
                 });
-                // jscs:enable
             } else {
                 toastr.info('Bootable USB drive is ready', {
                     'tapToDismiss': true,
@@ -416,14 +407,12 @@
         });
         socket.on('android-reset', function(session) {
             getSessions().then(function() {
-                // jscs:disable
                 toastr.info('Refresh finished for device:' +
                     session.device.serial_number, {
                     'tapToDismiss': true,
                     'timeOut': 3000,
                     'closeButton': true
                 });
-                // jscs:enable
             });
         });
         socket.on('android-remove', function() {
