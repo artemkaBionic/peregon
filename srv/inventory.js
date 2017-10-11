@@ -45,7 +45,7 @@ setInterval(function() {
 }, RESEND_SESSIONS_INTERVAL);
 
 // Reverse lookup to Azure in case if not found in our Mongo DB
-/*function getItemFromAzure(id, callback) {
+function getItemFromAzure(id, callback) {
     winston.log('info', 'Getting item from azure with Item Id: ' + id);
     request({
         url: INVENTORY_LOOKUP_URL + id,
@@ -62,10 +62,10 @@ setInterval(function() {
         else {
             winston.log('info', 'Azure server returned: ');
             winston.log('info', body);
-            callback({error: null, item: body});
+            callback({error: null, item: changeDeviceFormat(body)});
         }
     });
-}*/
+}
 
 // Item lookup from our Mongo DB
 function getItem(id, callback) {
@@ -86,7 +86,8 @@ function getItem(id, callback) {
             winston.log('info', response.body);
             var data = JSON.parse(response.body);
             if (data.message) {
-                callback({error: data.message, item: null});
+                winston.log('info', 'Calling item lookup from Azure with Id: ' + id);
+                getItemFromAzure(id, callback);
             } else {
                 callback({error: null, item: changeDeviceFormat(data)});
             }
