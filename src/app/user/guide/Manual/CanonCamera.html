@@ -10,7 +10,7 @@
             </div>
             <img class="guide-logo" src="/assets/images/Logo.png">
           </div>
-          <div class="home-header">Magnavox TV refresh</div>
+          <div class="home-header">Canon Camera refresh</div>
         </div>
       </div>
       <div class="col-sm-5 header-col">
@@ -31,60 +31,79 @@
         </li>
       </ul>
     </div>
-    <div ng-show="vm.substep.name === 'instruction'">
-      <!--<form name="inspection-form" class="content-finish" novalidate>-->
-        <!--<div class="inspect-mode">-->
-          <!--<div class="row text-center">-->
-            <!--<span style="font-size: 20px; font-weight: 400;margin-left: -3%">Is refresh successful?-->
-              <!--<i ng-click="vm.openHelpModal('xxs','If after going through steps device rebooted with factory settings then refresh was successful.','')" class="fa fa-question-circle" aria-hidden="true"></i>-->
-              <!--<button ng-click="vm.refreshSuccess()" style="border-radius: 10%" class="btn btn-success btn-sm">Yes</button>-->
-              <!--<button ng-click="vm.refreshFailed();" style="border-radius: 10%" class="btn btn-danger btn-sm">No</button>-->
-            <!--</span>-->
-          <!--</div>-->
-        <!--</div>-->
-      </form>
-      <div id="guide-no-images-sm">
-        <h2 class="text-center">Follow this steps to refresh Magnavox TV:</h2>
-        <div class="instruction-list-container-lg " style="margin: 0 auto; text-align: left;">
-          <div class="instruction-list">
-            <p class="lg-line-height">
-              1. Turn on <b>Magnavox TV</b>;
-            </p>
-            <p class="lg-line-height">
-              2. Go to <b>Home/Menu</b> and select <b>Setup</b>;
-            </p>
-            <p class="lg-line-height">
-              4. Select <b>Installation</b> then click on <b>Restore all settings</b>;
-            </p>
-            <p class="lg-line-height">
-              4. Click <b>Start now</b>, enter pin <b>'0000'</b> and click <b>Yes</b>;
-            </p>
-          </div>
+    <form name="inspection-form" class="content-finish" novalidate ng-show="vm.substep.name === 'instruction'">
+      <div class="inspect-mode">
+        <div class="row text-center">
+          <span style="font-size: 20px; font-weight: 400;margin-left: -3%" data-toggle="tooltip">Is refresh successful?
+            <i ng-click="vm.openHelpModal('xxs','If after going through steps device rebooted with factory settings then refresh was successful.','')" class="fa fa-question-circle" aria-hidden="true"></i>
+            <button ng-click="vm.refreshSuccess()" style="border-radius: 10%" class="btn btn-success btn-sm">Yes</button>
+            <button ng-click="vm.refreshFailed();" style="border-radius: 10%" class="btn btn-danger btn-sm">No</button>
+          </span>
         </div>
-        <div id="lastStepNoImage">
-          <div class="instruction-list-container-lg " style="margin: 0 auto; text-align: left;">
-            <div class="instruction-list" style="margin-bottom: 20px!important;">
-              <p class="lg-line-height">
-                6. If after going through steps device rebooted with factory settings then refresh was successful;
-              </p>
+      </div>
+    </form>
+    <div id="instructions" class="instructions-manual" ng-show="vm.substep.name === 'instruction'">
+      <h2 style="text-align: center; color:black;padding-bottom: 15px">Follow this steps to refresh Canon Camera:</h2>
+      <div class="instruction-list-container-lg " style="margin: 0 auto; text-align: left;font-size:12px">
+        <div class="instruction-list">
+          <p>1. Set the power switch to <b>ON</b>.
+          <div class="row">
+            <div class="col-xs-7">
+              <p>2. Press the <b>MENU</b> button to display the menu screen;</p>
+            </div>
+            <div class="col-xs-5 text-center">
+              <div  style="margin-top: 10px">
+                <img class="instruction-img" style="cursor: default" src="/assets/images/canon1.gif">
+              </div>
             </div>
           </div>
-          <div id="checkButtons" class="row text-center">
-            <h2 style="text-align: center; color:black;padding-bottom: 5px">Is refresh successful?</h2>
-            <button style="margin-right: 25px;margin-top:5px" class="instruction-btn btn btn-success btn-rounded" type="submit" ng-click="vm.refreshSuccess()">
-              Refresh successful
-            </button>
-            <button style="margin-top:5px" class="instruction-btn btn btn-danger btn-rounded" type="submit" ng-click="vm.refreshFailed();">
-              Refresh failed
-            </button>
+          <div class="row">
+            <div class="col-xs-7">
+              <p>3. Under the
+                <img src="/assets/images/canon-btn.gif">
+                tab, select <b>Clear all camera settings</b>, then press <b>SET</b>;</p>
+            </div>
+            <div class="col-xs-5 text-center">
+              <div style="margin-top: 10px" >
+                <img class="instruction-img" style="cursor: default" src="/assets/images/canon2.gif">
+              </div>
+            </div>
           </div>
-          <br>
+          <div class="row">
+            <div class="col-xs-7">
+              <p>4. Select <b>OK</b>, then press <b>SET</b>.</p>
+            </div>
+            <div class="col-xs-5 text-center">
+              <div style="margin-top: 10px" >
+                <img class="instruction-img" style="cursor: default" src="/assets/images/canon3.gif">
+              </div>
+            </div>
+          </div>
         </div>
-
-        <!-- The Modal -->
-        <div id="myModal" class="modal-instruction absolute block" ng-click="vm.close()">
-          <img class="modal-content-guide centered" id="img01">
+      </div>
+      <br>
+      <div id="lastStep">
+        <div class="instruction-list-container-lg " style="margin: 0 auto; text-align: left;">
+          <div class="instruction-list" style="margin-bottom: 20px!important;">
+            <p class="lg-line-height">
+              5. If after going through steps device rebooted with factory settings then refresh was successful.
+            </p>
+          </div>
         </div>
+        <div id="checkButtons" class="row text-center">
+          <h2 style="text-align: center; color:black;padding-bottom: 5px">Is refresh successful?</h2>
+          <button style="margin-right: 25px;margin-top:5px" class="instruction-btn btn btn-success btn-rounded" type="submit" ng-click="vm.refreshSuccess()">
+            Refresh successful
+          </button>
+          <button style="margin-top:5px" class="instruction-btn btn btn-danger btn-rounded" type="submit" ng-click="vm.refreshFailed();">
+            Refresh failed
+          </button>
+        </div>
+        <br>
+      </div>
+      <!-- The Modal -->
+      <div id="myModal" class="modal-instruction absolute block" ng-click="vm.close()">
+        <img class="modal-content-guide centered" id="img01">
       </div>
     </div>
     <div ng-switch="vm.step.name" class="row wizard ">
@@ -102,12 +121,12 @@
                     Screen and casing are in good condition;
                   </li>
                   <li>
-                    Buttons are working;
+                    Touchscreen and buttons are working;
                   </li>
                 </ul>
               </div>
             </div>
-            <div class="row text-center">
+            <div  class="row text-center">
               <button style="margin-right: 25px;margin-top:5px" class="instruction-btn btn btn-success btn-rounded" type="submit" ng-click="vm.deviceGood()">
                 Device is in good condition
               </button>
@@ -127,17 +146,21 @@
               <button class="btn btn-primary btn-rounded center" ng-click="vm.refreshEnd()">
                 Finish <i class="fa fa-caret-right"></i>
               </button>
+              <div class="text-center" style="margin-top: 15px">
+                <div>Help us to improve Device Refresh Station</div>
+                <button class="feedback-button" ng-click="vm.openFeedbackModal()"><i class="fa fa-comment-o" aria-hidden="true"></i> Leave feedback</button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <div ng-switch-when="refresh" style="height:570px; overflow-y: auto;overflow-x: hidden;">
+      <div ng-switch-when="refresh">
         <div ng-switch="vm.substep.name" class="row wizard">
           <div id="fifthSubstate" ng-switch-when="refreshSuccess">
             <div class="text-center" style="margin-top: 5%">
               <i style="color:forestgreen" class="fa fa-check-circle fa-5x" aria-hidden="true"></i>
               <h2>Success</h2>
-              <h3>You have successfully refreshed Magnavox TV.</h3>
+              <h3>You have successfully refreshed Canon Camera.</h3>
               <button style="margin-top: 1%" class="btn-primary btn-rounded" ng-click="vm.refreshEnd()">Finish</button>
               <div class="text-center" style="margin-top: 15px">
                 <div>Help us to improve Device Refresh Station</div>
@@ -148,7 +171,7 @@
           <div id="sixthSubstate" ng-switch-when="rerfeshFailed">
             <div class="text-center" style="margin-top: 5%">
               <i style="color: darkred" class="fa fa-minus-circle fa-5x" aria-hidden="true"></i>
-              <h2 style="margin-top: 2%">Magnavox TV refresh failed.</h2>
+              <h2 style="margin-top: 2%">Canon Camera refresh failed.</h2>
               <h4 style="margin-top: 2%">Ship device to Aaron's service center or retry going through steps.</h4>
               <button style="margin-top: 1%" class="btn-primary btn-rounded" ng-click="vm.retry()">Retry</button>
               <button style="margin-top: 1%" class="btn-danger btn-rounded" ng-click="vm.refreshEnd()">Finish</button>
@@ -157,6 +180,9 @@
                 <button class="feedback-button" ng-click="vm.openFeedbackModal()"><i class="fa fa-comment-o" aria-hidden="true"></i> Leave feedback</button>
               </div>
             </div>
+          </div>
+          <div ng-switch-when="instruction">
+
           </div>
         </div>
       </div>

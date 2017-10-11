@@ -345,6 +345,9 @@ function changeDeviceFormat(device) {
                 case 'Type':
                     session_device.type = device.Type;
                     break;
+                case 'SubType':
+                    session_device.sub_type = device.SubType;
+                    break;
                 case 'Description':
                     session_device.description = device.Description;
                     break;

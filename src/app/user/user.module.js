@@ -74,8 +74,9 @@
             var templateUrl = 'app/user/guide/unsupported.html';
             if (item.type !== null) {
                 if (item.type === 'Manual') {
+                    //console.log(item);
                     templateUrl = 'app/user/guide/' + item.type + '/' +
-                        item.SubType + '.html';
+                        item.sub_type + '.html';
                 } else if (item.type === 'Mac' || item.type === 'XboxOne' || item.type === 'WindowsUsb') {
                     templateUrl = 'app/user/guide/UsbGuides/UsbGuides.html';
                 } else {

@@ -17,7 +17,6 @@
         vm.refreshEnd = function() {
             $state.go('root.user');
         };
-
         vm.steps = {
             prepare: {
                 name: 'prepare',
