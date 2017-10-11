@@ -133,7 +133,7 @@ function sessionStart(sessionId, device, tmp, callback) {
             'end_time': null,
             'status': 'Incomplete',
             'diagnose_only': diagnose_only,
-            'device': session_device,
+            'device': device,
             'station': {
                 'name': station_name,
                 'service_tag': station_service_tag
