@@ -3594,7 +3594,11 @@ orbicular {
     color:blue;
   }
 }
-
+.instructions-sublist{
+  color: grey;
+  font-size: 10pt;
+  margin-left: -20px;
+}
 #guide-no-images-sm{
   height: calc(100vh - 135px)!important;
   position:relative;
