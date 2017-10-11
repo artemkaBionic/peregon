@@ -169,6 +169,7 @@ module.exports = function(io, data) {
         } else if (event.name === 'device-add') {
             usbDrives.set(event.data.id, {
                 id: event.data.id,
+                size: event.data.size,
                 status: 'not_ready',
                 progress: 0
             });

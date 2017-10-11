@@ -37,6 +37,9 @@ UsbCache.prototype.getAllUsbDrives = function(){
             if (usbDrives.usbData.numberOfDevices !== 0 && usbDrives[key].status === 'ready') {
                 usbDrives.usbData.readyDevices++;
             }
+            if (usbDrives[key].size < 30000000000) {
+                usbDrives.usbData.isSmallUsbDriveInserted = true;
+            }
         }
     }
     // statuses for front-end

@@ -25,12 +25,16 @@
       </ng-pluralize></span>
     </div>
     <div class="boot-instruction-row">
-      <span style="color:grey">Now you can create your Bootable <ng-pluralize count="vm.usbDrives.usbData.notReadyDevices" when="{'one': 'USB drive', 'other': 'USB drives'}"></ng-pluralize><br>
+      <span style="color:grey" ng-hide="vm.showSmallUsbError">Now you can create your Bootable <ng-pluralize count="vm.usbDrives.usbData.notReadyDevices" when="{'one': 'USB drive', 'other': 'USB drives'}"></ng-pluralize><br>
         <strong>Warning!</strong> This will wipe all information you have on <ng-pluralize count="vm.usbDrives.usbData.notReadyDevices" when="{'one': 'USB drive', 'other': 'USB drives'}"></ng-pluralize>.
       </span>
+      <span style="color:grey;" ng-show="vm.showSmallUsbError">
+        You've inserted USB drive which is smaller then 32GB. Make sure you are inserting 32GB USB drive.
+      </span>
+
     </div>
     <div class="boot-instruction-row">
-      <button class="btn btn-success btn-rounded" ng-click="vm.createBootDrives()">
+      <button class="btn btn-success btn-rounded" ng-click="vm.createBootDrives()" ng-disabled="vm.showSmallUsbError">
         Create Bootable <ng-pluralize count="vm.usbDrives.usbData.notReadyDevices" when="{'one': 'USB drive', 'other': 'USB drives'}"></ng-pluralize>
       </button>
       <!--<button class="btn btn-danger btn-rounded" ng-click="vm.cancelBootDrive()">Cancel</button>-->
@@ -46,7 +50,7 @@
         <orbicular progression="vm.percentageComplete" total="100">{{vm.data.counter}}</orbicular>
       </div>
       <div>
-        <p>{{vm.percentageComplete}}% complete</p>
+        <p>{{vm.percentageComplete}}% complete</p>g
       </div>
     </div>
   </div>
