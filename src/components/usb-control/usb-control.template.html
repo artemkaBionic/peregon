@@ -34,7 +34,7 @@
 
     </div>
     <div class="boot-instruction-row">
-      <button class="btn btn-success btn-rounded" ng-click="vm.createBootDrives()" ng-disabled="vm.showSmallUsbError">
+      <button id="create-bootable-drive" class="btn btn-success btn-rounded" ng-click="vm.createBootDrives()" ng-disabled="vm.showSmallUsbError">
         Create Bootable <ng-pluralize count="vm.usbDrives.usbData.notReadyDevices" when="{'one': 'USB drive', 'other': 'USB drives'}"></ng-pluralize>
       </button>
       <!--<button class="btn btn-danger btn-rounded" ng-click="vm.cancelBootDrive()">Cancel</button>-->

@@ -10,9 +10,9 @@
             </div>
             <img class="guide-logo" src="/assets/images/Logo.png">
           </div>
-          <div ng-show="vm.item.type==='XboxOne'" class="home-header">Xbox One Refresh</div>
-          <div ng-show="vm.item.type==='Mac'" class="home-header">Mac Refresh</div>
-          <div ng-show="vm.item.type==='WindowsUsb'" class="home-header">Windows Usb Refresh</div>
+          <!--<div ng-show="vm.item.type==='XboxOne'" class="home-header">Xbox One Refresh</div>-->
+          <!--<div ng-show="vm.item.type==='Mac'" class="home-header">Mac Refresh</div>-->
+          <!--<div ng-show="vm.item.type==='WindowsUsb'" class="home-header">Windows Usb Refresh</div>-->
         </div>
       </div>
       <div class="col-sm-5 header-col">
@@ -45,7 +45,9 @@
         <li ng-class="{'active': vm.step.number >= 4}"><span>Finish</span><i></i></li>
       </ul>
     </div>
-
+    <button ng-click="vm.finishFail()">Fail</button>
+    <button ng-click="vm.finishSuccess()">Success</button>
+    <button ng-click="vm.sessionExpired()">Fail</button>
     <div ng-switch="vm.step.name" class="row wizard">
       <div ng-switch-when="checkCondition">
         <div style="text-align: center">

@@ -42,7 +42,7 @@
       <!--</span>-->
       <!--</div>-->
       <!--</div>-->
-      </form>
+      <!--</form>-->
       <div id="guide-no-images-sm">
         <h2 class="text-center">Follow this steps to refresh Phillips TV:</h2>
         <div class="instruction-list-container-lg " style="margin: 0 auto; text-align: left;">
@@ -71,10 +71,10 @@
           </div>
           <div id="checkButtons" class="row text-center">
             <h2 style="text-align: center; color:black;padding-bottom: 5px">Is refresh successful?</h2>
-            <button style="margin-right: 25px;margin-top:5px" class="instruction-btn btn btn-success btn-rounded" type="submit" ng-click="vm.refreshSuccess()">
+            <button id="manual-refresh-success" style="margin-right: 25px;margin-top:5px" class="instruction-btn btn btn-success btn-rounded" type="submit" ng-click="vm.refreshSuccess()">
               Refresh successful
             </button>
-            <button style="margin-top:5px" class="instruction-btn btn btn-danger btn-rounded" type="submit" ng-click="vm.refreshFailed();">
+            <button id="manual-refresh-fail" style="margin-top:5px" class="instruction-btn btn btn-danger btn-rounded" type="submit" ng-click="vm.refreshFailed();">
               Refresh failed
             </button>
           </div>

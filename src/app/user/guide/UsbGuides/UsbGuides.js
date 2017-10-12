@@ -54,6 +54,17 @@
                 title: 'Device Broken'
             }
         };
+        vm.sessionExpired = function() {
+            vm.step = vm.steps.broken;
+        };
+
+        vm.finishFail = function() {
+            vm.step = vm.steps.failed;
+        };
+
+        vm.finishSuccess = function() {
+            vm.step = vm.steps.complete;
+        };
         vm.openFeedbackModal = function(){
             popupLauncher.openModal({
                 templateUrl: 'app/user/guide/Modals/Station-Feedback-modal.html',

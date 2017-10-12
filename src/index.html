@@ -4,6 +4,7 @@
   0)))}}var d=a;"undefined"!==typeof f?d=a[f]=[]:f="mixpanel";d.people=d.people||[];d.toString=function(b){var a="mixpanel";"mixpanel"!==f&&(a+="."+f);b||(a+=" (stub)");return a};d.people.toString=function(){return d.toString(1)+".people (stub)"};k="disable time_event track track_pageview track_links track_forms register register_once alias unregister identify name_tag set_config reset people.set people.set_once people.increment people.append people.union people.track_charge people.clear_charges people.delete_user".split(" ");
   for(h=0;h<k.length;h++)e(d,k[h]);a._i.push([b,c,f])};a.__SV=1.2;b=e.createElement("script");b.type="text/javascript";b.async=!0;b.src="undefined"!==typeof MIXPANEL_CUSTOM_LIB_URL?MIXPANEL_CUSTOM_LIB_URL:"file:"===e.location.protocol&&"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js".match(/^\/\//)?"https://cdn.mxpnl.com/libs/mixpanel-2-latest.min.js":"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";c=e.getElementsByTagName("script")[0];c.parentNode.insertBefore(b,c)}})(document,window.mixpanel||[]);
 mixpanel.init("1deb23329eaa18bbd9d19b7617862ac9");</script><!-- end Mixpanel -->
+
 <head>
   <meta charset="utf-8"/>
   <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1"/>
@@ -130,38 +131,38 @@ mixpanel.init("1deb23329eaa18bbd9d19b7617862ac9");</script><!-- end Mixpanel -->
 <script src="app/user/guide/HomeUsbGuides/HomeUsbGuides.controller.js"></script>
 <script src="app/user/guide/Android/Guide-modal.js"></script>
 <script src="app/user/guide/Android/Android.js"></script>
-<script src="app/user/shutdown/shutdown.js"></script>
-<script src="app/user/media/media.js"></script>
-<script src="app/user/guide/unsupported.js"></script>
-<script src="app/user/connection/connection.js"></script>
 <script src="components/core/core.module.js"></script>
 <script src="components/event/events/deviceaddEvent.service.js"></script>
-<script src="app/user/user.js"></script>
-<script src="app/index.js"></script>
-<script src="app/home/userHeader.js"></script>
-<script src="app/home/userHeader.directive.js"></script>
+<script src="app/user/shutdown/shutdown.js"></script>
+<script src="app/user/media/media.js"></script>
+<script src="app/user/connection/connection.js"></script>
+<script src="app/user/guide/unsupported.js"></script>
 <script src="components/usb-control/usb-control.component.js"></script>
-<script src="components/station/station.module.js"></script>
-<script src="components/station/station.service.js"></script>
 <script src="components/socket/socket.module.js"></script>
 <script src="components/socket/socket.service.js"></script>
-<script src="components/inventory/inventory.module.js"></script>
-<script src="components/inventory/inventory.service.js"></script>
-<script src="components/lib/external.js"></script>
+<script src="components/station/station.module.js"></script>
+<script src="components/station/station.service.js"></script>
 <script src="components/package/package.module.js"></script>
 <script src="components/package/package.service.js"></script>
+<script src="components/lib/external.js"></script>
+<script src="components/inventory/inventory.module.js"></script>
+<script src="components/inventory/inventory.service.js"></script>
+<script src="components/buffered-scroll/buffered-scroll.js"></script>
+<script src="components/filters/inputFilter.filter.js"></script>
 <script src="components/event/event.module.js"></script>
 <script src="components/event/event.service.js"></script>
-<script src="components/filters/inputFilter.filter.js"></script>
 <script src="components/device/device.module.js"></script>
 <script src="components/device/device.service.js"></script>
 <script src="components/core/underscore.service.js"></script>
 <script src="components/core/security.service.js"></script>
+<script src="app/index.js"></script>
 <script src="components/core/roleSecurity.directive.js"></script>
 <script src="components/core/popupLauncher.service.js"></script>
 <script src="components/core/navigation.service.js"></script>
 <script src="components/banner/banner.component.js"></script>
-<script src="components/buffered-scroll/buffered-scroll.js"></script>
+<script src="app/user/user.js"></script>
+<script src="app/home/userHeader.js"></script>
+<script src="app/home/userHeader.directive.js"></script>
 <script src="app/app.js"></script>
 <script src="app/app.env.js"></script>
 <!-- endinject -->

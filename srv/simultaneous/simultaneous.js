@@ -231,7 +231,7 @@ function deviceBridge(io) {
                     tmp.numberOfManual = appStartedDataJson.data.manual;
                     tmp.adbSerial = serial;
                     var unknownItem = {
-                        Type: 'Android',
+                        type: 'Android',
                         adbSerial: serial,
                         serial_number: imei
                     };

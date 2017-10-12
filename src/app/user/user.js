@@ -200,9 +200,14 @@
             if (vm.item !== null) {
                 var $stateParams = {};
                 $stateParams.itemNumber = vm.item.item_number;
+                mixpanel.track(
+                    "Session Start",
+                    {"item_type": vm.item.type}
+                );
                 vm.item = null;
                 vm.searchString = '';
                 $state.go('root.user.guide', $stateParams);
+
             }
         };
         // show modal for successful/failed sessions + enter item number for unrecognized devices
