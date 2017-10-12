@@ -425,12 +425,18 @@ figcaption {
   padding-top: 45px;
 }
 .modal-textarea {
-  height: 160px;
+  height: 80px;
   width: 100%;
   border-radius:5px;
   resize: none;
 }
-
+.scrollable-modal-content{
+  overflow-y: auto;
+  margin-top: 5px;
+  margin-right: 2px;
+  height: 480px;
+  overflow-x: hidden;
+}
 .submit-modal-content{
   width: 75vh;
 }
@@ -439,7 +445,7 @@ figcaption {
     width: 500px;
     border: 0;
     border-radius: 16px;
-    height: 570px!important;
+    height: 600px!important;
     position: fixed !important;
     z-index: 999 !important;
     top: 25% !important;
@@ -3719,19 +3725,18 @@ orbicular {
 }
 .banner{
   background-color: #17468F;
-  height: 150px;
-  position:absolute;
-  bottom:0;
-  left:0;
+  height: 50px;
   width: 100%;
-  z-index: 2000
+  z-index: 2000;
+  margin-top:-10px;
 }
 .closeButton{
   cursor: pointer;
   color:white;
 }
 .bannerText{
-  margin-top: 15px;
+  padding-top: 15px;
+  padding-left: 15px;
   color:white;
   cursor: pointer;
 }
@@ -3745,4 +3750,11 @@ orbicular {
   background: none;
   margin-right: 20px;
   color:#17468F
+}
+.modal-input {
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  border:1px grey solid;
+  width:100%;
 }

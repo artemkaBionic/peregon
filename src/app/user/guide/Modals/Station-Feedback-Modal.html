@@ -1,0 +1,45 @@
+<horizontal-ui-sheet horizontal-scroll1="" class="shuffle-animation apc-sheet-full modal-android">
+  <div class="manual-modal-content">
+    <div class="scrollable-modal-content">
+    <script type="text/javascript">var submitted = false;</script>
+    <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"
+            onload="if(submitted)  {vm.goHome()}"></iframe>
+    <form class="modal-form" action="https://docs.google.com/forms/d/e/1FAIpQLSe3H6fMN2PE6ShaWK6pZa9TDdJVYFJgfoNkEBErOejwpIM8tg/formResponse"
+          onsubmit="goHome()" method="post" target="hidden_iframe" ng-hide="vm.submitted">
+      <h3 class="text-center">Device Refresh Station Feedback</h3>
+      <div style="font-weight: 100;" class="form-group">
+        Please let us know your experience with our Device Refresh Station.
+      </div>
+      <div class="form-group">
+        <h5>Introduce yourself (optional)</h5>
+        <input class="modal-input" type="text" name="entry.588965138" value=""  id="entry_588965138" dir="auto"
+               aria-label="Introduce yourself (optional)  " title="">
+      </div>
+      <div class="form-group">
+        <h5>Describe you issue or share your ideas<span style="color:red"> *</span></h5>
+        <textarea class="modal-textarea" style="height:250px" name="entry.966198351" rows="8" cols="0" class="modal-textarea" id="entry_966198351" dir="auto"
+                  aria-label="Describe you issue or share your ideas  " aria-required="true" required="" ></textarea>
+      </div>
+      <input ng-show="false" type="text" name="entry.1305366294" value=""  id="entry_1305366294" dir="auto" aria-label="Station Id  " title="" ng-model="vm.stationName">
+      <div style="height: 140px" class="navigtion-buttons manual-modal-footer">
+        <div class="row simultaneous-modal-footer-btns">
+          <input type="submit" class="submit-modal-btn" value="SEND"/>
+          <button type="submit" class="btn-primary btn-rounded" ng-click="vm.closeModal()">Cancel</button>
+        </div>
+        <div class="text-center" style="margin-top: 15px">
+          <a style="cursor:pointer" ng-click="vm.openSurveyModal()"><i class="fa fa-file-text-o" aria-hidden="true"></i> Participate in a quick survey (under 1 minute)</a>
+        </div>
+      </div>
+
+    </form>
+    </div>
+    <div ng-show="vm.submitted" class="text-center submit-modal-success">
+      <i class="fa fa-check-circle success-icon"></i>
+      <h3>Thank you for your feedback!</h3>
+      <div style="margin-top: 20px" class="row text-center">
+        <button type="submit" class="btn-primary btn-rounded" ng-click="vm.closeModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+</horizontal-ui-sheet>

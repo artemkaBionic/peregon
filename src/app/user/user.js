@@ -90,7 +90,10 @@
             }, 500);
         });
         $scope.$on('showModal', function() {
-            vm.openFeedbackModal();
+            vm.openSurveyModal();
+        });
+        $scope.$on('showFeedbackButton', function(){
+            vm.showBanner = false;
         });
         // used for infinite scroll
         vm.increaseLimit = function() {
@@ -201,8 +204,11 @@
                 var $stateParams = {};
                 $stateParams.itemNumber = vm.item.item_number;
                 mixpanel.track(
-                    "Session Start",
-                    {"item_type": vm.item.type}
+                    'Session Start',
+                    {
+                        'item_type': vm.item.type,
+                        'item_number': vm.item.item_number
+                    }
                 );
                 vm.item = null;
                 vm.searchString = '';
@@ -265,6 +271,15 @@
             popupLauncher.openModal({
                 templateUrl: 'app/user/guide/Modals/Station-Feedback-modal.html',
                 controller: 'SessionFeedbackController',
+                bindToController: true,
+                controllerAs: 'vm',
+                size: 'sm-to-lg'
+            });
+        };
+        vm.openSurveyModal = function(){
+            popupLauncher.openModal({
+                templateUrl: 'app/user/guide/Modals/Station-Survey-modal.html',
+                controller: 'SessionSurveyController',
                 bindToController: true,
                 controllerAs: 'vm',
                 size: 'sm-to-lg'

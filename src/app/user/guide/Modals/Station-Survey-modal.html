@@ -1,5 +1,6 @@
 <horizontal-ui-sheet horizontal-scroll1="" class="shuffle-animation apc-sheet-full modal-android">
   <div class="manual-modal-content">
+    <div class="scrollable-modal-content">
     <script type="text/javascript">var submitted = false;</script>
     <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"
             onload="if(submitted)  {vm.goHome()}"></iframe>
@@ -7,7 +8,11 @@
       onsubmit="goHome()" method="post" target="hidden_iframe" ng-hide="vm.submitted">
       <h3 class="text-center">Device Refresh Station Survey</h3>
       <div class="form-group">
-        <h5>Are you satisfied with current Device Refresh Station performance?<span style="color:red"> *</span></h5>
+        <div style="font-weight: 100;" class="form-group">
+          Please help us serve you better by taking few seconds to tell us about your product and service experience so far.
+          We appreciate your duty and want to make sure we meet your expectations.
+        </div>
+        <h5>Are you satisfied with current Device Refresh Station <br>performance?<span style="color:red"> *</span></h5>
         <ul class="submit-modal-list" role="radiogroup" aria-label="Are you satisfied with current Device Refresh Station performance?">
           <li >
             <label>
@@ -58,23 +63,55 @@
         </ul>
       </div>
       <div class="form-group">
+        <h5>Do you find our refresh guides helpful?</h5>
+        <ul class="submit-modal-list" role="radiogroup" aria-label="Do you find our guides helpful?  ">
+          <li>
+            <label>
+              <span>
+                <input type="radio" name="entry.1460102954" value="Yes" id="group_1460102954_1" role="radio" aria-label="Yes">
+              </span>
+              <span >Yes</span>
+            </label>
+          </li>
+          <li>
+            <label>
+              <span>
+                <input type="radio" name="entry.1460102954" value="No" id="group_1460102954_2" role="radio" aria-label="No">
+              </span>
+              <span >No</span>
+            </label>
+          </li>
+          <li>
+            <label>
+              <span>
+                <input type="radio" name="entry.1460102954" value="Sometimes" id="group_1460102954_3" role="radio" aria-label="Sometimes">
+              </span>
+              <span>Sometimes</span>
+            </label>
+          </li>
+        </ul>
+      </div>
+      <div class="form-group">
         <h5>What can be improved?</h5>
         <textarea class="modal-textarea" name="entry.1539610425" rows="8"
                   cols="0" id="entry_1539610425" dir="auto" aria-label="What can be improved?"></textarea>
       </div>
+
       <div class="navigtion-buttons manual-modal-footer">
         <div class="row simultaneous-modal-footer-btns">
           <input type="submit" class="submit-modal-btn" value="SEND"/>
-          <button type="submit" class="btn-primary btn-rounded" ng-click="vm.closeModal()">Send later</button>
+          <button type="submit" class="btn-primary btn-rounded" ng-click="vm.closeModal()">Cancel</button>
         </div>
       </div>
     </form>
-    <div ng-show="vm.submitted" class="text-center submit-modal-success">
-      <i class="fa fa-check-circle success-icon"></i>
-      <h3>Thank you for your feedback!</h3>
-      <div style="margin-top: 20px" class="row text-center">
-        <button type="submit" class="btn-primary btn-rounded" ng-click="vm.closeModal()">Close</button>
+      <div ng-show="vm.submitted" class="text-center submit-modal-success">
+        <i class="fa fa-check-circle success-icon"></i>
+        <h3>Thank you for your feedback!</h3>
+        <div style="margin-top: 20px" class="row text-center">
+          <button type="submit" class="btn-primary btn-rounded" ng-click="vm.closeModal()">Close</button>
+        </div>
       </div>
     </div>
+
   </div>
 </horizontal-ui-sheet>

@@ -9,6 +9,7 @@ var simultaneous = require('./simultaneous/simultaneous');
 var usbDrives = require('./usbonly/usbCache');
 var sessions = require('./session_storage/sessions');
 var winston = require('winston');
+var station = require('./station');
 module.exports = function(io, data) {
 // Express Router
     var router = express.Router();
@@ -282,6 +283,9 @@ module.exports = function(io, data) {
     router.post('/updateStatus', function(req, res) {
         usbDrives.setStatus('sdc', 'in_progress');
         res.json({success:true});
+    });
+    router.get('/getStationName', function(req, res) {
+        res.json(station.getName());
     });
     return router;
 };

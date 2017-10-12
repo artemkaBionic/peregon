@@ -21,6 +21,7 @@
             vm.hide = true;
             vm.surveyDate = new Date();
             localStorage.setItem('surveyPassedDate',vm.surveyDate);
+            $rootScope.$broadcast('showFeedbackButton');
         };
         vm.startSurvey = function(){
             $rootScope.$broadcast('showModal');
