@@ -13,6 +13,7 @@
         'app.device',
         'app.event',
         'app.inventory',
+        'app.sessions',
         'app.user',
         'app.package',
         /*

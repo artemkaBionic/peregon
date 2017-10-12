@@ -5,9 +5,9 @@
         .module('app.user')
         .controller('SessionStatusModalController', SessionStatusModalController);
 
-    SessionStatusModalController.$inject = ['popupLauncher', 'data', 'config', 'stationService', 'inventoryService', '$scope', '$rootScope'];
+    SessionStatusModalController.$inject = ['popupLauncher', 'data', 'config', 'stationService', 'inventoryService', 'sessionsService', '$scope', '$rootScope'];
 
-    function SessionStatusModalController(popupLauncher, data, config, stationService, inventoryService, $scope, $rootScope) {
+    function SessionStatusModalController(popupLauncher, data, config, stationService, inventoryService, sessionsService, $scope, $rootScope) {
         /*jshint validthis: true */
         var vm = this;
         vm.searchString = '';
@@ -37,17 +37,17 @@
                 vm.deviceType = data.session.device.type;
             }
             vm.authorize = function(){
-                inventoryService.getAllSessionsByParams({'device.item_number': vm.item.item_number, status:'Incomplete'}).then(function(sessions) {
+                sessionsService.getAllSessionsByParams({'device.item_number': vm.item.item_number, status:'Incomplete'}).then(function(sessions) {
                     if (sessions.length > 0) {
                         vm.sessionAlreadyInProgress = true;
                     } else {
                         if (data.session.device.serial_number !== undefined) {
-                            inventoryService.updateSessionItem({'device.serial_number': vm.serialNo}, vm.item).then(function() {
+                            sessionsService.updateItem({'device.serial_number': vm.serialNo}, vm.item).then(function() {
                                 $rootScope.$broadcast('updateList');
                                 vm.closeModal();
                             });
                         } else {
-                            inventoryService.updateSessionItem({'_id': data.session._id}, vm.item).then(function() {
+                            sessionsService.updateItem({'_id': data.session._id}, vm.item).then(function() {
                                 $rootScope.$broadcast('updateList');
                                 vm.closeModal();
                             });

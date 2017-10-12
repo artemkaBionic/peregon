@@ -1,3 +1,5 @@
+/*jslint node: true */
+'use strict';
 var express = require('express');
 var fs = require('fs');
 var path = require('path');
@@ -53,31 +55,28 @@ module.exports = function(io, data) {
             });
     });
 
-    router.post('/data/inventory/sessions/:id/start', function(req, res) {
-        inventory.sessionStart(req.params.id, req.body, {}, function(result) {
+    router.post('/data/sessions/:id/start', function(req, res) {
+        sessions.start(req.params.id, req.body, {}).then(function(result) {
             res.json(result);
         });
     });
-    router.post('/data/inventory/sessions/update', function(req, res) {
-        inventory.sessionUpdate(req.body.session, req.body.level, req.body.message,
-            req.body.details, function(err, result) {
-                if (err) {
-                    winston.log('error', 'Error while updating session:' + err);
-                }
-                res.json(result);
-            });
+    router.post('/data/sessions/:id/addLogEntry', function(req, res) {
+        sessions.addLogEntry(req.params.id, req.body.level, req.body.message, req.body.details).then(function() {
+            res.json();
+        });
     });
 
-    router.post('/data/inventory/sessions/:id/finish', function(req, res) {
-        inventory.sessionFinish(req.params.id, req.body.details,
-            function(result) {
-                res.json(result);
-            });
+    router.post('/data/sessions/:id/finish', function(req, res) {
+        sessions.finish(req.params.id, req.body).then(function(result) {
+            res.json(result);
+        });
     });
     router.get('/data/packages/:contentType/:contentSubtype?',
         function(req, res) {
             try {
-                winston.log('info', 'Client requests ' + req.params.contentSubtype + ' ' + req.params.contentType + ' packages');
+                winston.log('info', 'Client requests ' +
+                    req.params.contentSubtype + ' ' + req.params.contentType +
+                    ' packages');
                 switch (req.params.contentType) {
                     case 'media':
                         if (isDevelopment) {
@@ -99,7 +98,9 @@ module.exports = function(io, data) {
                             ]);
                         } else {
                             var packages = [];
-                            winston.log('info', 'Searching for media packages in ' + config.mediaPackagePath);
+                            winston.log(
+                                'info', 'Searching for media packages in ' +
+                                config.mediaPackagePath);
                             var dirs = getDirectories(config.mediaPackagePath);
                             var len = dirs.length;
                             for (var i = 0; i < len; ++i) {
@@ -110,20 +111,22 @@ module.exports = function(io, data) {
                                 winston.log('info', 'Attempting to parse ' +
                                     packageFile);
                                 try {
-                                    var package = JSON.parse(
+                                    var pkg = JSON.parse(
                                         fs.readFileSync(packageFile, 'utf8'));
-                                    if (package.type === 'media' &&
+                                    if (pkg.type === 'media' &&
                                         ((typeof req.params.contentSubtype ===
-                                            'undefined' && package.subtype ===
+                                            'undefined' && pkg.subtype ===
                                             'advertisement') ||
                                             (typeof req.params.contentSubtype !==
                                                 'undefined' &&
-                                                package.subtype ===
+                                                pkg.subtype ===
                                                 req.params.contentSubtype))) {
-                                        packages.push(package);
+                                        packages.push(pkg);
                                     }
                                 } catch (e) {
-                                    winston.log('error', 'Error trying to read ' + packageFile);
+                                    winston.log(
+                                        'error', 'Error trying to read ' +
+                                        packageFile);
                                     winston.log('error', e);
                                 }
                             }
@@ -135,7 +138,8 @@ module.exports = function(io, data) {
                         break;
                 }
             } catch (e) {
-                winston.log('error', 'Unable to get ' + req.params.contentType + ' packages.');
+                winston.log('error', 'Unable to get ' + req.params.contentType +
+                    ' packages.');
                 winston.log('error', e);
             }
         });
@@ -188,7 +192,7 @@ module.exports = function(io, data) {
                 });
         } else if (event.name === 'device-remove') {
             usbDrives.delete(event.data.id);
-            controller.clearItemFiles().then(function(){
+            controller.clearItemFiles().then(function() {
                 io.emit(event.name, event.data);
             });
             io.emit(event.name, event.data);
@@ -256,13 +260,15 @@ module.exports = function(io, data) {
     router.post('/updateSessionItem',
         function(req, res) {
             sessions.sessionUpdateItem(req.body.params, req.body.item).
-            then(function(result) {
-                inventory.resendSessions();
-                res.json({sessionUpdated: result});
-            }).
-            catch(function(err) {
-                winston.log('error', 'Something went wrong while updating session item for serial:' + req.params.id);
-            });
+                then(function(result) {
+                    inventory.resendSessions();
+                    res.json({sessionUpdated: result});
+                }).
+                catch(function(err) {
+                    winston.log(
+                        'error', 'Something went wrong while updating session item for serial:' +
+                        req.params.id);
+                });
         });
     router.get('/getAllUsbDrives', function(req, res) {
         res.json(inventory.getAllUsbDrives());
@@ -282,7 +288,7 @@ module.exports = function(io, data) {
     });
     router.post('/updateStatus', function(req, res) {
         usbDrives.setStatus('sdc', 'in_progress');
-        res.json({success:true});
+        res.json({success: true});
     });
     router.get('/getStationName', function(req, res) {
         res.json(station.getName());

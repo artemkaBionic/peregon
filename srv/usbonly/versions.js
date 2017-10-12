@@ -1,13 +1,15 @@
 /**
  * Created by artem on 23.05.17.
  */
+/*jslint node: true */
+'use strict';
 var config = require('../config');
 var fs = require('fs');
 var shell = require('shelljs');
 
 function getCurrentVersion(versionFile) {
     return new Promise(function(resolve, reject) {
-        fs.readFile(versionFile, 'utf8', function (err, data) {
+        fs.readFile(versionFile, 'utf8', function(err, data) {
             if (err) {
                 reject(err);
             } else {
@@ -26,11 +28,11 @@ exports.getCurrentVersions = function(callback) {
     promises.push(getCurrentVersion(config.macVersionFile));
     Promise.all(promises).then(function(values) {
         callback(null, {
-            "winpe": values[0],
-            "winpe-app": values[1],
-            "windows": values[2],
-            "xbox": values[3],
-            "mac": values[4]
+            'winpe': values[0],
+            'winpe-app': values[1],
+            'windows': values[2],
+            'xbox': values[3],
+            'mac': values[4]
         });
     }, function(err) {
         callback(err, null);
@@ -38,7 +40,8 @@ exports.getCurrentVersions = function(callback) {
 };
 
 exports.createVersionsFile = function(device, callback) {
-    var usbVersionsFile = '/mnt/' + device + config.usbStatusPartition + '/versions.json';
+    var usbVersionsFile = '/mnt/' + device + config.usbStatusPartition +
+        '/versions.json';
     exports.getCurrentVersions(function(err, currentVersions) {
         if (err) {
             callback(err);
@@ -54,7 +57,8 @@ exports.createVersionsFile = function(device, callback) {
 };
 
 exports.getUsbVersions = function(device, callback) {
-    var usbVersionsFile = '/mnt/' + device + config.usbStatusPartition + '/versions.json';
+    var usbVersionsFile = '/mnt/' + device + config.usbStatusPartition +
+        '/versions.json';
     fs.readFile(usbVersionsFile, 'utf8', function(err, data) {
         if (err) {
             if (err.code === 'ENOENT') {

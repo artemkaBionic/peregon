@@ -1,3 +1,5 @@
+/*jslint node: true */
+'use strict';
 var config = require('./config');
 var fs = require('fs');
 var os = require('os');
@@ -107,7 +109,8 @@ exports.getConnectionState = function() {
 
 exports.getIsServiceCenter = function(callback) {
     if (isDevelopment) {
-        winston.log('info', 'Simulating service center check in a Windows development environment.');
+        winston.log('info',
+            'Simulating service center check in a Windows development environment.');
         callback(true);
     } else {
         fs.stat('/srv/packages/ServiceCenter.mode', function(err, stat) {
@@ -118,7 +121,9 @@ exports.getIsServiceCenter = function(callback) {
                 winston.log('info', 'isServiceCenter = false');
                 callback(false);
             } else {
-                winston.log('error', 'Error while checking if /srv/packages/ServiceCenter.mode exists: ', err.code);
+                winston.log('error',
+                    'Error while checking if /srv/packages/ServiceCenter.mode exists: ',
+                    err.code);
                 callback(null);
             }
         });
@@ -126,26 +131,30 @@ exports.getIsServiceCenter = function(callback) {
 };
 
 exports.getPackage = function(sku, callback) {
-    var package = {
+    var pkg = {
         isDownloaded: null
     };
     if (isDevelopment) {
-        winston.log('info', 'Simulating package download check in a Windows development environment.');
-        package.isDownloaded = true;
-        callback(package);
+        winston.log('info',
+            'Simulating package download check in a Windows development environment.');
+        pkg.isDownloaded = true;
+        callback(pkg);
     } else {
         fs.stat('/srv/packages/' + sku + '/.complete', function(err, stat) {
             if (err == null) {
-                winston.log('info', 'Package for sku ' + sku + ' is downloaded.');
-                package.isDownloaded = true;
+                winston.log('info', 'Package for sku ' + sku +
+                    ' is downloaded.');
+                pkg.isDownloaded = true;
             } else if (err.code == 'ENOENT') {
-                winston.log('info', 'Package for sku ' + sku + ' is NOT downloaded.');
-                package.isDownloaded = false;
+                winston.log('info', 'Package for sku ' + sku +
+                    ' is NOT downloaded.');
+                pkg.isDownloaded = false;
             } else {
-                winston.log('error', 'Error while checking if /srv/packages/' + sku +
+                winston.log('error', 'Error while checking if /srv/packages/' +
+                    sku +
                     '/.complete exists: ', err.code);
             }
-            callback(package);
+            callback(pkg);
         });
     }
 };

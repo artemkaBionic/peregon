@@ -11,11 +11,12 @@
         'toastr',
         '$timeout',
         'inventoryService',
+        'sessionsService',
         'item',
         'env'];
 
     function GuideControllerAndroid($scope, $state, popupLauncher, toastr,
-                                    $timeout, inventoryService, item, env) {
+                                    $timeout, inventoryService, sessionsService, item, env) {
 
         /*jshint validthis: true */
         var vm = this;
@@ -50,7 +51,7 @@
             vm.sessionId = null;
             vm.step = vm.steps.startOne; //!!! Definition for first Guide Step
 
-            inventoryService.getSessionByParams({
+            sessionsService.getSessionByParams({
                 'device.item_number': vm.item.item_number,
                 'status': 'Incomplete'
             }).then(function(session) {
@@ -163,7 +164,7 @@
         vm.deviceGood = function() {
             vm.step = vm.steps.preparationOne;
         };
-        vm.deviceBroken = function() {
+        vm.deviceBad = function() {
             vm.Broken = true;
             vm.finish();
         };
@@ -186,11 +187,11 @@
                 if (vm.sessionId === null) {
                     vm.sessionId = new Date().toISOString();
                 }
-                inventoryService.startSession(vm.sessionId, item).
+                sessionsService.start(vm.sessionId, item).
                     then(function(session){
-                        inventoryService.updateSession(session, 'Info',
-                            'Device is broken').then(function(session) {
-                            inventoryService.finishSession(session._id, {'complete': false});
+                        sessionsService.addLogEntry(session._id, 'Info',
+                            'Device is broken').then(function() {
+                            sessionsService.finish(session._id, {'complete': false});
                         });
                     }
                 );

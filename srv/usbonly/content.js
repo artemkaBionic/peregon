@@ -1,3 +1,4 @@
+/*jslint node: true */
 'use strict';
 var config = require('../config');
 var shell = require('shelljs');
@@ -234,7 +235,8 @@ exports.updateContent = function(socket_io, device, callback) {
                                                 });
                                         } else {
                                             copyFilesAndApplyImages(device,
-                                                contentTemp, copyFilesSize, 0, false, callback);
+                                                contentTemp, copyFilesSize, 0,
+                                                false, callback);
                                         }
                                     }
                                 });

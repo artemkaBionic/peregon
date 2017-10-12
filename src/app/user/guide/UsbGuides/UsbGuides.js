@@ -5,9 +5,9 @@
         .module('app.user')
         .controller('GuideControllerUsb', GuideControllerUsb);
 
-    GuideControllerUsb.$inject = ['$http', '$scope', 'item', 'inventoryService', '$state', 'env', 'popupLauncher'];
+    GuideControllerUsb.$inject = ['$http', '$scope', 'item', 'sessionsService', '$state', 'env', 'popupLauncher'];
 
-    function GuideControllerUsb($http, $scope, item, inventoryService, $state, env, popupLauncher) {
+    function GuideControllerUsb($http, $scope, item, sessionsService, $state, env, popupLauncher) {
         var socket = io.connect('http://' + env.baseUrl);
         /*jshint validthis: true */
         var vm = this;
@@ -84,7 +84,7 @@
             return true;
         }
         function checkSession(){
-            inventoryService.getSessionByParams({
+            sessionsService.getSessionByParams({
                 'device.item_number': vm.item.item_number,
                 'status': 'Incomplete'
             }).then(function(session) {
@@ -113,18 +113,18 @@
         }
         vm.startSession = function() {
             vm.sessionId = new Date().toISOString();
-            inventoryService.startSession(vm.sessionId, item).then(function(session){
+            sessionsService.start(vm.sessionId, item).then(function(session){
                 vm.session = session;
                // checkUsbStatus();
                 vm.step = vm.steps.usbControl;
             });
         };
-        vm.deviceBroken = function() {
+        vm.deviceBad = function() {
             vm.sessionId = new Date().toISOString();
-            inventoryService.startSession(vm.sessionId, item).then(function(session){
-                    inventoryService.updateSession(session, 'Info',
-                        'Device is broken').then(function(session) {
-                        inventoryService.finishSession(session._id, {'complete': false}).then(function(){
+            sessionsService.start(vm.sessionId, item).then(function(session){
+                    sessionsService.addLogEntry(session._id, 'Info',
+                        'Device is broken').then(function() {
+                        sessionsService.finish(session._id, {'complete': false}).then(function(){
                             vm.step = vm.steps.broken;
                         });
                     });
@@ -140,7 +140,7 @@
         function refreshDevicesStart(){
             vm.step = vm.steps.refreshDevice;
             vm.session.tmp.currentStep = 'refreshStarted';
-            inventoryService.updateSession(vm.session,'Info','Refresh Started','');
+            sessionsService.addLogEntry(vm.session._id,'Info','Refresh Started','');
         }
         function refreshDevicesStarted() {
             vm.step = vm.steps.refreshDevice;

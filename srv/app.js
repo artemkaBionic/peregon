@@ -1,3 +1,5 @@
+/*jslint node: true */
+'use strict';
 var express = require('express');
 var socket_io = require("socket.io");
 var path = require('path');
@@ -9,7 +11,7 @@ var logger = require('morgan');
 var bodyParser = require('body-parser');
 var childProcess = require('child_process');
 var config = require('./config');
-var station = require('./station');
+var station = require('./station.js');
 //var controller = require('./usbonly')
 var simultaneous = require('./simultaneous/simultaneous');
 // Express

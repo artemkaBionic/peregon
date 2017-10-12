@@ -1,6 +1,7 @@
 /**
  * Created by Larry on 9/16/2015.
  */
+/*jslint node: true */
 var config = {};
 
 config.mediaPackagePath = '/srv/media';

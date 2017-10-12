@@ -1,3 +1,4 @@
+/*jslint node: true */
 'use strict';
 var config = require('../config');
 var adb = require('adbkit');
@@ -8,7 +9,7 @@ Promise.config({
 var client = adb.createClient();
 var apk = __dirname + '/app-release.apk';
 var spawn = require('child_process').spawn;
-var station = require('../station');
+var station = require('../station.js');
 var StringDecoder = require('string_decoder').StringDecoder;
 var decoder = new StringDecoder('utf8');
 var inventory = require('../inventory');
@@ -112,10 +113,10 @@ function deviceBridge(io) {
         });
     }
 
-    function updateSession(session, level, message, details) {
-        winston.log('info', 'Updating session ' + session._id);
+    function updateSession(sessionId, level, message, details) {
+        winston.log('info', 'Updating session ' + sessionId);
         return new Promise(function(resolve) {
-            inventory.sessionUpdate(session, level, message, details,
+            inventory.sessionUpdate(sessionId, level, message, details,
                 function(session) {
                     resolve(session);
                 });
@@ -252,19 +253,16 @@ function deviceBridge(io) {
 
                 // check if wipe started indexOf !== -1 means 'includes'
                 else if (data.indexOf('WipeStarted') !== -1) {
-                    sessions.getSessionByParams(
-                        {'_id': sessionDate}).then(function(session) {
-                        if (failedTests.length > 0) {
-                            updateSession(session, 'Info', 'Android test fail',
-                                {'failedTests': failedTests}).then(function(){
-                                finishSession(session._id, {complete: false});
-                            });
-                        } else {
-                            updateSession(session, 'Info', 'Android refresh app has initiated a factory reset.').then(function(){
-                                finishSession(session._id, {complete: true});
-                            });
-                        }
-                    });
+                    if (failedTests.length > 0) {
+                        updateSession(sessionDate, 'Info', 'Android test fail',
+                            {'failedTests': failedTests}).then(function(){
+                            finishSession(sessionDate, {complete: false});
+                        });
+                    } else {
+                        updateSession(sessionDate, 'Info', 'Android refresh app has initiated a factory reset.').then(function(){
+                            finishSession(sessionDate, {complete: true});
+                        });
+                    }
                 }
 
                 // tests progress indexOf === -1 means 'not includes'

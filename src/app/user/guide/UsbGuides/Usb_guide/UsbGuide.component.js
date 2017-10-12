@@ -27,7 +27,7 @@
         vm.xBox = false;
         vm.android = false;
         console.log(vm.item);
-        if (!vm.item.CalledFromHome && !angular.lowercase(vm.item.type) === 'android') {
+        if (!vm.item.CalledFromHome && angular.lowercase(vm.item.type) !== 'android') {
             vm.height = {'height':'72vh'};
         }
         if (angular.lowercase(vm.item.manufacturer) === 'hp' && angular.lowercase(vm.item.type) === 'windowsusb') {

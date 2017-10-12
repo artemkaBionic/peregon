@@ -9,6 +9,7 @@
         'config',
         'stationService',
         'inventoryService',
+        'sessionsService',
         'env',
         '$scope',
         'toastr',
@@ -16,7 +17,7 @@
         'popupLauncher'];
 
     function UserController(
-        $q, $state, config, stationService, inventoryService, env, $scope,
+        $q, $state, config, stationService, inventoryService, sessionsService, env, $scope,
         toastr, $http, popupLauncher) {
         /*jshint validthis: true */
         var vm = this;
@@ -52,7 +53,7 @@
         displayBanner();
         function getSessions() {
             var deferred = $q.defer();
-            inventoryService.getAllSessionsByParams({}).then(function(sessions) {
+            sessionsService.getAllSessionsByParams({}).then(function(sessions) {
                 vm.sessions =  sessions;
                 deferred.resolve(sessions);
             });
@@ -219,7 +220,7 @@
         // show modal for successful/failed sessions + enter item number for unrecognized devices
         vm.showGuideForCards = function(session) {
             if (session.device.item_number) {
-                inventoryService.getSessionByParams({'_id':session._id})
+                sessionsService.getSessionByParams({'_id':session._id})
                     .then(function(res) {
                         if (res._id && session.status === 'Incomplete') {
                             var $stateParams = {};
@@ -261,7 +262,7 @@
                         }
                     });
             } else {
-                inventoryService.getSessionByParams({'_id':session._id})
+                sessionsService.getSessionByParams({'_id':session._id})
                     .then(function(res) {
                         openHelpModal('sm-to-xs', 'Unrecognized Device', res._id, session);
                     });
