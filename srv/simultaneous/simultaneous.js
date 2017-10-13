@@ -1,23 +1,22 @@
 /*jslint node: true */
 'use strict';
-var config = require('../config');
-var adb = require('adbkit');
-var Promise = require('bluebird');
-Promise.config({
-    warnings: false
-});
-var client = adb.createClient();
-var apk = __dirname + '/app-release.apk';
-var spawn = require('child_process').spawn;
-var station = require('../station.js');
-var StringDecoder = require('string_decoder').StringDecoder;
-var decoder = new StringDecoder('utf8');
-var inventory = require('../inventory');
-var sessions = require('../session_storage/sessions');
-var winston = require('winston');
-exports.deviceBridge = deviceBridge;
+module.exports = function(io) {
+    var config = require('../config');
+    var adb = require('adbkit');
+    var Promise = require('bluebird');
+    Promise.config({
+        warnings: false
+    });
+    var client = adb.createClient();
+    var apk = __dirname + '/app-release.apk';
+    var spawn = require('child_process').spawn;
+    var station = require('../station.js');
+    var StringDecoder = require('string_decoder').StringDecoder;
+    var decoder = new StringDecoder('utf8');
+    var inventory = require('../inventory.js');
+    var sessions = require('../session_storage/sessions.js')(io);
+    var winston = require('winston');
 
-function deviceBridge(io) {
     var devices = [];
     winston.log('info', 'Device bridge started');
     client.trackDevices().then(function(tracker) {
@@ -25,7 +24,8 @@ function deviceBridge(io) {
             io.emit('android-add', {});
         });
         tracker.on('change', function(device) {
-            winston.log('info', 'Device type:' + device.type + ' for device:' +
+            winston.log('info', 'Device type:' + device.type +
+                ' for device:' +
                 device.id);
             if (device.type === 'device') {
                 io.emit('installation-started', {});
@@ -54,7 +54,8 @@ function deviceBridge(io) {
 
         });
     }).catch(function(err) {
-        winston.log('error', 'Something went wrong while connecting device:',
+        winston.log('error',
+            'Something went wrong while connecting device:',
             err.stack);
     });
     //check for expired sessions every 10 minutes
@@ -78,7 +79,8 @@ function deviceBridge(io) {
                     var expireDate = new Date(plusOneHour);
                     var currentDate = new Date();
                     if (currentDate > expireDate) {
-                        winston.log('info', 'Session with key:' + sessionId +
+                        winston.log('info', 'Session with key:' +
+                            sessionId +
                             ' is expired');
                         io.emit('android-session-expired', {
                             'sessionId': sessions[i],
@@ -126,7 +128,8 @@ function deviceBridge(io) {
                 'info', 'Uninstalled previous version of app successfully for device: ' +
                 serial);
             client.install(serial, apk).then(function() {
-                winston.log('info', 'App is installed for device ' + serial);
+                winston.log('info', 'App is installed for device ' +
+                    serial);
                 io.emit('app-installed', {device: serial});
                 // clear logcat before start the app
                 clearLogcat(serial).then(function(serialNo) {
@@ -152,11 +155,13 @@ function deviceBridge(io) {
     function checkDeviceProgress(serial) {
         winston.log('info', devices.length + ' devices in process');
         if (devices.length === 0) {
-            winston.log('info', 'Launching refresh app on device:' + serial);
+            winston.log('info', 'Launching refresh app on device:' +
+                serial);
             devices.push(serial);
             startApp(serial);
         } else if (devices.indexOf(serial) === -1) {
-            winston.log('info', 'Launching refresh app on device:' + serial);
+            winston.log('info', 'Launching refresh app on device:' +
+                serial);
             devices.push(serial);
             startApp(serial);
         }
@@ -261,7 +266,8 @@ function deviceBridge(io) {
                         sessions.addLogEntry(sessionDate, 'Info',
                             'Android refresh app has initiated a factory reset.').
                             then(function() {
-                                finishSession(sessionDate, {complete: true});
+                                finishSession(sessionDate,
+                                    {complete: true});
                             });
                     }
                 }
@@ -301,5 +307,4 @@ function deviceBridge(io) {
             }
         });
     }
-}
-
+};

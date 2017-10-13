@@ -12,18 +12,17 @@ var bodyParser = require('body-parser');
 var childProcess = require('child_process');
 var config = require('./config');
 var station = require('./station.js');
-var simultaneous = require('./simultaneous/simultaneous');
 // Express
 var app = express();
 var winston = require('./log');
 // Socket.io
 var io = socket_io();
 app.io = io;
-simultaneous.deviceBridge(io);
 // Common data
 var isDevelopment = process.env.NODE_ENV === 'development';
 
 var routes = require('./routes.js')(io);
+require('./simultaneous/simultaneous.js')(io);
 var winston = require('winston');
 // Create data directory
 fs.mkdir(config.kioskDataPath, function(err) {

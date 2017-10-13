@@ -17,7 +17,6 @@ module.exports = function(io) {
     var RESEND_SESSIONS_INTERVAL = 900000; // 15 minutes
 
     //Periodically resend unsent sessions
-    resend();
     setInterval(function() {
         resend();
     }, RESEND_SESSIONS_INTERVAL);
