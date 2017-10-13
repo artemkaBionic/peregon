@@ -126,7 +126,51 @@ module.exports = function(io) {
                 insert(newSession).then(function(session) {
                     winston.log('info', 'Session with ID:' + sessionId +
                         ' was inserted succesfully');
-                    io.emit('session-started', session);
+                    io.emit('session-started', newSession);
+                    resolve(session);
+                }).catch(function(err) {
+                    winston.log(
+                        'error', 'Error while inserting session with ID:' +
+                        sessionId + ' Error:' + err);
+                    reject(err);
+                });
+            });
+        });
+    }
+
+    function deviceBroken(device) {
+        var startTime = new Date();
+        var sessionId = startTime;
+        winston.log('info', 'Session: ' + sessionId + ' device is broken');
+        return new Promise(function(resolve, reject) {
+            var stationName = station.getName();
+            station.getServiceTag(function(stationServiceTag) {
+                var newSession = {
+                    'start_time': startTime,
+                    'end_time': null,
+                    'status': 'Fail',
+                    'diagnose_only': false,
+                    'device': device,
+                    'station': {
+                        'name': stationName,
+                        'service_tag': stationServiceTag
+                    },
+                    'logs': [
+                        {
+                            'timestamp': startTime,
+                            'level': 'Info',
+                            'message': 'Device is broken',
+                            'details': ''
+                        }
+                    ],
+                    'tmp': {},
+                    'is_sent': false,
+                    '_id': sessionId
+                };
+                insert(newSession).then(function(session) {
+                    winston.log('info', 'Session with ID:' + sessionId +
+                        ' was inserted succesfully');
+                    io.emit('session-complete', newSession);
                     resolve(session);
                 }).catch(function(err) {
                     winston.log(
@@ -248,6 +292,7 @@ module.exports = function(io) {
         'getSessionByParams': getSessionByParams,
         'updateItem': updateItem,
         'start': start,
+        'deviceBroken': deviceBroken,
         'addLogEntry': addLogEntry,
         'finish': finish,
         'resend': resend

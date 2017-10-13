@@ -1,13 +1,20 @@
 (function() {
     'use strict';
 
-    angular
-        .module('app.user')
-        .controller('ConnectionController', ConnectionController);
+    angular.module('app.user').
+        controller('ConnectionController', ConnectionController);
 
-    ConnectionController.$inject = ['$scope', '$q', 'config', 'stationService', 'eventService', 'connectionState', '$uibModalInstance','eventDispatcher','$uibModal'];
+    ConnectionController.$inject = [
+        '$q',
+        'config',
+        'stationService',
+        'connectionState',
+        '$uibModalInstance',
+        'eventDispatcher'];
 
-    function ConnectionController($scope, $q, config, stationService, eventService, connectionState, $uibModalInstance, eventDispatcher, $uibModal) {
+    function ConnectionController(
+        $q, config, station, connectionState, $uibModalInstance,
+        eventDispatcher) {
         /*jshint validthis: true */
         var vm = this;
         vm.zoomed = false;
@@ -41,12 +48,14 @@
         vm.close = close;
 
         activate();
+
         function activate() {
 
             var queries = [loadNetworkDevices(), loadConnectionState()];
             $q.all(queries).then(function() {
                 for (var i = 0; i < vm.networkDevices.length; ++i) {
-                    if (vm.networkDevices[i].description === vm.connectionState.description) {
+                    if (vm.networkDevices[i].description ===
+                        vm.connectionState.description) {
                         vm.connectionState.displayDescription = vm.networkDevices[i].displayDescription;
                         vm.connectionState.isPortDetectable = vm.networkDevices[i].isPortDetectable;
                         vm.connectToNetworkStart(vm.networkDevices[i]);
@@ -71,19 +80,22 @@
 
         function loadNetworkDevices() {
 
-            return stationService.isServiceCenter().then(function(isServiceCenter) {
+            return station.isServiceCenter().then(function(isServiceCenter) {
                 for (var i = 0; i < config.networkDevices.length; ++i) {
-                    if (config.networkDevices[i].isServiceCenterConfig === isServiceCenter) {
+                    if (config.networkDevices[i].isServiceCenterConfig ===
+                        isServiceCenter) {
                         vm.networkDevices.push(config.networkDevices[i]);
                     }
                 }
             });
         }
+
         function loadConnectionState() {
             if (!vm.connectionState) {
-                return stationService.getConnectionState().then(function(connectionState) {
-                    vm.connectionState = connectionState;
-                });
+                return station.getConnectionState().
+                    then(function(connectionState) {
+                        vm.connectionState = connectionState;
+                    });
             }
         }
 
@@ -100,9 +112,9 @@
             vm.isFinished = true;
         };
 
-        vm.ChangeClass = function(){
-                if (vm.zoomed){vm.zoomed = false;}
-                else {vm.zoomed = true;}
-            };
+        vm.ChangeClass = function() {
+            if (vm.zoomed) {vm.zoomed = false;}
+            else {vm.zoomed = true;}
+        };
     }
 })();

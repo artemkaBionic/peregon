@@ -9,7 +9,7 @@
 
     inventoryService.$inject = ['$q', '$http', 'stationService'];
 
-    function inventoryService($q, $http, stationService) {
+    function inventoryService($q, $http, station) {
 
         var service = {};
 
@@ -31,7 +31,7 @@
                 $http.get(url, {timeout: canceller.promise}).
                     then(function(result) {
                         if (result.data.error) {
-                            stationService.getConnectionState().
+                            station.getConnectionState().
                                 then(function(connectionState) {
                                     if (connectionState.isOnline) {
                                         console.log(

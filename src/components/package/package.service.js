@@ -5,9 +5,9 @@
         .module('app.package')
         .factory('packageService', packageService);
 
-    packageService.$inject = ['$q', '$http', 'config'];
+    packageService.$inject = ['$q', '$http'];
 
-    function packageService($q, $http, config) {
+    function packageService($q, $http) {
 
         var service = {};
 

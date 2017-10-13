@@ -5,8 +5,8 @@
         .module('app')
         .controller('ApplicationController', AppController);
 
-    AppController.$inject = ['config', '$scope', '$rootScope', '$apcSidebar', 'notificationService', 'eventService', '$log'];
-    function AppController(config, $scope, $rootScope, $apcSidebar, notificationService, eventService, $log) {
+    AppController.$inject = ['config', '$scope', '$rootScope', '$apcSidebar', 'notificationService', '$log'];
+    function AppController(config, $scope, $rootScope, $apcSidebar, notificationService, $log) {
         /*jshint validthis: true */
         var vm = this;
 
@@ -22,10 +22,6 @@
 
             var listener = $rootScope.$on('$viewContentLoaded', function() {
                 listener();
-
-                function showWelcome(user) {
-                    notificationService.success('Welcome back', user.firstName + ' ' + user.lastName);
-                }
             });
         }
 

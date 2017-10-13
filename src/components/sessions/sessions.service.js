@@ -7,18 +7,25 @@
     angular.module('app.sessions').
         factory('sessionsService', sessionsService);
 
-    sessionsService.$inject = ['$q', '$http', 'stationService'];
+    sessionsService.$inject = ['$q', '$http'];
 
-    function sessionsService($q, $http, stationService) {
+    function sessionsService($q, $http) {
 
         var service = {};
 
-        function isValidItem(item) {
-            return item && item.sku;
-        }
-
         service.start = function(sessionId, item) {
             var url = '/data/sessions/' + sessionId + '/start';
+            var deferred = $q.defer();
+
+            $http.post(url, item).then(function(result) {
+                deferred.resolve(result.data);
+            });
+
+            return deferred.promise;
+        };
+
+        service.deviceBroken = function(item) {
+            var url = '/data/sessions/deviceBroken';
             var deferred = $q.defer();
 
             $http.post(url, item).then(function(result) {
@@ -52,7 +59,7 @@
                     'message': message,
                     'details': details
                 }).
-                then(function(result) {
+                then(function() {
                     deferred.resolve();
                 });
 

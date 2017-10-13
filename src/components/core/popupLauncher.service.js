@@ -7,7 +7,7 @@
 
     popupLauncher.$inject = ['$uibModal'];
 
-    function popupLauncher($uibModal, $uibModalInstance) {
+    function popupLauncher($uibModal) {
         var service = {
             openModal: openModal,
             closeModal:closeModal

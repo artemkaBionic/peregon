@@ -5,13 +5,13 @@
         .module('app.socket')
         .factory('socketService', socketService);
 
-    socketService.$inject = ['$rootScope', 'env'];
+    socketService.$inject = ['$rootScope'];
 
-    function socketService($rootScope, env) {
+    function socketService($rootScope) {
 
         var service = {};
 
-        service.socket = io.connect('http://' + env.baseUrl);
+        service.socket = io.connect();
 
         service.emit = function(eventName, data, callback) {
             service.socket.emit(eventName, data, function() {

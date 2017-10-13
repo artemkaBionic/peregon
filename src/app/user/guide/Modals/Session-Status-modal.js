@@ -1,13 +1,21 @@
 (function() {
     'use strict';
 
-    angular
-        .module('app.user')
-        .controller('SessionStatusModalController', SessionStatusModalController);
+    angular.module('app.user').
+        controller('SessionStatusModalController',
+            SessionStatusModalController);
 
-    SessionStatusModalController.$inject = ['popupLauncher', 'data', 'config', 'stationService', 'inventoryService', 'sessionsService', '$scope', '$rootScope'];
+    SessionStatusModalController.$inject = [
+        'popupLauncher',
+        'data',
+        'config',
+        'inventoryService',
+        'sessionsService',
+        '$scope',
+        '$rootScope'];
 
-    function SessionStatusModalController(popupLauncher, data, config, stationService, inventoryService, sessionsService, $scope, $rootScope) {
+    function SessionStatusModalController(
+        popupLauncher, data, config, inventory, sessions, $scope, $rootScope) {
         /*jshint validthis: true */
         var vm = this;
         vm.searchString = '';
@@ -36,27 +44,33 @@
                 vm.serialNo = data.session.device.serial_number;
                 vm.deviceType = data.session.device.type;
             }
-            vm.authorize = function(){
-                sessionsService.getAllSessionsByParams({'device.item_number': vm.item.item_number, status:'Incomplete'}).then(function(sessions) {
+            vm.authorize = function() {
+                sessions.getAllSessionsByParams({
+                    'device.item_number': vm.item.item_number,
+                    status: 'Incomplete'
+                }).then(function(sessions) {
                     if (sessions.length > 0) {
                         vm.sessionAlreadyInProgress = true;
                     } else {
                         if (data.session.device.serial_number !== undefined) {
-                            sessionsService.updateItem({'device.serial_number': vm.serialNo}, vm.item).then(function() {
-                                $rootScope.$broadcast('updateList');
-                                vm.closeModal();
-                            });
+                            sessions.updateItem(
+                                {'device.serial_number': vm.serialNo}, vm.item).
+                                then(function() {
+                                    $rootScope.$broadcast('updateList');
+                                    vm.closeModal();
+                                });
                         } else {
-                            sessionsService.updateItem({'_id': data.session._id}, vm.item).then(function() {
+                            sessions.updateItem({'_id': data.session._id},
+                                vm.item).then(function() {
                                 $rootScope.$broadcast('updateList');
                                 vm.closeModal();
                             });
                         }
 
                     }
-                 });
+                });
             };
-            vm.wrongItemNumber = function(){
+            vm.wrongItemNumber = function() {
                 vm.searchString = '';
             };
 
@@ -71,22 +85,26 @@
                         vm.searchStringError = false;
                         vm.itemNumberError = false;
                         //vm.sessionAlreadyInProgress = false;
-                        vm.searchStringSkuWarning = config.partialSkuRegEx.test(vm.searchString);
-                        if (config.partialItemNumberRegEx.test(vm.searchString)) {
+                        vm.searchStringSkuWarning = config.partialSkuRegEx.test(
+                            vm.searchString);
+                        if (config.partialItemNumberRegEx.test(
+                                vm.searchString)) {
                             vm.lastValidSearchString = vm.searchString;
                             if (config.itemNumberRegEx.test(vm.searchString)) {
                                 vm.item = null;
-                                inventoryService.getItem(vm.searchString).then(function(item) {
-                                    vm.item = item;
-                                    if (item !== null && item.type !== vm.deviceType) {
-                                        vm.wrongDeviceType = true;
-                                    }
-                                    vm.itemNumberError = false;
-                                }, function() {
-                                    if (vm.item === null) { // If vm.item is populated then a successful call to getItem was completed before this failure was returned.
-                                        vm.itemNumberError = true;
-                                    }
-                                });
+                                inventory.getItem(vm.searchString).
+                                    then(function(item) {
+                                        vm.item = item;
+                                        if (item !== null &&
+                                            item.type !== vm.deviceType) {
+                                            vm.wrongDeviceType = true;
+                                        }
+                                        vm.itemNumberError = false;
+                                    }, function() {
+                                        if (vm.item === null) { // If vm.item is populated then a successful call to getItem was completed before this failure was returned.
+                                            vm.itemNumberError = true;
+                                        }
+                                    });
                             } else {
                                 vm.item = null;
                             }
