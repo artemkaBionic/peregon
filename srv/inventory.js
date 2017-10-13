@@ -2,6 +2,7 @@
  * Created by larry on 3/3/2016.
  */
 /*jslint node: true */
+'use strict';
 var config = require('./config');
 var assert = require('assert');
 var path = require('path');
