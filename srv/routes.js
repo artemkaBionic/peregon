@@ -168,7 +168,7 @@ module.exports = function(io, data) {
             var connectionState = event.data;
             station.setConnectionState(connectionState);
             if (connectionState.isOnline) {
-                inventory.resendSessions(event.data);
+                sessions.resend();
             }
             io.emit(event.name, event.data);
         } else if (event.name === 'device-add') {

@@ -6,7 +6,7 @@ var Db = require('tingodb')().Db,
     config = require('../config'),
     station = require('../station.js'),
     request = require('requestretry');
-var db = new Db('.', {});
+var db = new Db(config.kioskDataPath, {});
 var sessions = db.collection('sessions');
 var Promise = require('bluebird');
 Promise.config({
@@ -21,6 +21,7 @@ exports.updateItem = updateItem;
 exports.start = start;
 exports.addLogEntry = addLogEntry;
 exports.finish = finish;
+exports.resend = resend;
 
 //Periodically resend unsent sessions
 resend();
