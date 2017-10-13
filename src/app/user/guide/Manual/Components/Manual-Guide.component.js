@@ -1,18 +1,16 @@
 (function() {
     'use strict';
 
-    angular
-        .module('app.user')
-        .component('manualGuide',
-            {
-                bindings: {
-                    item: '<'
-                },
-                controller: manualGuideController,
-                controllerAs: 'vm',
-                template: '<div ng-include="vm.getTemplate()">'
-            }
-        );
+    angular.module('app.user').component('manualGuide',
+        {
+            bindings: {
+                item: '<'
+            },
+            controller: manualGuideController,
+            controllerAs: 'vm',
+            template: '<div ng-include="vm.getTemplate()">'
+        }
+    );
 
     manualGuideController.$inject = ['$timeout', '$rootScope', 'popupLauncher'];
 
@@ -20,14 +18,16 @@
         var vm = this;
         var modal;
         var modalImg;
-        vm.getTemplate = function(){
+        vm.getTemplate = function() {
             return 'app/user/guide/Manual/Components/ManualGuideTemplates/PanasonicSmartTV.html';
         };
-        function sticky(_el){
-            _el.parentElement.addEventListener('scroll', function(){
+
+        function sticky(_el) {
+            _el.parentElement.addEventListener('scroll', function() {
                 _el.style.transform = 'translateY(' + this.scrollTop + 'px)';
             });
         }
+
         vm.openModal = function(src) {
             modal = angular.element('#myModal');
             modalImg = document.getElementById('img01');
@@ -41,17 +41,22 @@
             modal.css('display', 'none');
         };
         $timeout(function() {
-            var container = angular.element(document.querySelectorAll('#instructions'));
-            var footer = angular.element(document.querySelector('.content-finish'));
-            var lastStep = angular.element(document.querySelector('#instructions > #lastStep'));
+            var container = angular.element(
+                document.querySelectorAll('#instructions'));
+            var footer = angular.element(
+                document.querySelector('.content-finish'));
+            var lastStep = angular.element(
+                document.querySelector('#instructions > #lastStep'));
             console.log(container);
-            container.on('scroll', function(){
-                if (parseInt(container[0].offsetHeight + container[0].scrollTop + 1)  >= container[0].scrollHeight) {
+            container.on('scroll', function() {
+                if (parseInt(container[0].offsetHeight +
+                        container[0].scrollTop + 1) >=
+                    container[0].scrollHeight) {
                     footer.css('display', 'none');
-                    lastStep.attr('style','background-color:#e8eaed');
+                    lastStep.attr('style', 'background-color:#e8eaed');
                 } else {
                     footer.css('display', 'block');
-                    lastStep.attr('style','background-color:white')
+                    lastStep.attr('style', 'background-color:white');
                 }
 
             });
