@@ -3725,7 +3725,7 @@ orbicular {
 }
 .banner{
   background-color: #17468F;
-  height: 50px;
+  height: 72px;
   width: 100%;
   z-index: 2000;
   margin-top:-10px;
@@ -3734,9 +3734,15 @@ orbicular {
   cursor: pointer;
   color:white;
 }
+.banner-icon{
+  font-size: 1.5em;
+}
+.banner-icon-close{
+  margin-right: 30px;
+}
 .bannerText{
-  padding-top: 15px;
-  padding-left: 15px;
+  padding-top: 25px;
+  padding-left: 30px;
   color:white;
   cursor: pointer;
 }

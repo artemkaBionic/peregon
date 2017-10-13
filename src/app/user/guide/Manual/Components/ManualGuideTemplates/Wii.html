@@ -1,0 +1,68 @@
+<form name="inspection-form" class="content-finish" novalidate>
+  <div class="inspect-mode">
+    <div class="row text-center">
+      <span style="font-size: 20px; font-weight: 400;margin-left: -3%">Is refresh successful?
+        <i ng-click="vm.openHelpModal('xxs','If after going through steps device rebooted with factory settings then refresh was successful.','')" class="fa fa-question-circle" aria-hidden="true"></i>
+        <button id="manual-footer-refresh-success" ng-click="vm.refreshSuccess()" style="border-radius: 10%" class="btn btn-success btn-sm">Yes</button>
+        <button id="manual-footer-refresh-fail" ng-click="vm.refreshFailed();" style="border-radius: 10%" class="btn btn-danger btn-sm">No</button>
+      </span>
+    </div>
+  </div>
+</form>
+<div id="instructions" class="instructions-manual">
+  <h2 class="text-center">Follow this steps to refresh Wii device:</h2>
+  <div class="instruction-list-container-lg " style="margin: 0 auto; text-align: left;">
+    <div class="instruction-list">
+      <p class="lg-line-height">
+        1. Turn on <b>Wii device</b>;
+      </p>
+      <p class="lg-line-height">
+        2. From the main menu, choose the <b >Wii OPTIONS</b> button on the lower left side of the screen;
+      </p>
+      <p class="lg-line-height">
+        3. From the options page, locate and select <b >Wii SETTINGS</b>;
+      </p>
+      <p class="lg-line-height">
+        4. There are 3 Wii system settings pages, use your remote to click the arrow on the right
+        side of the screen until you have reached the 3rd page;
+      </p>
+      <p class="lg-line-height">
+        5. On page 3 you will see 4 options. Select the bottom option <b >FORMAT Wii SYSTEM MEMORY</b>;
+      </p>
+      <p class=lg-line-height">
+        6. You will now see a series of confirmation screens asking are you sure you want to
+        proceed with the format. On these screens select <b >FORMAT</b>;
+      </p>
+      <p class="lg-line-height">
+        7. After that you see that the Wii system is formatting the memory. This will take a few
+        moments. Once the system format is complete, you will be prompted to click <b >OK</b> to shut
+        down the machine. Make sure to test a game verifying that it starts and plays properly before
+        your GM inspects it, it is priced and put back on the sales floor.
+      </p>
+    </div>
+  </div>
+  <div id="lastStep">
+    <div class="instruction-list-container-lg " style="margin: 0 auto; text-align: left;">
+      <div class="instruction-list" style="margin-bottom: 20px!important;">
+        <p class="lg-line-height">
+          8. If after going through steps device rebooted with factory settings then refresh was successful;
+        </p>
+      </div>
+    </div>
+    <div id="checkButtons" class="row text-center">
+      <h2 style="text-align: center; color:black;padding-bottom: 5px">Is refresh successful?</h2>
+      <button id="manual-refresh-success" style="margin-right: 25px;margin-top:5px" class="instruction-btn btn btn-success btn-rounded" type="submit" ng-click="vm.refreshSuccess()">
+        Refresh successful
+      </button>
+      <button id="manual-refresh-fail" style="margin-top:5px" class="instruction-btn btn btn-danger btn-rounded" type="submit" ng-click="vm.refreshFailed();">
+        Refresh failed
+      </button>
+    </div>
+    <br>
+  </div>
+
+  <!-- The Modal -->
+  <div id="myModal" class="modal-instruction absolute block" ng-click="vm.close()">
+    <img class="modal-content-guide centered" id="img01">
+  </div>
+</div>

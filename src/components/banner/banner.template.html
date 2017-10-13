@@ -1,13 +1,15 @@
 <div class="banner" ng-hide="vm.hide">
-  <!--<button >Close</button>-->
-  <div class="closeButton pull-right " ng-click="vm.close()">
-    <i class="fa fa-times fa-2x "  aria-hidden="true" ></i>
-  </div>
-  <div class="bannerText" ng-click="vm.startSurvey()">
+  <div class="bannerText" >
     <div>
-      <i class="fa fa-file-text-o" aria-hidden="true"></i> Participate in a lightning fast anonymous
-      survey to improve the station with us (under 1 minute).
+      <!--<div class="col-xs-10">-->
+
+      <!--</div>-->
+      <!---->
+      <span ng-click="vm.startSurvey()">
+        <i class="fa fa-file-text-o banner-icon" aria-hidden="true"></i>
+        Participate in a lightning fast anonymous survey to improve the station with us (under 1 minute).
+      </span>
+      <i class="pull-right fa fa-times banner-icon banner-icon-close" ng-click="vm.close()" aria-hidden="true" ></i>
     </div>
   </div>
-
 </div>

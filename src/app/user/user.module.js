@@ -74,11 +74,9 @@
             var templateUrl = 'app/user/guide/unsupported.html';
             if (item.type !== null) {
                 if (item.type === 'Manual') {
-                    //console.log(item);
-                    templateUrl = 'app/user/guide/' + item.type + '/' +
-                        item.sub_type + '.html';
+                    templateUrl = 'app/user/guide/' + item.type + '/'  + item.type + '.html';
                 } else if (item.type === 'Mac' || item.type === 'XboxOne' || item.type === 'WindowsUsb') {
-                    templateUrl = 'app/user/guide/UsbGuides/UsbGuides.html';
+                    templateUrl = 'app/user/guide/Manual/Manual.html';
                 } else {
                     templateUrl = 'app/user/guide/' + item.type + '/' +
                         item.type + '.html';
@@ -103,7 +101,7 @@
             //     controllerName = 'GuideController' + item.type;
             // }
             if (item.type === 'Mac' || item.type === 'XboxOne' || item.type === 'WindowsUsb') {
-                controllerName = 'GuideControllerUsb';
+                controllerName = 'GuideControllerManual';
             } else {
                 controllerName = 'GuideController' + item.type;
             }

@@ -1,0 +1,40 @@
+<div id="guide-no-images-sm">
+  <h2 class="text-center">Follow this steps to refresh LG Television:</h2><br>
+  <div class="instruction-list-container-lg " style="margin: 0 auto; text-align: left;">
+    <div class="instruction-list">
+      <p class="lg-line-height">
+        1. Turn on <b>LG TV</b>;
+      </p>
+      <p class="lg-line-height">
+        2. In TV menu choose <b>Options</b> then select <b>Initial settings</b>;
+      </p>
+      <p class="lg-line-height">
+        3. Click <b>Yes</b> after which TV will be restored to factory settings;
+      </p>
+    </div>
+  </div>
+  <div id="lastStepNoImage">
+    <div class="instruction-list-container-lg " style="margin: 0 auto; text-align: left;">
+      <div class="instruction-list" style="margin-bottom: 20px!important;">
+        <p class="lg-line-height">
+          4. If after going through steps device rebooted with factory settings then refresh was successful;
+        </p>
+      </div>
+    </div>
+    <div id="checkButtons" class="row text-center">
+      <h2 style="text-align: center; color:black;padding-bottom: 5px">Is refresh successful?</h2>
+      <button id="manual-refresh-success" style="margin-right: 25px;margin-top:5px" class="instruction-btn btn btn-success btn-rounded" type="submit" ng-click="vm.refreshSuccess()">
+        Refresh successful
+      </button>
+      <button id="manual-refresh-fail" style="margin-top:5px" class="instruction-btn btn btn-danger btn-rounded" type="submit" ng-click="vm.refreshFailed();">
+        Refresh failed
+      </button>
+    </div>
+    <br>
+  </div>
+
+  <!-- The Modal -->
+  <div id="myModal" class="modal-instruction absolute block" ng-click="vm.close()">
+    <img class="modal-content-guide centered" id="img01">
+  </div>
+</div>

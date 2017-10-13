@@ -5,13 +5,11 @@
         .module('app.user')
         .controller('GuideControllerManual', GuideControllerManual);
 
-    GuideControllerManual.$inject = ['item', '$state', 'popupLauncher'];
+    GuideControllerManual.$inject = ['item', '$state', 'popupLauncher','$scope'];
 
-    function GuideControllerManual(item, $state, popupLauncher) {
+    function GuideControllerManual(item, $state, popupLauncher, $scope) {
         /*jshint validthis: true */
         var vm = this;
-        var modal;
-        var modalImg;
         vm.item = item;
         vm.showInstruction = true;
         vm.refreshEnd = function() {
@@ -74,6 +72,12 @@
         vm.deviceBad = function() {
             vm.substep = vm.substeps.deviceBroken;
         };
+        $scope.$on('refreshSuccess',function(){
+            vm.refreshSuccess();
+        });
+        $scope.$on('refreshFailed',function(){
+            vm.refreshFailed();
+        });
         vm.refreshSuccess = function() {
             vm.step = vm.steps.refresh;
             vm.substep = vm.substeps.refreshSuccess;
@@ -88,52 +92,6 @@
         };
         vm.refreshEnd = function() {
             $state.go('root.user');
-        };
-        function sticky(_el){
-            _el.parentElement.addEventListener('scroll', function(){
-                _el.style.transform = 'translateY(' + this.scrollTop + 'px)';
-            });
-        }
-        vm.openModal = function(src) {
-            modal = angular.element('#myModal');
-            modalImg = document.getElementById('img01');
-            modal.css('display', 'block');
-            modalImg.src = src;
-            var el = document.querySelector('#instructions > #myModal');
-            sticky(el);
-        };
-        vm.close = function() {
-            modal = angular.element('#myModal');
-            modal.css('display', 'none');
-        };
-        var container = angular.element(document.querySelector('#instructions'));
-        var footer = angular.element(document.querySelector('.content-finish'));
-        var lastStep = angular.element(document.querySelector('#instructions > #lastStep'));
-        container.on('scroll', function(){
-            if (parseInt(container[0].offsetHeight + container[0].scrollTop + 1)  >= container[0].scrollHeight) {
-                console.log('here1');
-                footer.css('display', 'none');
-                lastStep.attr('style','background-color:#e8eaed');
-            } else {
-                footer.css('display', 'block');
-                lastStep.attr('style','background-color:white')
-            }
-
-        });
-
-        vm.openHelpModal = function(modalSize, text, image) {
-            vm.test = {
-                text: text,
-                image: image
-            };
-            popupLauncher.openModal({
-                templateUrl: 'app/user/guide/Manual/Modals/Manual-modal.html',
-                controller: 'ManualModalController',
-                bindToController: true,
-                controllerAs: 'vm',
-                resolve: {Data: vm.test},
-                size: modalSize
-            });
         };
     }
 })();
