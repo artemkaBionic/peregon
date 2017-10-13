@@ -25,10 +25,12 @@ function deviceBridge(io) {
             io.emit('android-add', {});
         });
         tracker.on('change', function(device) {
-            winston.log('info', 'Device type:' + device.type + ' for device:' + device.id);
+            winston.log('info', 'Device type:' + device.type + ' for device:' +
+                device.id);
             if (device.type === 'device') {
                 io.emit('installation-started', {});
-                winston.log('info', 'Device ' + device.id + ' is ready to install app.');
+                winston.log('info', 'Device ' + device.id +
+                    ' is ready to install app.');
                 installApp(device.id);
             }
         });
@@ -41,7 +43,9 @@ function deviceBridge(io) {
                     finishSession(session._id, {complete: false});
                 }).
                 catch(function(err) {
-                    winston.log('error', 'Something went wrong while disconnecting device' + device.id + 'Error:' + err);
+                    winston.log(
+                        'error', 'Something went wrong while disconnecting device' +
+                        device.id + 'Error:' + err);
                 });
             if (index > -1) {
                 devices.splice(index, 1);
@@ -50,7 +54,8 @@ function deviceBridge(io) {
 
         });
     }).catch(function(err) {
-        winston.log('error', 'Something went wrong while connecting device:', err.stack);
+        winston.log('error', 'Something went wrong while connecting device:',
+            err.stack);
     });
     //check for expired sessions every 10 minutes
     setInterval(function() {
@@ -73,7 +78,8 @@ function deviceBridge(io) {
                     var expireDate = new Date(plusOneHour);
                     var currentDate = new Date();
                     if (currentDate > expireDate) {
-                        winston.log('info', 'Session with key:' + sessionId + ' is expired');
+                        winston.log('info', 'Session with key:' + sessionId +
+                            ' is expired');
                         io.emit('android-session-expired', {
                             'sessionId': sessions[i],
                             'device': sessions[i].device.serial_number
@@ -85,7 +91,7 @@ function deviceBridge(io) {
                     }
                 }
             }).catch(function(err) {
-                winston.log('error', err);
+            winston.log('error', err);
         });
     }
 
@@ -104,29 +110,9 @@ function deviceBridge(io) {
         });
     }
 
-    function startSession(sessionId, item, tmp) {
-        winston.log('info', 'Starting session ' + sessionId);
-        return new Promise(function(resolve) {
-            inventory.sessionStart(sessionId, item, tmp, function(session) {
-                resolve(session);
-            });
-        });
-    }
-
-    function updateSession(sessionId, level, message, details) {
-        winston.log('info', 'Updating session ' + sessionId);
-        return new Promise(function(resolve) {
-            inventory.sessionUpdate(sessionId, level, message, details,
-                function(session) {
-                    resolve(session);
-                });
-        });
-
-    }
-
     function finishSession(sessionId, details) {
         winston.log('info', 'Finishing session with ID: ' + sessionId);
-        inventory.sessionFinish(sessionId, details, function(session) {
+        sessions.finish(sessionId, details).then(function(session) {
             winston.log('info', 'Session is finished ' + session._id);
             session.tmp.currentStep = 'finish' + session.status;
             io.emit('android-reset', session);
@@ -136,7 +122,9 @@ function deviceBridge(io) {
     function installApp(serial) {
         client.uninstall(serial,
             'com.basechord.aarons.androidrefresh').then(function() {
-            winston.log('info', 'Uninstalled previous version of app successfully for device: ' + serial);
+            winston.log(
+                'info', 'Uninstalled previous version of app successfully for device: ' +
+                serial);
             client.install(serial, apk).then(function() {
                 winston.log('info', 'App is installed for device ' + serial);
                 io.emit('app-installed', {device: serial});
@@ -144,16 +132,19 @@ function deviceBridge(io) {
                 clearLogcat(serial).then(function(serialNo) {
                     checkDeviceProgress(serialNo);
                 }).catch(function(err) {
-                    winston.log('error', 'Something went wrong while clearing logcat for device: ' +
+                    winston.log(
+                        'error', 'Something went wrong while clearing logcat for device: ' +
                         serial + ' Error:' + err.stack);
                 });
             }).catch(function(err) {
-                winston.log('error', 'Something went wrong while installing the app on device: ' +
+                winston.log(
+                    'error', 'Something went wrong while installing the app on device: ' +
                     serial + ' Error:' + err.stack);
             });
         }).catch(function(err) {
-            winston.log('error', 'Something went wrong while uninstalling the app on device: ' +
-            serial + ' Error:' + err.stack);
+            winston.log(
+                'error', 'Something went wrong while uninstalling the app on device: ' +
+                serial + ' Error:' + err.stack);
         });
 
     }
@@ -177,11 +168,13 @@ function deviceBridge(io) {
             'am start -n com.basechord.aarons.androidrefresh/com.basechord.aarons.androidrefresh.app.MainActivity -a android.intent.action.MAIN -c android.intent.category.LAUNCHER').
             then(adb.util.readAll).
             then(function(output) {
-                winston.log('info', '[%s] %s', serial, output.toString().trim());
+                winston.log('info', '[%s] %s', serial,
+                    output.toString().trim());
                 readLogcat(serial);
             }).
             catch(function(err) {
-                winston.log('error', 'Something went wrong while launching the app on device: ' +
+                winston.log(
+                    'error', 'Something went wrong while launching the app on device: ' +
                     serial + ' Error:' + err.stack);
             });
     }
@@ -237,31 +230,39 @@ function deviceBridge(io) {
                         serial_number: imei
                     };
 
-                    startSession(sessionDate, unknownItem, tmp).then(function(session) {
-                        getSerialLookup(imei).then(function(res) {
-                            session.device = inventory.changeDeviceFormat(res.item);
-                            sessions.updateSession(session);
-                            io.emit('app-start', session);
-                        }).catch(function(err) {
-                            winston.log('error', 'Failed to get serial number because of: ' + err);
-                            io.emit('app-start', session);
+                    sessions.start(sessionDate, unknownItem, tmp).
+                        then(function(session) {
+                            getSerialLookup(imei).then(function(res) {
+                                session.device = inventory.changeDeviceFormat(
+                                    res.item);
+                                sessions.updateSession(session);
+                                io.emit('app-start', session);
+                            }).catch(function(err) {
+                                winston.log(
+                                    'error', 'Failed to get serial number because of: ' +
+                                    err);
+                                io.emit('app-start', session);
+                            });
+                        }).
+                        catch(function(err) {
+                            winston.log('error', err);
                         });
-                    }).catch(function(err) {
-                        winston.log('error', err);
-                    });
                 }
 
                 // check if wipe started indexOf !== -1 means 'includes'
                 else if (data.indexOf('WipeStarted') !== -1) {
                     if (failedTests.length > 0) {
-                        updateSession(sessionDate, 'Info', 'Android test fail',
-                            {'failedTests': failedTests}).then(function(){
+                        sessions.addLogEntry(sessionDate, 'Info',
+                            'Android test fail',
+                            {'failedTests': failedTests}).then(function() {
                             finishSession(sessionDate, {complete: false});
                         });
                     } else {
-                        updateSession(sessionDate, 'Info', 'Android refresh app has initiated a factory reset.').then(function(){
-                            finishSession(sessionDate, {complete: true});
-                        });
+                        sessions.addLogEntry(sessionDate, 'Info',
+                            'Android refresh app has initiated a factory reset.').
+                            then(function() {
+                                finishSession(sessionDate, {complete: true});
+                            });
                     }
                 }
 
@@ -285,11 +286,16 @@ function deviceBridge(io) {
                         session.tmp.passedAuto = passedAutoTests;
                         session.tmp.passedManual = passedManualTests;
                         session.failedTests = failedTests;
-                        session.tmp.currentStep = isAutoTest && passedAutoTests < session.tmp.numberOfAuto ? 'autoTesting' : 'manualTesting';
+                        session.tmp.currentStep = isAutoTest &&
+                        passedAutoTests < session.tmp.numberOfAuto
+                            ? 'autoTesting'
+                            : 'manualTesting';
                         sessions.updateSession(session);
                         io.emit('android-test', session);
                     }).catch(function(err) {
-                        winston.log('error', 'Something went wrong while getting data for device ' + serial + ' Error:' + err);
+                        winston.log(
+                            'error', 'Something went wrong while getting data for device ' +
+                            serial + ' Error:' + err);
                     });
                 }
             }

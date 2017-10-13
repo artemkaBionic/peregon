@@ -1,19 +1,19 @@
+// Express Router
 /*jslint node: true */
 'use strict';
-var express = require('express');
-var fs = require('fs');
-var path = require('path');
-var config = require('./config');
-var inventory = require('./inventory.js');
-var station = require('./station.js');
-var controller = require('./usbonly/controller');
-var simultaneous = require('./simultaneous/simultaneous');
-var usbDrives = require('./usbonly/usbCache');
-var sessions = require('./session_storage/sessions');
-var winston = require('winston');
-var station = require('./station');
-module.exports = function(io, data) {
-// Express Router
+module.exports = function(io) {
+    var express = require('express');
+    var fs = require('fs');
+    var path = require('path');
+    var config = require('./config.js');
+    var inventory = require('./inventory.js');
+    var station = require('./station.js');
+    var controller = require('./usbonly/controller.js')(io);
+    var simultaneous = require('./simultaneous/simultaneous.js');
+    var usbDrives = require('./usbonly/usbCache.js');
+    var sessions = require('./session_storage/sessions.js')(io);
+    var winston = require('winston');
+
     var router = express.Router();
 
     var isDevelopment = process.env.NODE_ENV === 'development';
@@ -61,7 +61,8 @@ module.exports = function(io, data) {
         });
     });
     router.post('/data/sessions/:id/addLogEntry', function(req, res) {
-        sessions.addLogEntry(req.params.id, req.body.level, req.body.message, req.body.details).then(function() {
+        sessions.addLogEntry(req.params.id, req.body.level, req.body.message,
+            req.body.details).then(function() {
             res.json();
         });
     });

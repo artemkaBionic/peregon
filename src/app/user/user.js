@@ -373,16 +373,15 @@
                 });
             });
         });
+        socket.on('session-started', function(session) {
+            getSessions().then(function() {
+                vm.viewSessions();
+            });
+        });
         socket.on('session-complete', function(session){
             getSessions().then(function() {
                 if (session !== null) {
                     toastr.info('Refresh finished', {
-                        'tapToDismiss': true,
-                        'timeOut': 3000,
-                        'closeButton': true
-                    });
-                } else {
-                    toastr.error('Something went wrong while reading sessions', {
                         'tapToDismiss': true,
                         'timeOut': 3000,
                         'closeButton': true

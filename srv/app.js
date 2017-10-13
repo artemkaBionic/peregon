@@ -1,7 +1,7 @@
 /*jslint node: true */
 'use strict';
 var express = require('express');
-var socket_io = require("socket.io");
+var socket_io = require('socket.io');
 var path = require('path');
 var fs = require('fs');
 var rimraf = require('rimraf');
@@ -12,7 +12,6 @@ var bodyParser = require('body-parser');
 var childProcess = require('child_process');
 var config = require('./config');
 var station = require('./station.js');
-//var controller = require('./usbonly')
 var simultaneous = require('./simultaneous/simultaneous');
 // Express
 var app = express();
@@ -24,12 +23,13 @@ simultaneous.deviceBridge(io);
 // Common data
 var isDevelopment = process.env.NODE_ENV === 'development';
 
-var routes = require('./routes')(io);
+var routes = require('./routes.js')(io);
 var winston = require('winston');
 // Create data directory
 fs.mkdir(config.kioskDataPath, function(err) {
     if (err && err.code !== 'EEXIST') {
-        winston.log('error', 'Failed to create directory ' + config.kioskDataPath, err);
+        winston.log('error', 'Failed to create directory ' +
+            config.kioskDataPath, err);
     }
 });
 
@@ -85,30 +85,49 @@ io.on('connection', function(socket) {
         if (isDevelopment) {
             winston.log('info', 'A client requested to apply media to device.');
             winston.log('info', data);
-            winston.log('info', 'Simulating applying a device in a development environment by waiting 3 seconds.');
+            winston.log('info',
+                'Simulating applying a device in a development environment by waiting 3 seconds.');
             setTimeout(function() {
-                io.emit('device-apply-progress', {progress: 100, device: data.device});
+                io.emit('device-apply-progress',
+                    {progress: 100, device: data.device});
             }, 3000);
         } else {
             if (typeof data.media === 'undefined' || data.media === null) {
-                winston.log('error', 'A client requested to apply an undefined media package.');
-                io.emit('device-apply-failed', {message: 'Media package is missing.', device: data.device});
-            } else {
-                winston.log('info', 'A client requested to apply "' + data.media.name + '" to the ' + data.device.type + ' device ' + data.device.id);
-                var mediaPackagePath = path.join(config.mediaPackagePath, data.media.id);
-                var mediaPackageFile = path.join(mediaPackagePath, '.package.json');
-                fs.readFile(mediaPackageFile, 'utf8', function(err, packageFileData) {
-                    var mediaPackage = JSON.parse(packageFileData);
-                    var fileSystem = 'fat32';
-                    if (mediaPackage.subtype === "xbox-one") {
-                        fileSystem = 'ntfs';
-                    }
-
-                    var python = childProcess.spawn('python', ['/opt/kiosk/apply_media.py', '--package', data.media.id, '--device', data.device.id, '--file-system', fileSystem]);
-                    python.on('close', function(code) {
-                        io.emit('device-apply-progress', {progress: 100, device: data.device});
-                    });
+                winston.log('error',
+                    'A client requested to apply an undefined media package.');
+                io.emit('device-apply-failed', {
+                    message: 'Media package is missing.',
+                    device: data.device
                 });
+            } else {
+                winston.log('info', 'A client requested to apply "' +
+                    data.media.name + '" to the ' + data.device.type +
+                    ' device ' + data.device.id);
+                var mediaPackagePath = path.join(config.mediaPackagePath,
+                    data.media.id);
+                var mediaPackageFile = path.join(mediaPackagePath,
+                    '.package.json');
+                fs.readFile(mediaPackageFile, 'utf8',
+                    function(err, packageFileData) {
+                        var mediaPackage = JSON.parse(packageFileData);
+                        var fileSystem = 'fat32';
+                        if (mediaPackage.subtype === 'xbox-one') {
+                            fileSystem = 'ntfs';
+                        }
+
+                        var python = childProcess.spawn('python', [
+                            '/opt/kiosk/apply_media.py',
+                            '--package',
+                            data.media.id,
+                            '--device',
+                            data.device.id,
+                            '--file-system',
+                            fileSystem]);
+                        python.on('close', function(code) {
+                            io.emit('device-apply-progress',
+                                {progress: 100, device: data.device});
+                        });
+                    });
             }
         }
     });
@@ -118,13 +137,14 @@ io.on('connection', function(socket) {
 if (isDevelopment) {
     //Simulate on online state for development purposes
     station.setConnectionState({
-        "isOnline": true,
-        "name": "C0204-FW",
-        "description": "Meraki MX64 Cloud Managed Router",
-        "port": "4"
+        'isOnline': true,
+        'name': 'C0204-FW',
+        'description': 'Meraki MX64 Cloud Managed Router',
+        'port': '4'
     });
 } else {
-    childProcess.spawn('python', ['/opt/connection-status/connection-status.py']);
+    childProcess.spawn('python',
+        ['/opt/connection-status/connection-status.py']);
 }
 
 module.exports = app;
