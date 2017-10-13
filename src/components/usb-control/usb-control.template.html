@@ -25,8 +25,8 @@
       </ng-pluralize></span>
     </div>
     <div class="boot-instruction-row">
-      <span style="color:grey" ng-hide="vm.showSmallUsbError">Now you can create your Bootable <ng-pluralize count="vm.usbDrives.usbData.notReadyDevices" when="{'one': 'USB drive', 'other': 'USB drives'}"></ng-pluralize><br>
-        <strong>Warning!</strong> This will wipe all information you have on <ng-pluralize count="vm.usbDrives.usbData.notReadyDevices" when="{'one': 'USB drive', 'other': 'USB drives'}"></ng-pluralize>.
+      <span style="color:grey" ng-hide="vm.showSmallUsbError">Now you can create your Bootable <ng-pluralize count="vm.usbDrives.usbData.notReadyDevices" when="{'one': ' USB drive', 'other': ' USB drives'}"></ng-pluralize><br>
+        <strong>Warning!</strong> This will wipe all information you have on <ng-pluralize count="vm.usbDrives.usbData.notReadyDevices" when="{'one': ' USB drive', 'other': ' USB drives'}"></ng-pluralize>.
       </span>
       <span style="color:grey;" ng-show="vm.showSmallUsbError">
         You've inserted USB drive which is smaller then 32GB. Make sure you are inserting 32GB USB drive.
@@ -35,7 +35,7 @@
     </div>
     <div class="boot-instruction-row">
       <button id="create-bootable-drive" class="btn btn-success btn-rounded" ng-click="vm.createBootDrives()" ng-disabled="vm.showSmallUsbError">
-        Create Bootable <ng-pluralize count="vm.usbDrives.usbData.notReadyDevices" when="{'one': 'USB drive', 'other': 'USB drives'}"></ng-pluralize>
+        Create Bootable <ng-pluralize count="vm.usbDrives.usbData.notReadyDevices" when="{'one': ' USB drive', 'other': ' USB drives'}"></ng-pluralize>
       </button>
       <!--<button class="btn btn-danger btn-rounded" ng-click="vm.cancelBootDrive()">Cancel</button>-->
     </div>
