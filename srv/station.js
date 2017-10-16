@@ -11,6 +11,7 @@ var connectionState = null;
 var service_tag = null;
 var name = null;
 var winston = require('winston');
+
 exports.getServiceTag = function(callback) {
     if (service_tag === null) {
         if (isDevelopment) {
@@ -99,12 +100,19 @@ exports.getUsbDrive = function(id, callback) {
         });
 };
 
-exports.setConnectionState = function(state) {
-    connectionState = state;
-};
-
-exports.getConnectionState = function() {
-    return connectionState;
+exports.getConnectionState = function(callback) {
+    if (connectionState === null) {
+        fs.readfile(config.connectionStateFile, function(err, data) {
+            if (err) {
+                winston.error('Error reading connections state: ' + err);
+            } else {
+                connectionState = JSON.parse(data);
+            }
+            callback(connectionState);
+        });
+    } else {
+        callback(connectionState);
+    }
 };
 
 exports.getIsServiceCenter = function(callback) {
