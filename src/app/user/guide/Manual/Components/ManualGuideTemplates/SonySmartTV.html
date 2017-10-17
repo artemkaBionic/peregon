@@ -10,48 +10,52 @@
   </div>
 </form>
 <div id="instructions" class="instructions-manual">
-  <h2 style="text-align: center; color:black;padding-bottom: 15px">Follow this steps to refresh Canon Camera:</h2>
+  <h2 style="text-align: center; color:black;padding-bottom: 15px">Follow this steps to refresh Sony Smart TV:</h2>
   <div class="instruction-list-container-lg " style="margin: 0 auto; text-align: left;font-size:12px">
     <div class="instruction-list">
-      <p>1. Set the power switch to <b>ON</b>.
+      <p>1. Plug out TV power cord from electrical outlet for a minute;</p>
+      <p>2. Plug in TV power cord to electrical outlet. TV will automatically turn on;</p>
       <div class="row">
         <div class="col-xs-7">
-          <p>2. Press the <b>MENU</b> button to display the menu screen;</p>
+          <p>3. Press and hold <b><i class="fa fa-arrow-up" aria-hidden="true"></i> button</b> on remote control;</p>
         </div>
         <div class="col-xs-5 text-center">
-          <div  style="margin-top: 10px">
-            <img class="instruction-img" style="cursor: default" src="/assets/images/canon1.gif">
+          <div class="instruction-img-border" style="margin-top: 10px" >
+            <img class="instruction-img" ng-click="vm.openModal('/assets/images/sony1.png')" src="/assets/images/sony1.png">
           </div>
         </div>
       </div>
       <div class="row">
         <div class="col-xs-7">
-          <p>3. Under the
-            <img src="/assets/images/canon-btn.gif">
-            tab, select <b>Clear all camera settings</b>, then press <b>SET</b>;</p>
+          <p>4. While holding <b><i class="fa fa-arrow-up" aria-hidden="true"></i> button</b> on remote, tab the
+            <b>Power button</b> on side of the TV;</p>
         </div>
         <div class="col-xs-5 text-center">
-          <div style="margin-top: 10px" >
-            <img class="instruction-img" style="cursor: default; border-radius: 5px" src="/assets/images/canon2.gif">
+          <div class="instruction-img-border" style="margin-top: 10px" >
+            <img class="instruction-img" ng-click="vm.openModal('/assets/images/sony2.png')" src="/assets/images/sony2.png">
           </div>
         </div>
       </div>
       <div class="row">
         <div class="col-xs-7">
-          <p>4. Select <b>OK</b>, then press <b>SET</b>.</p>
+          <p>5. Wait until <b>'Reset'</b> message is displayed on the bottom left side of the screen;</p>
         </div>
         <div class="col-xs-5 text-center">
-          <div style="margin-top: 10px" >
-            <img class="instruction-img" style="cursor: default; border-radius: 5px" src="/assets/images/canon3.gif">
+          <div class="instruction-img-border" style="margin-top: 10px" >
+            <img class="instruction-img" ng-click="vm.openModal('/assets/images/sony3.png')" src="/assets/images/sony3.png">
           </div>
         </div>
       </div>
+      <p>6. Release <b><i class="fa fa-arrow-up" aria-hidden="true"></i> button</b> on remote control and
+        wait for TV to complete the reset;</p>
+    </div>
+  </div>
   <br>
   <div id="lastStep">
     <div class="instruction-list-container-lg " style="margin: 0 auto; text-align: left;">
       <div class="instruction-list" style="margin-bottom: 20px!important;">
         <p class="lg-line-height">
-          5. If after going through steps device rebooted with factory settings then refresh was successful.
+          7. If after going through steps device rebooted with factory settings then refresh was successful.
         </p>
       </div>
     </div>
@@ -67,5 +71,9 @@
       </button>
     </div>
     <br>
+  </div>
+  <!-- The Modal -->
+  <div id="myModal" class="modal-instruction absolute block" ng-click="vm.close()">
+    <img class="modal-content-guide centered" id="img01">
   </div>
 </div>
