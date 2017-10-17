@@ -14,16 +14,17 @@ var config = require('./config');
 var station = require('./station.js');
 // Express
 var app = express();
-var winston = require('./log');
 // Socket.io
 var io = socket_io();
 app.io = io;
 // Common data
 var isDevelopment = process.env.NODE_ENV === 'development';
 
+require('./log');
+var winston = require('winston');
+
 var routes = require('./routes.js')(io);
 require('./simultaneous/simultaneous.js')(io);
-var winston = require('winston');
 // Create data directory
 fs.mkdir(config.kioskDataPath, function(err) {
     if (err && err.code !== 'EEXIST') {
@@ -130,20 +131,11 @@ io.on('connection', function(socket) {
             }
         }
     });
-});
-
-//Initialize station connection status
-if (isDevelopment) {
-    //Simulate on online state for development purposes
-    station.setConnectionState({
-        'isOnline': true,
-        'name': 'C0204-FW',
-        'description': 'Meraki MX64 Cloud Managed Router',
-        'port': '4'
+    station.getConnectionState(function(connectionState) {
+        if (connectionState) {
+            socket.emit('connection-status', connectionState);
+        }
     });
-} else {
-    childProcess.spawn('python',
-        ['/opt/connection-status/connection-status.py']);
-}
+});
 
 module.exports = app;

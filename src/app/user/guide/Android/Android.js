@@ -12,16 +12,15 @@
         '$timeout',
         'inventoryService',
         'sessionsService',
-        'item',
-        'env'];
+        'socketService',
+        'item'];
 
     function GuideControllerAndroid($scope, $state, popupLauncher, toastr,
-                                    $timeout, inventoryService, sessionsService, item, env) {
+                                    $timeout, inventory, sessions, socket, item) {
 
         /*jshint validthis: true */
         var vm = this;
         var timeouts = [];
-        var socket = io.connect('http://' + env.baseUrl);
         vm.item = item;
         vm.step = null;
         /*=================Checking for Android Refresh process finished to lock the device===============*/
@@ -51,7 +50,7 @@
             vm.sessionId = null;
             vm.step = vm.steps.startOne; //!!! Definition for first Guide Step
 
-            sessionsService.getSessionByParams({
+            sessions.getSessionByParams({
                 'device.item_number': vm.item.item_number,
                 'status': 'Incomplete'
             }).then(function(session) {
@@ -62,7 +61,7 @@
 
         function unlockDevice() {
             if (vm.item) {
-                inventoryService.unlock(vm.item.serial_number, false).
+                inventory.unlock(vm.item.serial_number, false).
                     then(function(data) {
                         if (!data.error) {
                             vm.deviceLockService = data.result.service;
@@ -77,10 +76,11 @@
 
         function lockDevice() {
             if (vm.item) {
-                inventoryService.lock(vm.item.serial_number);
+                inventory.lock(vm.item.serial_number);
             }
         }
-        vm.openFeedbackModal = function(){
+
+        vm.openFeedbackModal = function() {
             popupLauncher.openModal({
                 templateUrl: 'app/user/guide/Modals/Station-Feedback-modal.html',
                 controller: 'SessionFeedbackController',
@@ -138,6 +138,7 @@
                 title: 'Session Expired'
             }
         };
+
         /*================= End Modal Tips Steps definition===============*/
         function updateSession(session) {
             console.log(session);
@@ -145,28 +146,34 @@
                     (vm.sessionId === null && session.status === 'Incomplete' &&
                         session.device.item_number ===
                         vm.item.item_number))) {
-                    $scope.$evalAsync(function(){
-                        if (vm.sessionId === null) {
-                            vm.sessionId = session._id;
-                        }
-                        if (vm.steps[session.tmp.currentStep] !== undefined) {
-                            vm.step = vm.steps[session.tmp.currentStep];
-                        }
-                        vm.failedTests = session.failedTests;
-                        vm.autoSize = session.tmp.numberOfAuto;
-                        vm.autoPassed = session.tmp.passedAuto;
-                        vm.manualSize = session.tmp.numberOfManual;
-                        vm.manualPassed = session.tmp.passedManual;
-                    });
+                $scope.$evalAsync(function() {
+                    if (vm.sessionId === null) {
+                        vm.sessionId = session._id;
+                    }
+                    if (vm.steps[session.tmp.currentStep] !== undefined) {
+                        vm.step = vm.steps[session.tmp.currentStep];
+                    }
+                    vm.failedTests = session.failedTests;
+                    vm.autoSize = session.tmp.numberOfAuto;
+                    vm.autoPassed = session.tmp.passedAuto;
+                    vm.manualSize = session.tmp.numberOfManual;
+                    vm.manualPassed = session.tmp.passedManual;
+                });
             }
         }
+
         /*=================Guide Steps functions===============*/
         vm.deviceGood = function() {
             vm.step = vm.steps.preparationOne;
         };
         vm.deviceBad = function() {
+            vm.androidFinished = true;
             vm.Broken = true;
-            vm.finish();
+            if (vm.sessionId === null) {
+                vm.sessionId = new Date().toISOString();
+            }
+            sessions.deviceBroken(item);
+            vm.finishFail();
         };
         vm.sessionExpired = function() {
             lockDevice();
@@ -183,20 +190,7 @@
 
         vm.finish = function() {
             vm.androidFinished = true;
-            if (vm.Broken) {
-                if (vm.sessionId === null) {
-                    vm.sessionId = new Date().toISOString();
-                }
-                sessionsService.start(vm.sessionId, item).
-                    then(function(session){
-                        sessionsService.addLogEntry(session._id, 'Info',
-                            'Device is broken').then(function() {
-                            sessionsService.finish(session._id, {'complete': false});
-                        });
-                    }
-                );
-                vm.finishFail();
-            } else if (vm.TestsFault || vm.AndroidDisconnected) {
+            if (vm.TestsFault || vm.AndroidDisconnected) {
                 vm.finishFail();
             } else {
                 vm.finishSuccess();
@@ -211,9 +205,11 @@
         vm.goHome = function() {
             $state.go('root.user');
         };
-        function enableYesButton(){
+
+        function enableYesButton() {
             vm.step = vm.steps.enableYesButton;
         }
+
         socket.on('android-add', function() {
             vm.AndroidDisconnected = false;
             toastr.clear(vm.AndroidNotification);
@@ -230,7 +226,7 @@
                 enableYesButton();
             }
         });
-        socket.on('installation-started',function(){
+        socket.on('installation-started', function() {
             vm.step = vm.steps.waitForAppStart;
         });
         socket.on('android-remove', function() {

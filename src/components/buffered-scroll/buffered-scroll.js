@@ -4,7 +4,7 @@
         .directive('bufferedScroll',['$parse', function($parse) {
              return function($scope, element, attrs) {
                  var handler = $parse(attrs.bufferedScroll);
-                 element.scroll(function(evt) {
+                 element.scroll(function() {
                      var scrollTop    = element[0].scrollTop,
                          scrollHeight = element[0].scrollHeight,
                          offsetHeight = element[0].offsetHeight;

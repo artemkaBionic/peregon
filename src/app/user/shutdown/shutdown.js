@@ -5,9 +5,9 @@
         .module('app.user')
         .controller('ShutDownController', ShutDownController);
 
-    ShutDownController.$inject = ['stationService', 'eventService', 'connectionState', '$uibModalInstance', 'eventDispatcher', '$uibModal', '$timeout'];
+    ShutDownController.$inject = ['stationService', '$uibModalInstance', '$timeout'];
 
-    function ShutDownController(stationService, eventService, connectionState, $uibModalInstance, eventDispatcher, $uibModal, $timeout) {
+    function ShutDownController(station, $uibModalInstance, $timeout) {
         /*jshint validthis: true */
         var vm = this;
         vm.close = close;
@@ -22,12 +22,12 @@
 
         function reboot() {
             vm.rebooting = true;
-            $timeout(stationService.reboot, 3000);
+            $timeout(station.reboot, 3000);
         }
 
         function shutdown() {
             vm.turningOff = true;
-           $timeout(stationService.shutdown, 3000);
+           $timeout(station.shutdown, 3000);
         }
     }
 })();

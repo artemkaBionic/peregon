@@ -15,9 +15,9 @@
             CalledFromHome: true
         };
         if ($stateParams.manufacturer === 'hp') {
-            vm.title = 'HP laptops refresh instructions';
+            vm.title = 'HP laptop refresh instructions';
         } else if ($stateParams.manufacturer === 'dell') {
-            vm.title = 'Dell laptops refresh instructions';
+            vm.title = 'Dell laptop refresh instructions';
         } else if ($stateParams.type === 'XboxOne') {
             vm.title = 'X-Box One refresh instructions';
         } else {

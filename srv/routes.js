@@ -60,6 +60,11 @@ module.exports = function(io) {
             res.json(result);
         });
     });
+    router.post('/data/sessions/deviceBroken', function(req, res) {
+        sessions.deviceBroken(req.body).then(function(result) {
+            res.json(result);
+        });
+    });
     router.post('/data/sessions/:id/addLogEntry', function(req, res) {
         sessions.addLogEntry(req.params.id, req.body.level, req.body.message,
             req.body.details).then(function() {

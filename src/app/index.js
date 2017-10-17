@@ -11,7 +11,6 @@
         'app.socket',
         'app.station',
         'app.device',
-        'app.event',
         'app.inventory',
         'app.sessions',
         'app.user',

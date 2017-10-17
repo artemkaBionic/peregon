@@ -1,14 +1,19 @@
 (function() {
     'use strict';
 
-    angular
-        .module('app.user')
-        .controller('GuideControllerUsb', GuideControllerUsb);
+    angular.module('app.user').
+        controller('GuideControllerUsb', GuideControllerUsb);
 
-    GuideControllerUsb.$inject = ['$http', '$scope', 'item', 'sessionsService', '$state', 'env', 'popupLauncher'];
+    GuideControllerUsb.$inject = [
+        '$scope',
+        'item',
+        'sessionsService',
+        '$state',
+        'socketService',
+        'popupLauncher'];
 
-    function GuideControllerUsb($http, $scope, item, sessionsService, $state, env, popupLauncher) {
-        var socket = io.connect('http://' + env.baseUrl);
+    function GuideControllerUsb(
+        $scope, item, sessions, $state, socket, popupLauncher) {
         /*jshint validthis: true */
         var vm = this;
         vm.item = item;
@@ -65,7 +70,7 @@
         vm.finishSuccess = function() {
             vm.step = vm.steps.complete;
         };
-        vm.openFeedbackModal = function(){
+        vm.openFeedbackModal = function() {
             popupLauncher.openModal({
                 templateUrl: 'app/user/guide/Modals/Station-Feedback-modal.html',
                 controller: 'SessionFeedbackController',
@@ -75,6 +80,7 @@
             });
         };
         checkSession();
+
         function isEmptyObject(obj) {
             for (var prop in obj) {
                 if (obj.hasOwnProperty(prop)) {
@@ -83,18 +89,20 @@
             }
             return true;
         }
-        function checkSession(){
-            sessionsService.getSessionByParams({
+
+        function checkSession() {
+            sessions.getSessionByParams({
                 'device.item_number': vm.item.item_number,
                 'status': 'Incomplete'
             }).then(function(session) {
-                if (session){
+                if (session) {
                     updateSession(session);
                 } else {
                     checkCondition();
                 }
             });
         }
+
         function updateSession(session) {
             vm.session = session;
             if (session.status === 'Success') {
@@ -111,41 +119,48 @@
                 vm.step = vm.steps.failed;
             }
         }
+
         vm.startSession = function() {
             vm.sessionId = new Date().toISOString();
-            sessionsService.start(vm.sessionId, item).then(function(session){
+            sessions.start(vm.sessionId, item).then(function(session) {
                 vm.session = session;
-               // checkUsbStatus();
+                // checkUsbStatus();
                 vm.step = vm.steps.usbControl;
             });
         };
         vm.deviceBad = function() {
             vm.sessionId = new Date().toISOString();
-            sessionsService.start(vm.sessionId, item).then(function(session){
-                    sessionsService.addLogEntry(session._id, 'Info',
+            sessions.start(vm.sessionId, item).then(function(session) {
+                    sessions.addLogEntry(session._id, 'Info',
                         'Device is broken').then(function() {
-                        sessionsService.finish(session._id, {'complete': false}).then(function(){
-                            vm.step = vm.steps.broken;
-                        });
+                        sessions.finish(session._id, {'complete': false}).
+                            then(function() {
+                                vm.step = vm.steps.broken;
+                            });
                     });
                 }
             );
         };
+
         function checkCondition() {
             vm.step = vm.steps.checkCondition;
         }
-        $scope.$on('bootDevicesReady', function(){
+
+        $scope.$on('bootDevicesReady', function() {
             refreshDevicesStart();
         });
-        function refreshDevicesStart(){
+
+        function refreshDevicesStart() {
             vm.step = vm.steps.refreshDevice;
             vm.session.tmp.currentStep = 'refreshStarted';
-            sessionsService.addLogEntry(vm.session._id,'Info','Refresh Started','');
+            sessions.addLogEntry(vm.session._id, 'Info', 'Refresh Started', '');
         }
+
         function refreshDevicesStarted() {
             vm.step = vm.steps.refreshDevice;
         }
-        socket.on('session-complete', function(session){
+
+        socket.on('session-complete', function(session) {
             if (session._id === vm.session._id) {
                 updateSession(session);
             }

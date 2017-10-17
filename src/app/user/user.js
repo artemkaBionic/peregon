@@ -10,19 +10,18 @@
         'stationService',
         'inventoryService',
         'sessionsService',
-        'env',
+        'socketService',
         '$scope',
         'toastr',
-        '$http',
         'popupLauncher'];
 
     function UserController(
-        $q, $state, config, stationService, inventoryService, sessionsService, env, $scope,
-        toastr, $http, popupLauncher) {
+        $q, $state, config, station, inventory, sessions,
+        socket, $scope,
+        toastr, popupLauncher) {
         /*jshint validthis: true */
         var vm = this;
         vm.ready = false;
-        var socket = io.connect('http://' + env.baseUrl);
         vm.searchString = '';
         vm.lastValidSearchString = '';
         vm.item = null;
@@ -51,28 +50,46 @@
         vm.step = vm.steps.sessions;
         getSessions();
         displayBanner();
+
         function getSessions() {
             var deferred = $q.defer();
-            sessionsService.getAllSessionsByParams({}).then(function(sessions) {
-                vm.sessions =  sessions;
+            sessions.getAllSessionsByParams({}).then(function(sessions) {
+                vm.sessions = sessions;
                 deferred.resolve(sessions);
             });
             return deferred.promise;
         }
+
+        function updateSession(session) {
+            var sessionsArrayLength = vm.sessions.length;
+            var updated = false;
+            for (var i = 0; i < sessionsArrayLength; i++) {
+                if (vm.sessions[i]._id === session._id) {
+                    vm.sessions[i] = session;
+                    updated = true;
+                }
+            }
+            if (!updated) {
+                vm.sessions.push(session);
+            }
+        }
+
         vm.viewSessions = function() {
-            document.getElementById('sessions').style.borderBottom = '3px solid black';
+            document.getElementById(
+                'sessions').style.borderBottom = '3px solid black';
             document.getElementById('bootDevices').style.borderBottom = 'unset';
             vm.step = vm.steps.sessions;
         };
         vm.viewBootDevices = function() {
-            document.getElementById('bootDevices').style.borderBottom = '3px solid black';
+            document.getElementById(
+                'bootDevices').style.borderBottom = '3px solid black';
             document.getElementById('sessions').style.borderBottom = 'unset';
             vm.step = vm.steps.bootDevices;
         };
         vm.viewSessions();
-        $scope.$on('$stateChangeSuccess', function() {
-            getSessions();
-        });
+        // $scope.$on('$stateChangeSuccess', function() {
+        //     getSessions();
+        // });
         $scope.$watch('vm.textToFilter', function(newTextToFilter) {
             $scope.$watch('vm.sessionType', function(newDropdown, oldDropdown) {
                 var dropDownChoice = newDropdown ? newDropdown : oldDropdown;
@@ -85,15 +102,15 @@
                 }
             });
         });
-        $scope.$on('updateList', function() {
-            setTimeout(function() {
-                getSessions();
-            }, 500);
-        });
+        // $scope.$on('updateList', function() {
+        //     setTimeout(function() {
+        //         getSessions();
+        //     }, 500);
+        // });
         $scope.$on('showModal', function() {
             vm.openSurveyModal();
         });
-        $scope.$on('showFeedbackButton', function(){
+        $scope.$on('showFeedbackButton', function() {
             vm.showBanner = false;
         });
         // used for infinite scroll
@@ -109,7 +126,8 @@
             }
         };
         // this used make header of sessions table fixed on top is scroll
-        var container = angular.element(document.querySelector('.content-full-height-scroll'));
+        var container = angular.element(
+            document.querySelector('.content-full-height-scroll'));
         container.on('scroll', function() {
             var divAnchor = document.querySelector('#Header-anchor');
             var divHeader = angular.element(document.getElementById('Header'));
@@ -169,7 +187,7 @@
                     vm.lastValidSearchString = vm.searchString;
                     if (config.itemNumberRegEx.test(vm.searchString)) {
                         vm.item = null;
-                        inventoryService.getItem(vm.searchString).
+                        inventory.getItem(vm.searchString).
                             then(function(item) {
                                 vm.item = item;
                                 vm.itemNumberError = false;
@@ -220,8 +238,8 @@
         // show modal for successful/failed sessions + enter item number for unrecognized devices
         vm.showGuideForCards = function(session) {
             if (session.device.item_number) {
-                sessionsService.getSessionByParams({'_id':session._id})
-                    .then(function(res) {
+                sessions.getSessionByParams({'_id': session._id}).
+                    then(function(res) {
                         if (res._id && session.status === 'Incomplete') {
                             var $stateParams = {};
                             $stateParams.itemNumber = session.device.item_number;
@@ -230,45 +248,54 @@
                             vm.searchString = '';
                             $state.go('root.user.guide', $stateParams);
                         } else if (session.status === 'Fail') {
-                            if (session.failedTests && session.failedTests.length > 0) {
+                            if (session.failedTests &&
+                                session.failedTests.length > 0) {
                                 vm.failedTests = session.failedTests;
                                 if (vm.failedTests.length <= 4) {
-                                    openHelpModal('xxs',vm.failedTests);
+                                    openHelpModal('xxs', vm.failedTests);
                                 } else {
-                                    openHelpModal('sm-to-xs',vm.failedTests);
+                                    openHelpModal('sm-to-xs', vm.failedTests);
                                 }
                             } else {
                                 if (session.logs.length > 0) {
                                     var isBroken = false;
                                     var sessionExpired = false;
-                                    for (var i = 0; i < session.logs.length; i++) {
-                                        if (session.logs[i].message === 'Device is broken') {
+                                    for (var i = 0; i <
+                                    session.logs.length; i++) {
+                                        if (session.logs[i].message ===
+                                            'Device is broken') {
                                             isBroken = true;
-                                        } else if (session.logs[i].message === 'Session expired') {
+                                        } else if (session.logs[i].message ===
+                                            'Session expired') {
                                             sessionExpired = true;
                                         }
                                     }
                                     if (isBroken) {
-                                        openHelpModal('xxs', 'Session failed because device is broken.');
+                                        openHelpModal('xxs',
+                                            'Session failed because device is broken.');
                                     } else if (sessionExpired) {
-                                        openHelpModal('xxs', 'Refresh is not successfull because session expired.');
+                                        openHelpModal('xxs',
+                                            'Refresh is not successfull because session expired.');
                                     }
                                 } else {
-                                    openHelpModal('xxs', 'Session failed because device was unplugged.');
+                                    openHelpModal('xxs',
+                                        'Session failed because device was unplugged.');
                                 }
                             }
                         } else {
-                            openHelpModal('xxs','Device refreshed successfully.');
+                            openHelpModal('xxs',
+                                'Device refreshed successfully.');
                         }
                     });
             } else {
-                sessionsService.getSessionByParams({'_id':session._id})
-                    .then(function(res) {
-                        openHelpModal('sm-to-xs', 'Unrecognized Device', res._id, session);
+                sessions.getSessionByParams({'_id': session._id}).
+                    then(function(res) {
+                        openHelpModal('sm-to-xs', 'Unrecognized Device',
+                            res._id, session);
                     });
             }
         };
-        vm.openFeedbackModal = function(){
+        vm.openFeedbackModal = function() {
             popupLauncher.openModal({
                 templateUrl: 'app/user/guide/Modals/Station-Feedback-modal.html',
                 controller: 'SessionFeedbackController',
@@ -277,7 +304,7 @@
                 size: 'sm-to-lg'
             });
         };
-        vm.openSurveyModal = function(){
+        vm.openSurveyModal = function() {
             popupLauncher.openModal({
                 templateUrl: 'app/user/guide/Modals/Station-Survey-modal.html',
                 controller: 'SessionSurveyController',
@@ -286,6 +313,7 @@
                 size: 'sm-to-lg'
             });
         };
+
         function openHelpModal(modalSize, data, sessionId, session) {
             if (typeof(data) === 'string') {
                 vm.data = {
@@ -307,10 +335,11 @@
                 size: modalSize
             });
         }
+
         // jscs: enable
         vm.unlockForService = function() {
             if (vm.item) {
-                inventoryService.unlock(vm.item.serial_number, true).
+                inventory.unlock(vm.item.serial_number, true).
                     then(function(data) {
                         if (data.error) {
                             toastr.error(
@@ -337,9 +366,10 @@
         //=========== Start Working on catching the Android Connect before ItemNumber entered==========
         //=========== End Working on catching the Android Connect before ItemNumber entered==========
         activate();
+
         function activate() {
             var queries = [
-                stationService.isServiceCenter().
+                station.isServiceCenter().
                     then(function(isServiceCenter) {
                         vm.isServiceCenter = isServiceCenter;
                     })];
@@ -347,6 +377,7 @@
                 vm.ready = true;
             });
         }
+
         socket.on('device-add', function() {
             toastr.info('New USB drive was inserted into station', {
                 'tapToDismiss': true,
@@ -364,33 +395,30 @@
             vm.viewBootDevices();
         });
         socket.on('app-start', function(session) {
-            getSessions().then(function() {
-                toastr.info('Refresh started for device:' +
-                    session.device.serial_number, {
+            updateSession(session);
+            toastr.info('Refresh started for device:' +
+                session.device.serial_number, {
+                'tapToDismiss': true,
+                'timeOut': 3000,
+                'closeButton': true
+            });
+        });
+        socket.on('session-started', function(session) {
+            updateSession(session);
+            vm.viewSessions();
+        });
+        socket.on('session-complete', function(session) {
+            updateSession(session);
+            if (session !== null) {
+                toastr.info('Refresh finished', {
                     'tapToDismiss': true,
                     'timeOut': 3000,
                     'closeButton': true
                 });
-            });
+            }
+            vm.viewSessions();
         });
-        socket.on('session-started', function(session) {
-            getSessions().then(function() {
-                vm.viewSessions();
-            });
-        });
-        socket.on('session-complete', function(session){
-            getSessions().then(function() {
-                if (session !== null) {
-                    toastr.info('Refresh finished', {
-                        'tapToDismiss': true,
-                        'timeOut': 3000,
-                        'closeButton': true
-                    });
-                }
-                vm.viewSessions();
-            });
-        });
-        socket.on('session-error', function(){
+        socket.on('session-error', function() {
             toastr.error('Something went wrong while reading sessions', {
                 'tapToDismiss': true,
                 'timeOut': 3000,
@@ -414,34 +442,34 @@
         });
         socket.on('android-session-expired', function(data) {
             if ($state.current.name === 'root.user') {
-                getSessions().then(function() {
-                    toastr.warning('Session expired for device:' + data.device,
-                        {
-                            'tapToDismiss': true,
-                            'timeOut': 3000,
-                            'closeButton': true
-                        });
-                });
+                toastr.warning('Session expired for device:' + data.device,
+                    {
+                        'tapToDismiss': true,
+                        'timeOut': 3000,
+                        'closeButton': true
+                    });
             }
         });
-        socket.on('android-reset', function(session) {
-            getSessions().then(function() {
-                toastr.info('Refresh finished for device:' +
-                    session.device.serial_number, {
-                    'tapToDismiss': true,
-                    'timeOut': 3000,
-                    'closeButton': true
-                });
-            });
-        });
-        socket.on('android-remove', function() {
-            if ($state.current.name === 'root.user') {
-                getSessions();
-            }
-        });
-        function displayBanner(){
+        // socket.on('android-reset', function(session) {
+        //     getSessions().then(function() {
+        //         toastr.info('Refresh finished for device:' +
+        //             session.device.serial_number, {
+        //             'tapToDismiss': true,
+        //             'timeOut': 3000,
+        //             'closeButton': true
+        //         });
+        //     });
+        // });
+        // socket.on('android-remove', function() {
+        //     if ($state.current.name === 'root.user') {
+        //         getSessions();
+        //     }
+        // });
+
+        function displayBanner() {
             //604800000 - 7 days
-            vm.lastSurveyTime = new Date(localStorage.getItem('surveyPassedDate'));
+            vm.lastSurveyTime = new Date(
+                localStorage.getItem('surveyPassedDate'));
             vm.currentDate = new Date();
             if ((vm.currentDate - vm.lastSurveyTime) > 604800000) {
                 vm.showBanner = true;

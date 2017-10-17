@@ -9,7 +9,7 @@
         '$stateParams',
         'socketService'];
 
-    function MediaPackageController($scope, $stateParams, socketService) {
+    function MediaPackageController($scope, $stateParams, socket) {
         /*jshint validthis: true */
         var vm = this;
         vm.ready = false;
@@ -23,7 +23,7 @@
             $scope.started = true;
             $scope.progress = 0;
 
-            socketService.once('device-apply-progress', function(data) {
+            socket.once('device-apply-progress', function(data) {
                 $scope.progress = data.progress;
                 if ($scope.progress >= 100) {
                     $scope.finished = true;
@@ -33,7 +33,7 @@
             var data = {};
             data.device = $scope.device;
             data.media = $scope.mediaPackage;
-            socketService.emit('device-apply', data);
+            socket.emit('device-apply', data);
         };
     }
 })();

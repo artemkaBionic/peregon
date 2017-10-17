@@ -2,8 +2,7 @@
     'use strict';
 
     var module = angular.module('app.user', ['ui.router', 'ui.bootstrap']);
-    var config = module.config(appConfig);
-    config.run(onStateChange);
+    module.config(appConfig);
 
     appConfig.$inject = ['$stateProvider', '$filterProvider'];
 
@@ -56,8 +55,8 @@
 
         getItem.$inject = ['$stateParams', 'inventoryService'];
 
-        function getItem($stateParams, inventoryService) {
-            return inventoryService.getItem($stateParams.itemNumber).
+        function getItem($stateParams, inventory) {
+            return inventory.getItem($stateParams.itemNumber).
                 then(function(item) {
                     if (item) {
                         return item;
@@ -76,7 +75,8 @@
                 if (item.type === 'Manual') {
                     //console.log(item);
                     templateUrl = 'app/user/guide/' + item.type + '/'  + item.type + '.html';
-                } else if (item.type === 'Mac' || item.type === 'XboxOne' || item.type === 'WindowsUsb') {
+                } else if (item.type === 'Mac' || item.type === 'XboxOne' ||
+                    item.type === 'WindowsUsb') {
                     templateUrl = 'app/user/guide/UsbGuides/UsbGuides.html';
                 } else {
                     templateUrl = 'app/user/guide/' + item.type + '/' +
@@ -101,7 +101,8 @@
             // if (item.type !== null) {
             //     controllerName = 'GuideController' + item.type;
             // }
-            if (item.type === 'Mac' || item.type === 'XboxOne' || item.type === 'WindowsUsb') {
+            if (item.type === 'Mac' || item.type === 'XboxOne' ||
+                item.type === 'WindowsUsb') {
                 controllerName = 'GuideControllerUsb';
             } else {
                 controllerName = 'GuideController' + item.type;
@@ -153,12 +154,10 @@
 
                 var timeString = '';
                 if (days !== 0) {
-                    timeString += (days !== 1) ? (days + ' days ') : (days +
-                        ' day ');
+                    timeString += (days !== 1) ? (days + ' days ') : (days + ' day ');
                 }
                 if (hours !== 0) {
-                    timeString += (hours !== 1) ? (hours + ' hours ') : (hours +
-                        ' hour ');
+                    timeString += (hours !== 1) ? (hours + ' hours ') : (hours + ' hour ');
                 }
                 if (minutes !== 0) {
                     timeString += (minutes !== 1) ? (minutes + ' minutes ') : (minutes + ' minute ');
@@ -170,16 +169,5 @@
                 return timeString;
             };
         });
-    }
-
-    onStateChange.$inject = ['$rootScope', 'eventService'];
-
-    function onStateChange($rootScope, eventService) {
-        $rootScope.$on('$stateChangeStart', function(e, toState) {
-            if (toState.name === 'root.user') {
-                eventService.EnableDeviceNotification();
-            }
-        });
-
     }
 })();

@@ -26,6 +26,6 @@
         vm.startSurvey = function(){
             $rootScope.$broadcast('showModal');
             vm.close();
-        }
+        };
     }
 })();

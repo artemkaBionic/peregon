@@ -5,9 +5,9 @@
         .module('app.user')
         .controller('MediaController', MediaController);
 
-    MediaController.$inject = ['$stateParams', '$q', '$location', 'deviceService', 'packageService', 'eventService', 'socketService'];
+    MediaController.$inject = ['$stateParams', '$q', '$location', 'deviceService', 'packageService', 'socketService'];
 
-    function MediaController($stateParams, $q, $location, deviceService, packageService, eventService, socketService) {
+    function MediaController($stateParams, $q, $location, deviceService, packageService, socket) {
         /*jshint validthis: true */
         var vm = this;
         vm.selectedDevice = null;
@@ -69,12 +69,10 @@
 
         function waitForUsbAdd(minSize, callback) {
             if (vm.selectedDevice === null) {
-                eventService.DisableDeviceNotification();
-                socketService.once('event', function(event) {
+                socket.once('event', function(event) {
                     if (event.name === 'device-add') {
                         if (event.data.size >= minSize) {
                             vm.selectedDevice = event.data;
-                            eventService.EnableDeviceNotification();
                             callback();
                         } else {
                             waitForUsbAdd(minSize, callback);
@@ -87,7 +85,7 @@
         }
 
         function waitForUsbRemove(callback) {
-            socketService.once('event', function(event) {
+            socket.once('event', function(event) {
                 if (event.name === 'device-remove' && event.data.id === vm.selectedDevice.id) {
                     vm.selectedDevice = null;
                     callback();
@@ -110,7 +108,7 @@
         function applyMediaApply() {
             vm.step = vm.steps.applyMediaInProgress;
 
-            socketService.once('device-apply-progress', function(data) {
+            socket.once('device-apply-progress', function(data) {
                 if (data.progress >= 100) {
                     applyMediaComplete();
                 }
@@ -119,7 +117,7 @@
             var data = {};
             data.device = vm.selectedDevice;
             data.media = vm.selectedMediaPackage;
-            socketService.emit('device-apply', data);
+            socket.emit('device-apply', data);
         }
 
         function applyMediaComplete() {

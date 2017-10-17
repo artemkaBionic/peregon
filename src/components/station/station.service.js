@@ -1,9 +1,7 @@
 (function() {
     'use strict';
 
-    angular
-        .module('app.station')
-        .factory('stationService', stationService);
+    angular.module('app.station').factory('stationService', stationService);
 
     stationService.$inject = ['$q', '$http'];
 
