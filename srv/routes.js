@@ -161,7 +161,9 @@ module.exports = function(io) {
         });
     });
     router.get('/data/getConnectionState', function(req, res) {
-        res.json(station.getConnectionState());
+        station.getConnectionState(function(connectionState) {
+            res.json(connectionState);
+        });
     });
     router.post('/event/:name', function(req, res) {
         var event = {};
@@ -172,7 +174,6 @@ module.exports = function(io) {
 
         if (event.name === 'connection-status') {
             var connectionState = event.data;
-            station.setConnectionState(connectionState);
             if (connectionState.isOnline) {
                 sessions.resend();
             }
