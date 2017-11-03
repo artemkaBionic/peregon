@@ -72,15 +72,12 @@
         function guideTemplate($templateCache, $http, item) {
             var templateUrl = 'app/user/guide/unsupported.html';
             if (item.type !== null) {
-                if (item.type === 'Manual') {
-                    //console.log(item);
-                    templateUrl = 'app/user/guide/' + item.type + '/'  + item.type + '.html';
-                } else if (item.type === 'Mac' || item.type === 'XboxOne' ||
-                    item.type === 'WindowsUsb') {
+                if (item.type === 'Mac' || item.type === 'XboxOne' || item.type === 'WindowsUsb') {
                     templateUrl = 'app/user/guide/UsbGuides/UsbGuides.html';
+                } else if (item.type === 'Android' || item.type === 'Windows') {
+                    templateUrl = 'app/user/guide/' + item.type + '/' + item.type + '.html';
                 } else {
-                    templateUrl = 'app/user/guide/' + item.type + '/' +
-                        item.type + '.html';
+                    templateUrl = 'app/user/guide/Manual/Manual.html';
                 }
             }
             var templateContent = $templateCache.get(templateUrl);
@@ -101,11 +98,14 @@
             // if (item.type !== null) {
             //     controllerName = 'GuideController' + item.type;
             // }
-            if (item.type === 'Mac' || item.type === 'XboxOne' ||
-                item.type === 'WindowsUsb') {
-                controllerName = 'GuideControllerUsb';
-            } else {
-                controllerName = 'GuideController' + item.type;
+            if (item.type !== null) {
+                if (item.type === 'Mac' || item.type === 'XboxOne' || item.type === 'WindowsUsb') {
+                    controllerName = 'GuideControllerUsb';
+                } else if (item.type === 'Android' || item.type === 'Windows') {
+                    controllerName = 'GuideController' + item.type;
+                } else {
+                    controllerName = 'GuideControllerManual';
+                }
             }
             return controllerName;
         }

@@ -102,11 +102,15 @@ exports.getUsbDrive = function(id, callback) {
 
 exports.getConnectionState = function(callback) {
     if (connectionState === null) {
-        fs.readfile(config.connectionStateFile, function(err, data) {
+        fs.readFile(config.connectionStateFile, 'utf8', function(err, data) {
             if (err) {
                 winston.error('Error reading connections state: ' + err);
             } else {
-                connectionState = JSON.parse(data);
+                try {
+                    connectionState = JSON.parse(data);
+                } catch (e) {
+                    winston.error('Error parsong contents of state file: ' + e);
+                }
             }
             callback(connectionState);
         });
@@ -122,10 +126,10 @@ exports.getIsServiceCenter = function(callback) {
         callback(true);
     } else {
         fs.stat('/srv/packages/ServiceCenter.mode', function(err, stat) {
-            if (err == null) {
+            if (err === null) {
                 winston.log('info', 'isServiceCenter = true');
                 callback(true);
-            } else if (err.code == 'ENOENT') {
+            } else if (err.code === 'ENOENT') {
                 winston.log('info', 'isServiceCenter = false');
                 callback(false);
             } else {
@@ -149,11 +153,11 @@ exports.getPackage = function(sku, callback) {
         callback(pkg);
     } else {
         fs.stat('/srv/packages/' + sku + '/.complete', function(err, stat) {
-            if (err == null) {
+            if (err === null) {
                 winston.log('info', 'Package for sku ' + sku +
                     ' is downloaded.');
                 pkg.isDownloaded = true;
-            } else if (err.code == 'ENOENT') {
+            } else if (err.code === 'ENOENT') {
                 winston.log('info', 'Package for sku ' + sku +
                     ' is NOT downloaded.');
                 pkg.isDownloaded = false;

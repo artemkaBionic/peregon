@@ -21,7 +21,7 @@
         var modal;
         var modalImg;
         vm.getTemplate = function(){
-            return 'app/user/guide/Manual/Components/ManualGuideTemplates/' + vm.item.sub_type + '.html';
+            return 'app/user/guide/Manual/Components/ManualGuideTemplates/' + vm.item.type + '.html';
         };
         function sticky(_el){
             _el.parentElement.addEventListener('scroll', function(){
