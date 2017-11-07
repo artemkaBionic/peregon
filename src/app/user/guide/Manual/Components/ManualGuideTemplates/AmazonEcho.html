@@ -1,0 +1,52 @@
+    <form name="inspection-form" class="content-finish" novalidate>
+      <div class="inspect-mode">
+        <div class="row text-center">
+          <span style="font-size: 20px; font-weight: 400;margin-left: -3%" data-toggle="tooltip">Is refresh successful?
+            <i ng-click="vm.openHelpModal('xxs','If after going through steps device rebooted with factory settings then refresh was successful.','')" class="fa fa-question-circle" aria-hidden="true"></i>
+            <button id="manual-footer-refresh-success" ng-click="vm.refreshSuccess()" style="border-radius: 10%" class="btn btn-success btn-sm">Yes</button>
+            <button id="manual-footer-refresh-fail" ng-click="vm.refreshFailed();" style="border-radius: 10%" class="btn btn-danger btn-sm">No</button>
+          </span>
+        </div>
+      </div>
+    </form>
+    <div id="instructions" class="instructions-manual">
+      <h2 style="text-align: center; color:black;padding-bottom: 15px">Follow these steps to refresh Amazon Echo:</h2>
+      <div class="instruction-list-container-lg " style="margin: 0 auto; text-align: left;font-size:12px">
+        <div class="instruction-list">
+          <div class="row">
+            <div class="col-xs-7">
+              <p>1. Use a paper clip (or similar tool) to press and hold the Reset button at the base of your device.</p>
+            </div>
+            <div class="col-xs-5 text-center">
+              <div class="instruction-img-border" style="margin-top: 10px">
+                <img class="instruction-img" ng-click="vm.openModal('/assets/images/amazonEchoStep1.jpg')" src="/assets/images/amazonEchoStep1.jpg">
+              </div>
+            </div>
+          </div>
+          <p>2. When the light ring on your Echo device turns orange and then blue, release the Reset button.</p>
+      </div>
+      <br>
+      <div id="lastStep">
+        <div class="instruction-list-container-lg " style="margin: 0 auto; text-align: left;">
+          <div class="instruction-list" style="margin-bottom: 20px!important;">
+            <p class="lg-line-height">
+              3. If after going through steps the light ring turns orange, then refresh was successful.
+            </p>
+          </div>
+        </div>
+        <div id="checkButtons" class="row text-center">
+          <h2 style="text-align: center; color:black;padding-bottom: 5px">Is refresh successful?</h2>
+          <button id="manual-refresh-success" style="margin-right: 25px;margin-top:5px" class="instruction-btn btn btn-success btn-rounded" type="submit" ng-click="vm.refreshSuccess()">
+            Refresh successful
+          </button>
+          <button id="manual-refresh-fail" style="margin-top:5px" class="instruction-btn btn btn-danger btn-rounded" type="submit" ng-click="vm.refreshFailed();">
+            Refresh failed
+          </button>
+        </div>
+        <br>
+      </div>
+      <!-- The Modal -->
+      <div id="myModal" class="modal-instruction absolute block" ng-click="vm.close()">
+        <img class="modal-content-guide centered" id="img01">
+      </div>
+    </div>
