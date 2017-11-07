@@ -179,30 +179,12 @@ module.exports = function(io) {
             }
             io.emit(event.name, event.data);
         } else if (event.name === 'device-add') {
-            usbDrives.set(event.data.id, {
-                id: event.data.id,
-                size: event.data.size,
-                status: 'not_ready',
-                progress: 0
-            });
-            controller.isRefreshUsb(event.data.id,
-                function(err, isInitialized) {
-                    if (err) {
-                        winston.log('error', err);
-                    } else {
-                        if (isInitialized) {
-                            controller.prepareUsb(io);
-                        } else {
-                            io.emit(event.name, event.data);
-                        }
-                    }
-                });
+            controller.addUsb(event.data);
+            io.emit(event.name, event.data);
         } else if (event.name === 'device-remove') {
-            usbDrives.delete(event.data.id);
-            controller.clearItemFiles().then(function() {
+            controller.removeUsb(event.data, function() {
                 io.emit(event.name, event.data);
             });
-            io.emit(event.name, event.data);
         }
         else if (event.name === 'usb-complete') {
             usbDrives.finishProgress(event.data.id);

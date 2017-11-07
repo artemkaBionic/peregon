@@ -10,8 +10,8 @@ module.exports = function(io) {
     var versions = require('./versions');
     var fs = require('fs');
     var StringDecoder = require('string_decoder').StringDecoder;
-    var usbDrive = require('./usbCache');
     var decoder = new StringDecoder('utf8');
+    var usbDrive = require('./usbCache');
     var winston = require('winston');
     // The Windows package contains an unused image file (install.wim) and inefficient driver collections.
     // We need to remove and replace these large files.
