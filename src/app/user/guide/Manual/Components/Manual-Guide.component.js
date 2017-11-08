@@ -51,7 +51,7 @@
                     lastStep.attr('style','background-color:#e8eaed');
                 } else {
                     footer.css('display', 'block');
-                    lastStep.attr('style','background-color:white')
+                    lastStep.attr('style','background-color:white');
                 }
 
             });

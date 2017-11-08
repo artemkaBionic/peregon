@@ -92,8 +92,8 @@
             });
         }
 
-        function usbProgress(data) {
-            vm.percentageComplete = data.progress;
+        function usbProgress(progress) {
+            vm.percentageComplete = progress;
         }
 
         function prepareRefreshUsbStart() {
@@ -115,8 +115,8 @@
 
         function showBootDeviceProgress() {
             vm.step = vm.steps.bootDevicesProcessing;
-            inventory.getLowestUsbInProgress().then(function(usbDrive) {
-                usbProgress(usbDrive);
+            inventory.getLowestUsbInProgress().then(function(minProgress) {
+                usbProgress(minProgress);
             });
         }
 
@@ -145,8 +145,8 @@
         socket.on('device-remove', function() {
             checkUsbStatus();
         });
-        socket.on('usb-progress', function() {
-            checkUsbStatus();
+        socket.on('usb-progress', function(progress) {
+            usbProgress(progress);
         });
         socket.on('usb-complete', function() {
             checkUsbStatus();

@@ -107,12 +107,12 @@ UsbCache.prototype.getLowestUsbInProgress = function() {
             var min = usbDrivesInProgress.reduce(function(prev, current) {
                 return (prev.progress < current.progress) ? prev : current;
             });//returns object with min progress;
+            return min;
         } else {
-            return {message: 'No ubs drives in progress'};
+            return null;
         }
-        return min;
     }
-    return {message: 'No usb drives were added to refresh station'};
+    return null;
 };
 
 function isEmptyObject(obj) {

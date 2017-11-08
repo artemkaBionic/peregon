@@ -23,7 +23,8 @@ module.exports = function(io) {
     function updateProgress(value, device) {
         winston.info('Progress for device: ' + device + ' is: ' + value + '%');
         usbDrive.updateProgress(value, device);
-        io.emit('usb-progress', {progress: value, device: device});
+        var minProgress = usbDrive.getLowestUsbInProgress();
+        io.emit('usb-progress', minProgress);
     }
 
     function copyFiles(
@@ -77,7 +78,7 @@ module.exports = function(io) {
 
         var ddCommand = 'dd bs=4M if=' + config.macContent +
             ' | pv --numeric --size ' + macImageSize + ' | dd bs=4M of=/dev/' +
-            device + config.usbMacPartition;
+            device + config.usbMacPartition + ' && sync';
         winston.info('Running command "' + ddCommand + '"');
         var dd = spawn('script', ['-c', ddCommand]);
 

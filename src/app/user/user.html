@@ -2,7 +2,9 @@
   <div class="content-full-height-scroll" buffered-scroll="vm.increaseLimit();">
     <header style="display:unset!important" class="front-general" user-header></header>
     <banner-controller ng-show="vm.showBanner"></banner-controller>
-    <button ng-hide="vm.showBanner" class="pull-right feedback-button" ng-click="vm.openFeedbackModal()"><i class="fa fa-comment-o" aria-hidden="true"></i> Leave feedback</button>
+    <button ng-hide="vm.showBanner" class="pull-right feedback-button" ng-click="vm.openFeedbackModal()"><i
+      class="fa fa-comment-o" aria-hidden="true"></i> Leave feedback
+    </button>
     <div id="Header-anchor"></div>
     <form ng-submit="vm.showGuide()" style="height: 165px">
       <!--<button ng-click="vm.openFeedbackModal()">Feed</button>-->
@@ -71,12 +73,12 @@
               <div class="boot-instruction-row">
                 <a style="font-weight: bold;" ui-sref="root.usbGuides({type: 'WindowsUsb', manufacturer: 'dell'})"> <i
                   class="fa fa-windows" aria-hidden="true"></i> Dell laptop instructions <i class="fa fa-chevron-right"
-                                                                                             aria-hidden="true"></i></a>
+                                                                                            aria-hidden="true"></i></a>
               </div>
               <div style="margin-top: 3px">
                 <a style="font-weight: bold;" ui-sref="root.usbGuides({type: 'WindowsUsb',manufacturer: 'hp'})"><i
                   class="fa fa-windows" aria-hidden="true"></i> HP laptop instructions <i class="fa fa-chevron-right"
-                                                                                           aria-hidden="true"></i></a>
+                                                                                          aria-hidden="true"></i></a>
               </div>
               <div style="margin-top: 3px">
                 <a style="font-weight: bold;"
@@ -94,7 +96,7 @@
             <div class="col-xs-1">
             </div>
             <div class="col-xs-6 text-center">
-             <usb-control></usb-control>
+              <usb-control></usb-control>
             </div>
           </div>
         </div>

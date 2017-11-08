@@ -316,12 +316,12 @@ module.exports = function(io) {
         return new Promise(function(resolve, reject) {
             partitions.mountPartitions(device, function(err) {
                 if (err) {
-                    partitions.unmountPartitions(device, function(err) {
+                    partitions.unmountPartitions(device, function() {
                         reject(err);
                     });
                 } else {
                     content.clearStatus(device);
-                    partitions.unmountPartitions(device, null);
+                    partitions.unmountPartitions(device);
                     resolve();
                 }
             });

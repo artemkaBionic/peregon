@@ -59,16 +59,17 @@ function checkPartitioning(device, callback) {
 }
 
 function unmountPartitions(device, callback) {
+    callback = callback || function() {}; //callback is optional
     winston.info('Unmounting USB device ' + device);
-    shell.exec('sync && umount /mnt/' + device + '?', {silent: true},
+    shell.exec('sync && umount /dev/' + device + '?', {silent: true},
         function(code, stdout, stderr) {
-            shell.rm('-rf', '/mnt/' + device + '?');
             if (code !== 0) {
                 winston.log('error', 'Unmounting failed because of err code:' +
                     code);
                 callback(new Error(stderr));
             } else {
                 winston.info('Unmounted device:' + device + ' successfully');
+                shell.rm('-rf', '/mnt/' + device + '?');
                 callback(null);
             }
         });

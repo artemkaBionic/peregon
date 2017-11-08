@@ -32,7 +32,6 @@ exports.getAllUsbDrives = getAllUsbDrives;
 exports.getLowestUsbInProgress = getLowestUsbInProgress;
 exports.changeDeviceFormat = changeDeviceFormat;
 
-
 // Reverse lookup to Azure in case if not found in our Mongo DB
 function getItemFromAzure(id, callback) {
     winston.log('info', 'Getting item from azure with Item Id: ' + id);
@@ -75,7 +74,8 @@ function getItem(id, callback) {
             winston.log('info', response.body);
             var data = JSON.parse(response.body);
             if (data.message) {
-                winston.log('info', 'Calling item lookup from Azure with Id: ' + id);
+                winston.log('info', 'Calling item lookup from Azure with Id: ' +
+                    id);
                 getItemFromAzure(id, callback);
             } else {
                 callback({error: null, item: changeDeviceFormat(data)});
@@ -104,6 +104,7 @@ function getSerialLookup(imei, callback) {
         }
     });
 }
+
 function getAllUsbDrives() {
     return usbDrives.getAllUsbDrives();
 }
