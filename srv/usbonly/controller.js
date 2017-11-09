@@ -46,20 +46,24 @@ module.exports = function(io) {
         }
     });
 
-    function addUsb(device) {
-        usbDrives.set(device.id, {
+    function addUsb(device, callback) {
+        callback = callback || function() {}; //callback is optional
+        var usbData = {
             'id': device.id,
             'size': device.size,
             'status': 'not_ready',
             'progress': 0
-        });
+        };
+        usbDrives.set(usbData.id, usbData);
         isRefreshUsb(device.id,
             function(err, isInitialized) {
                 if (err) {
                     winston.log('error', err);
                 } else {
                     if (isInitialized) {
-                        prepareUsb(io);
+                        prepareUsb(callback);
+                    } else {
+                        callback();
                     }
                 }
             });
@@ -70,7 +74,8 @@ module.exports = function(io) {
         clearItemFiles().then(callback);
     }
 
-    function prepareUsb() {
+    function prepareUsb(callback) {
+        callback = callback || function() {}; //callback is optional
         winston.info('Prepearing usb');
         var devices = usbDrives.getAllUsbDrives();
         for (var key in devices) {
@@ -86,6 +91,7 @@ module.exports = function(io) {
                             usbDrives.finishProgress(device.id);
                             io.emit('usb-complete',
                                 {err: err, device: device.id});
+                            callback();
                         });
                     } else {
                         readSessions(device.id).then(function() {
@@ -99,10 +105,10 @@ module.exports = function(io) {
                                         usbDrives.finishProgress(device.id);
                                         io.emit('usb-complete',
                                             {err: err, device: device.id});
+                                        callback();
                                     });
                             });
                         });
-
                     }
                 });
             }

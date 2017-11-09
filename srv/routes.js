@@ -179,8 +179,9 @@ module.exports = function(io) {
             }
             io.emit(event.name, event.data);
         } else if (event.name === 'device-add') {
-            controller.addUsb(event.data);
-            io.emit(event.name, event.data);
+            controller.addUsb(event.data, function() {
+                io.emit(event.name, event.data);
+            });
         } else if (event.name === 'device-remove') {
             controller.removeUsb(event.data, function() {
                 io.emit(event.name, event.data);
