@@ -236,10 +236,10 @@ module.exports = function(io) {
                 });
         });
     router.get('/getAllUsbDrives', function(req, res) {
-        res.json(inventory.getAllUsbDrives());
+        res.json(usbDrives.getAllUsbDrives());
     });
     router.get('/getLowestUsbInProgress', function(req, res) {
-        res.json(inventory.getLowestUsbInProgress());
+        res.json(usbDrives.getLowestUsbInProgress());
     });
     router.post('/createItemFiles', function(req, res) {
         controller.createItemFiles(req.body.item).then(function() {

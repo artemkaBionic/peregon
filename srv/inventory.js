@@ -12,7 +12,6 @@ var rimraf = require('rimraf');
 var request = require('requestretry');
 var uuid = require('uuid/v1');
 var station = require('./station');
-var usbDrives = require('./usbonly/usbCache');
 var INVENTORY_LOOKUP_URL = 'https://' + config.apiHost +
     '/api/inventorylookup/';
 var SERIAL_LOOKUP_URL = 'https://' + config.apiHost + '/api/seriallookup/';
@@ -28,8 +27,6 @@ exports.getSerialLookup = getSerialLookup;
 exports.getItem = getItem;
 exports.lockDevice = lockDevice;
 exports.unlockDevice = unlockDevice;
-exports.getAllUsbDrives = getAllUsbDrives;
-exports.getLowestUsbInProgress = getLowestUsbInProgress;
 exports.changeDeviceFormat = changeDeviceFormat;
 
 // Reverse lookup to Azure in case if not found in our Mongo DB
@@ -103,14 +100,6 @@ function getSerialLookup(imei, callback) {
             callback({error: null, item: body});
         }
     });
-}
-
-function getAllUsbDrives() {
-    return usbDrives.getAllUsbDrives();
-}
-
-function getLowestUsbInProgress() {
-    return usbDrives.getLowestUsbInProgress();
 }
 
 function unlockDevice(imei, forService, callback) {

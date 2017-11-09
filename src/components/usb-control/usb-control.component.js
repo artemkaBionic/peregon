@@ -62,11 +62,7 @@
         function checkUsbStatus() {
             inventory.getAllUsbDrives().then(function(usbDrives) {
                 vm.usbDrives = usbDrives;
-                if (usbDrives.usbData.isSmallUsbDriveInserted) {
-                    vm.showSmallUsbError = true;
-                } else {
-                    vm.showSmallUsbError = false;
-                }
+                vm.showSmallUsbError = usbDrives.usbData.isSmallUsbDriveInserted;
                 if (usbDrives.usbData.status === 'newBootDevice') {
                     newBootDevice();
                 } else if (usbDrives.usbData.status === 'bootDevicesReady') {
@@ -137,9 +133,6 @@
         }
 
         socket.on('device-add', function(usbData) {
-            if (usbData.size < 30000000000) {
-                vm.showSmallUsbError = true;
-            }
             checkUsbStatus();
         });
         socket.on('device-remove', function() {
