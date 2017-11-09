@@ -179,11 +179,11 @@ module.exports = function(io) {
             }
             io.emit(event.name, event.data);
         } else if (event.name === 'device-add') {
-            controller.addUsb(event.data, function() {
+            controller.addUsb(event.data).then(function() {
                 io.emit(event.name, event.data);
             });
         } else if (event.name === 'device-remove') {
-            controller.removeUsb(event.data, function() {
+            controller.removeUsb(event.data).then(function() {
                 io.emit(event.name, event.data);
             });
         }
@@ -211,27 +211,9 @@ module.exports = function(io) {
         station.shutdown();
     });
 
-    router.post('/prepareUsb', function(req, res) {
-        //console.log(req.body);
-        controller.prepareUsb(io, req.body);
-        res.status(200).send();
-    });
-
-    router.post('/readSession', function(req, res) {
-        controller.readSession(io, req.body, function(err, isSessionComplete) {
-            if (err) {
-                res.status(500).json(null);
-            } else {
-                res.status(200).json(isSessionComplete);
-            }
-        });
-    });
-
-    router.get('/data/getAllSessions', function(req, res) {
-        sessions.getSessionsByParams({}).then(function(response) {
-            res.json(response);
-        }).catch(function(err) {
-            winston.log('error', err);
+    router.post('/prepareAllUsb', function(req, res) {
+        controller.prepareAllUsb().then(function() {
+            res.status(200).send();
         });
     });
 
@@ -268,11 +250,6 @@ module.exports = function(io) {
     });
     router.post('/createItemFiles', function(req, res) {
         controller.createItemFiles(req.body.item).then(function() {
-            res.status(200).send();
-        });
-    });
-    router.post('/clearItemFiles', function(req, res) {
-        controller.clearItemFiles().then(function() {
             res.status(200).send();
         });
     });

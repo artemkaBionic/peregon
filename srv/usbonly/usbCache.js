@@ -59,35 +59,25 @@ UsbCache.prototype.getAllUsbDrives = function() {
     }
     return usbDrives;
 };
-UsbCache.prototype.updateProgress = function(progress, device) {
-    winston.info('Updating progress for device:' + device);
-    for (var key in this._usbDrives) {
-        if (this._usbDrives.hasOwnProperty(key)) {
-            if (key === device) {
-                this._usbDrives[key].status = 'in_progress';
-                this._usbDrives[key].progress = +progress;
-            }
-        }
+UsbCache.prototype.updateProgress = function(key, progress) {
+    winston.info('Updating progress for usb ' + key);
+    if (this._usbDrives.hasOwnProperty(key)) {
+        this._usbDrives[key].status = 'in_progress';
+        this._usbDrives[key].progress = progress;
     }
 };
-UsbCache.prototype.finishProgress = function(device) {
-    winston.info('Finishing progress for device:' + device);
-    for (var key in this._usbDrives) {
-        if (this._usbDrives.hasOwnProperty(key)) {
-            if (key === device) {
-                this._usbDrives[key].status = 'ready';
-                this._usbDrives[key].progress = 100;
-            }
-        }
+UsbCache.prototype.finishProgress = function(key) {
+    winston.info('Finishing progress for usb ' + key);
+    if (this._usbDrives.hasOwnProperty(key)) {
+        this._usbDrives[key].status = 'ready';
+        this._usbDrives[key].progress = 100;
     }
 };
-UsbCache.prototype.setStatus = function(device, status) {
-    winston.info('Setting status:' + status + ' for device:' + device);
-    for (var key in this._usbDrives) {
-        if (this._usbDrives.hasOwnProperty(key) && device === key) {
-            this._usbDrives[key].status = status;
-            this._usbDrives[key].progress = 0;
-        }
+UsbCache.prototype.setStatus = function(key, status) {
+    winston.info('Setting status ' + status + ' for usb ' + key);
+    if (this._usbDrives.hasOwnProperty(key)) {
+        this._usbDrives[key].status = status;
+        this._usbDrives[key].progress = 0;
     }
 };
 UsbCache.prototype.getLowestUsbInProgress = function() {
@@ -117,8 +107,9 @@ UsbCache.prototype.getLowestUsbInProgress = function() {
 
 function isEmptyObject(obj) {
     for (var prop in obj) {
-        if (obj.hasOwnProperty(prop))
+        if (obj.hasOwnProperty(prop)) {
             return false;
+        }
     }
     return true;
 }

@@ -122,7 +122,7 @@
 
         vm.createBootDrives = function() {
             $http({
-                url: '/prepareUsb',
+                url: '/prepareAllUsb',
                 method: 'POST',
                 headers: {'content-type': 'application/json'}
             }).then(function() {

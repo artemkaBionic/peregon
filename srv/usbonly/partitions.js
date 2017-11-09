@@ -1,124 +1,108 @@
 /*jslint node: true */
 'use strict';
-var config = require('../config');
+var config = require('../config.js');
 var os = require('os');
 var shell = require('shelljs');
 var winston = require('winston');
+var Promise = require('bluebird');
 
-function doesMbrExist(device, callback) {
-    shell.exec('parted --script /dev/' + device + ' --machine print',
-        {silent: true}, function(code, stdout, stderr) {
-            if (code !== 0) {
-                callback(new Error(stdout), null);
-            } else {
-                var deviceInfo = stdout.trim().split(os.EOL)[1].split(':');
-                var mbrExists = deviceInfo[5] === 'msdos';
-                callback(null, mbrExists);
-            }
-        });
+function doesMbrExist(device) {
+    return new Promise(function(resolve, reject) {
+        shell.exec('parted --script /dev/' + device + ' --machine print', {silent: true},
+            function(code, stdout, stderr) {
+                if (code !== 0) {
+                    reject(new Error(stderr));
+                } else {
+                    var deviceInfo = stdout.trim().split(os.EOL)[1].split(':');
+                    var mbrExists = deviceInfo[5] === 'msdos';
+                    resolve(mbrExists);
+                }
+            });
+    });
 }
 
-function doPartitionsExist(device, callback) {
-    shell.exec('lsblk --output name,label,size --pairs /dev/' + device,
-        {silent: true}, function(code, stdout, stderr) {
-            if (code !== 0) {
-                callback(new Error(stderr), null);
-            } else {
-                var partitionsInfo = stdout.trim().split(os.EOL);
-                console.log('Partitions info:');
-                console.log(partitionsInfo);
-                var correctPartitionsExist = partitionsInfo.length === 5
-                    && partitionsInfo[1].indexOf('LABEL="XboxRefresh"') >= 0
-                    && partitionsInfo[2].indexOf('LABEL="WinRefresh"') >= 0
-                    && partitionsInfo[3].indexOf('LABEL="MacRefresh"') >= 0
-                    && partitionsInfo[4].indexOf('LABEL="Status"') >= 0;
-
-                callback(null, correctPartitionsExist);
-            }
-        });
+function doPartitionsExist(device) {
+    return new Promise(function(resolve, reject) {
+        shell.exec('lsblk --output name,label,size --pairs /dev/' + device, {silent: true},
+            function(code, stdout, stderr) {
+                if (code !== 0) {
+                    reject(new Error(stderr));
+                } else {
+                    var partitionsInfo = stdout.trim().split(os.EOL);
+                    var correctPartitionsExist = partitionsInfo.length === 5 &&
+                        partitionsInfo[1].indexOf('LABEL="XboxRefresh"') >= 0 &&
+                        partitionsInfo[2].indexOf('LABEL="WinRefresh"') >= 0 &&
+                        partitionsInfo[3].indexOf('LABEL="MacRefresh"') >= 0 &&
+                        partitionsInfo[4].indexOf('LABEL="Status"') >= 0;
+                    resolve(correctPartitionsExist);
+                }
+            });
+    });
 }
 
-function checkPartitioning(device, callback) {
-    doesMbrExist(device, function(err, mbrExists) {
-        if (err) {
-            callback(err, null);
+function checkPartitioning(device) {
+    return doesMbrExist(device).then(function(mbrExists) {
+        if (mbrExists) {
+            return doPartitionsExist(device);
         } else {
-            if (mbrExists) {
-                doPartitionsExist(device, function(err, partitionsExist) {
-                    if (err) {
-                        callback(err, null);
-                    } else {
-                        callback(null, partitionsExist);
-                    }
-                });
-            } else {
-                callback(null, false);
-            }
+            return false;
         }
     });
 }
 
-function unmountPartitions(device, callback) {
-    callback = callback || function() {}; //callback is optional
+function unmountPartitions(device) {
     winston.info('Unmounting USB device ' + device);
-    shell.exec('sync && umount /dev/' + device + '?', {silent: true},
-        function(code, stdout, stderr) {
-            if (code !== 0) {
-                winston.log('error', 'Unmounting failed because of err code:' +
-                    code);
-                callback(new Error(stderr));
-            } else {
-                winston.info('Unmounted device:' + device + ' successfully');
-                shell.rm('-rf', '/mnt/' + device + '?');
-                callback(null);
-            }
-        });
+    return new Promise(function(resolve) {
+        shell.exec('sync && umount /dev/' + device + '?', {silent: true},
+            function(code, stdout, stderr) {
+                if (code !== 0) {
+                    winston.error('Unmounting failed because of error code: ' + code + ', ' + stderr);
+                } else {
+                    winston.info('Unmounted device: ' + device + ' successfully');
+                    shell.rm('-rf', '/mnt/' + device + '?');
+                }
+                resolve();
+            });
+    });
 }
 
-function mountPartitions(device, callback) {
+function mountPartitions(device) {
     winston.info('Mounting partitions for device:' + device);
-    shell.mkdir('-p', [
-        '/mnt/' + device + config.usbXboxPartition,
-        '/mnt/' + device + config.usbWindowsPartition,
-        '/mnt/' + device + config.usbStatusPartition]);
-    shell.exec('mount /dev/' + device + config.usbXboxPartition + ' /mnt/' +
-        device + config.usbXboxPartition
-        + ' && mount /dev/' + device + config.usbWindowsPartition + ' /mnt/' +
-        device + config.usbWindowsPartition
-        + ' && mount /dev/' + device + config.usbStatusPartition + ' /mnt/' +
-        device + config.usbStatusPartition,
-        function(code, stdout, stderr) {
-            if (code !== 0) {
-                unmountPartitions(device, function() {
-                    callback(new Error(stderr));
-                });
-            } else {
-                callback(null);
-            }
-        });
+    return new Promise(function(resolve, reject) {
+        shell.mkdir('-p', [
+            '/mnt/' + device + config.usbXboxPartition,
+            '/mnt/' + device + config.usbWindowsPartition,
+            '/mnt/' + device + config.usbStatusPartition]);
+        shell.exec('mount /dev/' + device + config.usbXboxPartition + ' /mnt/' + device + config.usbXboxPartition +
+            ' && mount /dev/' + device + config.usbWindowsPartition + ' /mnt/' + device + config.usbWindowsPartition +
+            ' && mount /dev/' + device + config.usbStatusPartition + ' /mnt/' + device + config.usbStatusPartition,
+            function(code, stdout, stderr) {
+                if (code !== 0) {
+                    unmountPartitions(device).then(function() {
+                        reject(new Error(stderr));
+                    });
+                } else {
+                    resolve();
+                }
+            });
+    });
 }
 
-function updatePartitions(device, callback) {
+function updatePartitions(device) {
     winston.info('Updating partitions for device:' + device);
-    checkPartitioning(device, function(err, isPartitioned) {
-        if (err) {
-            callback(err);
+    return checkPartitioning(device).then(function(isPartitioned) {
+        if (isPartitioned) {
+            winston.info('USB device ' + device + ' already partitioned correctly');
+            return mountPartitions(device);
         } else {
-            if (isPartitioned) {
-                winston.info('USB device ' + device +
-                    ' already partitioned correctly');
-                mountPartitions(device, function(err) {
-                    callback(err);
-                });
-            } else {
-                winston.info('Partitions update process started for device:' +
-                    device);
+            winston.info('Partitions update process started for device:' + device);
+            return new Promise(function(resolve, reject) {
                 // Get disk size
                 shell.exec('parted --machine --script /dev/' + device +
                     ' unit MiB print | awk -F: \'FNR==2{print $2}\'',
                     function(code, stdout, stderr) {
                         if (code !== 0) {
-                            callback(new Error(stdout));
+                            reject(new Error(stderr));
                         } else {
                             var totalDiskSize = parseInt(
                                 stdout.split(os.EOL)[0].replace('MiB', ''));
@@ -129,8 +113,7 @@ function updatePartitions(device, callback) {
                             var partitionStart = 0;
                             var partitionEnd = 0;
 
-                            winston.info('Initializing new USB device ' +
-                                device);
+                            winston.info('Initializing new USB device ' + device);
                             // Initialize MBR
                             var script = 'mklabel msdos \\';
                             // Create Xbox Partition
@@ -140,54 +123,44 @@ function updatePartitions(device, callback) {
                             // Create Windows Partition
                             partitionStart = partitionEnd + 1;
                             partitionEnd = partitionEnd + windowsPartitionSize;
-                            script += '\nmkpart primary fat32 ' +
-                                partitionStart + 'MiB ' + partitionEnd +
-                                'MiB \\';
+                            script += '\nmkpart primary fat32 ' + partitionStart + 'MiB ' + partitionEnd + 'MiB \\';
                             // Create Mac Partition
                             partitionStart = partitionEnd + 1;
-                            partitionEnd = partitionEnd +
-                                config.usbMacPartitionSize;
-                            script += '\nmkpart primary hfs+ ' +
-                                partitionStart + 'MiB ' + partitionEnd +
-                                'MiB \\';
+                            partitionEnd = partitionEnd + config.usbMacPartitionSize;
+                            script += '\nmkpart primary hfs+ ' + partitionStart + 'MiB ' + partitionEnd + 'MiB \\';
                             // Create Status Partition
                             partitionStart = partitionEnd + 1;
-                            script += '\nmkpart primary fat32 ' +
-                                partitionStart + 'MiB 100%';
-                            shell.exec('parted --script /dev/' + device + ' ' +
-                                script, function(code, stdout, stderr) {
+                            script += '\nmkpart primary fat32 ' + partitionStart + 'MiB 100%';
+                            shell.exec('parted --script /dev/' + device + ' ' + script, function(code, stdout, stderr) {
                                 if (code !== 0) {
-                                    callback(new Error(stdout));
+                                    reject(new Error(stderr));
                                 } else {
                                     // Build Xbox File System
-                                    var command = 'mkfs.ntfs -f -L "XboxRefresh" /dev/' +
-                                        device + config.usbXboxPartition;
+                                    var command = 'mkfs.ntfs -f -L "XboxRefresh" /dev/' + device +
+                                        config.usbXboxPartition;
                                     // Build Windows File System
-                                    command += ' && mkfs.vfat -F32 -n "WinRefresh" /dev/' +
-                                        device + config.usbWindowsPartition;
+                                    command += ' && mkfs.vfat -F32 -n "WinRefresh" /dev/' + device +
+                                        config.usbWindowsPartition;
                                     // Build Mac File System
-                                    command += ' && mkfs.hfsplus -v "MacRefresh" /dev/' +
-                                        device + config.usbMacPartition;
+                                    command += ' && mkfs.hfsplus -v "MacRefresh" /dev/' + device +
+                                        config.usbMacPartition;
                                     // Build Status File System
-                                    command += ' && mkfs.vfat -F32 -n "Status" /dev/' +
-                                        device + config.usbStatusPartition;
-                                    shell.exec(command,
-                                        function(code, stdout, sdterr) {
-                                            if (code !== 0) {
-                                                callback(new Error(stderr));
-                                            } else {
-                                                mountPartitions(device,
-                                                    function(err) {
-                                                        callback(err);
-                                                    });
-                                            }
-                                        });
+                                    command += ' && mkfs.vfat -F32 -n "Status" /dev/' + device +
+                                        config.usbStatusPartition;
+                                    shell.exec(command, function(code, stdout, sdterr) {
+                                        if (code !== 0) {
+                                            reject(new Error(stderr));
+                                        } else {
+                                            mountPartitions(device).then(function() {
+                                                resolve();
+                                            });
+                                        }
+                                    });
                                 }
                             });
                         }
                     });
-
-            }
+            });
         }
     });
 }

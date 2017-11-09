@@ -4,11 +4,10 @@ module.exports = function(io) {
     var config = require('../config.js');
     var partitions = require('./partitions.js');
     var content = require('./content.js')(io);
-    var fs = require('fs');
     var versions = require('./versions.js');
     var usbDrives = require('./usbCache.js');
     var Promise = require('bluebird');
-    var BlueBirdQueue = require('bluebird-queue');
+    var fs = Promise.promisifyAll(require('fs'));
     var sessions = require('../session_storage/sessions.js');
     var inventory = require('../inventory.js');
     var winston = require('winston');
@@ -17,20 +16,13 @@ module.exports = function(io) {
     var decoder = new StringDecoder('utf8');
 
     //Find existing USB drives
-    var find = spawn('find',
-        ['/dev/disk/by-id/', '-name', 'usb*', '-not', '-name', '*-part?']);
+    var find = spawn('find', ['/dev/disk/by-id/', '-name', 'usb*', '-not', '-name', '*-part?']);
     find.stdout.on('data', function(findData) {
         var lines = decoder.write(findData).split(/\n+/);
         for (var len = lines.length, i = 0; i < len; ++i) {
             if (lines[i].length > 0) {
                 winston.info('reading details for ' + lines[i]);
-                var lsblk = spawn('lsblk', [
-                    '--bytes',
-                    '--output',
-                    'NAME,SIZE',
-                    '--noheadings',
-                    '--nodeps',
-                    lines[i]]);
+                var lsblk = spawn('lsblk', ['--bytes', '--output', 'NAME,SIZE', '--noheadings', '--nodeps', lines[i]]);
                 lsblk.stdout.on('data', function(lsblkData) {
                     var deviceInfo = decoder.write(lsblkData).
                         trim().
@@ -46,8 +38,7 @@ module.exports = function(io) {
         }
     });
 
-    function addUsb(device, callback) {
-        callback = callback || function() {}; //callback is optional
+    function addUsb(device) {
         var usbData = {
             'id': device.id,
             'size': device.size,
@@ -55,289 +46,197 @@ module.exports = function(io) {
             'progress': 0
         };
         usbDrives.set(usbData.id, usbData);
-        isRefreshUsb(device.id,
-            function(err, isInitialized) {
-                if (err) {
-                    winston.log('error', err);
-                } else {
-                    if (isInitialized) {
-                        prepareUsb(callback);
-                    } else {
-                        callback();
-                    }
-                }
-            });
-    }
-
-    function removeUsb(device, callback) {
-        usbDrives.delete(device.id);
-        clearItemFiles().then(callback);
-    }
-
-    function prepareUsb(callback) {
-        callback = callback || function() {}; //callback is optional
-        winston.info('Prepearing usb');
-        var devices = usbDrives.getAllUsbDrives();
-        for (var key in devices) {
-            if (devices.hasOwnProperty(key) &&
-                devices[key].status === 'not_ready') {
-                var device = devices[key];
-                usbDrives.setStatus(device.id, 'in_progress');
-                partitions.updatePartitions(device.id, function(err) {
-                    if (err) {
-                        winston.info('Error while updating partitions');
-                        winston.log('error', err);
-                        partitions.unmountPartitions(device.id, function() {
-                            usbDrives.finishProgress(device.id);
-                            io.emit('usb-complete',
-                                {err: err, device: device.id});
-                            callback();
-                        });
-                    } else {
-                        readSessions(device.id).then(function() {
-                            content.updateContent(device.id, function(err) {
-                                if (err) {
-                                    winston.info('Error updating content');
-                                    winston.info(err);
-                                }
-                                partitions.unmountPartitions(device.id,
-                                    function() {
-                                        usbDrives.finishProgress(device.id);
-                                        io.emit('usb-complete',
-                                            {err: err, device: device.id});
-                                        callback();
-                                    });
-                            });
-                        });
-                    }
-                });
+        return isRefreshUsb(device.id).then(function(isInitialized) {
+            if (isInitialized) {
+                return prepareUsb(device.id);
             }
-        }
-    }
-
-    function isRefreshUsb(device, callback) {
-        partitions.doPartitionsExist(device, callback);
-    }
-
-    function readSessions(device) {
-        return new Promise(function(resolve) {
-            readSessionFiles(device, function(err) {
-                if (err) {
-                    winston.info('Error reading session files');
-                    winston.log('error', err);
-                    io.emit('session-error', err);
-                }
-                readXboxSessions(device, function(err) {
-                    if (err) {
-                        winston.info('Error reading xbox files');
-                        winston.log('error', err);
-                        io.emit('session-error', err);
-                    }
-                    content.clearStatus(device);
-                    resolve({success: true});
-                });
-            });
+        }).catch(function(err) {
+            winston.error(err);
         });
     }
 
-    function readSessionFiles(device, callback) {
-        winston.info('Reading session files');
-        var sessionsDirectory = '/mnt/' + device + config.usbStatusPartition +
-            '/sessions';
-        fs.readdir(sessionsDirectory, function(err, files) {
-            if (err) {
-                winston.log('info', err);
-                callback(err);
-            } else {
-                if (files.length > 0) {
-                    for (var i = 0; i < files.length; i++) {
-                        console.log('File found:' + files[i]);
-                        fs.readFile(sessionsDirectory + '/' + files[i], 'utf8',
-                            function(err, data) {
-                                if (err) {
-                                    if (err.code === 'ENOENT') {
-                                        callback(null);
-                                    } else {
-                                        callback(err);
-                                    }
-                                } else {
-                                    try {
-                                        // Remove non-printable characters
-                                        data = data.replace(/[^\x20-\x7E]+/g,
-                                            '');
-                                        var usbSession = JSON.parse(data);
-                                        winston.info(
-                                            'Refresh Session details:');
-                                        winston.info(usbSession);
-                                        sessions.getSessionByParams({
-                                            'device.item_number': usbSession.device.item_number,
-                                            'status': 'Incomplete'
-                                        }).then(function(session) {
-                                            if (session === null) {
-                                                usbSession._id = usbSession.start_time;
-                                                sessions.set(usbSession._id,
-                                                    usbSession);
-                                            } else {
-                                                usbSession._id = session._id;
-                                                sessions.updateSession(
-                                                    usbSession);
-                                            }
-                                            sessions.finish(usbSession._id,
-                                                {
-                                                    complete: usbSession.status ===
-                                                    'Success'
-                                                });
-                                        });
-                                    } catch (err) {
-                                        winston.info('Error reading session');
-                                        winston.log('error', err);
-                                        callback(err);
-                                    }
-                                }
-                            });
-                    }
-                    callback(null);
-                } else {
-                    callback(null);
-                }
+    function removeUsb(device) {
+        usbDrives.delete(device.id);
+        return clearItemFiles();
+    }
+
+    function prepareAllUsb() {
+        var devices = usbDrives.getAllUsbDrives();
+        var usbDrivesToPrepare = [];
+        for (var key in devices) {
+            if (devices.hasOwnProperty(key) && devices[key].status === 'not_ready') {
+                usbDrivesToPrepare.push(prepareUsb(key));
             }
+        }
+        return Promise.all(usbDrivesToPrepare);
+    }
+
+    function prepareUsb(deviceId) {
+        winston.info('Prepearing usb ' + deviceId);
+        usbDrives.setStatus(deviceId, 'in_progress');
+        return partitions.updatePartitions(deviceId).
+            then(readSessions(deviceId)).
+            then(content.updateContent(deviceId)).
+            then(partitions.unmountPartitions(deviceId)).
+            then(function() {
+                io.emit('usb-complete');
+            });
+    }
+
+    function isRefreshUsb(deviceId) {
+        return partitions.doPartitionsExist(deviceId);
+    }
+
+    function readSessions(deviceId) {
+        return readSessionFiles(deviceId).then(readXboxSessions(deviceId)).then(content.clearStatus(deviceId));
+    }
+
+    function readSessionFiles(deviceId) {
+        winston.info('Reading session files on ' + deviceId);
+        var sessionsDirectory = '/mnt/' + deviceId + config.usbStatusPartition + '/sessions';
+        return fs.readdirAsync(sessionsDirectory).then(function(files) {
+            var sessionFiles = [];
+            for (var i = 0; i < files.length; i++) {
+                winston.info('Session file found: ' + files[i]);
+                sessionFiles.push(fs.readFileAsync(sessionsDirectory + '/' + files[i], 'utf8').then(processUsbSession));
+            }
+            return Promise.all(sessionFiles);
+        }).catch(function(err) {
+            winston.info(err);
+        });
+    }
+
+    function processUsbSession(data) {
+        // Remove non-printable characters
+        data = data.replace(/[^\x20-\x7E]+/g, '');
+        return JSON.parse(data).then(function(usbSession) {
+            winston.info('Refresh Session details: ' +
+                usbSession);
+            sessions.getSessionByParams({
+                'device.item_number': usbSession.device.item_number,
+                'status': 'Incomplete'
+            }).then(function(session) {
+                if (session === null) {
+                    usbSession._id = usbSession.start_time;
+                    sessions.set(usbSession._id,
+                        usbSession);
+                } else {
+                    usbSession._id = session._id;
+                    sessions.updateSession(
+                        usbSession);
+                }
+                sessions.finish(usbSession._id,
+                    {
+                        complete: usbSession.status ===
+                        'Success'
+                    });
+            });
         });
     }
 
     function readXboxSessions(device, callback) {
         winston.info('Reading xbox sessions');
         var systemUpdateDir = '/mnt/' + device + '1/$SystemUpdate';
-        var usbItemFile = '/mnt/' + device + config.usbStatusPartition +
-            '/item.json';
+        var usbItemFile = '/mnt/' + device + config.usbStatusPartition + '/item.json';
         var unreportedSessions = 0;
-        fs.readFile(systemUpdateDir + '/update.log', 'utf8',
-            function(err, data) {
-                if (err) {
-                    if (err.code !== 'ENOENT') {
-                        callback(err);
-                    }
+        return fs.readFileAsync(systemUpdateDir + '/update.log', 'utf8').then(function(data) {
+            unreportedSessions = data.split(/\r\n|\r|\n/).
+                filter(function(value) {
+                    return value !== '';
+                }).length / 2;
+            winston.info('There are ' + unreportedSessions + ' Xbox Sessions');
+            return fs.readFileAsync(usbItemFile, 'utf8').then(JSON.parse).then(function(item) {
+                if (item.Type === 'XboxOne') {
+                    var sessionComplete = unreportedSessions > 0;
+                    return sessions.getSessionByParams({
+                        'device.item_number': item.InventoryNumber,
+                        'status': 'Incomplete'
+                    }).then(function(session) {
+                        if (session === null) {
+                            sessions.start(new Date().toISOString(), item, null).
+                                then(function(session) {sessions.finish(session._id, {complete: sessionComplete});});
+                        } else {
+                            sessions.finish(session._id, {complete: sessionComplete});
+                        }
+                        unreportedSessions--;
+                        return reportXboxSessions(unreportedSessions);
+                    });
                 } else {
-                    unreportedSessions = data.split(/\r\n|\r|\n/).
-                        filter(function(value) {
-                            return value !== '';
-                        }).length / 2;
-                    winston.info('There are ' + unreportedSessions +
-                        ' Xbox Sessions');
+                    return reportXboxSessions(unreportedSessions);
                 }
-                fs.readFile(usbItemFile, 'utf8', function(err, item) {
-                    if (err) {
-                        if (err.code === 'ENOENT') {
-                            reportXboxSessions(unreportedSessions, callback);
-                        } else {
-                            callback(err);
-                        }
-                    } else {
-                        item = JSON.parse(item);
-                        if (item.Type === 'XboxOne') {
-                            var sessionComplete = unreportedSessions > 0;
-                            sessions.getSessionByParams({
-                                'device.item_number': item.InventoryNumber,
-                                'status': 'Incomplete'
-                            }).then(function(session) {
-                                if (session === null) {
-                                    sessions.start(new Date().toISOString(),
-                                        item, null, function(session) {
-                                            sessions.finish(session._id,
-                                                {complete: sessionComplete});
-                                        });
-                                } else {
-                                    sessions.finish(session._id,
-                                        {complete: sessionComplete});
-                                }
-                                unreportedSessions--;
-                                reportXboxSessions(unreportedSessions,
-                                    callback);
-                            });
-                        } else {
-                            reportXboxSessions(unreportedSessions, callback);
-                        }
-                    }
-                });
+            }).catch(function(err) {
+                if (err.code === 'ENOENT') {
+                    return reportXboxSessions(unreportedSessions);
+                } else {
+                    winston.error('Error reading ' + usbItemFile + ' ' + err.message);
+                }
             });
+        }).catch(function(err) {
+            if (err.code !== 'ENOENT') {
+                winston.error('Error reading ' + systemUpdateDir + '/update.log ' + err.message);
+            }
+        });
     }
 
-    function reportXboxSessions(count, callback) {
+    function reportXboxSessions(count) {
         winston.info('Reporting ' + count + ' xbox sessions');
+        var newSessions = [];
         for (var i = 0; i < count; i++) {
-            sessions.start(new Date().toISOString(), {Type: 'XboxOne'},
-                null, function(session) {
-                    sessions.finish(session._id, {complete: true});
-                });
+            newSessions.push(sessions.start(new Date().toISOString(), {Type: 'XboxOne'}, null).then(function(session) {
+                sessions.finish(session._id, {complete: true});
+            }));
         }
-        callback();
+        return Promise.all(newSessions);
     }
 
     function createItemFiles(item) {
         console.log('Creating item files');
-        var queue = new BlueBirdQueue({});
+        var itemFiles = [];
         var devices = usbDrives.getAllUsbDrives();
         for (var key in devices) {
             if (devices.hasOwnProperty(key) && devices[key].id) {
-                queue.add(createItemFile(devices[key].id, item));
+                itemFiles.push(createItemFile(devices[key].id, item));
             }
         }
-        return queue.start();
+        return Promise.all(itemFiles);
     }
 
     function clearItemFiles(deviceId) {
         console.log('Clearing item files');
-        var queue = new BlueBirdQueue({});
+        var itemFiles = [];
         var devices = usbDrives.getAllUsbDrives();
         for (var key in devices) {
             if (devices.hasOwnProperty(key) && devices[key].id) {
-                queue.add(clearItemFile(devices[key].id));
+                itemFiles.push(clearItemFile(devices[key].id));
             }
         }
-        return queue.start();
+        return Promise.all(itemFiles);
     }
 
     function createItemFile(device, item) {
-        return new Promise(function(resolve, reject) {
-            partitions.mountPartitions(device, function(err) {
-                if (err) {
-                    partitions.unmountPartitions(device, function() {
-                        reject(err);
-                    });
-                } else {
-                    content.createItemFile(device, item, function(err) {
-                        if (err) {
-                            reject(err);
-                        }
-                        partitions.unmountPartitions(device, function() {
-                            resolve();
-                        });
-
-                    });
-                }
+        return partitions.mountPartitions(device).
+            then(content.createItemFile(device, item)).
+            then(partitions.unmountPartitions(device)).
+            catch(function(err) {
+                partitions.unmountPartitions(device);
+                winston.error('Error creating item file on usb ' + device + ', ' + err);
             });
-        });
     }
 
     function clearItemFile(device) {
-        return new Promise(function(resolve, reject) {
-            partitions.mountPartitions(device, function(err) {
-                if (err) {
-                    partitions.unmountPartitions(device, function() {
-                        reject(err);
-                    });
-                } else {
-                    content.clearStatus(device);
-                    partitions.unmountPartitions(device);
-                    resolve();
-                }
+        return partitions.mountPartitions(device).
+            then(content.clearStatus(device)).
+            then(partitions.unmountPartitions(device)).
+            catch(function(err) {
+                partitions.unmountPartitions(device);
+                winston.error('Error creating item file on usb ' + device + ', ' + err);
             });
-        });
     }
 
     return {
         'addUsb': addUsb,
         'removeUsb': removeUsb,
-        'prepareUsb': prepareUsb,
+        'prepareAllUsb': prepareAllUsb,
         'isRefreshUsb': isRefreshUsb,
         'createItemFiles': createItemFiles,
         'clearItemFiles': clearItemFiles
