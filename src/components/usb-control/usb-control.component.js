@@ -89,6 +89,7 @@
         }
 
         function usbProgress(progress) {
+            vm.step = vm.steps.bootDevicesProcessing;
             vm.percentageComplete = progress;
         }
 
@@ -110,7 +111,6 @@
         }
 
         function showBootDeviceProgress() {
-            vm.step = vm.steps.bootDevicesProcessing;
             inventory.getLowestUsbInProgress().then(function(minProgress) {
                 usbProgress(minProgress);
             });
