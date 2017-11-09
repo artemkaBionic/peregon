@@ -425,21 +425,6 @@
                 'closeButton': true
             });
         });
-        socket.on('usb-complete', function(status) {
-            if (status.err) {
-                toastr.error('Something went wrong while creating USB drive', {
-                    'tapToDismiss': true,
-                    'timeOut': 3000,
-                    'closeButton': true
-                });
-            } else {
-                toastr.info('Bootable USB drive is ready', {
-                    'tapToDismiss': true,
-                    'timeOut': 3000,
-                    'closeButton': true
-                });
-            }
-        });
         socket.on('android-session-expired', function(data) {
             if ($state.current.name === 'root.user') {
                 toastr.warning('Session expired for device:' + data.device,
@@ -450,21 +435,6 @@
                     });
             }
         });
-        // socket.on('android-reset', function(session) {
-        //     getSessions().then(function() {
-        //         toastr.info('Refresh finished for device:' +
-        //             session.device.serial_number, {
-        //             'tapToDismiss': true,
-        //             'timeOut': 3000,
-        //             'closeButton': true
-        //         });
-        //     });
-        // });
-        // socket.on('android-remove', function() {
-        //     if ($state.current.name === 'root.user') {
-        //         getSessions();
-        //     }
-        // });
 
         function displayBanner() {
             //604800000 - 7 days

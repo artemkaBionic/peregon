@@ -187,13 +187,6 @@ module.exports = function(io) {
                 io.emit(event.name, event.data);
             });
         }
-        else if (event.name === 'usb-complete') {
-            usbDrives.finishProgress(event.data.id);
-            io.emit(event.name, event.data);
-        } else if (event.name === 'usb-progress') {
-            usbDrives.updateProgress(event.data.progress, event.data.id);
-            io.emit(event.name, event.data);
-        }
         else {
             io.emit(event.name, event.data);
         }

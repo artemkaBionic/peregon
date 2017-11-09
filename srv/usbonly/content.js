@@ -12,18 +12,18 @@ module.exports = function(io) {
     var fs = Promise.promisifyAll(require('fs'));
     var StringDecoder = require('string_decoder').StringDecoder;
     var decoder = new StringDecoder('utf8');
-    var usbDrive = require('./usbCache');
+    var usbDrives = require('./usbCache');
     var winston = require('winston');
     // The Windows package contains an unused image file (install.wim) and inefficient driver collections.
     // We need to remove and replace these large files.
     // In the meantime, we use the --exclude parameter to make sure we don't copy them to the USB drive
     var rsyncParameters = '--recursive --copy-links --times --modify-window=1 --delete-before --no-inc-recursive --exclude=packages/97fc1b7c-049f-4933-88e5-cb19362e3360/Images/install.wim --exclude=packages/97fc1b7c-049f-4933-88e5-cb19362e3360/Drivers/HP-* --exclude=packages/97fc1b7c-049f-4933-88e5-cb19362e3360/Drivers/Hewlett-Packard-* --exclude=packages/97fc1b7c-049f-4933-88e5-cb19362e3360/Drivers/Dell-*';
 
-    function updateProgress(value, device) {
+    function updateProgress(device, value) {
         winston.info('Progress for device: ' + device + ' is: ' + value + '%');
-        usbDrive.updateProgress(value, device);
-        var minProgress = usbDrive.getLowestUsbInProgress();
-        io.emit('usb-progress', minProgress);
+        usbDrives.updateProgress(device, value);
+        var minProgress = usbDrives.getLowestUsbInProgress();
+        io.emit('usb-progress', minProgress.progress);
     }
 
     function copyFiles(contentTemp, copyFilesSize, totalSize, device) {
@@ -45,7 +45,7 @@ module.exports = function(io) {
                         message.match(/[^ ]+/g)[2].replace('%', '')) *
                         progressRatio);
                     if (progress > sentProgress) {
-                        updateProgress(progress, device);
+                        updateProgress(device, progress);
                         sentProgress = progress;
                     }
                 } catch (err) {
@@ -87,7 +87,7 @@ module.exports = function(io) {
                 try {
                     var progress = Math.round(parseInt(message) * progressRatio);
                     if (progress > sentProgress && progress <= 100) {
-                        updateProgress(progress, device);
+                        updateProgress(device, progress);
                         sentProgress = progress;
                     }
                 } catch (err) {

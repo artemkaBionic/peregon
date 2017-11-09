@@ -78,6 +78,7 @@ module.exports = function(io) {
             then(readSessions(deviceId)).
             then(content.updateContent(deviceId)).
             then(partitions.unmountPartitions(deviceId)).
+            then(usbDrives.finishProgress(deviceId)).
             then(function() {
                 io.emit('usb-complete');
             });
