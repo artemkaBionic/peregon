@@ -18,34 +18,29 @@ module.exports = function(io) {
     var winston = require('winston');
 
     var devices = [];
-    winston.log('info', 'Device bridge started');
+    winston.info('Device bridge started');
     client.trackDevices().then(function(tracker) {
         tracker.on('add', function(device) {
             io.emit('android-add', {});
         });
         tracker.on('change', function(device) {
-            winston.log('info', 'Device type:' + device.type +
-                ' for device:' +
-                device.id);
+            winston.info('Device type:' + device.type + ' for device:' + device.id);
             if (device.type === 'device') {
                 io.emit('installation-started', {});
-                winston.log('info', 'Device ' + device.id +
-                    ' is ready to install app.');
+                winston.info('Device ' + device.id + ' is ready to install app.');
                 installApp(device.id);
             }
         });
         tracker.on('remove', function(device) {
-            winston.log('info', 'Device %s was unplugged:' + device.id);
+            winston.info('Device %s was unplugged:' + device.id);
             var index = devices.indexOf(device.id);
             sessions.getSessionByParams(
                 {'tmp.adbSerial': device.id, 'status': 'Incomplete'}).
                 then(function(session) {
-                    finishSession(session._id, {complete: false});
+                    return finishSession(session._id, {complete: false});
                 }).
-                catch(function(err) {
-                    winston.log(
-                        'error', 'Something went wrong while disconnecting device' +
-                        device.id + 'Error:' + err);
+                catch(function(e) {
+                    winston.error('Something went wrong while disconnecting device' + device.id + 'Error:' + e);
                 });
             if (index > -1) {
                 devices.splice(index, 1);
@@ -53,10 +48,8 @@ module.exports = function(io) {
             }
 
         });
-    }).catch(function(err) {
-        winston.log('error',
-            'Something went wrong while connecting device:',
-            err.stack);
+    }).catch(function(e) {
+        winston.error('Something went wrong while connecting device:', e.stack);
     });
     //check for expired sessions every 10 minutes
     setInterval(function() {
@@ -65,7 +58,7 @@ module.exports = function(io) {
 
     // 3600000 - hour 600000 - 10 mins
     function checkSessionExpired() {
-        winston.log('info', 'Check for expired sessions');
+        winston.info('Check for expired sessions');
         sessions.getSessionsByParams(
             {
                 'device.item_number': {$exists: true, $ne: null},
@@ -79,9 +72,7 @@ module.exports = function(io) {
                     var expireDate = new Date(plusOneHour);
                     var currentDate = new Date();
                     if (currentDate > expireDate) {
-                        winston.log('info', 'Session with key:' +
-                            sessionId +
-                            ' is expired');
+                        winston.info('Session with key:' + sessionId + ' is expired');
                         io.emit('android-session-expired', {
                             'sessionId': sessions[i],
                             'device': sessions[i].device.serial_number
@@ -92,13 +83,13 @@ module.exports = function(io) {
                         }, 5000);
                     }
                 }
-            }).catch(function(err) {
-            winston.log('error', err);
+            }).catch(function(e) {
+            winston.error(e);
         });
     }
 
     function getSerialLookup(imei) {
-        winston.log('info', 'Getting serial lookup for imei:' + imei);
+        winston.info('Getting serial lookup for imei:' + imei);
         return new Promise(function(resolve, reject) {
             inventory.getSerialLookup(imei, function(item) {
                 if (JSON.stringify(item).
@@ -113,85 +104,71 @@ module.exports = function(io) {
     }
 
     function finishSession(sessionId, details) {
-        winston.log('info', 'Finishing session with ID: ' + sessionId);
-        sessions.finish(sessionId, details).then(function(session) {
-            winston.log('info', 'Session is finished ' + session._id);
+        winston.info('Finishing session with ID: ' + sessionId);
+        return sessions.finish(sessionId, details).then(function(session) {
+            winston.info('Session is finished ' + session._id);
             session.tmp.currentStep = 'finish' + session.status;
             io.emit('android-reset', session);
         });
     }
 
     function installApp(serial) {
-        client.uninstall(serial,
-            'com.basechord.aarons.androidrefresh').then(function() {
-            winston.log(
-                'info', 'Uninstalled previous version of app successfully for device: ' +
-                serial);
-            client.install(serial, apk).then(function() {
-                winston.log('info', 'App is installed for device ' +
-                    serial);
+        return client.uninstall(serial, 'com.basechord.aarons.androidrefresh').then(function() {
+            winston.info('Uninstalled previous version of app successfully for device: ' + serial);
+            return client.install(serial, apk).then(function() {
+                winston.info('App is installed for device ' + serial);
                 io.emit('app-installed', {device: serial});
                 // clear logcat before start the app
-                clearLogcat(serial).then(function(serialNo) {
-                    checkDeviceProgress(serialNo);
-                }).catch(function(err) {
-                    winston.log(
-                        'error', 'Something went wrong while clearing logcat for device: ' +
-                        serial + ' Error:' + err.stack);
-                });
-            }).catch(function(err) {
-                winston.log(
-                    'error', 'Something went wrong while installing the app on device: ' +
-                    serial + ' Error:' + err.stack);
+                return clearLogcat(serial).then(function(serialNo) {checkDeviceProgress(serialNo);}).
+                    catch(function(e) {
+                        winston.error('Something went wrong while clearing logcat for device: ' + serial + ' Error:' +
+                            e.stack);
+                    });
+            }).catch(function(e) {
+                winston.error('Something went wrong while installing the app on device: ' + serial + ' Error:' +
+                    e.stack);
             });
-        }).catch(function(err) {
-            winston.log(
-                'error', 'Something went wrong while uninstalling the app on device: ' +
-                serial + ' Error:' + err.stack);
+        }).catch(function(e) {
+            winston.error('Something went wrong while uninstalling the app on device: ' + serial + ' Error:' + e.stack);
         });
-
     }
 
     function checkDeviceProgress(serial) {
-        winston.log('info', devices.length + ' devices in process');
+        winston.info(devices.length + ' devices in process');
         if (devices.length === 0) {
-            winston.log('info', 'Launching refresh app on device:' +
-                serial);
+            winston.info('Launching refresh app on device:' + serial);
             devices.push(serial);
             startApp(serial);
         } else if (devices.indexOf(serial) === -1) {
-            winston.log('info', 'Launching refresh app on device:' +
-                serial);
+            winston.info('Launching refresh app on device:' + serial);
             devices.push(serial);
             startApp(serial);
         }
     }
 
     function startApp(serial) {
-        winston.log('info', 'Starting refresh app for device:' + serial);
+        winston.info('Starting refresh app for device:' + serial);
         return client.shell(serial,
             'am start -n com.basechord.aarons.androidrefresh/com.basechord.aarons.androidrefresh.app.MainActivity -a android.intent.action.MAIN -c android.intent.category.LAUNCHER').
             then(adb.util.readAll).
             then(function(output) {
-                winston.log('info', '[%s] %s', serial,
-                    output.toString().trim());
+                winston.info('[%s] %s', serial, output.toString().trim());
                 readLogcat(serial);
             }).
-            catch(function(err) {
-                winston.log(
-                    'error', 'Something went wrong while launching the app on device: ' +
-                    serial + ' Error:' + err.stack);
+            catch(function(e) {
+                winston.error('Something went wrong while launching the app on device: ' + serial + ' Error:' +
+                    e.stack);
             });
     }
 
     function clearLogcat(serial) {
-        winston.log('info', 'Clearing logcat for device:' + serial);
+        winston.info('Clearing logcat for device:' + serial);
         return new Promise(function(resolve, reject) {
             var aaronsClearLogcat = spawn('adb',
                 ['-s', serial, 'logcat', '-c']);
             aaronsClearLogcat.stdout.on('data', function(data) {
             });
-            winston.log('info', 'Logcat cleared for device: ' + serial);
+            winston.info('Logcat cleared for device: ' + serial);
             resolve(serial);
         });
     }
@@ -206,7 +183,7 @@ module.exports = function(io) {
     }
 
     function readLogcat(serial) {
-        winston.log('info', 'Reading logcat for device: ' + serial);
+        winston.info('Reading logcat for device: ' + serial);
         var aaronsLogcat = spawn('adb',
             ['-s', serial, 'logcat', '-s', 'Aarons_Result']);
         var failedTests = [];
@@ -217,7 +194,7 @@ module.exports = function(io) {
         var sessionDate = new Date().toISOString();
         aaronsLogcat.stdout.on('data', function(data) {
             data = decoder.write(data);
-            winston.log('info', 'Parsing logcat data: ' + data);
+            winston.info('Parsing logcat data: ' + data);
             if (IsJsonString(data.substring(data.indexOf('{')))) {
                 // check if app started indexOf !== -1 means 'includes'
                 if (data.indexOf('AppStartedCommand') !== -1) {
@@ -237,38 +214,31 @@ module.exports = function(io) {
 
                     sessions.start(sessionDate, unknownItem, tmp).
                         then(function(session) {
-                            getSerialLookup(imei).then(function(res) {
-                                session.device = inventory.changeDeviceFormat(
-                                    res.item);
-                                sessions.updateSession(session);
-                                io.emit('app-start', session);
-                            }).catch(function(err) {
-                                winston.log(
-                                    'error', 'Failed to get serial number because of: ' +
-                                    err);
+                            return getSerialLookup(imei).then(function(res) {
+                                session.device = inventory.changeDeviceFormat(res.item);
+                                return sessions.updateSession(session).then(function() {
+                                    io.emit('app-start', session);
+                                });
+                            }).catch(function(e) {
+                                winston.error('Failed to get serial number because of: ' + e);
                                 io.emit('app-start', session);
                             });
                         }).
-                        catch(function(err) {
-                            winston.log('error', err);
+                        catch(function(e) {
+                            winston.error(e);
                         });
                 }
 
                 // check if wipe started indexOf !== -1 means 'includes'
                 else if (data.indexOf('WipeStarted') !== -1) {
                     if (failedTests.length > 0) {
-                        sessions.addLogEntry(sessionDate, 'Info',
-                            'Android test fail',
-                            {'failedTests': failedTests}).then(function() {
-                            finishSession(sessionDate, {complete: false});
-                        });
-                    } else {
-                        sessions.addLogEntry(sessionDate, 'Info',
-                            'Android refresh app has initiated a factory reset.').
+                        sessions.addLogEntry(sessionDate, 'Info', 'Android test fail', {'failedTests': failedTests}).
                             then(function() {
-                                finishSession(sessionDate,
-                                    {complete: true});
+                                return finishSession(sessionDate, {complete: false});
                             });
+                    } else {
+                        sessions.addLogEntry(sessionDate, 'Info', 'Android refresh app has initiated a factory reset.').
+                            then(function() {return finishSession(sessionDate, {complete: true});});
                     }
                 }
 
@@ -293,15 +263,11 @@ module.exports = function(io) {
                         session.tmp.passedManual = passedManualTests;
                         session.failedTests = failedTests;
                         session.tmp.currentStep = isAutoTest &&
-                        passedAutoTests < session.tmp.numberOfAuto
-                            ? 'autoTesting'
-                            : 'manualTesting';
+                        passedAutoTests < session.tmp.numberOfAuto ? 'autoTesting' : 'manualTesting';
                         sessions.updateSession(session);
                         io.emit('android-test', session);
-                    }).catch(function(err) {
-                        winston.log(
-                            'error', 'Something went wrong while getting data for device ' +
-                            serial + ' Error:' + err);
+                    }).catch(function(ee) {
+                        winston.error('Something went wrong while getting data for device ' + serial + ' Error:' + e);
                     });
                 }
             }

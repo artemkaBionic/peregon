@@ -127,8 +127,8 @@ module.exports = function(io) {
     function copyFilesAndApplyImages(device, contentTemp, copyFilesSize, macImageSize, applyMac) {
         var totalSize = macImageSize + copyFilesSize;
         return copyFiles(contentTemp, copyFilesSize, totalSize, device).
-            then(applyMac ? applyMacImage(device, macImageSize, totalSize) : Promise.resolve()).
-            then(finishApplyContent(device));
+            then(function() {return applyMac ? applyMacImage(device, macImageSize, totalSize) : Promise.resolve();}).
+            then(function() {return finishApplyContent(device);});
     }
 
     function updateContent(device) {

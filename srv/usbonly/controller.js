@@ -46,13 +46,9 @@ module.exports = function(io) {
             'progress': 0
         };
         usbDrives.set(usbData.id, usbData);
-        return isRefreshUsb(device.id).then(function(isInitialized) {
-            if (isInitialized) {
-                return prepareUsb(device.id);
-            }
-        }).catch(function(err) {
-            winston.error(err);
-        });
+        return isRefreshUsb(device.id).
+            then(function(isInitialized) {return isInitialized ? prepareUsb(device.id) : Promise.resolve();}).
+            catch(function(err) {winston.error(err);});
     }
 
     function removeUsb(device) {
@@ -76,13 +72,11 @@ module.exports = function(io) {
         winston.info('Prepearing usb ' + deviceId);
         usbDrives.setStatus(deviceId, 'in_progress');
         return partitions.updatePartitions(deviceId).
-            then(readSessions(deviceId)).
-            then(content.updateContent(deviceId)).
-            finally(partitions.unmountPartitions(deviceId)).
-            then(usbDrives.finishProgress(deviceId)).
-            then(function() {
-                io.emit('usb-complete');
-            });
+            then(function() {return readSessions(deviceId);}).
+            then(function() {return content.updateContent(deviceId);}).
+            finally(function() {return partitions.unmountPartitions(deviceId);}).
+            then(function() {return usbDrives.finishProgress(deviceId);}).
+            then(function() {io.emit('usb-complete');});
     }
 
     function isRefreshUsb(deviceId) {
@@ -90,7 +84,9 @@ module.exports = function(io) {
     }
 
     function readSessions(deviceId) {
-        return readSessionFiles(deviceId).then(readXboxSessions(deviceId)).then(content.clearStatus(deviceId));
+        return readSessionFiles(deviceId).
+            then(function() {return readXboxSessions(deviceId);}).
+            then(function() {return content.clearStatus(deviceId);});
     }
 
     function readSessionFiles(deviceId) {
@@ -100,11 +96,13 @@ module.exports = function(io) {
             var sessionFiles = [];
             for (var i = 0; i < files.length; i++) {
                 winston.info('Session file found: ' + files[i]);
-                sessionFiles.push(fs.readFileAsync(sessionsDirectory + '/' + files[i], 'utf8').then(processUsbSession)).catch(function (e) {
-                    if (e.code !== 'ENOENT') {
-                        throw e;
-                    }
-                });
+                sessionFiles.push(fs.readFileAsync(sessionsDirectory + '/' + files[i], 'utf8').
+                    then(processUsbSession)).
+                    catch(function(e) {
+                        if (e.code !== 'ENOENT') {
+                            throw e;
+                        }
+                    });
             }
             return Promise.all(sessionFiles);
         }).catch(function(err) {
@@ -115,22 +113,24 @@ module.exports = function(io) {
     function processUsbSession(data) {
         // Remove non-printable characters
         data = data.replace(/[^\x20-\x7E]+/g, '');
-        return JSON.parse(data).then(function(usbSession) {
-            winston.info('Refresh Session details: ' + usbSession);
-            sessions.getSessionByParams({
-                'device.item_number': usbSession.device.item_number,
-                'status': 'Incomplete'
-            }).then(function(session) {
-                if (session === null) {
-                    usbSession._id = usbSession.start_time;
-                    sessions.set(usbSession._id, usbSession);
-                } else {
-                    usbSession._id = session._id;
-                    sessions.updateSession(usbSession);
-                }
-                sessions.finish(usbSession._id, {complete: usbSession.status === 'Success'});
+        return JSON.parse(data).
+            then(function(usbSession) {
+                winston.info('Refresh Session details: ' + usbSession);
+                return sessions.getSessionByParams({
+                    'device.item_number': usbSession.device.item_number,
+                    'status': 'Incomplete'
+                }).then(function(session) {
+                    if (session === null) {
+                        usbSession._id = usbSession.start_time;
+                        return sessions.insert(usbSession);
+                    } else {
+                        usbSession._id = session._id;
+                        return sessions.update(usbSession);
+                    }
+                }).then(function() {
+                    return sessions.finish(usbSession._id, {complete: usbSession.status === 'Success'});
+                });
             });
-        });
     }
 
     function readXboxSessions(device) {
@@ -151,14 +151,15 @@ module.exports = function(io) {
                         'device.item_number': item.InventoryNumber,
                         'status': 'Incomplete'
                     }).then(function(session) {
+                        var promise;
                         if (session === null) {
-                            sessions.start(new Date().toISOString(), item, null).
+                            promise = sessions.start(new Date().toISOString(), item, null).
                                 then(function(session) {sessions.finish(session._id, {complete: sessionComplete});});
                         } else {
-                            sessions.finish(session._id, {complete: sessionComplete});
+                            promise = sessions.finish(session._id, {complete: sessionComplete});
                         }
                         unreportedSessions--;
-                        return reportXboxSessions(unreportedSessions);
+                        return promise.then(function() {return reportXboxSessions(unreportedSessions);});
                     });
                 } else {
                     return reportXboxSessions(unreportedSessions);
@@ -182,7 +183,7 @@ module.exports = function(io) {
         var newSessions = [];
         for (var i = 0; i < count; i++) {
             newSessions.push(sessions.start(new Date().toISOString(), {Type: 'XboxOne'}, null).then(function(session) {
-                sessions.finish(session._id, {complete: true});
+                return sessions.finish(session._id, {complete: true});
             }));
         }
         return Promise.all(newSessions);
@@ -214,8 +215,8 @@ module.exports = function(io) {
 
     function createItemFile(device, item) {
         return partitions.mountPartitions(device).
-            then(content.createItemFile(device, item)).
-            finally(partitions.unmountPartitions(device)).
+            then(function() {return content.createItemFile(device, item);}).
+            finally(function() {return partitions.unmountPartitions(device);}).
             catch(function(err) {
                 winston.error('Error creating item file on usb ' + device + ', ' + err);
             });
@@ -223,8 +224,8 @@ module.exports = function(io) {
 
     function clearItemFile(device) {
         return partitions.mountPartitions(device).
-            then(content.clearStatus(device)).
-            finally(partitions.unmountPartitions(device)).
+            then(function() {return content.clearStatus(device);}).
+            finally(function() {return partitions.unmountPartitions(device);}).
             catch(function(err) {
                 winston.error('Error creating item file on usb ' + device + ', ' + err);
             });

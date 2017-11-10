@@ -66,8 +66,7 @@ module.exports = function(io) {
         });
     });
     router.post('/data/sessions/:id/addLogEntry', function(req, res) {
-        sessions.addLogEntry(req.params.id, req.body.level, req.body.message,
-            req.body.details).then(function() {
+        sessions.addLogEntry(req.params.id, req.body.level, req.body.message, req.body.details).then(function() {
             res.json();
         });
     });

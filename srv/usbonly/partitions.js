@@ -11,6 +11,7 @@ function doesMbrExist(device) {
         shell.exec('parted --script /dev/' + device + ' --machine print', {silent: true},
             function(code, stdout, stderr) {
                 if (code !== 0) {
+                    winston.error('Failed to check if USB ' + device + ' has a MBR, parted returned error code ' + code + ' ' + stdout);
                     reject(new Error(stderr));
                 } else {
                     var deviceInfo = stdout.trim().split(os.EOL)[1].split(':');
@@ -41,13 +42,7 @@ function doPartitionsExist(device) {
 }
 
 function checkPartitioning(device) {
-    return doesMbrExist(device).then(function(mbrExists) {
-        if (mbrExists) {
-            return doPartitionsExist(device);
-        } else {
-            return false;
-        }
-    });
+    return doesMbrExist(device).then(function(mbrExists) {return mbrExists ? doPartitionsExist(device) : false;});
 }
 
 function unmountPartitions(device) {

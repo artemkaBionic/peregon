@@ -78,8 +78,7 @@ module.exports = function(io) {
     }
 
     function updateItem(params, item) {
-        winston.log('info', 'Updating all sessons in Tingo with params:' +
-            params);
+        winston.log('info', 'Updating all sessons in Tingo with params:' + params);
         return new Promise(function(resolve, reject) {
             sessions.update(params,
                 {
