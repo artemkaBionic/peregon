@@ -112,17 +112,16 @@
 
         function showBootDeviceProgress() {
             inventory.getLowestUsbInProgress().then(function(minProgress) {
-                usbProgress(minProgress);
+                usbProgress(minProgress.progress);
             });
         }
 
         vm.createBootDrives = function() {
+            usbProgress(0);
             $http({
                 url: '/prepareAllUsb',
                 method: 'POST',
                 headers: {'content-type': 'application/json'}
-            }).then(function() {
-                showBootDeviceProgress();
             });
         };
 

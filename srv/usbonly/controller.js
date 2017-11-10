@@ -63,6 +63,7 @@ module.exports = function(io) {
     function prepareAllUsb() {
         var devices = usbDrives.getAllUsbDrives();
         var usbDrivesToPrepare = [];
+        console.log(devices);
         for (var key in devices) {
             if (devices.hasOwnProperty(key) && devices[key].status === 'not_ready') {
                 usbDrivesToPrepare.push(prepareUsb(key));
@@ -77,7 +78,7 @@ module.exports = function(io) {
         return partitions.updatePartitions(deviceId).
             then(readSessions(deviceId)).
             then(content.updateContent(deviceId)).
-            then(partitions.unmountPartitions(deviceId)).
+            finally(partitions.unmountPartitions(deviceId)).
             then(usbDrives.finishProgress(deviceId)).
             then(function() {
                 io.emit('usb-complete');
@@ -99,7 +100,11 @@ module.exports = function(io) {
             var sessionFiles = [];
             for (var i = 0; i < files.length; i++) {
                 winston.info('Session file found: ' + files[i]);
-                sessionFiles.push(fs.readFileAsync(sessionsDirectory + '/' + files[i], 'utf8').then(processUsbSession));
+                sessionFiles.push(fs.readFileAsync(sessionsDirectory + '/' + files[i], 'utf8').then(processUsbSession)).catch(function (e) {
+                    if (e.code !== 'ENOENT') {
+                        throw e;
+                    }
+                });
             }
             return Promise.all(sessionFiles);
         }).catch(function(err) {
@@ -111,31 +116,24 @@ module.exports = function(io) {
         // Remove non-printable characters
         data = data.replace(/[^\x20-\x7E]+/g, '');
         return JSON.parse(data).then(function(usbSession) {
-            winston.info('Refresh Session details: ' +
-                usbSession);
+            winston.info('Refresh Session details: ' + usbSession);
             sessions.getSessionByParams({
                 'device.item_number': usbSession.device.item_number,
                 'status': 'Incomplete'
             }).then(function(session) {
                 if (session === null) {
                     usbSession._id = usbSession.start_time;
-                    sessions.set(usbSession._id,
-                        usbSession);
+                    sessions.set(usbSession._id, usbSession);
                 } else {
                     usbSession._id = session._id;
-                    sessions.updateSession(
-                        usbSession);
+                    sessions.updateSession(usbSession);
                 }
-                sessions.finish(usbSession._id,
-                    {
-                        complete: usbSession.status ===
-                        'Success'
-                    });
+                sessions.finish(usbSession._id, {complete: usbSession.status === 'Success'});
             });
         });
     }
 
-    function readXboxSessions(device, callback) {
+    function readXboxSessions(device) {
         winston.info('Reading xbox sessions');
         var systemUpdateDir = '/mnt/' + device + '1/$SystemUpdate';
         var usbItemFile = '/mnt/' + device + config.usbStatusPartition + '/item.json';
@@ -165,16 +163,16 @@ module.exports = function(io) {
                 } else {
                     return reportXboxSessions(unreportedSessions);
                 }
-            }).catch(function(err) {
-                if (err.code === 'ENOENT') {
+            }).catch(function(e) {
+                if (e.code === 'ENOENT') {
                     return reportXboxSessions(unreportedSessions);
                 } else {
-                    winston.error('Error reading ' + usbItemFile + ' ' + err.message);
+                    winston.error('Error reading ' + usbItemFile + ' ' + e.message);
                 }
             });
-        }).catch(function(err) {
-            if (err.code !== 'ENOENT') {
-                winston.error('Error reading ' + systemUpdateDir + '/update.log ' + err.message);
+        }).catch(function(e) {
+            if (e.code !== 'ENOENT') {
+                winston.error('Error reading ' + systemUpdateDir + '/update.log ' + e.message);
             }
         });
     }
@@ -217,9 +215,8 @@ module.exports = function(io) {
     function createItemFile(device, item) {
         return partitions.mountPartitions(device).
             then(content.createItemFile(device, item)).
-            then(partitions.unmountPartitions(device)).
+            finally(partitions.unmountPartitions(device)).
             catch(function(err) {
-                partitions.unmountPartitions(device);
                 winston.error('Error creating item file on usb ' + device + ', ' + err);
             });
     }
@@ -227,9 +224,8 @@ module.exports = function(io) {
     function clearItemFile(device) {
         return partitions.mountPartitions(device).
             then(content.clearStatus(device)).
-            then(partitions.unmountPartitions(device)).
+            finally(partitions.unmountPartitions(device)).
             catch(function(err) {
-                partitions.unmountPartitions(device);
                 winston.error('Error creating item file on usb ' + device + ', ' + err);
             });
     }

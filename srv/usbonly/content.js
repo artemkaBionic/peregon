@@ -27,8 +27,8 @@ module.exports = function(io) {
     }
 
     function copyFiles(contentTemp, copyFilesSize, totalSize, device) {
-        winston.info('Copying files to USB');
         return new Promise(function(resolve, reject) {
+            winston.info('Copying files to USB');
             var err = '';
             var sentProgress = 0;
             var progressRatio = copyFilesSize / totalSize;
@@ -70,8 +70,8 @@ module.exports = function(io) {
     }
 
     function applyMacImage(device, macImageSize, totalSize) {
-        winston.info('Applying Mac image');
         return new Promise(function(resolve, reject) {
+            winston.info('Applying Mac image');
             var err = '';
             var sentProgress = 0;
             var progressRatio = macImageSize / totalSize;
@@ -132,10 +132,10 @@ module.exports = function(io) {
     }
 
     function updateContent(device) {
-        winston.info('Updating content on ' + device);
         return versions.getCurrentVersions().then(function(currentVersions) {
             return versions.getUsbVersions(device).then(function(usbVersions) {
                 return new Promise(function(resolve, reject) {
+                    winston.info('Updating content on ' + device);
                     // Prepare files to copy
                     var contentTemp = path.join(os.tmpdir(), 'tmp', uuid());
                     shell.mkdir('-p', [
@@ -194,8 +194,8 @@ module.exports = function(io) {
     }
 
     function clearStatus(device) {
-        winston.info('Clearing status for device:' + device);
         return new Promise(function(resolve) {
+            winston.info('Clearing status for device:' + device);
             //Remove Xbox Refresh status files
             shell.rm([
                 '/mnt/' + device + config.usbXboxPartition +

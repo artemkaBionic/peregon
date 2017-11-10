@@ -51,8 +51,8 @@ function checkPartitioning(device) {
 }
 
 function unmountPartitions(device) {
-    winston.info('Unmounting USB device ' + device);
     return new Promise(function(resolve) {
+        winston.info('Unmounting USB device ' + device);
         shell.exec('sync && umount /dev/' + device + '?', {silent: true},
             function(code, stdout, stderr) {
                 if (code !== 0) {
@@ -67,8 +67,8 @@ function unmountPartitions(device) {
 }
 
 function mountPartitions(device) {
-    winston.info('Mounting partitions for device:' + device);
     return new Promise(function(resolve, reject) {
+        winston.info('Mounting partitions for device: ' + device);
         shell.mkdir('-p', [
             '/mnt/' + device + config.usbXboxPartition,
             '/mnt/' + device + config.usbWindowsPartition,
@@ -89,13 +89,13 @@ function mountPartitions(device) {
 }
 
 function updatePartitions(device) {
-    winston.info('Updating partitions for device:' + device);
     return checkPartitioning(device).then(function(isPartitioned) {
+        winston.info('Updating partitions for device: ' + device);
         if (isPartitioned) {
             winston.info('USB device ' + device + ' already partitioned correctly');
             return mountPartitions(device);
         } else {
-            winston.info('Partitions update process started for device:' + device);
+            winston.info('Partitions update process started for device: ' + device);
             return new Promise(function(resolve, reject) {
                 // Get disk size
                 shell.exec('parted --machine --script /dev/' + device +
@@ -151,9 +151,7 @@ function updatePartitions(device) {
                                         if (code !== 0) {
                                             reject(new Error(stderr));
                                         } else {
-                                            mountPartitions(device).then(function() {
-                                                resolve();
-                                            });
+                                            resolve(mountPartitions(device));
                                         }
                                     });
                                 }

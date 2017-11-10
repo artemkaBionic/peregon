@@ -41,7 +41,19 @@ function createVersionsFile(device) {
 
 function getUsbVersions(device) {
     var usbVersionsFile = '/mnt/' + device + config.usbStatusPartition + '/versions.json';
-    return fs.readFileAsync(usbVersionsFile, 'utf8').then(JSON.parse);
+    return fs.readFileAsync(usbVersionsFile, 'utf8').then(JSON.parse).catch(function(e) {
+        if (e.code === 'ENOENT') {
+            return Promise.resolve({
+                'winpe': -1,
+                'winpe-app': -1,
+                'windows': -1,
+                'xbox': -1,
+                'mac': -1
+            });
+        } else {
+            throw e;
+        }
+    });
 }
 
 module.exports = {
