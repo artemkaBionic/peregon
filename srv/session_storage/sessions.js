@@ -102,6 +102,26 @@ module.exports = function(io) {
         });
     }
 
+    function updateCurrentStep(sessionId, currentStep) {
+        winston.log('info', 'Updating current step of sesson ' + sessionId);
+        return new Promise(function(resolve, reject) {
+            sessions.update({_id: sessionId},
+                {
+                    $set: {
+                        'tmp.currentStep': currentStep
+                    }
+                }, {upsert: true, setDefaultsOnInsert: true},
+                function(err, result) {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(result);
+                    }
+                });
+
+        });
+    }
+
     function start(sessionId, device, tmp) {
         winston.log('info', 'Session: ' + sessionId + ' started');
         return new Promise(function(resolve, reject) {
@@ -126,7 +146,7 @@ module.exports = function(io) {
                     winston.log('info', 'Session with ID:' + sessionId +
                         ' was inserted succesfully');
                     io.emit('session-started', newSession);
-                    resolve(session);
+                    resolve(newSession);
                 }).catch(function(err) {
                     winston.log(
                         'error', 'Error while inserting session with ID:' +
@@ -290,6 +310,7 @@ module.exports = function(io) {
         'getSessionsByParams': getSessionsByParams,
         'getSessionByParams': getSessionByParams,
         'updateItem': updateItem,
+        'updateCurrentStep': updateCurrentStep,
         'start': start,
         'deviceBroken': deviceBroken,
         'addLogEntry': addLogEntry,

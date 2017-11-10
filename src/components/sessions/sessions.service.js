@@ -13,11 +13,22 @@
 
         var service = {};
 
-        service.start = function(sessionId, item) {
+        service.start = function(sessionId, item, tmp) {
             var url = '/data/sessions/' + sessionId + '/start';
             var deferred = $q.defer();
 
-            $http.post(url, item).then(function(result) {
+            $http.post(url, {'item': item, 'tmp': tmp}).then(function(result) {
+                deferred.resolve(result.data);
+            });
+
+            return deferred.promise;
+        };
+
+        service.updateCurrentStep = function(sessionId, currentStep) {
+            var url = '/data/sessions/' + sessionId + '/updateCurrentStep';
+            var deferred = $q.defer();
+
+            $http.post(url, {'currentStep': currentStep}).then(function(result) {
                 deferred.resolve(result.data);
             });
 

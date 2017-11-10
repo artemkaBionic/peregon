@@ -56,8 +56,15 @@ module.exports = function(io) {
     });
 
     router.post('/data/sessions/:id/start', function(req, res) {
-        sessions.start(req.params.id, req.body, {}).then(function(result) {
+        sessions.start(req.params.id, req.body.item, req.body.tmp).then(function(result) {
             res.json(result);
+        });
+    });
+    router.post('/data/sessions/:id/updateCurrentStep', function(req, res) {
+        sessions.updateCurrentStep(req.params.id, req.body.currentStep).then(function(result) {
+            res.json(result);
+        }).catch(function(err) {
+            winston.error('Unable to updating current step for session ' + req.params.id + ', ' + err);
         });
     });
     router.post('/data/sessions/deviceBroken', function(req, res) {
@@ -221,19 +228,19 @@ module.exports = function(io) {
         });
     });
 
-    router.post('/updateSessionItem',
-        function(req, res) {
-            sessions.sessionUpdateItem(req.body.params, req.body.item).
-                then(function(result) {
-                    inventory.resendSessions();
-                    res.json({sessionUpdated: result});
-                }).
-                catch(function(err) {
-                    winston.log(
-                        'error', 'Something went wrong while updating session item for serial:' +
-                        req.params.id);
-                });
-        });
+    router.post('/updateSessionItem', function(req, res) {
+        sessions.updateItem(req.body.params, req.body.item).
+            then(function(result) {
+                inventory.resendSessions();
+                res.json({sessionUpdated: result});
+            }).
+            catch(function(err) {
+                winston.log(
+                    'error', 'Something went wrong while updating session item for serial:' +
+                    req.params.id);
+            });
+    });
+
     router.get('/getAllUsbDrives', function(req, res) {
         res.json(usbDrives.getAllUsbDrives());
     });

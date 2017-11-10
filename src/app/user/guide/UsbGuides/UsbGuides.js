@@ -19,7 +19,6 @@
         vm.item = item;
         vm.selectedDevice = null;
         vm.refreshMediaPackage = null;
-        vm.sessionId = null;
         vm.usbDrives = {};
         vm.session = {};
         vm.steps = {
@@ -59,16 +58,22 @@
                 title: 'Device Broken'
             }
         };
+
+        function setStep(step) {
+            vm.step = step;
+            sessions.updateCurrentStep(vm.session._id, step.name);
+        }
+
         vm.sessionExpired = function() {
-            vm.step = vm.steps.broken;
+            setStep(vm.steps.broken);
         };
 
         vm.finishFail = function() {
-            vm.step = vm.steps.failed;
+            setStep(vm.steps.failed);
         };
 
         vm.finishSuccess = function() {
-            vm.step = vm.steps.complete;
+            setStep(vm.steps.complete);
         };
         vm.openFeedbackModal = function() {
             popupLauncher.openModal({
@@ -81,15 +86,6 @@
         };
         checkSession();
 
-        function isEmptyObject(obj) {
-            for (var prop in obj) {
-                if (obj.hasOwnProperty(prop)) {
-                    return false;
-                }
-            }
-            return true;
-        }
-
         function checkSession() {
             sessions.getSessionByParams({
                 'device.item_number': vm.item.item_number,
@@ -98,66 +94,44 @@
                 if (session) {
                     updateSession(session);
                 } else {
-                    checkCondition();
+                    var sessionId = new Date().toISOString();
+                    sessions.start(sessionId, item, {'currentStep': 'checkCondition'}).then(function(session) {
+                        updateSession(session);
+                    });
                 }
             });
         }
 
         function updateSession(session) {
             vm.session = session;
-            if (session.status === 'Success') {
+            if (vm.session.status === 'Success') {
                 vm.step = vm.steps.complete;
-            } else if (session.status === 'Incomplete') {
-                if (!isEmptyObject(session.tmp)) {
-                    if (session.tmp.currentStep === 'refreshStarted') {
-                        refreshDevicesStarted();
-                    }
-                } else {
-                    vm.step = vm.steps.usbControl;
-                }
+            } else if (vm.session.status === 'Incomplete') {
+                vm.step = vm.steps[session.tmp.currentStep];
             } else {
                 vm.step = vm.steps.failed;
             }
         }
 
         vm.startSession = function() {
-            vm.sessionId = new Date().toISOString();
-            sessions.start(vm.sessionId, item).then(function(session) {
-                vm.session = session;
-                // checkUsbStatus();
-                vm.step = vm.steps.usbControl;
-            });
+            setStep(vm.steps.usbControl);
         };
         vm.deviceBad = function() {
-            vm.sessionId = new Date().toISOString();
-            sessions.start(vm.sessionId, item).then(function(session) {
-                    sessions.addLogEntry(session._id, 'Info',
-                        'Device is broken').then(function() {
-                        sessions.finish(session._id, {'complete': false}).
-                            then(function() {
-                                vm.step = vm.steps.broken;
-                            });
-                    });
-                }
-            );
+            setStep(vm.steps.broken).then(function(){
+                return sessions.addLogEntry(vm.session._id, 'Info', 'Device is broken');
+            }).then(function() {
+                return sessions.finish(vm.session._id, {'complete': false});
+            });
         };
-
-        function checkCondition() {
-            vm.step = vm.steps.checkCondition;
-        }
 
         $scope.$on('bootDevicesReady', function() {
             refreshDevicesStart();
         });
 
         function refreshDevicesStart() {
-            vm.step = vm.steps.refreshDevice;
+            setStep(vm.steps.refreshDevice);
             vm.session.tmp.currentStep = 'refreshStarted';
             sessions.addLogEntry(vm.session._id, 'Info', 'Refresh Started', '');
-        }
-
-        function refreshDevicesStarted() {
-            vm.step = vm.steps.refreshDevice;
         }
 
         socket.on('session-complete', function(session) {

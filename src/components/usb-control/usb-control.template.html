@@ -43,7 +43,7 @@
   <div ng-show="vm.step.name === 'bootDevicesProcessing'">
     <div class="row wizard-contents text-center" ng-style="vm.guideTitle">
       <div>Preparing USB drive</div>
-      <div>This may take up to 15 minutes...</div>
+      <div>This may take up to 30 minutes...</div>
     </div>
     <div class="row wizard-contents text-center">
       <div class="center circle-bar">
@@ -62,11 +62,7 @@
       <span><ng-pluralize count="vm.usbDrives.usbData.readyDevices" when="{'one': 'Bootable USB drive is ready', 'other': 'Bootable USB drives are ready'}"></span>
     </div>
     <div class="boot-instruction-row">
-      <span style="color:grey">Remove
-        <ng-pluralize count="vm.usbDrives.usbData.readyDevices"
-                      when="{'one': 'Bootable USB drive from Refresh Station and start refresh.',
-                      'other': 'Bootable USB drives from Refresh Station and start refresh.'}">
-      </span>
+      <span style="color:grey">Remove USB drive from Refresh Station and start refresh.</span>
       <span>
         <br>
         <strong>Warning!</strong> Do not forget to insert
