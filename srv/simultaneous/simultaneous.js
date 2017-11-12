@@ -107,8 +107,10 @@ module.exports = function(io) {
         winston.info('Finishing session with ID: ' + sessionId);
         return sessions.finish(sessionId, details).then(function(session) {
             winston.info('Session is finished ' + session._id);
-            session.tmp.currentStep = 'finish' + session.status;
-            io.emit('android-reset', session);
+            sessions.updateCurrentStep(sessionId, 'finish' + session.status).then(function(updatedSession) {
+                session = updatedSession;
+                io.emit('android-reset', session);
+            });
         });
     }
 
@@ -198,8 +200,7 @@ module.exports = function(io) {
             if (IsJsonString(data.substring(data.indexOf('{')))) {
                 // check if app started indexOf !== -1 means 'includes'
                 if (data.indexOf('AppStartedCommand') !== -1) {
-                    appStartedDataJson = JSON.parse(
-                        data.substring(data.indexOf('{')));
+                    appStartedDataJson = JSON.parse(data.substring(data.indexOf('{')));
                     imei = appStartedDataJson.data.imei;
                     appStartedDataJson.sessionId = sessionDate;
                     var tmp = {};
@@ -244,8 +245,7 @@ module.exports = function(io) {
 
                 // tests progress indexOf === -1 means 'not includes'
                 else if (data.indexOf('beginning') === -1) {
-                    var testResultJson = JSON.parse(
-                        data.substring(data.indexOf('{')));
+                    var testResultJson = JSON.parse(data.substring(data.indexOf('{')));
                     var isAutoTest = testResultJson.commandName.indexOf(
                         'AutoTestCommand') !== -1;
                     if (testResultJson.passed === true) {

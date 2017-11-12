@@ -114,9 +114,8 @@ module.exports = function(io) {
 
     function createItemFile(device, item) {
         var usbItemFile = '/mnt/' + device + config.usbStatusPartition + '/item.json';
-        return JSON.stringify(item).then(function(json) {
-            return fs.writeFileAsync(usbItemFile, json);
-        });
+        var json = JSON.stringify(item);
+        return fs.writeFileAsync(usbItemFile, json);
     }
 
     function finishApplyContent(device) {

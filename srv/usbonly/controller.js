@@ -97,12 +97,12 @@ module.exports = function(io) {
             for (var i = 0; i < files.length; i++) {
                 winston.info('Session file found: ' + files[i]);
                 sessionFiles.push(fs.readFileAsync(sessionsDirectory + '/' + files[i], 'utf8').
-                    then(processUsbSession)).
+                    then(processUsbSession).
                     catch(function(e) {
                         if (e.code !== 'ENOENT') {
                             throw e;
                         }
-                    });
+                    }));
             }
             return Promise.all(sessionFiles);
         }).catch(function(err) {
@@ -113,24 +113,22 @@ module.exports = function(io) {
     function processUsbSession(data) {
         // Remove non-printable characters
         data = data.replace(/[^\x20-\x7E]+/g, '');
-        return JSON.parse(data).
-            then(function(usbSession) {
-                winston.info('Refresh Session details: ' + usbSession);
-                return sessions.getSessionByParams({
-                    'device.item_number': usbSession.device.item_number,
-                    'status': 'Incomplete'
-                }).then(function(session) {
-                    if (session === null) {
-                        usbSession._id = usbSession.start_time;
-                        return sessions.insert(usbSession);
-                    } else {
-                        usbSession._id = session._id;
-                        return sessions.update(usbSession);
-                    }
-                }).then(function() {
-                    return sessions.finish(usbSession._id, {complete: usbSession.status === 'Success'});
-                });
-            });
+        var usbSession = JSON.parse(data);
+        winston.info('Refresh Session details: ' + usbSession);
+        return sessions.getSessionByParams({
+            'device.item_number': usbSession.device.item_number,
+            'status': 'Incomplete'
+        }).then(function(session) {
+            if (session === null) {
+                usbSession._id = usbSession.start_time;
+                return sessions.insert(usbSession);
+            } else {
+                usbSession._id = session._id;
+                return sessions.update(usbSession);
+            }
+        }).then(function() {
+            return sessions.finish(usbSession._id, {complete: usbSession.status === 'Success'});
+        });
     }
 
     function readXboxSessions(device) {
