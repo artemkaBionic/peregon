@@ -117,7 +117,7 @@
             setStep(vm.steps.usbControl);
         };
         vm.deviceBad = function() {
-            setStep(vm.steps.broken).then(function(){
+            setStep(vm.steps.broken).then(function() {
                 return sessions.addLogEntry(vm.session._id, 'Info', 'Device is broken');
             }).then(function() {
                 return sessions.finish(vm.session._id, {'complete': false});

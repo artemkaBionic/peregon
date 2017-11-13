@@ -46,84 +46,94 @@ module.exports = function(io) {
     }
 
     function insert(session) {
-        winston.log('info', 'Adding session with id: ' + session._id);
+        winston.info('Adding session with id: ' + session._id);
         return new Promise(function(resolve, reject) {
-            sessions.insert(session, function(err, result) {
+            sessions.insert(session, function(err) {
                 assert.equal(null, err);
                 if (err) {
                     reject(err);
                 } else {
-                    resolve(result);
+                    winston.info('New session ID is ' + session._id);
+                    resolve(session);
                 }
             });
         });
     }
 
     function update(session) {
-        winston.log('info', 'Updating session with id: ' + session._id);
+        winston.info('Updating session with id: ' + session._id);
         return new Promise(function(resolve, reject) {
             sessions.update({_id: session._id}, session,
                 {upsert: true, setDefaultsOnInsert: true},
-                function(err) {
+                function(err, updatedSession) {
                     if (err) {
-                        winston.log('error', 'Can not update session' +
-                            session._id +
-                            'in tingo because of' + err);
+                        winston.error('Can not update session' + session._id + 'in tingo because of' + err);
                         reject(err);
                     } else {
-                        resolve();
+                        io.emit('session-updated', session);
+                        resolve(session);
                     }
                 });
-        });
-    }
-
-    function updateItem(params, item) {
-        winston.log('info', 'Updating all sessons in Tingo with params:' + params);
-        return new Promise(function(resolve, reject) {
-            sessions.update(params,
-                {
-                    $set: {
-                        'device.sku': item.Sku,
-                        'device.item_number': item.InventoryNumber,
-                        'device.model': item.Model,
-                        'device.manufacturer': item.Manufacturer,
-                        'device.type': item.Type,
-                        'device.serial_number': item.Serial
-                    }
-                }, {upsert: true, setDefaultsOnInsert: true, multi: true},
-                function(err, result) {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        resolve(result);
-                    }
-                });
-
         });
     }
 
     function updateCurrentStep(sessionId, currentStep) {
-        winston.log('info', 'Updating current step of sesson ' + sessionId);
+        winston.info('Updating current step of sesson ' + sessionId);
         return new Promise(function(resolve, reject) {
             sessions.update({_id: sessionId},
                 {
                     $set: {
                         'tmp.currentStep': currentStep
                     }
-                }, {upsert: true, setDefaultsOnInsert: true},
-                function(err, result) {
+                },
+                function(err, updatedSession) {
                     if (err) {
+                        winston.error('Can not update session' + sessionId + 'in tingo because of' + err);
                         reject(err);
                     } else {
-                        resolve(result);
+                        sessions.findOne({_id: sessionId}, function(err, session) {
+                            if (err) {
+                                reject(err);
+                            } else {
+                                io.emit('session-updated', session);
+                                resolve(session);
+                            }
+                        });
                     }
                 });
+        });
+    }
 
+    function updateItem(sessionId, item) {
+        winston.info('Updating item of sesson ' + sessionId);
+        return new Promise(function(resolve, reject) {
+            sessions.update({_id: sessionId},
+                {
+                    $set: {
+                        'device.item_number': item.item_number,
+                        'device.sku': item.sku
+                    }
+                },
+                function(err) {
+                    if (err) {
+                        winston.error('Can not update session' + sessionId + 'in tingo because of' + err);
+                        reject(err);
+                    } else {
+                        sessions.findOne({_id: sessionId}, function(err, session) {
+                            if (err) {
+                                reject(err);
+                            } else {
+                                io.emit('session-updated', session);
+                                resolve(session);
+                            }
+                        });
+                    }
+                });
         });
     }
 
     function start(sessionId, device, tmp) {
-        winston.log('info', 'Session: ' + sessionId + ' started');
+        winston.info('Session: ' + sessionId + ' started');
         return new Promise(function(resolve, reject) {
             var stationName = station.getName();
             station.getServiceTag(function(stationServiceTag) {
@@ -143,7 +153,7 @@ module.exports = function(io) {
                     '_id': sessionId
                 };
                 insert(newSession).then(function(session) {
-                    winston.log('info', 'Session with ID:' + sessionId +
+                    winston.info('Session with ID:' + sessionId +
                         ' was inserted succesfully');
                     io.emit('session-started', newSession);
                     resolve(newSession);
@@ -160,7 +170,7 @@ module.exports = function(io) {
     function deviceBroken(device) {
         var startTime = new Date();
         var sessionId = startTime;
-        winston.log('info', 'Session: ' + sessionId + ' device is broken');
+        winston.info('Session: ' + sessionId + ' device is broken');
         return new Promise(function(resolve, reject) {
             var stationName = station.getName();
             station.getServiceTag(function(stationServiceTag) {
@@ -187,14 +197,12 @@ module.exports = function(io) {
                     '_id': sessionId
                 };
                 insert(newSession).then(function(session) {
-                    winston.log('info', 'Session with ID:' + sessionId +
-                        ' was inserted succesfully');
+                    winston.info('Session with ID:' + sessionId + ' was inserted succesfully');
                     io.emit('session-complete', newSession);
                     resolve(session);
                 }).catch(function(err) {
                     winston.log(
-                        'error', 'Error while inserting session with ID:' +
-                        sessionId + ' Error:' + err);
+                        'error', 'Error while inserting session with ID:' + sessionId + ' Error:' + err);
                     reject(err);
                 });
             });
@@ -217,9 +225,7 @@ module.exports = function(io) {
                 {_id: sessionId},
                 {$push: {logs: logEntry}}, function(err) {
                     if (err) {
-                        winston.log('error', 'Can not update logs for' +
-                            sessionId +
-                            'in Tingo because of' + err);
+                        winston.error('Can not update logs for' + sessionId + 'in Tingo because of' + err);
                     }
                     resolve();
                 }
@@ -230,16 +236,14 @@ module.exports = function(io) {
     function finish(sessionId, details) {
         return new Promise(function(resolve, reject) {
             getSessionByParams({_id: sessionId}).then(function(session) {
-                winston.log('info', 'A client requested to finish an ' +
-                    session.device.type + ' refresh of session id ' +
+                winston.info('A client requested to finish an ' + session.device.type + ' refresh of session id ' +
                     session._id);
                 session.end_time = new Date();
                 if (details.diagnose_only) {
                     session.diagnose_only = true;
                 }
                 if (details.complete) {
-                    addLogEntry(sessionId, 'Info',
-                        'Refresh completed successfully.');
+                    addLogEntry(sessionId, 'Info', 'Refresh completed successfully.');
                     session.status = 'Success';
                     update(session);
                 } else {
@@ -262,8 +266,7 @@ module.exports = function(io) {
         var sessionID = session._id;
         if (session.device.item_number) {
             delete session.tmp;
-            winston.log('info', 'Sending session with this ID:' + sessionID +
-                ' for device: ' + session.device.item_number);
+            winston.info('Sending session with this ID:' + sessionID + ' for device: ' + session.device.item_number);
             request({
                 method: 'POST',
                 url: API_URL + '/session',
@@ -277,19 +280,18 @@ module.exports = function(io) {
                 // update status is sent
                 session.is_sent = true;
                 update(session);
-                winston.log('info', 'Session with this this ID:' + sessionID +
-                    ' was sent.');
+                winston.info('Session with this this ID:' + sessionID + ' was sent.');
             }).catch(function(error) {
-                winston.log('error', 'ERROR: Unable to send session.');
+                winston.error('ERROR: Unable to send session.');
                 winston.log('error', error);
             });
         } else {
-            winston.log('info', 'Session with this ID not sent:' + sessionID);
+            winston.info('Session with this ID not sent:' + sessionID);
         }
     }
 
     function resend() {
-        winston.log('info', 'Attempting to resend unsent sessions');
+        winston.info('Attempting to resend unsent sessions');
         getSessionsByParams(
             {
                 'device.item_number': {$exists: true, $ne: null},
@@ -309,6 +311,7 @@ module.exports = function(io) {
     return {
         'getSessionsByParams': getSessionsByParams,
         'getSessionByParams': getSessionByParams,
+        'insert': insert,
         'update': update,
         'updateItem': updateItem,
         'updateCurrentStep': updateCurrentStep,

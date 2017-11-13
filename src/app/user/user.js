@@ -102,11 +102,6 @@
                 }
             });
         });
-        // $scope.$on('updateList', function() {
-        //     setTimeout(function() {
-        //         getSessions();
-        //     }, 500);
-        // });
         $scope.$on('showModal', function() {
             vm.openSurveyModal();
         });
@@ -238,61 +233,47 @@
         // show modal for successful/failed sessions + enter item number for unrecognized devices
         vm.showGuideForCards = function(session) {
             if (session.device.item_number) {
-                sessions.getSessionByParams({'_id': session._id}).
-                    then(function(res) {
-                        if (res._id && session.status === 'Incomplete') {
-                            var $stateParams = {};
-                            $stateParams.itemNumber = session.device.item_number;
-                            $stateParams.sessionId = res._id;
-                            vm.item = null;
-                            vm.searchString = '';
-                            $state.go('root.user.guide', $stateParams);
-                        } else if (session.status === 'Fail') {
-                            if (session.failedTests &&
-                                session.failedTests.length > 0) {
-                                vm.failedTests = session.failedTests;
-                                if (vm.failedTests.length <= 4) {
-                                    openHelpModal('xxs', vm.failedTests);
-                                } else {
-                                    openHelpModal('sm-to-xs', vm.failedTests);
-                                }
-                            } else {
-                                if (session.logs.length > 0) {
-                                    var isBroken = false;
-                                    var sessionExpired = false;
-                                    for (var i = 0; i <
-                                    session.logs.length; i++) {
-                                        if (session.logs[i].message ===
-                                            'Device is broken') {
-                                            isBroken = true;
-                                        } else if (session.logs[i].message ===
-                                            'Session expired') {
-                                            sessionExpired = true;
-                                        }
-                                    }
-                                    if (isBroken) {
-                                        openHelpModal('xxs',
-                                            'Session failed because device is broken.');
-                                    } else if (sessionExpired) {
-                                        openHelpModal('xxs',
-                                            'Refresh is not successfull because session expired.');
-                                    }
-                                } else {
-                                    openHelpModal('xxs',
-                                        'Session failed because device was unplugged.');
+                if (session._id && session.status === 'Incomplete') {
+                    var $stateParams = {};
+                    $stateParams.itemNumber = session.device.item_number;
+                    $stateParams.sessionId = session._id;
+                    vm.item = null;
+                    vm.searchString = '';
+                    $state.go('root.user.guide', $stateParams);
+                } else if (session.status === 'Fail') {
+                    if (session.failedTests && session.failedTests.length > 0) {
+                        vm.failedTests = session.failedTests;
+                        if (vm.failedTests.length <= 4) {
+                            openHelpModal('xxs', vm.failedTests);
+                        } else {
+                            openHelpModal('sm-to-xs', vm.failedTests);
+                        }
+                    } else {
+                        if (session.logs.length > 0) {
+                            var isBroken = false;
+                            var sessionExpired = false;
+                            for (var i = 0; i <
+                            session.logs.length; i++) {
+                                if (session.logs[i].message === 'Device is broken') {
+                                    isBroken = true;
+                                } else if (session.logs[i].message === 'Session expired') {
+                                    sessionExpired = true;
                                 }
                             }
+                            if (isBroken) {
+                                openHelpModal('xxs', 'Session failed because device is broken.');
+                            } else if (sessionExpired) {
+                                openHelpModal('xxs', 'Refresh is not successfull because session expired.');
+                            }
                         } else {
-                            openHelpModal('xxs',
-                                'Device refreshed successfully.');
+                            openHelpModal('xxs', 'Session failed because device was unplugged.');
                         }
-                    });
+                    }
+                } else {
+                    openHelpModal('xxs', 'Device refreshed successfully.');
+                }
             } else {
-                sessions.getSessionByParams({'_id': session._id}).
-                    then(function(res) {
-                        openHelpModal('sm-to-xs', 'Unrecognized Device',
-                            res._id, session);
-                    });
+                openHelpModal('sm-to-xs', 'Unrecognized Device', session._id, session);
             }
         };
         vm.openFeedbackModal = function() {
@@ -406,6 +387,9 @@
         socket.on('session-started', function(session) {
             updateSession(session);
             vm.viewSessions();
+        });
+        socket.on('session-updated', function(session) {
+            updateSession(session);
         });
         socket.on('session-complete', function(session) {
             updateSession(session);

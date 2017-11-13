@@ -46,16 +46,14 @@
             return deferred.promise;
         };
 
-        service.updateItem = function(params, item) {
+        service.updateItem = function(sessionId, item) {
+            var url = '/data/sessions/' + sessionId + '/updateItem';
             var deferred = $q.defer();
-            $http({
-                url: '/updateSessionItem',
-                method: 'POST',
-                headers: {'content-type': 'application/json'},
-                data: {params: params, item: item}
-            }).then(function(result) {
+
+            $http.post(url, {'item': item}).then(function(result) {
                 deferred.resolve(result.data);
             });
+
             return deferred.promise;
         };
 

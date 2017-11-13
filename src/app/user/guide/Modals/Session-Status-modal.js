@@ -45,29 +45,8 @@
                 vm.deviceType = data.session.device.type;
             }
             vm.authorize = function() {
-                sessions.getAllSessionsByParams({
-                    'device.item_number': vm.item.item_number,
-                    status: 'Incomplete'
-                }).then(function(sessions) {
-                    if (sessions.length > 0) {
-                        vm.sessionAlreadyInProgress = true;
-                    } else {
-                        if (data.session.device.serial_number !== undefined) {
-                            sessions.updateItem(
-                                {'device.serial_number': vm.serialNo}, vm.item).
-                                then(function() {
-                                    $rootScope.$broadcast('updateList');
-                                    vm.closeModal();
-                                });
-                        } else {
-                            sessions.updateItem({'_id': data.session._id},
-                                vm.item).then(function() {
-                                $rootScope.$broadcast('updateList');
-                                vm.closeModal();
-                            });
-                        }
-
-                    }
+                sessions.updateItem(data.session._id, vm.item).then(function() {
+                    vm.closeModal();
                 });
             };
             vm.wrongItemNumber = function() {

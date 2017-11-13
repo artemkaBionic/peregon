@@ -67,6 +67,13 @@ module.exports = function(io) {
             winston.error('Unable to updating current step for session ' + req.params.id + ', ' + err);
         });
     });
+    router.post('/data/sessions/:id/updateItem', function(req, res) {
+        sessions.updateItem(req.params.id, req.body.item).then(function(result) {
+            res.json(result);
+        }).catch(function(err) {
+            winston.error('Unable to updating item for session ' + req.params.id + ', ' + err);
+        });
+    });
     router.post('/data/sessions/deviceBroken', function(req, res) {
         sessions.deviceBroken(req.body).then(function(result) {
             res.json(result);
@@ -226,19 +233,6 @@ module.exports = function(io) {
         sessions.getSessionByParams(req.body).then(function(session) {
             res.json(session);
         });
-    });
-
-    router.post('/updateSessionItem', function(req, res) {
-        sessions.updateItem(req.body.params, req.body.item).
-            then(function(result) {
-                inventory.resendSessions();
-                res.json({sessionUpdated: result});
-            }).
-            catch(function(err) {
-                winston.log(
-                    'error', 'Something went wrong while updating session item for serial:' +
-                    req.params.id);
-            });
     });
 
     router.get('/getAllUsbDrives', function(req, res) {

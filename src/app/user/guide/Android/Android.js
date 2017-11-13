@@ -245,15 +245,7 @@
             }
         });
 
-        socket.on('app-start', function(session) {
-            updateSession(session);
-        });
-
-        socket.on('android-test', function(session) {
-            updateSession(session);
-        });
-
-        socket.on('android-reset', function(session) {
+        socket.on('session-updated', function(session) {
             updateSession(session);
         });
 

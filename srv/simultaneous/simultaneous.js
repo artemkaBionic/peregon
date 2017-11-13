@@ -107,10 +107,7 @@ module.exports = function(io) {
         winston.info('Finishing session with ID: ' + sessionId);
         return sessions.finish(sessionId, details).then(function(session) {
             winston.info('Session is finished ' + session._id);
-            sessions.updateCurrentStep(sessionId, 'finish' + session.status).then(function(updatedSession) {
-                session = updatedSession;
-                io.emit('android-reset', session);
-            });
+            sessions.updateCurrentStep(sessionId, 'finish' + session.status);
         });
     }
 
@@ -217,12 +214,9 @@ module.exports = function(io) {
                         then(function(session) {
                             return getSerialLookup(imei).then(function(res) {
                                 session.device = inventory.changeDeviceFormat(res.item);
-                                return sessions.updateSession(session).then(function() {
-                                    io.emit('app-start', session);
-                                });
+                                return sessions.update(session);
                             }).catch(function(e) {
                                 winston.error('Failed to get serial number because of: ' + e);
-                                io.emit('app-start', session);
                             });
                         }).
                         catch(function(e) {
@@ -264,8 +258,7 @@ module.exports = function(io) {
                         session.failedTests = failedTests;
                         session.tmp.currentStep = isAutoTest &&
                         passedAutoTests < session.tmp.numberOfAuto ? 'autoTesting' : 'manualTesting';
-                        sessions.updateSession(session);
-                        io.emit('android-test', session);
+                        sessions.update(session);
                     }).catch(function(ee) {
                         winston.error('Something went wrong while getting data for device ' + serial + ' Error:' + e);
                     });

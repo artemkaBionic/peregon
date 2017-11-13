@@ -124,14 +124,13 @@ module.exports = function(io) {
             'status': 'Incomplete'
         }).then(function(session) {
             if (session === null) {
-                usbSession._id = usbSession.start_time;
                 return sessions.insert(usbSession);
             } else {
                 usbSession._id = session._id;
                 return sessions.update(usbSession);
             }
-        }).then(function() {
-            return sessions.finish(usbSession._id, {complete: usbSession.status === 'Success'});
+        }).then(function(updatedSession) {
+            return sessions.finish(updatedSession._id, {complete: updatedSession.status === 'Success'});
         });
     }
 
