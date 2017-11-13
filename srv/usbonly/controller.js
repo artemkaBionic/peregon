@@ -16,26 +16,30 @@ module.exports = function(io) {
     var decoder = new StringDecoder('utf8');
 
     //Find existing USB drives
-    var find = spawn('find', ['/dev/disk/by-id/', '-name', 'usb*', '-not', '-name', '*-part?']);
-    find.stdout.on('data', function(findData) {
-        var lines = decoder.write(findData).split(/\n+/);
-        for (var len = lines.length, i = 0; i < len; ++i) {
-            if (lines[i].length > 0) {
-                winston.info('reading details for ' + lines[i]);
-                var lsblk = spawn('lsblk', ['--bytes', '--output', 'NAME,SIZE', '--noheadings', '--nodeps', lines[i]]);
-                lsblk.stdout.on('data', function(lsblkData) {
-                    var deviceInfo = decoder.write(lsblkData).
-                        trim().
-                        split(/\ +/);
-                    addUsb({
-                        'id': deviceInfo[0],
-                        'size': deviceInfo[1],
-                        'status': 'not_ready',
-                        'progress': 0
+    //First, remove any broken symlinks to drives that no longer exist
+    var fixBroken = spawn('find', ['-L', '/dev/disk/by-id/', '-maxdepth', '1', '-type', 'l', '-delete']);
+    fixBroken.on('exit', function() {
+        var findDrives = spawn('find', ['/dev/disk/by-id/', '-name', 'usb*', '-not', '-name', '*-part?']);
+        findDrives.stdout.on('data', function(findData) {
+            var lines = decoder.write(findData).split(/\n+/);
+            for (var len = lines.length, i = 0; i < len; ++i) {
+                if (lines[i].length > 0) {
+                    winston.info('reading details for ' + lines[i]);
+                    var lsblk = spawn('lsblk', ['--bytes', '--output', 'NAME,SIZE', '--noheadings', '--nodeps', lines[i]]);
+                    lsblk.stdout.on('data', function(lsblkData) {
+                        var deviceInfo = decoder.write(lsblkData).
+                            trim().
+                            split(/\ +/);
+                        addUsb({
+                            'id': deviceInfo[0],
+                            'size': deviceInfo[1],
+                            'status': 'not_ready',
+                            'progress': 0
+                        });
                     });
-                });
+                }
             }
-        }
+        });
     });
 
     function addUsb(device) {

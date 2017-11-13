@@ -309,6 +309,7 @@ module.exports = function(io) {
     return {
         'getSessionsByParams': getSessionsByParams,
         'getSessionByParams': getSessionByParams,
+        'update': update,
         'updateItem': updateItem,
         'updateCurrentStep': updateCurrentStep,
         'start': start,
