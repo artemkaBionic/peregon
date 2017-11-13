@@ -8,7 +8,7 @@ module.exports = function(io) {
     var usbDrives = require('./usbCache.js');
     var Promise = require('bluebird');
     var fs = Promise.promisifyAll(require('fs'));
-    var sessions = require('../session_storage/sessions.js');
+    var sessions = require('../session_storage/sessions.js')(io);
     var inventory = require('../inventory.js');
     var winston = require('winston');
     var spawn = require('child_process').spawn;
@@ -114,7 +114,7 @@ module.exports = function(io) {
         // Remove non-printable characters
         data = data.replace(/[^\x20-\x7E]+/g, '');
         var usbSession = JSON.parse(data);
-        winston.info('Refresh Session details: ' + usbSession);
+        winston.info('Refresh Session details: ' + JSON.stringify(usbSession));
         return sessions.getSessionByParams({
             'device.item_number': usbSession.device.item_number,
             'status': 'Incomplete'
