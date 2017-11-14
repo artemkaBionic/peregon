@@ -132,13 +132,13 @@ module.exports = function(io) {
         });
     }
 
-    function start(sessionId, device, tmp) {
-        winston.info('Session: ' + sessionId + ' started');
+    function start(sessionStartDate, device, tmp) {
+        winston.info('Session: ' + sessionStartDate + ' started');
         return new Promise(function(resolve, reject) {
             var stationName = station.getName();
             station.getServiceTag(function(stationServiceTag) {
                 var newSession = {
-                    'start_time': new Date(),
+                    'start_time': sessionStartDate,
                     'end_time': null,
                     'status': 'Incomplete',
                     'diagnose_only': false,
@@ -150,17 +150,17 @@ module.exports = function(io) {
                     'logs': [],
                     'tmp': tmp,
                     'is_sent': false,
-                    '_id': sessionId
+                    '_id': sessionStartDate
                 };
                 insert(newSession).then(function(session) {
-                    winston.info('Session with ID:' + sessionId +
+                    winston.info('Session with ID:' + sessionStartDate +
                         ' was inserted succesfully');
                     io.emit('session-started', newSession);
                     resolve(newSession);
                 }).catch(function(err) {
                     winston.log(
                         'error', 'Error while inserting session with ID:' +
-                        sessionId + ' Error:' + err);
+                        sessionStartDate + ' Error:' + err);
                     reject(err);
                 });
             });

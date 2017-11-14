@@ -67,8 +67,8 @@ module.exports = function(io) {
             then(function(sessions) {
                 for (var i = 0; i < sessions.length; i++) {
                     var sessionId = sessions[i]._id;
-                    var sessionDate = new Date(sessions[i].start_time);
-                    var plusOneHour = sessionDate.getTime() + (3600000);
+                    var sessionStartDate = new Date(sessions[i].start_time);
+                    var plusOneHour = sessionStartDate.getTime() + (3600000);
                     var expireDate = new Date(plusOneHour);
                     var currentDate = new Date();
                     if (currentDate > expireDate) {
@@ -190,7 +190,7 @@ module.exports = function(io) {
         var passedManualTests = 0;
         var imei = null;
         var appStartedDataJson = {};
-        var sessionDate = new Date().toISOString();
+        var sessionStartDate = new Date().toISOString();
         aaronsLogcat.stdout.on('data', function(data) {
             data = decoder.write(data);
             winston.info('Parsing logcat data: ' + data);
@@ -199,7 +199,7 @@ module.exports = function(io) {
                 if (data.indexOf('AppStartedCommand') !== -1) {
                     appStartedDataJson = JSON.parse(data.substring(data.indexOf('{')));
                     imei = appStartedDataJson.data.imei;
-                    appStartedDataJson.sessionId = sessionDate;
+                    appStartedDataJson.sessionId = sessionStartDate;
                     var tmp = {};
                     tmp.numberOfAuto = appStartedDataJson.data.auto;
                     tmp.numberOfManual = appStartedDataJson.data.manual;
@@ -210,7 +210,7 @@ module.exports = function(io) {
                         serial_number: imei
                     };
 
-                    sessions.start(sessionDate, unknownItem, tmp).
+                    sessions.start(sessionStartDate, unknownItem, tmp).
                         then(function(session) {
                             return getSerialLookup(imei).then(function(res) {
                                 session.device = inventory.changeDeviceFormat(res.item);
@@ -227,13 +227,15 @@ module.exports = function(io) {
                 // check if wipe started indexOf !== -1 means 'includes'
                 else if (data.indexOf('WipeStarted') !== -1) {
                     if (failedTests.length > 0) {
-                        sessions.addLogEntry(sessionDate, 'Info', 'Android test fail', {'failedTests': failedTests}).
+                        sessions.addLogEntry(sessionStartDate, 'Info', 'Android test fail',
+                            {'failedTests': failedTests}).
                             then(function() {
-                                return finishSession(sessionDate, {complete: false});
+                                return finishSession(sessionStartDate, {complete: false});
                             });
                     } else {
-                        sessions.addLogEntry(sessionDate, 'Info', 'Android refresh app has initiated a factory reset.').
-                            then(function() {return finishSession(sessionDate, {complete: true});});
+                        sessions.addLogEntry(sessionStartDate, 'Info',
+                            'Android refresh app has initiated a factory reset.').
+                            then(function() {return finishSession(sessionStartDate, {complete: true});});
                     }
                 }
 
@@ -252,7 +254,7 @@ module.exports = function(io) {
                         failedTests.push(testResultJson.commandName);
                     }
                     sessions.getSessionByParams(
-                        {'_id': sessionDate}).then(function(session) {
+                        {'_id': sessionStartDate}).then(function(session) {
                         session.tmp.passedAuto = passedAutoTests;
                         session.tmp.passedManual = passedManualTests;
                         session.failedTests = failedTests;

@@ -25,7 +25,8 @@ module.exports = function(io) {
             for (var len = lines.length, i = 0; i < len; ++i) {
                 if (lines[i].length > 0) {
                     winston.info('reading details for ' + lines[i]);
-                    var lsblk = spawn('lsblk', ['--bytes', '--output', 'NAME,SIZE', '--noheadings', '--nodeps', lines[i]]);
+                    var lsblk = spawn('lsblk',
+                        ['--bytes', '--output', 'NAME,SIZE', '--noheadings', '--nodeps', lines[i]]);
                     lsblk.stdout.on('data', function(lsblkData) {
                         var deviceInfo = decoder.write(lsblkData).
                             trim().
@@ -124,6 +125,7 @@ module.exports = function(io) {
             'status': 'Incomplete'
         }).then(function(session) {
             if (session === null) {
+                usbSession._id = usbSession.start_time;
                 return sessions.insert(usbSession);
             } else {
                 usbSession._id = session._id;
