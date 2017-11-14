@@ -24,9 +24,12 @@
                 //console.log(tokens);
                 var items = arr.filter(function(obj) {
                     // gets values from items array
-                    var values = Object.keys(obj.device).map(function(key) {
-                        return obj.device[key].toString().toLowerCase();
-                    });
+                    var values = [];
+                    if (angular.isDefined(obj.device)) {
+                        values = Object.keys(obj.device).map(function(key) {
+                            return obj.device[key].toString().toLowerCase();
+                        });
+                    }
                     for (var i = 0; i < values.length; i++) {
                         if (values[i] === obj.device.item_number) {
                             values.push(obj.status.toLowerCase());
@@ -35,13 +38,12 @@
                     // checks if values from items includes tokens
                     var keysExistsInObj = tokens.filter(function(key) {
                         return values.some(function(v) {
-                            if (!angular.isUndefined(v)) {
+                            if (angular.isDefined(v)) {
                                 if (key.startsWith('-')) {
                                     key = '';
                                 } else {
                                     return v.includes(key.toLowerCase());
                                 }
-
                             }
                         });
                     });
