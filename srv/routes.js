@@ -56,9 +56,19 @@ module.exports = function(io) {
     });
 
     router.post('/data/sessions/:id/start', function(req, res) {
-        sessions.start(req.params.id, req.body.item, req.body.tmp).then(function(result) {
-            res.json(result);
-        });
+        if (req.body.item === undefined) {
+            sessions.start(req.params.id, req.body, {}).then(function(result) {
+                res.json(result);
+            });
+        } else if (req.body.tmp === undefined) {
+            sessions.start(req.params.id, req.body.item, {}).then(function(result) {
+                res.json(result);
+            });
+        } else {
+            sessions.start(req.params.id, req.body.item, req.body.tmp).then(function(result) {
+                res.json(result);
+            });
+        }
     });
     router.post('/data/sessions/:id/updateCurrentStep', function(req, res) {
         sessions.updateCurrentStep(req.params.id, req.body.currentStep).then(function(result) {

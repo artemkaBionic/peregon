@@ -133,7 +133,7 @@ module.exports = function(io) {
     }
 
     function start(sessionStartDate, device, tmp) {
-        winston.info('Session: ' + sessionStartDate + ' started');
+        winston.info('Session: ' + sessionStartDate + ' started for device ' + JSON.stringify(device));
         return new Promise(function(resolve, reject) {
             var stationName = station.getName();
             station.getServiceTag(function(stationServiceTag) {
@@ -152,15 +152,12 @@ module.exports = function(io) {
                     'is_sent': false,
                     '_id': sessionStartDate
                 };
-                insert(newSession).then(function(session) {
-                    winston.info('Session with ID:' + sessionStartDate +
-                        ' was inserted succesfully');
+                insert(newSession).then(function() {
+                    winston.info('Session with ID: ' + sessionStartDate + ' was inserted succesfully.');
                     io.emit('session-started', newSession);
                     resolve(newSession);
                 }).catch(function(err) {
-                    winston.log(
-                        'error', 'Error while inserting session with ID:' +
-                        sessionStartDate + ' Error:' + err);
+                    winston.error('Error while inserting session with ID:' + sessionStartDate + ' Error:' + err);
                     reject(err);
                 });
             });
