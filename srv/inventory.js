@@ -12,8 +12,8 @@ var rimraf = require('rimraf');
 var request = require('requestretry');
 var uuid = require('uuid/v1');
 var station = require('./station');
-var AZURE_INVENTORY_LOOKUP_URL = 'https://' + config.apiHost + '/api/inventorylookup/';
-var AZURE_SERIAL_LOOKUP_URL = 'https://' + config.apiHost + '/api/seriallookup/';
+var INVENTORY_LOOKUP_URL = 'https://' + config.apiHost + '/api/inventorylookup/';
+var SERIAL_LOOKUP_URL = 'https://' + config.apiHost + '/api/seriallookup/';
 var API_URL = 'https://api2.basechord.com';
 var isDevelopment = process.env.NODE_ENV === 'development';
 var result = null;
@@ -53,10 +53,10 @@ function getItemFromAzure(id, callback) {
 
 // Item lookup from our Mongo DB
 function getItem(id, callback) {
-    winston.log('info', API_URL + '/inventory/lookup/' + id);
+    winston.log('info', API_URL + '/aarons/inventorylookup' + id);
     request({
         rejectUnauthorized: false,
-        uri: API_URL + '/inventory/lookup/' + id,
+        uri: API_URL + '/aarons/inventorylookup' + id,
         headers: {
             'Authorization': config.api2Authorization
         }
