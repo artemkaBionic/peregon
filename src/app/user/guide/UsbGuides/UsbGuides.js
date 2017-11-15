@@ -61,7 +61,7 @@
 
         function setStep(step) {
             vm.step = step;
-            sessions.updateCurrentStep(vm.session._id, step.name);
+            return sessions.updateCurrentStep(vm.session._id, step.name);
         }
 
         vm.sessionExpired = function() {
@@ -118,7 +118,7 @@
         };
         vm.deviceBad = function() {
             setStep(vm.steps.broken).then(function() {
-                return sessions.addLogEntry(vm.session._id, 'Info', 'Device is broken');
+                return sessions.addLogEntry(vm.session._id, 'Info', 'Device is broken', '');
             }).then(function() {
                 return sessions.finish(vm.session._id, {'complete': false});
             });

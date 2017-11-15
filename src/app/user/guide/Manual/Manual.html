@@ -25,90 +25,81 @@
     <div class="row">
       <ul id="progress-tracker" data-steps="2">
         <li ng-class="{'active': vm.step.number === 1}">
-          <span>Preparation</span></li>
-        <li ng-class="{'active': vm.step.number === 2}">
-          <span>Refresh Instruction</span></li>
+          <span>Prepare</span></li>
+        <li ng-class="{'active': vm.step.number > 1}">
+          <span>Refresh</span></li>
         </li>
       </ul>
     </div>
-    <manual-guide ng-show="vm.substep.name === 'instruction'" data-item="vm.item"></manual-guide>
     <div ng-switch="vm.step.name" class="row wizard ">
-      <div id="first" ng-switch-when="prepare">
-        <div ng-switch="vm.substep.name" class="row wizard">
-          <div ng-switch-when="checkCondition">
-            <div style="text-align: center">
-              <h2>Inspect the device and make sure that:</h2>
-              <div class="instruction-list-container" style="margin: 0 auto; text-align: left">
-                <ul class="instruction-list">
-                  <li>
-                    Device turns on
-                  </li>
-                  <li>
-                    Screen and casing are in good condition
-                  </li>
-                  <li>
-                    Controls (touchscreen, touchpad, buttons, etc.) work
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <div  class="row text-center">
-              <button id="manual-device-good" style="margin-right: 25px;margin-top:5px" class="instruction-btn btn btn-success btn-rounded" type="submit" ng-click="vm.deviceGood()">
-                Device is in good condition
-              </button>
-              <button id="manual-device-bad" style="margin-top:5px" class="instruction-btn btn btn-danger btn-rounded" type="submit" ng-click="vm.deviceBad();">
-                Device is in poor condition or faulty
-              </button>
-            </div>
+      <div ng-switch-when="checkCondition">
+        <div style="text-align: center">
+          <h2>Inspect the device and make sure that:</h2>
+          <div class="instruction-list-container" style="margin: 0 auto; text-align: left">
+            <ul class="instruction-list">
+              <li>
+                Device turns on
+              </li>
+              <li>
+                Screen and casing are in good condition
+              </li>
+              <li>
+                Controls (touchscreen, touchpad, buttons, etc.) work
+              </li>
+            </ul>
           </div>
-          <div ng-switch-when="deviceBroken">
-            <div class="text-align-center">
-              <i class="fa fa-ban warning-icon"></i>
-              <h2>Device needs to be repaired</h2>
-              <h3 class="text-align-center">Ship it to Aaron's Service
-                Center for repair</h3>
-            </div>
-            <div class="row nav-btn">
-              <button class="btn btn-primary btn-rounded center" ng-click="vm.refreshEnd()">
-                Finish <i class="fa fa-caret-right"></i>
-              </button>
-              <div class="text-center" style="margin-top: 15px">
-                <div>Help us to improve Device Refresh Station</div>
-                <button class="feedback-button" ng-click="vm.openFeedbackModal()"><i class="fa fa-comment-o" aria-hidden="true"></i> Leave feedback</button>
-              </div>
-            </div>
+        </div>
+        <div  class="row text-center">
+          <button id="manual-device-good" style="margin-right: 25px;margin-top:5px" class="instruction-btn btn btn-success btn-rounded" type="submit" ng-click="vm.deviceGood()">
+            Device is in good condition
+          </button>
+          <button id="manual-device-bad" style="margin-top:5px" class="instruction-btn btn btn-danger btn-rounded" type="submit" ng-click="vm.deviceBad();">
+            Device is in poor condition or faulty
+          </button>
+        </div>
+      </div>
+      <div ng-switch-when="refreshDevice">
+        <manual-guide data-item="vm.item"></manual-guide>
+      </div>
+      <div ng-switch-when="complete">
+        <div class="text-center" style="margin-top: 5%">
+          <i style="color:forestgreen" class="fa fa-check-circle fa-5x" aria-hidden="true"></i>
+          <h2>Success</h2>
+          <h3>You have successfully refreshed the device.</h3>
+          <button style="margin-top: 1%" class="btn-primary btn-rounded" ng-click="vm.refreshEnd()">Finish</button>
+          <div class="text-center" style="margin-top: 15px">
+            <div>Help us to improve Device Refresh Station</div>
+            <button class="feedback-button" ng-click="vm.openFeedbackModal()"><i class="fa fa-comment-o" aria-hidden="true"></i> Leave feedback</button>
           </div>
         </div>
       </div>
-      <div ng-switch-when="refresh">
-        <div ng-switch="vm.substep.name" class="row wizard">
-          <div id="fifthSubstate" ng-switch-when="refreshSuccess">
-            <div class="text-center" style="margin-top: 5%">
-              <i style="color:forestgreen" class="fa fa-check-circle fa-5x" aria-hidden="true"></i>
-              <h2>Success</h2>
-              <h3>You have successfully refreshed the device.</h3>
-              <button style="margin-top: 1%" class="btn-primary btn-rounded" ng-click="vm.refreshEnd()">Finish</button>
-              <div class="text-center" style="margin-top: 15px">
-                <div>Help us to improve Device Refresh Station</div>
-                <button class="feedback-button" ng-click="vm.openFeedbackModal()"><i class="fa fa-comment-o" aria-hidden="true"></i> Leave feedback</button>
-              </div>
-            </div>
+      <div ng-switch-when="failed">
+        <div class="text-center" style="margin-top: 5%">
+          <i style="color: darkred" class="fa fa-minus-circle fa-5x" aria-hidden="true"></i>
+          <h2 style="margin-top: 2%">Refresh Failed.</h2>
+          <h4 style="margin-top: 2%">Ship device to Aaron's service center or retry going through steps.</h4>
+          <button style="margin-top: 1%" class="btn-primary btn-rounded" ng-click="vm.retry()">Retry</button>
+          <button style="margin-top: 1%" class="btn-danger btn-rounded" ng-click="vm.refreshEnd()">Finish</button>
+          <div class="text-center" style="margin-top: 15px">
+            <div>Help us to improve Device Refresh Station</div>
+            <button class="feedback-button" ng-click="vm.openFeedbackModal()"><i class="fa fa-comment-o" aria-hidden="true"></i> Leave feedback</button>
           </div>
-          <div id="sixthSubstate" ng-switch-when="rerfeshFailed">
-            <div class="text-center" style="margin-top: 5%">
-              <i style="color: darkred" class="fa fa-minus-circle fa-5x" aria-hidden="true"></i>
-              <h2 style="margin-top: 2%">Refresh Failed.</h2>
-              <h4 style="margin-top: 2%">Ship device to Aaron's service center or retry going through steps.</h4>
-              <button style="margin-top: 1%" class="btn-primary btn-rounded" ng-click="vm.retry()">Retry</button>
-              <button style="margin-top: 1%" class="btn-danger btn-rounded" ng-click="vm.refreshEnd()">Finish</button>
-              <div class="text-center" style="margin-top: 15px">
-                <div>Help us to improve Device Refresh Station</div>
-                <button class="feedback-button" ng-click="vm.openFeedbackModal()"><i class="fa fa-comment-o" aria-hidden="true"></i> Leave feedback</button>
-              </div>
-            </div>
-          </div>
-          <div ng-switch-when="instruction">
-
+        </div>
+      </div>
+      <div ng-switch-when="broken">
+        <div class="text-align-center">
+          <i class="fa fa-ban warning-icon"></i>
+          <h2>Device needs to be repaired</h2>
+          <h3 class="text-align-center">Ship it to Aaron's Service
+            Center for repair</h3>
+        </div>
+        <div class="row nav-btn">
+          <button class="btn btn-primary btn-rounded center" ng-click="vm.refreshEnd()">
+            Finish <i class="fa fa-caret-right"></i>
+          </button>
+          <div class="text-center" style="margin-top: 15px">
+            <div>Help us to improve Device Refresh Station</div>
+            <button class="feedback-button" ng-click="vm.openFeedbackModal()"><i class="fa fa-comment-o" aria-hidden="true"></i> Leave feedback</button>
           </div>
         </div>
       </div>
