@@ -1,8 +1,6 @@
 machine:
   node:
-     version: 7.2.1
-  services:
-     - docker
+     version: 0.12.18
 
 
 dependencies:
@@ -10,11 +8,13 @@ dependencies:
     - if [ ! -v ENV ] ; then npm install -g gulp bower ; fi
     - if [ ! -v ENV ] ; then gem install sass ; fi
     - if [ ! -v ENV ] ; then npm install ; fi
-    - if [ ! -v ENV ] ; then bower install ; fi 
+    - if [ ! -v ENV ] ; then bower install ; fi
     - if [ ! -v ENV ] ; then gulp build ; fi
+    - if [ ! -v ENV ] ; then cd KioskDistribution && npm install ; fi
     - git config --global user.name "bot"
-    - git config --global user.email "bchordbot@basechord.com" 
-   
+    - git config --global user.email "bchordbot@basechord.com"
+
+
 test:
   pre:
      - echo "tests"
@@ -23,36 +23,34 @@ test:
 deployment:
   lab:
     branch: master
-    commands:     
+    commands:
       # Add customer data. Need to add customer as a script parameter for other clients!
       - chmod +x customer.sh && ./customer.sh
       - git clone git@github.com:BaseChord/KioskDistribution.git
-      - cp -r dist/* KioskDistribution/ 
+      - cp -r dist/* KioskDistribution/
       - cd KioskDistribution && git config --global user.name "bot" && git config --global user.email "bchordbot@basechord.com" && git add * && git commit -m "Deploy $CIRCLE_BUILD_NUM" && git push               
   canary:
     branch: canary
-    commands:     
+    commands:
       # Add customer data. Need to add customer as a script parameter for other clients!
       - chmod +x customer.sh && ./customer.sh
       - git clone -b canary git@github.com:BaseChord/KioskDistribution.git
-      - cp -r dist/* KioskDistribution/ 
+      - cp -r dist/* KioskDistribution/
       - cd KioskDistribution && git config --global user.name "bot" && git config --global user.email "bchordbot@basechord.com" && git add * && git commit -m "Deploy $CIRCLE_BUILD_NUM" && git push 
   canary2:
     branch: canary2
-    commands:     
+    commands:
       # Add customer data. Need to add customer as a script parameter for other clients!
       - chmod +x customer.sh && ./customer.sh
       - git clone -b canary2 git@github.com:BaseChord/KioskDistribution.git
-      - cp -r dist/* KioskDistribution/ 
+      - cp -r dist/* KioskDistribution/
       - cd KioskDistribution && git config --global user.name "bot" && git config --global user.email "bchordbot@basechord.com" && git add * && git commit -m "Deploy $CIRCLE_BUILD_NUM" && git push 
   production:
     branch: production
-    commands:     
+    commands:
       # Add customer data. Need to add customer as a script parameter for other clients!
       - chmod +x customer.sh && ./customer.sh
       - git clone -b production git@github.com:BaseChord/KioskDistribution.git
-      - cp -r dist/* KioskDistribution/ 
+      - cp -r dist/* KioskDistribution/
       - cd KioskDistribution && git config --global user.name "bot" && git config --global user.email "bchordbot@basechord.com" && git add * && git commit -m "Deploy $CIRCLE_BUILD_NUM" && git push 
 
-      
-  
