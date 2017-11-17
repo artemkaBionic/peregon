@@ -12,7 +12,7 @@ dependencies:
     - if [ ! -v ENV ] ; then npm install ; fi
     - if [ ! -v ENV ] ; then bower install ; fi
     - if [ ! -v ENV ] ; then gulp build ; fi
-    - if [ ! -v ENV ] ; then cd KioskDistribution && npm install ; fi
+    - if [ ! -v ENV ] ; then cd dist && npm install ; fi
     - git config --global user.name "bot"
     - git config --global user.email "bchordbot@basechord.com"
 
