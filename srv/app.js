@@ -1,13 +1,10 @@
 /*jslint node: true */
 'use strict';
 var express = require('express');
-var socket_io = require('socket.io');
+var socketIo = require('socket.io');
 var path = require('path');
 var fs = require('fs');
 var rimraf = require('rimraf');
-//var favicon = require('serve-favicon');
-var logger = require('morgan');
-//var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var childProcess = require('child_process');
 var config = require('./config');
@@ -15,7 +12,7 @@ var station = require('./station.js');
 // Express
 var app = express();
 // Socket.io
-var io = socket_io();
+var io = socketIo();
 app.io = io;
 // Common data
 var isDevelopment = process.env.NODE_ENV === 'development';
@@ -39,7 +36,6 @@ app.set('view engine', 'jade');
 
 // uncomment after placing your favicon in ../src/assets/images
 //app.use(favicon(__dirname + '../src/assets/images/favicon.ico'));
-app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 //app.use(cookieParser());
