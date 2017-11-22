@@ -4,9 +4,9 @@
     angular.module('app.user').
         controller('SessionSurveyController', SessionSurveyController);
 
-    SessionSurveyController.$inject = ['popupLauncher', '$scope'];
+    SessionSurveyController.$inject = ['popupLauncher', '$scope', '$http'];
 
-    function SessionSurveyController(popupLauncher, $scope) {
+    function SessionSurveyController(popupLauncher, $scope, $http) {
         var vm = this;
         vm.closeModal = popupLauncher.closeModal;//Close modal window by pressing on Dismiss button
         vm.submitted = false;
@@ -18,6 +18,9 @@
             $scope.$apply();
         };
         window.goHome = vm.goHome;
+        $http.get('getStationName').then(function(response) {
+            vm.stationName = response.data;
+        });
     }
 })();
 
