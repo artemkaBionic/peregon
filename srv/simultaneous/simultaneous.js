@@ -106,7 +106,7 @@ module.exports = function(io) {
     function finishSession(sessionId, details) {
         winston.info('Finishing session with ID: ' + sessionId);
         return sessions.finish(sessionId, details).then(function(session) {
-            winston.info('Session is finished ' + session._id);
+            winston.info('Session is finished ' + sessionId);
             sessions.updateCurrentStep(sessionId, 'finish' + session.status);
         });
     }
@@ -114,6 +114,9 @@ module.exports = function(io) {
     function installApp(serial) {
         return client.uninstall(serial, 'com.basechord.aarons.androidrefresh').then(function() {
             winston.info('Uninstalled previous version of app successfully for device: ' + serial);
+        }).catch(function(e) {
+            winston.error('Something went wrong while uninstalling the app on device: ' + serial + ' Error:' + e.stack);
+        }).finally(function() {
             return client.install(serial, apk).then(function() {
                 winston.info('App is installed for device ' + serial);
                 io.emit('app-installed', {device: serial});
@@ -129,9 +132,6 @@ module.exports = function(io) {
                     e.stack);
                 io.emit('installation-failed', {error: 'Failed to install the app on device: ' + serial});
             });
-        }).catch(function(e) {
-            winston.error('Something went wrong while uninstalling the app on device: ' + serial + ' Error:' + e.stack);
-            io.emit('installation-failed', {error: 'Failed to uninstall the app on device: ' + serial});
         });
     }
 

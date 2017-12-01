@@ -147,23 +147,30 @@
 
         /*================= End Modal Tips Steps definition===============*/
         function updateSession(session) {
-            console.log(session);
-            if (session && (session._id === vm.sessionId ||
-                    (vm.sessionId === null && session.status === 'Incomplete' &&
-                        session.device.item_number ===
-                        vm.item.item_number))) {
+            if (session &&
+                (session._id === vm.sessionId || (vm.sessionId === null && session.status === 'Incomplete'))) {
                 $scope.$evalAsync(function() {
                     if (vm.sessionId === null) {
                         vm.sessionId = session._id;
                     }
-                    if (vm.steps[session.tmp.currentStep] !== undefined) {
-                        vm.step = vm.steps[session.tmp.currentStep];
+                    if (session.tmp !== undefined) {
+                        if (session.tmp.currentStep !== undefined && vm.steps[session.tmp.currentStep] !== undefined) {
+                            vm.step = vm.steps[session.tmp.currentStep];
+                        }
+                        if (session.tmp.numberOfAuto !== undefined) {
+                            vm.autoSize = session.tmp.numberOfAuto;
+                        }
+                        if (session.tmp.passedAuto !== undefined) {
+                            vm.autoPassed = session.tmp.passedAuto;
+                        }
+                        if (session.tmp.numberOfManual !== undefined) {
+                            vm.manualSize = session.tmp.numberOfManual;
+                        }
+                        if (session.tmp.passedManual !== undefined) {
+                            vm.manualPassed = session.tmp.passedManual;
+                        }
                     }
                     vm.failedTests = session.failedTests;
-                    vm.autoSize = session.tmp.numberOfAuto;
-                    vm.autoPassed = session.tmp.passedAuto;
-                    vm.manualSize = session.tmp.numberOfManual;
-                    vm.manualPassed = session.tmp.passedManual;
                 });
             }
         }

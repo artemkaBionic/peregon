@@ -48,14 +48,15 @@ module.exports = function(io) {
     function insert(session) {
         winston.info('Adding session with id: ' + session._id);
         return new Promise(function(resolve, reject) {
-            sessions.insert(session, function(err) {
-                assert.equal(null, err);
-                if (err) {
-                    reject(err);
-                } else {
-                    winston.info('New session ID is ' + session._id);
-                    resolve(session);
-                }
+            sessions.update({_id: session._id}, session,
+                {upsert: true, setDefaultsOnInsert: true},
+                function(err) {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        winston.info('New session ID is ' + session._id);
+                        resolve(session);
+                    }
             });
         });
     }
@@ -65,7 +66,7 @@ module.exports = function(io) {
         return new Promise(function(resolve, reject) {
             sessions.update({_id: session._id}, session,
                 {upsert: true, setDefaultsOnInsert: true},
-                function(err, updatedSession) {
+                function(err) {
                     if (err) {
                         winston.error('Can not update session' + session._id + 'in tingo because of' + err);
                         reject(err);
@@ -86,7 +87,7 @@ module.exports = function(io) {
                         'tmp.currentStep': currentStep
                     }
                 },
-                function(err, updatedSession) {
+                function(err) {
                     if (err) {
                         winston.error('Can not update session' + sessionId + 'in tingo because of' + err);
                         reject(err);
