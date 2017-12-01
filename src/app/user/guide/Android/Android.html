@@ -217,6 +217,14 @@
         </div>
       </div>
 
+      <div class="anim-wizard-step" ng-switch-when="appInstallFail">
+        <div class="step-header">
+          <i class="fa fa-clock-o warning-icon"></i>
+          <h2 class="text-align-center">{{vm.error}}</h2>
+          <h3 class="text-align-center">Disconnect and reconnect the device to try again. If the problem persists, contact support.</h3>
+        </div>
+      </div>
+
     </div>
   </div>
 </horizontal-ui-sheet>

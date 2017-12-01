@@ -122,13 +122,16 @@ module.exports = function(io) {
                     catch(function(e) {
                         winston.error('Something went wrong while clearing logcat for device: ' + serial + ' Error:' +
                             e.stack);
+                        io.emit('installation-failed', {error: 'Failed to clear logcat for device: ' + serial});
                     });
             }).catch(function(e) {
                 winston.error('Something went wrong while installing the app on device: ' + serial + ' Error:' +
                     e.stack);
+                io.emit('installation-failed', {error: 'Failed to install the app on device: ' + serial});
             });
         }).catch(function(e) {
             winston.error('Something went wrong while uninstalling the app on device: ' + serial + ' Error:' + e.stack);
+            io.emit('installation-failed', {error: 'Failed to uninstall the app on device: ' + serial});
         });
     }
 

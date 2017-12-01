@@ -23,6 +23,7 @@
         var timeouts = [];
         vm.item = item;
         vm.step = null;
+        vm.error = '';
         /*=================Checking for Android Refresh process finished to lock the device===============*/
         $scope.$on('$destroy', function() {
             timeouts.forEach(function(timeout) {
@@ -136,6 +137,11 @@
                 name: 'sessionExpired',
                 number: 9,
                 title: 'Session Expired'
+            },
+            appInstallFail: {
+                name: 'appInstallFail',
+                number: 10,
+                title: 'App install failed.'
             }
         };
 
@@ -228,6 +234,10 @@
         });
         socket.on('installation-started', function() {
             vm.step = vm.steps.waitForAppStart;
+        });
+        socket.on('installation-failed', function(data) {
+            vm.error = data.error;
+            vm.step = vm.steps.appInstallFail;
         });
         socket.on('android-remove', function() {
             toastr.clear(vm.AndroidNotification);
