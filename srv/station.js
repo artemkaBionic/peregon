@@ -1,6 +1,6 @@
 /*jslint node: true */
 'use strict';
-var config = require('./config');
+var config = require('./config.js');
 var fs = require('fs');
 var os = require('os');
 var childProcess = require('child_process');

@@ -1,7 +1,7 @@
 /*jslint node: true */
 'use strict';
 module.exports = function(io) {
-    var config = require('../config');
+    var config = require('../config.js');
     var adb = require('adbkit');
     var Promise = require('bluebird');
     Promise.config({

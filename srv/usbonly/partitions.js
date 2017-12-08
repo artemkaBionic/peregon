@@ -48,14 +48,15 @@ function checkPartitioning(device) {
 function unmountPartitions(device) {
     return new Promise(function(resolve) {
         winston.info('Unmounting USB device ' + device);
-        shell.exec('sync && umount /dev/' + device + '?', {silent: true},
+        shell.exec('sync && umount /mnt/' + device + '?', {silent: true},
             function(code, stdout, stderr) {
-                if (code !== 0) {
-                    winston.error('Unmounting failed because of error code: ' + code + ', ' + stderr);
+                stderr = stderr.replace(/umount:.*not found\n/g, '').replace(/umount:.*not mounted\n/g, '');
+                if (stderr.length === 0) {
+                    winston.info('Unmounted all devices successfully');
                 } else {
-                    winston.info('Unmounted device: ' + device + ' successfully');
-                    shell.rm('-rf', '/mnt/' + device + '?');
+                    winston.error('Unmounting failed because of error code: ' + code + ', ' + stderr);
                 }
+                shell.rm('-rf', '/mnt/' + device + '?');
                 resolve();
             });
     });

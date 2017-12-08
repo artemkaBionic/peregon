@@ -76,12 +76,16 @@ module.exports = function(io) {
     function prepareUsb(deviceId) {
         winston.info('Prepearing usb ' + deviceId);
         usbDrives.setStatus(deviceId, 'in_progress');
-        return partitions.updatePartitions(deviceId).
+        var updatePromise = partitions.updatePartitions(deviceId).
             then(function() {return readSessions(deviceId);}).
             then(function() {return content.updateContent(deviceId);}).
             finally(function() {return partitions.unmountPartitions(deviceId);}).
             then(function() {return usbDrives.finishProgress(deviceId);}).
             then(function() {io.emit('usb-complete');});
+        usbDrives.startUpdate(deviceId, updatePromise);
+        return updatePromise.finally(function() {
+            usbDrives.endUpdate(deviceId, updatePromise)
+        });
     }
 
     function isRefreshUsb(deviceId) {

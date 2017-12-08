@@ -3,20 +3,13 @@
  */
 /*jslint node: true */
 'use strict';
-var config = require('./config');
-var assert = require('assert');
+var config = require('./config.js');
 var path = require('path');
 var fs = require('fs');
-var childProcess = require('child_process');
-var rimraf = require('rimraf');
 var request = require('requestretry');
-var uuid = require('uuid/v1');
-var station = require('./station');
 var INVENTORY_LOOKUP_URL = 'https://' + config.apiHost + '/api/inventorylookup/';
 var SERIAL_LOOKUP_URL = 'https://' + config.apiHost + '/api/seriallookup/';
 var API_URL = 'https://api2.basechord.com';
-var isDevelopment = process.env.NODE_ENV === 'development';
-var result = null;
 var Promise = require('bluebird');
 Promise.config({
     warnings: false

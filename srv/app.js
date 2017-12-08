@@ -4,10 +4,10 @@ var express = require('express');
 var socketIo = require('socket.io');
 var path = require('path');
 var fs = require('fs');
-var rimraf = require('rimraf');
+var shell = require('shelljs');
 var bodyParser = require('body-parser');
 var childProcess = require('child_process');
-var config = require('./config');
+var config = require('./config.js');
 var station = require('./station.js');
 // Express
 var app = express();
@@ -22,12 +22,35 @@ var winston = require('winston');
 
 var routes = require('./routes.js')(io);
 require('./simultaneous/simultaneous.js')(io);
+
 // Create data directory
 fs.mkdir(config.kioskDataPath, function(err) {
     if (err && err.code !== 'EEXIST') {
         winston.log('error', 'Failed to create directory ' +
             config.kioskDataPath, err);
     }
+});
+
+// Create temp directory
+fs.mkdir(config.kioskTempPath, function(err) {
+    if (err) {
+        if (err.code === 'EEXIST') {
+            shell.rm('-rf', path.join(config.kioskTempPath, '*'));
+        } else {
+            winston.log('error', 'Failed to create directory ' + config.kioskDataPath, err);
+        }
+    }
+});
+
+// Clear mount directory
+shell.exec('sync && umount /mnt/*', {silent: true}, function(code, stdout, stderr) {
+    stderr = stderr.replace(/umount:.*not found\n/g, '').replace(/umount:.*not mounted\n/g, '');
+    if (stderr.length === 0) {
+        winston.info('Unmounted all devices successfully');
+    } else {
+        winston.error('Unmounting failed because of error code: ' + code + ', ' + stderr);
+    }
+    shell.rm('-rf', '/mnt/*');
 });
 
 // view engine setup

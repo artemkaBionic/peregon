@@ -11,9 +11,11 @@ Object.setPrototypeOf(UsbCache.prototype, Object.prototype);
 UsbCache.prototype.set = function(key, device) {
     winston.info('Adding this device to usb cache:' + key);
     this._usbDrives[key] = device;
+    this._usbDrives[key].updatePromise = null;
 };
 
 UsbCache.prototype.delete = function(key) {
+    this.cancelUpdate(key);
     delete this._usbDrives[key];
 };
 
@@ -59,6 +61,22 @@ UsbCache.prototype.getAllUsbDrives = function() {
     }
     return usbDrives;
 };
+
+UsbCache.prototype.startUpdate = function(key, promise) {
+    this._usbDrives[key].updatePromise = promise;
+};
+UsbCache.prototype.endUpdate = function(key) {
+    if (this._usbDrives.hasOwnProperty(key)) {
+        this._usbDrives[key].updatePromise = null;
+    }
+};
+UsbCache.prototype.cancelUpdate = function(key) {
+    if (this._usbDrives[key].updatePromise) {
+        this._usbDrives[key].updatePromise.cancel();
+        this._usbDrives[key].updatePromise = null;
+    }
+};
+
 UsbCache.prototype.updateProgress = function(key, progress) {
     winston.info('Updating progress for usb ' + key);
     if (this._usbDrives.hasOwnProperty(key)) {
