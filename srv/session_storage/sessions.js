@@ -217,13 +217,13 @@ module.exports = function(io) {
             'message': message,
             'details': details
         };
-
+        winston.info('Adding log entry for session ' + sessionId + ': ' + logEntry);
         return new Promise(function(resolve) {
             sessions.update(
                 {_id: sessionId},
                 {$push: {logs: logEntry}}, function(err) {
                     if (err) {
-                        winston.error('Can not update logs for' + sessionId + 'in Tingo because of' + err);
+                        winston.error('Error adding log entry for session ' + sessionId + ': ' + err);
                     }
                     resolve();
                 }
@@ -235,7 +235,7 @@ module.exports = function(io) {
         return new Promise(function(resolve, reject) {
             getSessionByParams({_id: sessionId}).then(function(session) {
                 winston.info('A client requested to finish an ' + session.device.type + ' refresh of session id ' +
-                    session._id);
+                    session._id + ' with details: ' + details);
                 session.end_time = new Date();
                 if (details.diagnose_only) {
                     session.diagnose_only = true;

@@ -59,14 +59,20 @@ module.exports = function(io) {
         if (req.body.item === undefined) {
             sessions.start(req.params.id, req.body, {}).then(function(result) {
                 res.json(result);
+            }).catch(function(err) {
+                res.status(500).send();
             });
         } else if (req.body.tmp === undefined) {
             sessions.start(req.params.id, req.body.item, {}).then(function(result) {
                 res.json(result);
+            }).catch(function(err) {
+                res.status(500).send();
             });
         } else {
             sessions.start(req.params.id, req.body.item, req.body.tmp).then(function(result) {
                 res.json(result);
+            }).catch(function(err) {
+                res.status(500).send();
             });
         }
     });
@@ -74,14 +80,16 @@ module.exports = function(io) {
         sessions.updateCurrentStep(req.params.id, req.body.currentStep).then(function(result) {
             res.json(result);
         }).catch(function(err) {
-            winston.error('Unable to updating current step for session ' + req.params.id + ', ' + err);
+            winston.error('Unable to update current step for session ' + req.params.id + ', ' + err);
+            res.status(500).send();
         });
     });
     router.post('/data/sessions/:id/updateItem', function(req, res) {
         sessions.updateItem(req.params.id, req.body.item).then(function(result) {
             res.json(result);
         }).catch(function(err) {
-            winston.error('Unable to updating item for session ' + req.params.id + ', ' + err);
+            winston.error('Unable to update item for session ' + req.params.id + ', ' + err);
+            res.status(500).send();
         });
     });
     router.post('/data/sessions/deviceBroken', function(req, res) {
@@ -92,12 +100,16 @@ module.exports = function(io) {
     router.post('/data/sessions/:id/addLogEntry', function(req, res) {
         sessions.addLogEntry(req.params.id, req.body.level, req.body.message, req.body.details).then(function() {
             res.json();
+        }).catch(function(err) {
+            res.status(500).send();
         });
     });
 
     router.post('/data/sessions/:id/finish', function(req, res) {
         sessions.finish(req.params.id, req.body).then(function(result) {
             res.json(result);
+        }).catch(function(err) {
+            res.status(500).send();
         });
     });
     router.get('/data/packages/:contentType/:contentSubtype?',
