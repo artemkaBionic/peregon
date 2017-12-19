@@ -39,8 +39,8 @@ module.exports = function(io) {
                 then(function(session) {
                     return finishSession(session._id, {complete: false});
                 }).
-                catch(function(e) {
-                    winston.error('Something went wrong while disconnecting device' + device.id + 'Error:' + e);
+                catch(function(err) {
+                    winston.error('Something went wrong while disconnecting device' + device.id, err);
                 });
             if (index > -1) {
                 devices.splice(index, 1);
@@ -48,8 +48,8 @@ module.exports = function(io) {
             }
 
         });
-    }).catch(function(e) {
-        winston.error('Something went wrong while connecting device:', e.stack);
+    }).catch(function(err) {
+        winston.error('Something went wrong while connecting device:', err);
     });
     //check for expired sessions every 10 minutes
     setInterval(function() {
@@ -83,12 +83,12 @@ module.exports = function(io) {
                 }
             }
         }).catch(function(err) {
-            winston.error('Error while attempting to check for expired Android sessions: ' + err);
+            winston.error('Error while attempting to check for expired Android sessions', err);
         });
     }
 
     function getSerialLookup(imei) {
-        winston.info('Getting serial lookup for imei:' + imei);
+        winston.info('Getting serial lookup for imei: ' + imei);
         return new Promise(function(resolve, reject) {
             inventory.getSerialLookup(imei, function(item) {
                 if (JSON.stringify(item).
@@ -113,22 +113,20 @@ module.exports = function(io) {
     function installApp(serial) {
         return client.uninstall(serial, 'com.basechord.aarons.androidrefresh').then(function() {
             winston.info('Uninstalled previous version of app successfully for device: ' + serial);
-        }).catch(function(e) {
-            winston.error('Something went wrong while uninstalling the app on device: ' + serial + ' Error:' + e.stack);
+        }).catch(function(err) {
+            winston.error('Something went wrong while uninstalling the app on device: ' + serial, err);
         }).finally(function() {
             return client.install(serial, apk).then(function() {
                 winston.info('App is installed for device ' + serial);
                 io.emit('app-installed', {device: serial});
                 // clear logcat before start the app
                 return clearLogcat(serial).then(function(serialNo) {checkDeviceProgress(serialNo);}).
-                    catch(function(e) {
-                        winston.error('Something went wrong while clearing logcat for device: ' + serial + ' Error:' +
-                            e.stack);
+                    catch(function(err) {
+                        winston.error('Something went wrong while clearing logcat for device: ' + serial, err);
                         io.emit('installation-failed', {error: 'Failed to clear logcat for device: ' + serial});
                     });
-            }).catch(function(e) {
-                winston.error('Something went wrong while installing the app on device: ' + serial + ' Error:' +
-                    e.stack);
+            }).catch(function(err) {
+                winston.error('Something went wrong while installing the app on device: ' + serial, err);
                 io.emit('installation-failed', {error: 'Failed to install the app on device: ' + serial});
             });
         });
@@ -156,9 +154,8 @@ module.exports = function(io) {
                 winston.info('[%s] %s', serial, output.toString().trim());
                 readLogcat(serial);
             }).
-            catch(function(e) {
-                winston.error('Something went wrong while launching the app on device: ' + serial + ' Error:' +
-                    e.stack);
+            catch(function(err) {
+                winston.error('Something went wrong while launching the app on device: ' + serial, err);
             });
     }
 
@@ -218,11 +215,11 @@ module.exports = function(io) {
                                 session.device = inventory.changeDeviceFormat(res.item);
                                 return sessions.update(session);
                             }).catch(function(err) {
-                                winston.error('Failed to get serial number because of: ' + err);
+                                winston.error('Failed to get serial number', err);
                             });
                         }).
                         catch(function(err) {
-                            winston.error('Error while attempting to start Android session: ' + err);
+                            winston.error('Error while attempting to start Android session', err);
                         });
                 }
 
@@ -263,8 +260,8 @@ module.exports = function(io) {
                         session.tmp.currentStep = isAutoTest &&
                         passedAutoTests < session.tmp.numberOfAuto ? 'autoTesting' : 'manualTesting';
                         sessions.update(session);
-                    }).catch(function(ee) {
-                        winston.error('Something went wrong while getting data for device ' + serial + ' Error:' + e);
+                    }).catch(function(err) {
+                        winston.error('Something went wrong while getting data for device ' + serial, err);
                     });
                 }
             }

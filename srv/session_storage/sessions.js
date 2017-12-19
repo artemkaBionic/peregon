@@ -199,8 +199,7 @@ module.exports = function(io) {
                     io.emit('session-complete', newSession);
                     resolve(session);
                 }).catch(function(err) {
-                    winston.log(
-                        'error', 'Error while inserting session with ID:' + sessionId + ' Error:' + err);
+                    winston.error('Error while inserting session with ID:' + sessionId, err);
                     reject(err);
                 });
             });
@@ -223,7 +222,7 @@ module.exports = function(io) {
                 {_id: sessionId},
                 {$push: {logs: logEntry}}, function(err) {
                     if (err) {
-                        winston.error('Error adding log entry for session ' + sessionId + ': ' + err);
+                        winston.error('Error adding log entry for session ' + sessionId, err);
                     }
                     resolve();
                 }
@@ -235,7 +234,7 @@ module.exports = function(io) {
         return new Promise(function(resolve, reject) {
             getSessionByParams({_id: sessionId}).then(function(session) {
                 winston.info('A client requested to finish an ' + session.device.type + ' refresh of session id ' +
-                    session._id + ' with details: ' + details);
+                    session._id + ' with details: ', details);
                 session.end_time = new Date();
                 if (details.diagnose_only) {
                     session.diagnose_only = true;
@@ -253,7 +252,7 @@ module.exports = function(io) {
                 resolve(session);
                 send(session);
             }).catch(function(err) {
-                winston.log('error', err);
+                winston.error('Error finishing session ' + sessionId, err);
                 reject(err);
             });
         });
@@ -279,9 +278,8 @@ module.exports = function(io) {
                 session.is_sent = true;
                 update(session);
                 winston.info('Session with this this ID:' + sessionID + ' was sent.');
-            }).catch(function(error) {
-                winston.error('ERROR: Unable to send session.');
-                winston.log('error', error);
+            }).catch(function(err) {
+                winston.error('Unable to send session.', err);
             });
         } else {
             winston.info('Session with this ID not sent:' + sessionID);
@@ -302,7 +300,7 @@ module.exports = function(io) {
                 }
             }).
             catch(function(err) {
-                winston.log('error', err);
+                winston.error('Error resending session', err);
             });
     }
 

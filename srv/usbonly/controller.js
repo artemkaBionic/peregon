@@ -53,7 +53,7 @@ module.exports = function(io) {
         usbDrives.set(usbData.id, usbData);
         return isRefreshUsb(device.id).
             then(function(isInitialized) {return isInitialized ? prepareUsb(device.id) : Promise.resolve();}).
-            catch(function(err) {winston.error(err);});
+            catch(function(err) {winston.error('Error adding USB', err);});
     }
 
     function removeUsb(device) {
@@ -115,7 +115,7 @@ module.exports = function(io) {
             }
             return Promise.all(sessionFiles);
         }).catch(function(err) {
-            winston.info(err);
+            winston.error('Error reading session files', err);
         });
     }
 
@@ -123,7 +123,7 @@ module.exports = function(io) {
         // Remove non-printable characters
         data = data.replace(/[^\x20-\x7E]+/g, '');
         var usbSession = JSON.parse(data);
-        winston.info('Refresh Session details: ' + JSON.stringify(usbSession));
+        winston.info('Refresh Session details', usbSession);
         return sessions.getSessionByParams({
             'device.item_number': usbSession.device.item_number,
             'status': 'Incomplete'
@@ -171,16 +171,16 @@ module.exports = function(io) {
                 } else {
                     return reportXboxSessions(unreportedSessions);
                 }
-            }).catch(function(e) {
-                if (e.code === 'ENOENT') {
+            }).catch(function(err) {
+                if (err.code === 'ENOENT') {
                     return reportXboxSessions(unreportedSessions);
                 } else {
-                    winston.error('Error reading ' + usbItemFile + ' ' + e.message);
+                    winston.error('Error reading ' + usbItemFile, err);
                 }
             });
-        }).catch(function(e) {
-            if (e.code !== 'ENOENT') {
-                winston.error('Error reading ' + systemUpdateDir + '/update.log ' + e.message);
+        }).catch(function(err) {
+            if (err.code !== 'ENOENT') {
+                winston.error('Error reading ' + systemUpdateDir + '/update.log ', err);
             }
         });
     }
@@ -225,7 +225,7 @@ module.exports = function(io) {
             then(function() {return content.createItemFile(device, item);}).
             finally(function() {return partitions.unmountPartitions(device);}).
             catch(function(err) {
-                winston.error('Error creating item file on usb ' + device + ', ' + err);
+                winston.error('Error creating item file on usb ' + device, err);
             });
     }
 
@@ -234,7 +234,7 @@ module.exports = function(io) {
             then(function() {return content.clearStatus(device);}).
             finally(function() {return partitions.unmountPartitions(device);}).
             catch(function(err) {
-                winston.error('Error creating item file on usb ' + device + ', ' + err);
+                winston.error('Error creating item file on usb ' + device, err);
             });
     }
 

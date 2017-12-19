@@ -88,7 +88,7 @@ if (isDevelopment) {
 // production error handler
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
-    winston.log('error', err);
+    winston.error('Unhandled error', err);
     res.status(err.status || 500);
     res.render('error', {
         message: err.message,
@@ -101,18 +101,15 @@ io.on('connection', function(socket) {
     winston.info('A client connected');
     socket.on('device-apply', function(data) {
         if (isDevelopment) {
-            winston.info('A client requested to apply media to device.');
-            winston.log('info', data);
-            winston.log('info',
-                'Simulating applying a device in a development environment by waiting 3 seconds.');
+            winston.info('A client requested to apply media to device.', data);
+            winston.info('Simulating applying a device in a development environment by waiting 3 seconds.');
             setTimeout(function() {
                 io.emit('device-apply-progress',
                     {progress: 100, device: data.device});
             }, 3000);
         } else {
             if (typeof data.media === 'undefined' || data.media === null) {
-                winston.log('error',
-                    'A client requested to apply an undefined media package.');
+                winston.error('A client requested to apply an undefined media package.');
                 io.emit('device-apply-failed', {
                     message: 'Media package is missing.',
                     device: data.device

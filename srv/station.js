@@ -21,7 +21,7 @@ exports.getServiceTag = function(callback) {
             shell.exec('dmidecode -s system-serial-number',
                 function(code, stdout, stderr) {
                     if (code !== 0) {
-                        winston.log('error', stderr);
+                        winston.error('Error reported from dmidecode: ' + stderr);
                     } else {
                         service_tag = stdout.substr(0, stdout.indexOf('\n')); // First line
                     }
@@ -104,12 +104,12 @@ exports.getConnectionState = function(callback) {
     if (connectionState === null) {
         fs.readFile(config.connectionStateFile, 'utf8', function(err, data) {
             if (err) {
-                winston.error('Error reading connections state: ' + err);
+                winston.error('Error reading connections state', err);
             } else {
                 try {
                     connectionState = JSON.parse(data);
-                } catch (e) {
-                    winston.error('Error parsong contents of state file: ' + e);
+                } catch (err) {
+                    winston.error('Error parsong contents of state file', err);
                 }
             }
             callback(connectionState);
@@ -121,8 +121,7 @@ exports.getConnectionState = function(callback) {
 
 exports.getIsServiceCenter = function(callback) {
     if (isDevelopment) {
-        winston.log('info',
-            'Simulating service center check in a Windows development environment.');
+        winston.info('Simulating service center check in a Windows development environment.');
         callback(true);
     } else {
         fs.stat('/srv/packages/ServiceCenter.mode', function(err, stat) {
@@ -133,9 +132,7 @@ exports.getIsServiceCenter = function(callback) {
                 winston.info('isServiceCenter = false');
                 callback(false);
             } else {
-                winston.log('error',
-                    'Error while checking if /srv/packages/ServiceCenter.mode exists: ',
-                    err.code);
+                winston.error('Error while checking if /srv/packages/ServiceCenter.mode exists: ', err);
                 callback(null);
             }
         });
@@ -147,24 +144,19 @@ exports.getPackage = function(sku, callback) {
         isDownloaded: null
     };
     if (isDevelopment) {
-        winston.log('info',
-            'Simulating package download check in a Windows development environment.');
+        winston.info('Simulating package download check in a Windows development environment.');
         pkg.isDownloaded = true;
         callback(pkg);
     } else {
         fs.stat('/srv/packages/' + sku + '/.complete', function(err, stat) {
             if (err === null) {
-                winston.info('Package for sku ' + sku +
-                    ' is downloaded.');
+                winston.info('Package for sku ' + sku + ' is downloaded.');
                 pkg.isDownloaded = true;
             } else if (err.code === 'ENOENT') {
-                winston.info('Package for sku ' + sku +
-                    ' is NOT downloaded.');
+                winston.info('Package for sku ' + sku + ' is NOT downloaded.');
                 pkg.isDownloaded = false;
             } else {
-                winston.error('Error while checking if /srv/packages/' +
-                    sku +
-                    '/.complete exists: ', err.code);
+                winston.error('Error while checking if /srv/packages/' + sku + '/.complete exists: ', err);
             }
             callback(pkg);
         });

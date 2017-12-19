@@ -80,7 +80,7 @@ module.exports = function(io) {
         sessions.updateCurrentStep(req.params.id, req.body.currentStep).then(function(result) {
             res.json(result);
         }).catch(function(err) {
-            winston.error('Unable to update current step for session ' + req.params.id + ', ' + err);
+            winston.error('Unable to update current step for session ' + req.params.id, err);
             res.status(500).send();
         });
     });
@@ -88,7 +88,7 @@ module.exports = function(io) {
         sessions.updateItem(req.params.id, req.body.item).then(function(result) {
             res.json(result);
         }).catch(function(err) {
-            winston.error('Unable to update item for session ' + req.params.id + ', ' + err);
+            winston.error('Unable to update item for session ' + req.params.id, err);
             res.status(500).send();
         });
     });
@@ -139,9 +139,7 @@ module.exports = function(io) {
                             ]);
                         } else {
                             var packages = [];
-                            winston.log(
-                                'info', 'Searching for media packages in ' +
-                                config.mediaPackagePath);
+                            winston.info('Searching for media packages in ' + config.mediaPackagePath);
                             var dirs = getDirectories(config.mediaPackagePath);
                             var len = dirs.length;
                             for (var i = 0; i < len; ++i) {
@@ -149,8 +147,7 @@ module.exports = function(io) {
                                     dirs[i]);
                                 var packageFile = path.join(fullDir,
                                     '.package.json');
-                                winston.info('Attempting to parse ' +
-                                    packageFile);
+                                winston.info('Attempting to parse ' + packageFile);
                                 try {
                                     var pkg = JSON.parse(
                                         fs.readFileSync(packageFile, 'utf8'));
@@ -164,11 +161,8 @@ module.exports = function(io) {
                                                 req.params.contentSubtype))) {
                                         packages.push(pkg);
                                     }
-                                } catch (e) {
-                                    winston.log(
-                                        'error', 'Error trying to read ' +
-                                        packageFile);
-                                    winston.log('error', e);
+                                } catch (err) {
+                                    winston.error('Error trying to read ' + packageFile, err);
                                 }
                             }
                             res.json(packages);
@@ -178,10 +172,8 @@ module.exports = function(io) {
                         res.json(null);
                         break;
                 }
-            } catch (e) {
-                winston.error('Unable to get ' + req.params.contentType +
-                    ' packages.');
-                winston.log('error', e);
+            } catch (err) {
+                winston.error('Unable to get ' + req.params.contentType + ' packages.', err);
             }
         });
 
@@ -204,8 +196,7 @@ module.exports = function(io) {
         var event = {};
         event.name = req.params.name;
         event.data = req.body;
-        winston.log('info', event.name + ' event has been reported.');
-        winston.log('info', event.data);
+        winston.info(event.name + ' event has been reported.', event.data);
 
         if (event.name === 'connection-status') {
             var connectionState = event.data;

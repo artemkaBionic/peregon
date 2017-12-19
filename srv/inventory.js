@@ -33,12 +33,11 @@ function getItemFromAzure(id, callback) {
         json: true
     }, function(error, response, body) {
         if (error) {
-            winston.log('error', error);
+            winston.error('Error getting item from Azure', error);
             callback({error: error, item: null});
         }
         else {
-            winston.info('Azure server returned: ');
-            winston.log('info', body);
+            winston.info('Azure server returned: ', body);
             callback({error: null, item: changeDeviceFormat(body)});
         }
     });
@@ -46,7 +45,7 @@ function getItemFromAzure(id, callback) {
 
 // Item lookup from our Mongo DB
 function getItem(id, callback) {
-    winston.log('info', API_URL + '/aarons/inventorylookup' + id);
+    winston.info(API_URL + '/aarons/inventorylookup' + id);
     request({
         rejectUnauthorized: false,
         uri: API_URL + '/aarons/inventorylookup' + id,
@@ -55,16 +54,14 @@ function getItem(id, callback) {
         }
     }, function(error, response) {
         if (error) {
-            winston.log('error', error);
+            winston.error('Error getting item', error);
             callback({error: error, item: null});
         }
         else {
-            winston.info('NodeJS server returned: ');
-            winston.log('info', response.body);
+            winston.info('NodeJS server returned: ', response.body);
             var data = JSON.parse(response.body);
             if (data.message) {
-                winston.info('Calling item lookup from Azure with Id: ' +
-                    id);
+                winston.info('Calling item lookup from Azure with Id: ' + id);
                 getItemFromAzure(id, callback);
             } else {
                 callback({error: null, item: changeDeviceFormat(data)});
@@ -83,12 +80,11 @@ function getSerialLookup(imei, callback) {
         json: true
     }, function(error, response, body) {
         if (error) {
-            winston.log('error', error);
+            winston.error('Error getting item by Serial: ', error);
             callback({error: error, item: null});
         }
         else {
-            winston.info('Server returned: ');
-            winston.log('info', body);
+            winston.info('Server returned: ', body);
             callback({error: null, item: body});
         }
     });
@@ -107,7 +103,7 @@ function unlockDevice(imei, forService, callback) {
         json: true
     }, function(error, response, body) {
         if (error) {
-            winston.log('error', error);
+            winston.error('Error unlocking device', error);
             callback({error: error, result: null});
         }
         else {
@@ -129,7 +125,7 @@ function lockDevice(imei, callback) {
         json: true
     }, function(error, response, body) {
         if (error) {
-            winston.log('error', error);
+            winston.error('Error locking device', error);
             callback({error: error, result: null});
         }
         else {
