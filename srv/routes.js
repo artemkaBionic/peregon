@@ -37,7 +37,7 @@ module.exports = function(io) {
     });
 
     router.get('/data/inventory/:id', function(req, res) {
-        winston.log('info', 'Request for get item which was sent');
+        winston.info('Request for get item which was sent');
         inventory.getItem(req.params.id, function(item) {
             res.json(item);
         });
@@ -115,7 +115,7 @@ module.exports = function(io) {
     router.get('/data/packages/:contentType/:contentSubtype?',
         function(req, res) {
             try {
-                winston.log('info', 'Client requests ' +
+                winston.info('Client requests ' +
                     req.params.contentSubtype + ' ' + req.params.contentType +
                     ' packages');
                 switch (req.params.contentType) {
@@ -149,7 +149,7 @@ module.exports = function(io) {
                                     dirs[i]);
                                 var packageFile = path.join(fullDir,
                                     '.package.json');
-                                winston.log('info', 'Attempting to parse ' +
+                                winston.info('Attempting to parse ' +
                                     packageFile);
                                 try {
                                     var pkg = JSON.parse(
@@ -179,7 +179,7 @@ module.exports = function(io) {
                         break;
                 }
             } catch (e) {
-                winston.log('error', 'Unable to get ' + req.params.contentType +
+                winston.error('Unable to get ' + req.params.contentType +
                     ' packages.');
                 winston.log('error', e);
             }
@@ -230,12 +230,12 @@ module.exports = function(io) {
     });
 
     router.post('/system/reboot', function(req, res) {
-        winston.log('info', 'Rebooting...');
+        winston.info('Rebooting...');
         station.reboot();
     });
 
     router.post('/system/shutdown', function(req, res) {
-        winston.log('info', 'Shutting down...');
+        winston.info('Shutting down...');
         station.shutdown();
     });
 

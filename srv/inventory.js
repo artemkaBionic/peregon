@@ -23,7 +23,7 @@ exports.changeDeviceFormat = changeDeviceFormat;
 
 // Reverse lookup to Azure in case if not found in our Mongo DB
 function getItemFromAzure(id, callback) {
-    winston.log('info', 'Getting item from azure with Item Id: ' + id);
+    winston.info('Getting item from azure with Item Id: ' + id);
     request({
         url: INVENTORY_LOOKUP_URL + id,
         headers: {
@@ -37,7 +37,7 @@ function getItemFromAzure(id, callback) {
             callback({error: error, item: null});
         }
         else {
-            winston.log('info', 'Azure server returned: ');
+            winston.info('Azure server returned: ');
             winston.log('info', body);
             callback({error: null, item: changeDeviceFormat(body)});
         }
@@ -59,11 +59,11 @@ function getItem(id, callback) {
             callback({error: error, item: null});
         }
         else {
-            winston.log('info', 'NodeJS server returned: ');
+            winston.info('NodeJS server returned: ');
             winston.log('info', response.body);
             var data = JSON.parse(response.body);
             if (data.message) {
-                winston.log('info', 'Calling item lookup from Azure with Id: ' +
+                winston.info('Calling item lookup from Azure with Id: ' +
                     id);
                 getItemFromAzure(id, callback);
             } else {
@@ -87,7 +87,7 @@ function getSerialLookup(imei, callback) {
             callback({error: error, item: null});
         }
         else {
-            winston.log('info', 'Server returned: ');
+            winston.info('Server returned: ');
             winston.log('info', body);
             callback({error: null, item: body});
         }
@@ -95,7 +95,7 @@ function getSerialLookup(imei, callback) {
 }
 
 function unlockDevice(imei, forService, callback) {
-    winston.log('info', 'Unlocking imei ' + imei);
+    winston.info('Unlocking imei ' + imei);
     request({
         method: 'POST',
         url: API_URL + '/unlockapi/unlock',
@@ -114,7 +114,7 @@ function unlockDevice(imei, forService, callback) {
             callback({error: null, result: body});
         }
     });
-    winston.log('info', 'Unlock request has been sent');
+    winston.info('Unlock request has been sent');
 }
 
 function lockDevice(imei, callback) {
@@ -136,7 +136,7 @@ function lockDevice(imei, callback) {
             callback({error: null, result: body});
         }
     });
-    winston.log('info', 'Lock request has been sent');
+    winston.info('Lock request has been sent');
 }
 
 function filesExist(directory, files) {

@@ -67,7 +67,7 @@ exports.getUsbDrives = function(callback) {
 };
 
 exports.getUsbDrive = function(id, callback) {
-    winston.log('info', 'Getting USB drive information for ' + id);
+    winston.info('Getting USB drive information for ' + id);
     shell.exec('udevadm info --query=property --path=/sys/block/' + id,
         {silent: true}, function(code, stdout, stderr) {
             if (code !== 0) {
@@ -127,10 +127,10 @@ exports.getIsServiceCenter = function(callback) {
     } else {
         fs.stat('/srv/packages/ServiceCenter.mode', function(err, stat) {
             if (err === null) {
-                winston.log('info', 'isServiceCenter = true');
+                winston.info('isServiceCenter = true');
                 callback(true);
             } else if (err.code === 'ENOENT') {
-                winston.log('info', 'isServiceCenter = false');
+                winston.info('isServiceCenter = false');
                 callback(false);
             } else {
                 winston.log('error',
@@ -154,15 +154,15 @@ exports.getPackage = function(sku, callback) {
     } else {
         fs.stat('/srv/packages/' + sku + '/.complete', function(err, stat) {
             if (err === null) {
-                winston.log('info', 'Package for sku ' + sku +
+                winston.info('Package for sku ' + sku +
                     ' is downloaded.');
                 pkg.isDownloaded = true;
             } else if (err.code === 'ENOENT') {
-                winston.log('info', 'Package for sku ' + sku +
+                winston.info('Package for sku ' + sku +
                     ' is NOT downloaded.');
                 pkg.isDownloaded = false;
             } else {
-                winston.log('error', 'Error while checking if /srv/packages/' +
+                winston.error('Error while checking if /srv/packages/' +
                     sku +
                     '/.complete exists: ', err.code);
             }
@@ -172,14 +172,14 @@ exports.getPackage = function(sku, callback) {
 };
 
 exports.reboot = function() {
-    winston.log('info', 'Reboot requested.');
+    winston.info('Reboot requested.');
     if (!isDevelopment) {
         childProcess.spawn('python', ['/opt/powercontrol.py', '--reboot']);
     }
 };
 
 exports.shutdown = function() {
-    winston.log('info', 'Shutdown requested.');
+    winston.info('Shutdown requested.');
     if (!isDevelopment) {
         childProcess.spawn('python', ['/opt/powercontrol.py', '--poweroff']);
     }

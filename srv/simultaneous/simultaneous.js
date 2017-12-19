@@ -59,32 +59,31 @@ module.exports = function(io) {
     // 3600000 - hour 600000 - 10 mins
     function checkSessionExpired() {
         winston.info('Check for expired sessions');
-        sessions.getSessionsByParams(
-            {
-                'device.item_number': {$exists: true, $ne: null},
-                'status': 'Incomplete'
-            }).
-            then(function(sessions) {
-                for (var i = 0; i < sessions.length; i++) {
-                    var sessionId = sessions[i]._id;
-                    var sessionStartDate = new Date(sessions[i].start_time);
-                    var plusOneHour = sessionStartDate.getTime() + (3600000);
-                    var expireDate = new Date(plusOneHour);
-                    var currentDate = new Date();
-                    if (currentDate > expireDate) {
-                        winston.info('Session with key:' + sessionId + ' is expired');
-                        io.emit('android-session-expired', {
-                            'sessionId': sessions[i],
-                            'device': sessions[i].device.serial_number
-                        });
-                        setTimeout(function() {
-                            finishSession(sessionId, {complete: false});
-                            io.emit('session-expired-confirmation', {});
-                        }, 5000);
-                    }
+        sessions.getSessionsByParams({
+            'device.item_number': {$exists: true, $ne: null},
+            'device.type': 'Android',
+            'status': 'Incomplete'
+        }).then(function(sessions) {
+            for (var i = 0; i < sessions.length; i++) {
+                var sessionId = sessions[i]._id;
+                var sessionStartDate = new Date(sessions[i].start_time);
+                var plusOneHour = sessionStartDate.getTime() + (3600000);
+                var expireDate = new Date(plusOneHour);
+                var currentDate = new Date();
+                if (currentDate > expireDate) {
+                    winston.info('Session with key:' + sessionId + ' is expired');
+                    io.emit('android-session-expired', {
+                        'sessionId': sessions[i],
+                        'device': sessions[i].device.serial_number
+                    });
+                    setTimeout(function() {
+                        finishSession(sessionId, {complete: false});
+                        io.emit('session-expired-confirmation', {});
+                    }, 5000);
                 }
-            }).catch(function(e) {
-            winston.error(e);
+            }
+        }).catch(function(err) {
+            winston.error('Error while attempting to check for expired Android sessions: ' + err);
         });
     }
 
@@ -218,12 +217,12 @@ module.exports = function(io) {
                             return getSerialLookup(imei).then(function(res) {
                                 session.device = inventory.changeDeviceFormat(res.item);
                                 return sessions.update(session);
-                            }).catch(function(e) {
-                                winston.error('Failed to get serial number because of: ' + e);
+                            }).catch(function(err) {
+                                winston.error('Failed to get serial number because of: ' + err);
                             });
                         }).
-                        catch(function(e) {
-                            winston.error(e);
+                        catch(function(err) {
+                            winston.error('Error while attempting to start Android session: ' + err);
                         });
                 }
 

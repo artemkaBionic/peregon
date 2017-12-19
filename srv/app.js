@@ -26,8 +26,7 @@ require('./simultaneous/simultaneous.js')(io);
 // Create data directory
 fs.mkdir(config.kioskDataPath, function(err) {
     if (err && err.code !== 'EEXIST') {
-        winston.log('error', 'Failed to create directory ' +
-            config.kioskDataPath, err);
+        winston.error('Failed to create directory ' + config.kioskDataPath, err);
     }
 });
 
@@ -37,7 +36,7 @@ fs.mkdir(config.kioskTempPath, function(err) {
         if (err.code === 'EEXIST') {
             shell.rm('-rf', path.join(config.kioskTempPath, '*'));
         } else {
-            winston.log('error', 'Failed to create directory ' + config.kioskDataPath, err);
+            winston.error('Failed to create directory ' + config.kioskDataPath, err);
         }
     }
 });
@@ -99,10 +98,10 @@ app.use(function(err, req, res, next) {
 
 // socket.io events
 io.on('connection', function(socket) {
-    winston.log('info', 'A client connected');
+    winston.info('A client connected');
     socket.on('device-apply', function(data) {
         if (isDevelopment) {
-            winston.log('info', 'A client requested to apply media to device.');
+            winston.info('A client requested to apply media to device.');
             winston.log('info', data);
             winston.log('info',
                 'Simulating applying a device in a development environment by waiting 3 seconds.');
@@ -119,7 +118,7 @@ io.on('connection', function(socket) {
                     device: data.device
                 });
             } else {
-                winston.log('info', 'A client requested to apply "' +
+                winston.info('A client requested to apply "' +
                     data.media.name + '" to the ' + data.device.type +
                     ' device ' + data.device.id);
                 var mediaPackagePath = path.join(config.mediaPackagePath,
