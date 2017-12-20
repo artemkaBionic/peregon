@@ -68,7 +68,7 @@ module.exports = function(io) {
                 {upsert: true, setDefaultsOnInsert: true},
                 function(err) {
                     if (err) {
-                        winston.error('Can not update session' + session._id + 'in tingo because of' + err);
+                        winston.error('Can not update session ' + session._id + ' in tingo', err);
                         reject(err);
                     } else {
                         io.emit('session-updated', session);
@@ -89,7 +89,7 @@ module.exports = function(io) {
                 },
                 function(err) {
                     if (err) {
-                        winston.error('Can not update session' + sessionId + 'in tingo because of' + err);
+                        winston.error('Can not update current step of session ' + sessionId + ' in tingo', err);
                         reject(err);
                     } else {
                         sessions.findOne({_id: sessionId}, function(err, session) {
@@ -117,7 +117,7 @@ module.exports = function(io) {
                 },
                 function(err) {
                     if (err) {
-                        winston.error('Can not update session' + sessionId + 'in tingo because of' + err);
+                        winston.error('Can not update item for session ' + sessionId + ' in tingo', err);
                         reject(err);
                     } else {
                         sessions.findOne({_id: sessionId}, function(err, session) {
@@ -158,7 +158,7 @@ module.exports = function(io) {
                     io.emit('session-started', newSession);
                     resolve(newSession);
                 }).catch(function(err) {
-                    winston.error('Error while inserting session with ID:' + sessionStartDate + ' Error:' + err);
+                    winston.error('Error while inserting session with ID:' + sessionStartDate, err);
                     reject(err);
                 });
             });
