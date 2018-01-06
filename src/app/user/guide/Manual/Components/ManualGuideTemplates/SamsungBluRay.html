@@ -1,28 +1,25 @@
 <div id="guide-no-images-sm">
   <h2 class="text-center">Follow these steps to refresh Samsung Blu-Ray player:</h2>
-  <div class="instruction-list-container-lg " style="margin: 0 auto; text-align: left;">
-    <div class="instruction-list">
-      <p class="lg-line-height">
-        1. Turn on <b>Samsung Blu-Ray player</b>.
-      </p>
-      <p class="lg-line-height">
-        2. Press the <b>STOP</b> button for more than five seconds with no disc in the drive.
-        The initialization message appears on the screen, and the player turns off automatically.
-      </p>
-    </div>
+  <div class="container instruction-list">
+    <p class="lg-line-height">
+      1. Turn on <b>Samsung Blu-Ray player</b>.
+    </p>
+    <p class="lg-line-height">
+      2. Press the <b>STOP</b> button for more than five seconds with no disc in the drive.
+      The initialization message appears on the screen, and the player turns off automatically.
+    </p>
   </div>
   <div id="lastStepNoImage">
-    <div class="instruction-list-container-lg " style="margin: 0 auto; text-align: left;">
-      <div class="instruction-list">
-        <p class="lg-line-height">
-          3. When you turn the blu-ray player on again, all the settings will be reset and all user
-          information will be erased.
-        </p>
-      </div>
+    <div class="container instruction-list">
+      <p class="lg-line-height">
+        3. When you turn the blu-ray player on again, all the settings will be reset and all user
+        information will be erased.
+      </p>
     </div>
     <div id="checkButtons" class="row text-center">
       <h2 style="text-align: center; color:black;padding-bottom: 5px">Is refresh successful?</h2>
-      <button id="manual-refresh-success" style="margin-right: 25px;margin-top:5px" class="instruction-btn btn btn-success btn-rounded" type="submit" ng-click="vm.refreshSuccess()">
+      <button id="manual-refresh-success" style="margin-right: 25px;margin-top:5px" class="instruction-btn btn btn-success btn-rounded" type="submit"
+              ng-click="vm.refreshSuccess()">
         Refresh successful
       </button>
       <button id="manual-refresh-fail" style="margin-top:5px" class="instruction-btn btn btn-danger btn-rounded" type="submit" ng-click="vm.refreshFailed();">

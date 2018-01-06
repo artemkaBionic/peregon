@@ -17,9 +17,6 @@
         /*jshint validthis: true */
         var vm = this;
         vm.item = item;
-        vm.selectedDevice = null;
-        vm.refreshMediaPackage = null;
-        vm.usbDrives = {};
         vm.session = {};
         vm.steps = {
             checkCondition: {
@@ -130,7 +127,6 @@
 
         function refreshDevicesStart() {
             setStep(vm.steps.refreshDevice);
-            vm.session.tmp.currentStep = 'refreshStarted';
             sessions.addLogEntry(vm.session._id, 'Info', 'Refresh Started', '');
         }
 

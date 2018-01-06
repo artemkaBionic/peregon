@@ -1,0 +1,74 @@
+<div id="instructions" class="instructions-manual">
+  <h2 style="text-align: center; color:black;padding-bottom: 15px">Follow these steps to refresh ASUS (Windows 8 and later):</h2>
+  <div class="container instruction-list">
+    <div class="row">
+      <div class="col-md-7">
+        <p>1. Power on the computer and repeatedly press the F2 key until Setup is open.</p>
+      </div>
+      <div class="col-md-5 text-center">
+        <div class="instruction-img-border">
+          <img class="instruction-img" ng-click="vm.openModal('/assets/images/asus-uefi-setup.png')" src="/assets/images/asus-uefi-setup.png">
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-7">
+        <p>2. Press the F9 key to load setup defaults, then select YES and press ENTER to confirm.</p>
+      </div>
+      <div class="col-md-5 text-center">
+        <div class="instruction-img-border">
+          <img class="instruction-img" ng-click="vm.openModal('/assets/images/asus-uefi-load-setup-defaults.png')" src="/assets/images/asus-uefi-load-setup-defaults.png">
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-7">
+        <p>3. Navigate to Advanced settings, select Network Stack, and press ENTER.</p>
+      </div>
+      <div class="col-md-5 text-center">
+        <div class="instruction-img-border">
+          <img class="instruction-img" ng-click="vm.openModal('/assets/images/asus-uefi-network-stack.png')" src="/assets/images/asus-uefi-network-stack.png">
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-7">
+        <p>4. Press ENTER, select Enabled, and press ENTER. Check that Ipv4 PXE Support is enabled.</p>
+      </div>
+      <div class="col-md-5 text-center">
+        <div class="instruction-img-border">
+          <img class="instruction-img" ng-click="vm.openModal('/assets/images/asus-uefi-enable-network-boot.png')" src="/assets/images/asus-uefi-enable-network-boot.png">
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-7">
+        <p>6. Press the F10 key to save changes and exit, then select Yes and press ENTER to confirm.</p>
+      </div>
+      <div class="col-md-5 text-center">
+        <div class="instruction-img-border">
+          <img class="instruction-img" ng-click="vm.openModal('/assets/images/asus-uefi-save-changes.png')" src="/assets/images/asus-uefi-save-changes.png">
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-7">
+        <p>7. While rebooting, repeatedly press the ESC key until the "Please select boot device" menu appears.</p>
+        <p>8. Select "UEFI: Atheros Boot Agent" and press ENTER.</p>
+      </div>
+      <div class="col-md-5 text-center">
+        <div class="instruction-img-border">
+          <img class="instruction-img" ng-click="vm.openModal('/assets/images/asus-uefi-network-boot-menu.png')" src="/assets/images/asus-uefi-network-boot-menu.png">
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <p>9. When the Refresh Environment has loaded, follow the instructions to start the refresh.</p>
+      <p>10. After the refresh is finished, click the OK button to turn off the computer.</p>
+    </div>
+  </div>
+  <!-- The Modal -->
+  <div id="myModal" class="modal-instruction absolute block" ng-click="vm.close()">
+    <img class="modal-content-guide centered" id="img01">
+  </div>
+</div>

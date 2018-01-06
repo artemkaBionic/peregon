@@ -28,10 +28,10 @@
   <div horizontal-ui-sheet-content>
     <div class="row">
       <ul id="progress-tracker" data-steps="3">
-        <li ng-class="{'active': vm.step.number >= 1 && vm.step.number <= 2, 'done': vm.step.number > 4}">
+        <li ng-class="{'active': vm.step.number >= 1 && vm.step.number <= 2, 'done': vm.step.number > 2}">
           <span>Prepare</span>
         </li>
-        <li ng-class="{'active': vm.step.number === 3, 'done': vm.step.number > 4}">
+        <li ng-class="{'active': vm.step.number === 3, 'done': vm.step.number > 3}">
           <span ng-show="vm.item.type==='WindowsUsb'">
             Refresh the Windows laptop
           </span>
@@ -52,8 +52,8 @@
       <div ng-switch-when="checkCondition">
         <div style="text-align: center">
           <h2>Inspect device and make sure that:</h2>
-          <div class="instruction-list-container" style="margin: 0 auto; text-align: left">
-            <ul class="instruction-list">
+          <div class="container instruction-list">
+            <ul>
               <li>
                 Device turns on;
               </li>
@@ -67,7 +67,8 @@
           </div>
         </div>
         <div class="row text-center">
-          <button id="usb-device-good" style="margin-right: 25px;margin-top:5px" class="instruction-btn btn btn-success btn-rounded" type="submit" ng-click="vm.startSession()">
+          <button id="usb-device-good" style="margin-right: 25px;margin-top:5px" class="instruction-btn btn btn-success btn-rounded" type="submit"
+                  ng-click="vm.startSession()">
             Device is in good condition
           </button>
           <button id="usb-device-bad" style="margin-top:5px" class="instruction-btn btn btn-danger btn-rounded" type="submit" ng-click="vm.deviceBad()">

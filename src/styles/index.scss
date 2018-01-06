@@ -33,17 +33,12 @@ $header-height: 13vh;
   margin-top: 22px;
 }
 
-.content-frame-with-finish {
-  height: calc(100% - 265px) !important;
-}
-
 .content-frame {
-  width: calc(100% - 16px);
-  height: 100%;
+  width: 100%;
+  height: calc(87% - 110px);
   margin: 0;
   padding: 0;
   border: none;
-  position: absolute;
   overflow-y: scroll;
   overflow-x: hidden;
 }
@@ -111,6 +106,20 @@ $header-height: 13vh;
 
 .apc-sheet-content {
   overflow: hidden !important;
+}
+
+.instruction-img-border {
+  border: 1px solid #dcdcdc;
+  padding: 6px;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 10px;
+}
+
+.modal-content-guide {
+  width: auto;
+  height: auto;
+  max-width: 90%;
+  max-height: 90%;
 }
 
 /*============Xbox Guide===================*/
@@ -309,6 +318,7 @@ figcaption {
   position: relative;
   margin: 0 1px;
 }
+
 #progress-tracker[data-steps="2"] li {
   width: 49%;
 }
@@ -399,53 +409,62 @@ figcaption {
   height: 90vh;
   width: 75vw;
 }
-.modal-form{
+
+.modal-form {
   margin-left: 1vw;
   margin-right: 1vw;
 }
+
 .submit-modal-btn {
   background-color: #507f15;
-  color:white;
+  color: white;
   height: 48px;
   min-width: 156px;
   border-radius: 7px;
   text-transform: uppercase;
   font-weight: 400;
   padding: 6px 24px;
-  border:none;
+  border: none;
 }
+
 .submit-modal-btn:hover {
   background-color: #3d6010;
 }
+
 .submit-modal-list {
   list-style-type: none;
   margin-left: -2vw;
 }
-.submit-modal-success{
+
+.submit-modal-success {
   padding-top: 45px;
 }
+
 .modal-textarea {
   height: 80px;
   width: 100%;
-  border-radius:5px;
+  border-radius: 5px;
   resize: none;
 }
-.scrollable-modal-content{
+
+.scrollable-modal-content {
   overflow-y: auto;
   margin-top: 5px;
   margin-right: 2px;
   height: 480px;
   overflow-x: hidden;
 }
-.submit-modal-content{
+
+.submit-modal-content {
   width: 75vh;
 }
+
 .modal-sm-to-lg {
   .modal-content {
     width: 500px;
     border: 0;
     border-radius: 16px;
-    height: 600px!important;
+    height: 600px !important;
     position: fixed !important;
     z-index: 999 !important;
     top: 25% !important;
@@ -453,12 +472,13 @@ figcaption {
     margin-top: -100px !important;
   }
 }
+
 .modal-xs {
   width: 35vw;
   .modal-content {
     border: 0;
     border-radius: 16px;
-    height: 500px!important;
+    height: 500px !important;
     position: fixed !important;
     z-index: 999 !important;
     top: 25% !important;
@@ -466,18 +486,20 @@ figcaption {
     margin-top: -100px !important;
   }
 }
+
 .modal-xxs {
   width: 35vw;
   .modal-content {
     border: 0;
     border-radius: 16px;
-    height: 250px!important;
+    height: 250px !important;
     position: fixed !important;
     z-index: 999 !important;
     top: 25% !important;
     margin-left: -20px !important;
   }
 }
+
 .modal-sm-to-xs {
   width: 45vw;
   .modal-content {
@@ -491,6 +513,7 @@ figcaption {
     margin-top: -220px !important;
   }
 }
+
 .modal-dialog {
   position: absolute;
   top: 0;
@@ -963,60 +986,72 @@ button[disabled]:hover {
   height: 300px;
   position: relative;
 }
-.content-full-height-scroll{
+
+.content-full-height-scroll {
   overflow-x: hidden;
   overflow-y: auto;
   height: 100vh;
 }
+
 .simultaneous-info {
   border-top: 2px solid rgba(168, 150, 194, 0.7);
   margin: 0px 10px 10px 10px;
   z-index: 1;
 }
+
 .simultaneous-nav {
-  height:40px;
+  height: 40px;
   border-top: 2px solid rgba(168, 150, 194, 0.7);
   position: relative;
   margin: 10px 10px 0px 10px;
 }
-.simultaneous-header{
+
+.simultaneous-header {
   margin-top: 10px;
   margin-bottom: 10px;
 }
-.simultaneous-item{
-  margin-bottom:5px;
- // height: 60px;
+
+.simultaneous-item {
+  margin-bottom: 5px;
+  // height: 60px;
 }
-.simultaneous-input{
-  border-radius:4px;
+
+.simultaneous-input {
+  border-radius: 4px;
 }
-.simultaneous-table-header{
+
+.simultaneous-table-header {
   padding: 10px;
 }
-.simultaneous-modal-footer-btns{
+
+.simultaneous-modal-footer-btns {
   margin: 0 auto;
   width: 320px;
-  button{
+  button {
     margin-top: 10px;
   }
 }
-.simultaneous-nav-btn{
+
+.simultaneous-nav-btn {
   display: inline-block;
-  z-index:2;
+  z-index: 2;
   font-size: 17px;
   margin: 0px 5px 0px 5px;
   padding: 8.5px 5px 5px 5px;
   font-weight: bold;
   //color: black;
 }
+
 .simultaneous-nav-btn:hover {
   padding: 8.5px 5px 6px 5px;
   background-color: lightgrey;
-  cursor:pointer;
+  cursor: pointer;
 }
-.boot-instructions-col{
+
+.boot-instructions-col {
   border-right: 1px solid grey;
 }
+
 .boot-instruction-row {
   margin-top: 20px;
 }
@@ -1026,45 +1061,50 @@ button[disabled]:hover {
   font-weight: bold;
   line-height: 110%;
 }
+
 .boot-instruction-title-grey {
   font-size: 15pt;
   font-weight: bold;
   line-height: 110%;
-  color:grey;
+  color: grey;
 }
-.usb-icon{
-  width:50px;
-  height:50px;
-  background-color:lightgrey;
-  border-radius:100%;
-  line-height:50px;
-  text-align:center;
-  vertical-align:middle;
-  display:inline-block;
+
+.usb-icon {
+  width: 50px;
+  height: 50px;
+  background-color: lightgrey;
+  border-radius: 100%;
+  line-height: 50px;
+  text-align: center;
+  vertical-align: middle;
+  display: inline-block;
   margin: 0 auto;
-  i{
+  i {
     line-height: inherit;
-    font-size:15pt;
+    font-size: 15pt;
   }
 }
-.usb-icon-lg{
-  width:75px;
-  height:75px;
-  background-color:lightgrey;
-  border-radius:100%;
-  line-height:75px;
-  text-align:center;
-  vertical-align:middle;
-  display:inline-block;
+
+.usb-icon-lg {
+  width: 75px;
+  height: 75px;
+  background-color: lightgrey;
+  border-radius: 100%;
+  line-height: 75px;
+  text-align: center;
+  vertical-align: middle;
+  display: inline-block;
   margin: 0 auto;
-  i{
+  i {
     line-height: inherit;
-    font-size:20pt;
+    font-size: 20pt;
   }
 }
-.usb-instruction-navbtn{
+
+.usb-instruction-navbtn {
   font-size: 17pt;
 }
+
 .item-number-input {
   text-indent: 43px;
   height: 50px;
@@ -1075,24 +1115,26 @@ button[disabled]:hover {
   border-radius: 4px;
   width: 300px;
 }
-.item-buttons{
+
+.item-buttons {
   float: left;
   margin-left: 5px;
   margin-top: 3px;
 }
-#item-container
-{
+
+#item-container {
   margin-top: 30px;
   text-align: center;
 }
-#item-centered
-{
+
+#item-centered {
   display: inline-block;
 }
-#item-background
-{
+
+#item-background {
   text-align: left;
 }
+
 .inner-addon {
   float: left;
   position: relative;
@@ -1106,36 +1148,51 @@ button[disabled]:hover {
 }
 
 /* align glyph */
-.left-addon .icon  { left:  0px;}
-.right-addon .icon { right: 0px;}
+.left-addon .icon {
+  left: 0px;
+}
+
+.right-addon .icon {
+  right: 0px;
+}
 
 /* add padding  */
-.left-addon input  { padding-left:  10px; }
-.right-addon input { padding-right: 30px; }
+.left-addon input {
+  padding-left: 10px;
+}
+
+.right-addon input {
+  padding-right: 30px;
+}
 
 .simultaneous-sort-button {
   background-color: transparent;
-  border:none;
+  border: none;
   font-size: 18px;
   font-weight: bold;
 
 }
-.simultaneous-sorting-btn{
-  color:black;
+
+.simultaneous-sorting-btn {
+  color: black;
   text-decoration: none;
   cursor: pointer;
 }
-.simultaneous-sorting-btn:hover{
-  color:black;
+
+.simultaneous-sorting-btn:hover {
+  color: black;
   text-decoration: none;
   cursor: pointer;
 }
-.item-error-row{
+
+.item-error-row {
   margin-top: 10px;
 }
-.btn-test{
+
+.btn-test {
   border-radius: 4px;
 }
+
 .item-details {
   font-size: 2em;
   position: absolute;
@@ -1244,15 +1301,22 @@ button[disabled]:hover {
 
 // End Connection Check hover
 
-.guide-footer{
+.guide-footer {
   margin-top: 5px;
-  border-top:1px black solid;
+  border-top: 1px black solid;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 50px;
 }
-.guide-footer-content{
+
+.guide-footer-content {
   font-size: 20px;
   font-weight: 400;
-  margin-top: 1.5vh;
+  margin-top: 10px;
 }
+
 .guide-header {
   color: #eee;
   position: absolute;
@@ -1555,11 +1619,13 @@ button[disabled]:hover {
   border-radius: 7px;
 
 }
+
 .check-condition {
   padding: 20px 30px;
   border-radius: 7px;
 
 }
+
 .inspection-ask {
   padding: 2vh 3vh;
   border: 3px solid transparent;
@@ -1983,7 +2049,7 @@ button[disabled]:hover {
   $barBg: #EEE, // The remaining progress color
   $barWidth: 8, // The bar width is defined as a percentage of the width of the circle
   $contentBg: #ffffff, // The circle center
-  //$fontSize: 8, // Content font-size as a percentage of the circle size
+    //$fontSize: 8, // Content font-size as a percentage of the circle size
   $fontColor: #FFF, // Content text color
   $transTime: 0.3s, // Time to animate the movement
   $transFunc: linear, // transition timing
@@ -2010,9 +2076,10 @@ button[disabled]:hover {
 orbicular i {
   color: #775D9F;
 }
+
 orbicular {
-   font-size: 230px!important;
- }
+  font-size: 230px !important;
+}
 
 .android-video h3 {
   margin: 60px;
@@ -2197,7 +2264,7 @@ orbicular {
     display: none;
   }
   .home-header-title {
-    font-size:12pt;
+    font-size: 12pt;
   }
   .station-online {
     height: 28.4px;
@@ -3229,23 +3296,35 @@ orbicular {
 }
 
 @-webkit-keyframes dot {
-  0% { opacity: 0; }
-  50% { opacity: 0; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 @keyframes dot {
-  0% { opacity: 0; }
-  50% { opacity: 0; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
-
 
 @-webkit-keyframes ellipsis {
   to {
     width: 1.25em;
   }
 }
+
 @media only screen and (max-width: 550px) {
   .instruction-list {
     font-size: 12pt;
@@ -3257,52 +3336,46 @@ orbicular {
       margin-bottom: 10px;
     }
   }
-  .instruction-list-container{
-    width: 350px !important;
+  .container.instruction-list {
+    width: 350px;
   }
   .instruction-buttons {
     margin-left: 15.5%;
-    .instruction-btn{
+    .instruction-btn {
       font-size: 10px;
-      padding:0;
+      padding: 0;
       height: 40px;
     }
   }
   .instruction-header {
     margin-left: 15.5%;
-    h2{
+    h2 {
       font-size: 20px;
     }
   }
-  .instruction-row{
+  .instruction-row {
     margin-top: 20px;
     margin-left: 10%;
     font-weight: 500;
     font-size: 12px;
     color: black;
   }
-  .instruction-last{
+  .instruction-last {
     margin-top: 10px;
     margin-left: 10%;
     font-weight: 500;
     font-size: 12px;
     color: black;
   }
-  .instruction-img-border{
-    width:200px;
-    border: 1px solid #dcdcdc;
-    padding: 6px;
-    box-shadow: 0 0 3px rgba(0,0,0,0.1);
+  .instruction-img-border {
+    width: 200px;
   }
   .instruction-img {
     max-width: 100%;
     max-height: 100%;
   }
-  .guide-caption{
+  .guide-caption {
     font-size: 14px;
-  }
-  .modal-content-guide {
-    width: 350px;
   }
   .simultaneous-table-header span {
     font-size: 10px !important;
@@ -3310,7 +3383,7 @@ orbicular {
   .simultaneous-table-header {
     font-size: 10px !important;
   }
-  .simultaneous-item{
+  .simultaneous-item {
     font-size: 10px !important;
   }
   .inner-addon {
@@ -3319,13 +3392,14 @@ orbicular {
   .item-buttons {
     float: unset;
   }
-  .simultaneous-sort-button{
+  .simultaneous-sort-button {
     font-size: 14px !important;
   }
   .guide-logo-small {
     width: 15vh;
   }
 }
+
 @media only screen and (min-width: 550px) {
 
   .instruction-list {
@@ -3337,6 +3411,11 @@ orbicular {
       margin-bottom: 10px;
     }
   }
+
+  .container.instruction-list {
+    width: 960px;
+  }
+
   .instruction-buttons {
     margin-left: 15.5%;
   }
@@ -3358,12 +3437,6 @@ orbicular {
     font-size: 12px;
     color: black;
   }
-  .instruction-img-border {
-    width: 200px;
-    border: 1px solid #dcdcdc;
-    padding: 6px;
-    box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
-  }
   .instruction-img {
     max-width: 100%;
     max-height: 100%;
@@ -3371,23 +3444,19 @@ orbicular {
   .guide-caption {
     font-size: 18px;
   }
-  /* Modal Content (image) */
-  .modal-content-guide {
-    width: 400px;
-  }
 }
+
 @media only screen and (min-width: 700px) {
-  .simultaneous-table-header span{
-      font-size: 12px !important;
+  .simultaneous-table-header span {
+    font-size: 12px !important;
   }
   .simultaneous-table-header {
     font-size: 12px !important;
   }
-  .simultaneous-item{
+  .simultaneous-item {
     font-size: 12px !important;
   }
   .instruction-list {
-    font-size: 17pt;
     font-weight: 300;
     margin-top: 20px;
     margin-bottom: 30px;
@@ -3402,51 +3471,40 @@ orbicular {
     margin-left: 25.5%;
 
   }
-  .instruction-row{
+  .instruction-row {
     margin-top: 20px;
     margin-left: 15%;
     font-weight: 500;
     font-size: 18px;
     color: black;
   }
-  .instruction-last{
+  .instruction-last {
     margin-top: 10px;
     margin-left: 15%;
     font-weight: 500;
     font-size: 18px;
     color: black;
   }
-  .instruction-img-border{
-    width:300px;
-    border: 1px solid #dcdcdc;
-    padding: 6px;
-    box-shadow: 0 0 3px rgba(0,0,0,0.1);
-  }
   .instruction-img {
     max-width: 100%;
     max-height: 100%;
   }
-  /* Modal Content (image) */
-  .modal-content-guide {
-    width: 500px;
-  }
-  .instructions-manual{
-    height: 68vh!important;
+  .instructions-manual {
+    height: 68vh !important;
   }
 }
 
 @media only screen and (min-width: 1200px) {
-  .simultaneous-table-header span{
+  .simultaneous-table-header span {
     font-size: unset !important;
   }
   .simultaneous-table-header {
     font-size: unset !important;
   }
-  .simultaneous-item{
+  .simultaneous-item {
     font-size: unset !important;
   }
   .instruction-list {
-    font-size: 17pt;
     font-weight: 300;
     margin-top: 20px;
     margin-bottom: 30px;
@@ -3460,43 +3518,34 @@ orbicular {
   .instruction-header {
     margin-left: 31.5%;
   }
-  .instruction-row{
+  .instruction-row {
     margin-top: 20px;
     margin-left: 28%;
     font-weight: 500;
     font-size: 18px;
     color: black;
   }
-  .instruction-last{
+  .instruction-last {
     margin-top: 10px;
     margin-left: 28%;
     font-weight: 500;
     font-size: 18px;
     color: black;
   }
-  .instruction-img-border{
-    width:300px;
-    border: 1px solid #dcdcdc;
-    padding: 6px;
-    box-shadow: 0 0 3px rgba(0,0,0,0.1);
-  }
   .instruction-img {
     max-width: 100%;
     max-height: 100%;
   }
-  /* Modal Content (image) */
-  .modal-content-guide {
-    width: 600px;
-  }
-  .instructions-manual{
-    height: 69vh!important;
+  .instructions-manual {
+    height: 69vh !important;
   }
 }
+
 @media only screen and (min-width: 1600px) {
   .instruction-list {
     font-size: 20pt;
     font-weight: 300;
-    width:600px;
+    width: 600px;
     margin: 0 auto;
     text-align: left;
     li {
@@ -3504,47 +3553,40 @@ orbicular {
     }
   }
   .instruction-buttons {
-     margin-left: 36%;
-   }
+    margin-left: 36%;
+  }
   .instruction-header {
     margin-left: 36%;
   }
-  .instruction-row{
+  .instruction-row {
     margin-top: 20px;
     margin-left: 25%;
     font-weight: 500;
     font-size: 18px;
     color: black;
   }
-  .instruction-last{
+  .instruction-last {
     margin-top: 10px;
     margin-left: 25%;
     font-weight: 500;
     font-size: 18px;
     color: black;
   }
-  .instruction-img-border{
-    width:450px;
-    border: 1px solid #dcdcdc;
-    padding: 6px;
-    box-shadow: 0 0 3px rgba(0,0,0,0.1);
+  .instruction-img-border {
+    width: 450px;
   }
   .instruction-img {
     max-width: 100%;
     max-height: 100%;
   }
-  /* Modal Content (image) */
-  .modal-content-guide {
-    width: 700px;
-  }
-  .instructions-manual{
-    height: 73vh!important;
+  .instructions-manual {
+    height: 73vh !important;
   }
 }
 
 .modal-instruction {
-  background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0,0,0,0.7); /* Black w/ opacity */
+  background-color: rgb(0, 0, 0); /* Fallback color */
+  background-color: rgba(0, 0, 0, 0.7); /* Black w/ opacity */
   display: none;
   overflow: hidden;
   position: fixed;
@@ -3556,6 +3598,7 @@ orbicular {
   -webkit-overflow-scrolling: touch;
   outline: 0;
 }
+
 .block {
   text-align: center;
 }
@@ -3571,63 +3614,73 @@ orbicular {
   display: inline-block;
   vertical-align: middle;
 }
+
 #myImg {
   border-radius: 5px;
   cursor: pointer;
   transition: 0.3s;
 }
 
-#myImg:hover {opacity: 0.2;}
+#myImg:hover {
+  opacity: 0.2;
+}
 
-.heading-instructions{
+.heading-instructions {
   font-size: 18pt;
   color: black;
   font-weight: 400;
 }
-#instructions{
-  height:78vh;
-  position:relative;
+
+#instructions {
+  height: 78vh;
+  position: relative;
   overflow-x: hidden;
   overflow-y: auto;
-  b{
+  b {
     font-weight: 400;
   }
-  .instruction-list{
+  .instruction-list {
     margin-top: 0px !important;
-    margin-bottom: 0px!important;
+    margin-bottom: 0px !important;
   }
   a {
-    color:blue;
+    color: blue;
   }
 }
-.instructions-sublist{
+
+.instructions-sublist {
   color: grey;
   font-size: 10pt;
   margin-left: -20px;
 }
-#guide-no-images-sm{
-  height: calc(100vh - 135px)!important;
-  position:relative;
+
+#guide-no-images-sm {
+  height: calc(100vh - 135px) !important;
+  position: relative;
   overflow-x: hidden;
   overflow-y: auto;
-  b{
+  b {
     font-weight: 400;
   }
-  .instruction-list{
+  .instruction-list {
     margin-top: 0px !important;
-    margin-bottom: 0px!important;
+    margin-bottom: 0px !important;
   }
 }
-#lastStepNoImage{
+
+#lastStepNoImage {
   background-color: #e8eaed;
 }
-#checkButtons{
+
+#checkButtons {
   margin-top: -20px;
 }
-#instructions > #myModal{
-  position:absolute;
+
+#instructions > #myModal {
+  position: absolute;
   white-space: nowrap;
 }
+
 /* Caption of Modal Image */
 #caption {
   margin: auto;
@@ -3641,7 +3694,7 @@ orbicular {
 }
 
 /* Add Animation */
-.modal-content-guide{
+.modal-content-guide {
   -webkit-animation-name: zoom;
   -webkit-animation-duration: 0.6s;
   animation-name: zoom;
@@ -3649,118 +3702,144 @@ orbicular {
 }
 
 @-webkit-keyframes zoom {
-  from {-webkit-transform:scale(0)}
-  to {-webkit-transform:scale(1)}
+  from {
+    -webkit-transform: scale(0)
+  }
+  to {
+    -webkit-transform: scale(1)
+  }
 }
 
 @keyframes zoom {
-  from {transform:scale(0)}
-  to {transform:scale(1)}
+  from {
+    transform: scale(0)
+  }
+  to {
+    transform: scale(1)
+  }
 }
 
-.instruction-img:hover{
+.instruction-img:hover {
   cursor: pointer;
 }
-.instruction-list-container{
-  width: 600px;
-}
-.instruction-list-container-lg{
-  width:700px;
-}
-.medium-bold{
+
+.medium-bold {
   font-weight: 400;
 }
+
 .lg-line-height {
   line-height: 200%;
 }
+
 .myDiv {
-  overflow-y: scroll; height:100px;
+  overflow-y: scroll;
+  height: 100px;
   background: yellow;
 }
-.manual-modal-content{
+
+.manual-modal-content {
   position: relative;
   min-height: 100%;
 }
+
 .manual-modal-footer {
   position: absolute;
   left: 0;
   bottom: 0;
   height: 100px;
   width: 100%;
-  overflow:hidden;
+  overflow: hidden;
 }
-.imageManualModal{
+
+.imageManualModal {
   width: 36.5vw;
-  margin:20px 15px 10px 15px;
+  margin: 20px 15px 10px 15px;
 }
+
 .modalTextManual {
   margin: 20px 30px 20px 30px;
 }
-.modalErrors{
+
+.modalErrors {
   margin-top: -25px
 }
+
 .clickable-item {
   cursor: pointer;
 }
-.clickable-item:hover{
-  box-shadow: 0 0 3px #888888!important;
+
+.clickable-item:hover {
+  box-shadow: 0 0 3px #888888 !important;
 }
-.button-in-progress{
+
+.button-in-progress {
   color: orange;
 }
-.button-failed{
-  color:red;
+
+.button-failed {
+  color: red;
 }
-.button-successful{
-  color:#6cab1c;
+
+.button-successful {
+  color: #6cab1c;
 }
-.item-center{
+
+.item-center {
   margin: 0 auto;
   width: 300px
 }
-.enter-item-number-btn{
+
+.enter-item-number-btn {
   border-radius: 5px;
   font-size: 0.7vw;
   padding: 3px 10px 3px 10px;
 }
-.banner{
+
+.banner {
   background-color: #17468F;
   height: 72px;
   width: 100%;
   z-index: 2000;
-  margin-top:-10px;
+  margin-top: -10px;
 }
-.closeButton{
+
+.closeButton {
   cursor: pointer;
-  color:white;
+  color: white;
 }
-.banner-icon{
+
+.banner-icon {
   font-size: 1.5em;
 }
-.banner-icon-close{
+
+.banner-icon-close {
   margin-right: 30px;
 }
-.bannerText{
+
+.bannerText {
   padding-top: 25px;
   padding-left: 30px;
-  color:white;
+  color: white;
   cursor: pointer;
 }
-.feedback-button{
-  border:none;
+
+.feedback-button {
+  border: none;
   background: none;
   margin-right: 20px;
 }
-.feedback-button:hover{
-  border:none;
+
+.feedback-button:hover {
+  border: none;
   background: none;
   margin-right: 20px;
-  color:#17468F
+  color: #17468F
 }
+
 .modal-input {
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
   border-radius: 5px;
-  border:1px grey solid;
-  width:100%;
+  border: 1px grey solid;
+  width: 100%;
 }

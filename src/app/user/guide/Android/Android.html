@@ -43,15 +43,15 @@
       <div class="anim-wizard-step" id="first" ng-switch-when="startOne">
         <div style="text-align: center">
           <h2>Inspect device and make sure that:</h2>
-          <div class="instruction-list-container" style="margin: 0 auto; text-align: left">
-            <ul class="instruction-list">
+          <div class="container instruction-list">
+            <ul>
               <li>
                 Device turns on;
               </li>
               <li>
                 Screen and casing are in good condition;
               </li>
-              <li >
+              <li>
                 Keyboard and touchpad are working;
               </li>
             </ul>
@@ -94,15 +94,14 @@
       </div>
 
       <div class="anim-wizard-step" ng-switch-when="autoTesting">
-        <div  class="step-header-diagnostic">
+        <div class="step-header-diagnostic">
           <h2 class="text-align-center">
             <i class="fa fa-check check-green medium-icon"></i>
             Android device connected successfully</h2>
           <div class="row">
           </div>
         </div>
-        <div  class="row"><h3 class="text-align-center automated-anim">Performing automatic
-          diagnostics...</h3>
+        <div class="row"><h3 class="text-align-center automated-anim">Performing automatic diagnostics...</h3>
         </div>
         <div class="row">
           <div class="center circle-bar">
@@ -128,8 +127,7 @@
         </div>
         <div ng-hide="vm.manualShowLastAction">
           <div class="row">
-            <h3 class="text-align-center automated-anim">Follow instructions on the Android Device for manual
-              diagnostics...</h3>
+            <h3 class="text-align-center automated-anim">Follow instructions on the Android Device for manual diagnostics...</h3>
           </div>
           <div class="row">
             <div class="col-xl-12 col-lg-12 col-md-6 col-sm-6 col-xs-12 hide-small-raspberry">

@@ -1,0 +1,15 @@
+<horizontal-ui-sheet horizontal-scroll1="" class="shuffle-animation apc-sheet-full modal-android">
+  <div class="windows-modal-content">
+    <div class="text-center">
+      <img class="imageWindowsModal" ng-src="{{vm.data.image}}"/>
+    </div>
+    <div class="modalTextWindows">
+      <h4>{{vm.data.text}}</h4>
+    </div>
+    <div class="navigtion-buttons windows-modal-footer">
+      <button  ng-click="vm.closeModal()" class="btn center btn-primary btn-rounded android-modal-dismiss">
+        <span>Close</span>
+      </button>
+    </div>
+  </div>
+</horizontal-ui-sheet>

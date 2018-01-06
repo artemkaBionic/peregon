@@ -82,7 +82,7 @@ embed, iframe, object, video { max-width: 100%; }
 
 input[type=text],input.text, input.title, textarea, select { background-color:#fff; border:1px solid #bbb; padding: 2px; color: #4e4e4e; }
 input[type=text]:focus, input.text:focus, input.title:focus, textarea:focus, select:focus { border-color:#2D3940; color: #3e3e3e; }
-input[type=text], input.text, input.title, textarea, select { margin:0.5em 0; }
+/*input[type=text], input.text, input.title, textarea, select { margin:0.5em 0; }*/
 textarea { padding: 4px; }
 
 img#about-image { float: left; margin: 3px 8px 8px 0px; }
@@ -292,7 +292,7 @@ body, input, textarea, select { font-family: 'Open Sans', Arial, sans-serif; }
 	.entry-content tr th, .entry-content thead th { color: #555; font-weight: bold; padding: 9px 24px; }
 	.entry-content tr td { border-top: 1px solid #eee; padding: 6px 24px; }
 
-.et-additional-content .entry-content { margin-bottom: 85px; }
+/*.et-additional-content .entry-content { margin-bottom: 85px; }*/
 .page .entry { padding-bottom: 35px; }
 
 .et-author { position: absolute; left: 0; bottom: -25px; width: 100%; text-align: center; z-index: 10; }

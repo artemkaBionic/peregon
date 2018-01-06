@@ -1,0 +1,74 @@
+<div id="instructions" class="instructions-manual">
+  <h2 style="text-align: center; color:black;padding-bottom: 15px">Follow these steps to refresh HP (Windows 7 and earlier):</h2>
+  <div class="container instruction-list">
+    <div class="row">
+      <div class="col-md-7">
+        <p>1. Power on the computer and repeatedly press the F10 key until "F10...BIOS Setup Options" appears.</p>
+      </div>
+      <div class="col-md-5 text-center">
+        <div class="instruction-img-border">
+          <img class="instruction-img" ng-click="vm.openModal('/assets/images/hp-bios-f10.png')" src="/assets/images/hp-bios-f10.png">
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-7">
+        <p>2. Press the F9 key to load setup defaults, then select YES and press ENTER to confirm.</p>
+      </div>
+      <div class="col-md-5 text-center">
+        <div class="instruction-img-border">
+          <img class="instruction-img" ng-click="vm.openModal('/assets/images/hp-bios-load-setup-defaults.png')" src="/assets/images/hp-bios-load-setup-defaults.png">
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-7">
+        <p>3. Navigate to System Configuration, select Boot Options, and press ENTER.</p>
+      </div>
+      <div class="col-md-5 text-center">
+        <div class="instruction-img-border">
+          <img class="instruction-img" ng-click="vm.openModal('/assets/images/hp-bios-boot-options.png')" src="/assets/images/hp-bios-boot-options.png">
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-7">
+        <p>4. Choose Internal Network Adapter Boot and press ENTER.</p>
+        <p>5. Select Enabled and press ENTER.</p>
+      </div>
+      <div class="col-md-5 text-center">
+        <div class="instruction-img-border">
+          <img class="instruction-img" ng-click="vm.openModal('/assets/images/hp-bios-enable-network-boot.png')" src="/assets/images/hp-bios-enable-network-boot.png">
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-7">
+        <p>6. Press the F10 key to save changes and exit, then select Yes and press ENTER to confirm.</p>
+      </div>
+      <div class="col-md-5 text-center">
+        <div class="instruction-img-border">
+          <img class="instruction-img" ng-click="vm.openModal('/assets/images/hp-bios-save-changes.png')" src="/assets/images/hp-bios-save-changes.png">
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-7">
+        <p>7. While rebooting, repeatedly press the F12 key until "F12...Network Boot" appears.</p>
+      </div>
+      <div class="col-md-5 text-center">
+        <div class="instruction-img-border">
+          <img class="instruction-img" ng-click="vm.openModal('/assets/images/hp-bios-network-boot-menu.png')" src="/assets/images/hp-bios-network-boot-menu.png">
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <p>8. When the Refresh Environment has loaded, follow the instructions to start the refresh.</p>
+      <p>9. After the refresh is finished, click the OK button to turn off the computer.</p>
+    </div>
+  </div>
+  <!-- The Modal -->
+  <div id="myModal" class="modal-instruction absolute block" ng-click="vm.close()">
+    <img class="modal-content-guide centered" id="img01">
+  </div>
+</div>
