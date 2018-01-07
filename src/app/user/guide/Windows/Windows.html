@@ -3,7 +3,7 @@
     <div class="row header-row">
       <div class="col-sm-7 header-col">
         <div class="header-middle-col">
-          <div id="go-home-usb" class="home-link" ng-click="vm.refreshEnd()">
+          <div id="go-home-usb" class="home-link" ng-click="vm.goHome()">
             <div class="home-button">
               <i class="fa fa-home home-button-icon"></i>
               <span class="home-button-text">Home</span>
@@ -26,10 +26,10 @@
         <li ng-class="{'active': vm.step.number === 1, 'done': vm.step.number > 1}">
           <span>Prepare</span>
         </li>
-        <li ng-class="{'active': vm.step.number >= 2 && vm.step.number <= 3, 'done': vm.step.number > 3}">
+        <li ng-class="{'active': vm.step.number === 2 , 'done': vm.step.number > 2}">
           <span>Refresh Windows</span>
         </li>
-        <li ng-class="{'active': vm.step.number >= 4}">
+        <li ng-class="{'active': vm.step.number >= 3}">
           <span>Finish</span>
         </li>
       </ul>
@@ -53,8 +53,7 @@
           </div>
         </div>
         <div class="row text-center">
-          <button id="usb-device-good" style="margin-right: 25px;margin-top:5px" class="instruction-btn btn btn-success btn-rounded" type="submit"
-                  ng-click="vm.startSession()">
+          <button id="usb-device-good" style="margin-right: 25px;margin-top:5px" class="instruction-btn btn btn-success btn-rounded" type="submit" ng-click="vm.deviceGood()">
             Device is in good condition
           </button>
           <button id="usb-device-bad" style="margin-top:5px" class="instruction-btn btn btn-danger btn-rounded" type="submit" ng-click="vm.deviceBad()">
@@ -63,30 +62,8 @@
         </div>
       </div>
       <div class="anim-wizard-step" ng-switch-when="beginRefresh">
-        <div class="guide-footer">
-          <div class="row text-center">
-            <div class="guide-footer-content">Waiting for refresh to start.
-              <span style="margin-left: -4px">
-                <span class="two">.</span><span class="three">.</span>
-              </span>
-            </div>
-          </div>
-        </div>
         <iframe ng-if="vm.isSkuGuideAvailable" class="content-frame" ng-src="{{vm.skuGuideUrl}}"></iframe>
         <windows-guide ng-if="!vm.isSkuGuideAvailable" data-item="vm.item"></windows-guide>
-      </div>
-
-      <div class="anim-wizard-step" ng-switch-when="refreshInProgress">
-        <div class="row wizard-graphics">
-          <div class="la-ball-clip-rotate-multiple la-2x spinner">
-            <div></div>
-            <div></div>
-          </div>
-        </div>
-        <div class="row wizard-contents">
-          <h2>Refresh is in progress, please wait...</h2>
-          <h3>You may press the Home button to navigate away from this refresh guide and begin another refresh session, the refresh process will not be interrupted.</h3>
-        </div>
       </div>
 
       <div class="anim-wizard-step" ng-switch-when="complete">

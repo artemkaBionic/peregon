@@ -4,13 +4,20 @@
     angular.module('app.user').
         controller('GuideControllerWindows', GuideControllerWindows);
 
-    GuideControllerWindows.$inject = ['$q', 'config', 'item', 'sessionsService', '$state', 'socketService', 'popupLauncher'];
+    GuideControllerWindows.$inject = [
+        '$q',
+        'config',
+        'item',
+        'sessionsService',
+        '$state',
+        'socketService',
+        'popupLauncher'];
 
     function GuideControllerWindows($q, config, item, sessions, $state, socket, popupLauncher) {
         /*jshint validthis: true */
         var vm = this;
         vm.item = item;
-        vm.session = {};
+        vm.sessionId = null;
         vm.isSkuGuideAvailable = null;
 
         vm.skuGuideUrl = config.skuGuidesPath + '/' + item.sku + '/' + config.skuGuidesIndexFile;
@@ -26,30 +33,32 @@
                 number: 2,
                 title: 'Begin Refresh'
             },
-            refreshInProgress: {
-                name: 'refreshInProgress',
-                number: 3,
-                title: 'Refresh in Progress'
-            },
             complete: {
                 name: 'complete',
-                number: 4,
+                number: 3,
                 title: 'Refresh Complete'
             },
             failed: {
                 name: 'failed',
-                number: 5,
+                number: 4,
                 title: 'Refresh Failed'
             },
             broken: {
                 name: 'broken',
-                number: 6,
+                number: 5,
                 title: 'Device Broken'
             }
         };
+        vm.step = vm.steps.checkCondition;
         activate();
 
         function activate() {
+            sessions.getSessionByParams({
+                'device.item_number': vm.item.item_number,
+                'status': 'Incomplete'
+            }).then(function(session) {
+                updateSession(session);
+            });
             checkIsSkuGuideAvailable();
         }
 
@@ -64,11 +73,6 @@
             }
         }
 
-        function setStep(step) {
-            vm.step = step;
-            return sessions.updateCurrentStep(vm.session._id, step.name);
-        }
-
         vm.openFeedbackModal = function() {
             popupLauncher.openModal({
                 templateUrl: 'app/user/guide/Modals/Station-Feedback-modal.html',
@@ -78,58 +82,50 @@
                 size: 'sm-to-lg'
             });
         };
-        checkSession();
-
-        function checkSession() {
-            sessions.getSessionByParams({
-                'device.item_number': vm.item.item_number,
-                'status': 'Incomplete'
-            }).then(function(session) {
-                if (session) {
-                    updateSession(session);
-                } else {
-                    var sessionId = new Date().toISOString();
-                    sessions.start(sessionId, item, {'currentStep': 'checkCondition'}).then(function(session) {
-                        updateSession(session);
-                    });
-                }
-            });
-        }
 
         function updateSession(session) {
-            vm.session = session;
-            if (vm.session.status === 'Success') {
-                vm.step = vm.steps.complete;
-            } else if (vm.session.status === 'Incomplete') {
-                vm.step = vm.steps[session.tmp.currentStep];
-            } else {
-                if (vm.step !== vm.steps.broken) {
-                    vm.step = vm.steps.failed;
+            if (session &&
+                (session._id === vm.sessionId || (vm.sessionId === null && session.status === 'Incomplete'))) {
+                if (vm.sessionId === null) {
+                    vm.sessionId = session._id;
                 }
+                if (session.status === 'Success') {
+                    vm.step = vm.steps.complete;
+                } else if (session.status === 'Incomplete') {
+                    vm.step = vm.steps.beginRefresh;
+                } else {
+                    if (vm.step !== vm.steps.broken) {
+                        vm.step = vm.steps.failed;
+                    }
+                }
+                vm.failedTests = session.failedTests;
             }
         }
 
-        vm.startSession = function() {
-            setStep(vm.steps.beginRefresh);
+        vm.deviceGood = function() {
+            vm.step = vm.steps.beginRefresh;
         };
         vm.deviceBad = function() {
-            setStep(vm.steps.broken).then(function() {
-                return sessions.addLogEntry(vm.session._id, 'Info', 'Device is broken', '');
-            }).then(function() {
-                return sessions.finish(vm.session._id, {'complete': false});
-            });
+            vm.androidFinished = true;
+            vm.Broken = true;
+            if (vm.sessionId === null) {
+                vm.sessionId = new Date().toISOString();
+            }
+            sessions.deviceBroken(item);
+            vm.step = vm.steps.broken;
+        };
+        vm.retry = function() {
+            vm.step = vm.steps.beginRefresh;
+        };
+        vm.goHome = function() {
+            $state.go('root.user');
         };
 
         socket.on('session-updated', function(session) {
             updateSession(session);
         });
         socket.on('session-complete', function(session) {
-            if (session._id === vm.session._id) {
-                updateSession(session);
-            }
+            updateSession(session);
         });
-        vm.refreshEnd = function() {
-            $state.go('root.user');
-        };
     }
 })();
