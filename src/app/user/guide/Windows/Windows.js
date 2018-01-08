@@ -84,8 +84,8 @@
         };
 
         function updateSession(session) {
-            if (session &&
-                (session._id === vm.sessionId || (vm.sessionId === null && session.status === 'Incomplete'))) {
+            if (session && (session._id === vm.sessionId ||
+                    (vm.sessionId === null && session.device.item_number === vm.item.item_number))) {
                 if (vm.sessionId === null) {
                     vm.sessionId = session._id;
                 }
@@ -115,6 +115,7 @@
             vm.step = vm.steps.broken;
         };
         vm.retry = function() {
+            vm.sessionId = null;
             vm.step = vm.steps.beginRefresh;
         };
         vm.goHome = function() {
