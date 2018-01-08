@@ -9,9 +9,6 @@ winston.add(winston.transports.Syslog, {
     appName: 'kiosk'
 });
 
-process.stdout.on('error', function epipeFilter(err) {
-    if (err.code === 'EPIPE') {
-        return process.exit();
-    }
-    process.emit('error', err);
+process.on('uncaughtException', function(err) {
+    winston.error(err);
 });
