@@ -189,10 +189,7 @@
                                     vm.item = item;
                                     vm.itemNumberError = false;
                                     vm.itemUnsupportedError = false;
-                                    if (vm.item.type && vm.item.type !== 'Unsupported') {
-                                        // enable keypad submit button
-                                        $('.bc-keypad__key-button--submit').addClass('bc-keypad-submit-enabled');
-                                    } else {
+                                    if (!vm.item.type || vm.item.type === 'Unsupported') {
                                         vm.itemUnsupportedError = true;
                                     }
                                 } else {
@@ -208,12 +205,6 @@
                                 }
                             });
                     } else {
-                        // disable keypad submit button
-                        if ($('.bc-keypad__key-button--submit').
-                                hasClass('bc-keypad-submit-enabled')) {
-                            $('.bc-keypad__key-button--submit').
-                                removeClass('bc-keypad-submit-enabled');
-                        }
                         vm.item = null;
                     }
                 } else {

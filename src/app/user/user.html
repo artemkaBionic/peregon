@@ -19,7 +19,7 @@
                        ng-model="vm.searchString"/>
               </div>
               <div class="item-buttons text-center">
-                <button ng-disabled="vm.item === null" type="submit" class="btn-primary btn-rounded">Start</button>
+                <button ng-disabled="vm.item === null || vm.itemUnsupportedError" type="submit" class="btn-primary btn-rounded">Start</button>
               </div>
               <div class="item-buttons text-center" ng-show="vm.isServiceCenter && vm.item.type === 'Android'">
                 <button type="button" class="btn-primary btn-rounded" ng-click="vm.unlockForService()">Unlock for
