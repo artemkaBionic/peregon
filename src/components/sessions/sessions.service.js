@@ -61,7 +61,7 @@
             var url = '/data/sessions/' + sessionId + '/addLogEntry';
             var deferred = $q.defer();
 
-            console.log(message);
+            //console.log(message);
             $http.post(url,
                 {
                     'level': level,

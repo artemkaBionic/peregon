@@ -31,18 +31,21 @@
         </div>
       </div>
       <div class="row text-center item-error-row">
-        <div ng-hide="vm.item === null">
+        <div ng-hide="vm.item === null || vm.itemUnsupportedError">
           <button class="item-button" type="submit"><strong>SKU: {{vm.item.sku}}</strong><br/>{{vm.item.description}}
           </button>
         </div>
-        <div class="item-button-error" ng-show="vm.itemNumberError"><strong>Item not found</strong><br/>Check
-          the ItemNumber
+        <div class="item-button-error" ng-show="vm.itemNumberError">
+          <strong>Item not found</strong><br/>Check the Item Number
+        </div>
+        <div class="item-button-error" ng-show="vm.itemUnsupportedError">
+          <strong>{{vm.item.sku}} is not a supported SKU</strong><br/>To request support for this SKU, <a href="" ng-click="vm.openFeedbackModal()">leave feedback</a> or contact the NSC
         </div>
         <div class="item-button-error" ng-show="vm.searchStringSkuWarning && !vm.searchStringError">
           <strong>It looks like you might be typing a SKU</strong><br/>Make sure you are entering a valid Item Number
         </div>
-        <div class="item-button-error" ng-show="vm.searchStringError"><strong>Item Number Required</strong><br/>Make
-          sure you are typing a valid Item Number, not a SKU
+        <div class="item-button-error" ng-show="vm.searchStringError">
+          <strong>Item Number Required</strong><br/>Make sure you are typing a valid Item Number, not a SKU
         </div>
       </div>
     </form>

@@ -27,6 +27,7 @@
         vm.item = null;
         vm.AndroidEmei = null;
         vm.itemNumberError = false;
+        vm.itemUnsupportedError = false;
         vm.searchStringError = false;
         vm.searchStringSkuWarning = false;
         vm.isServiceCenter = false;
@@ -176,22 +177,34 @@
             if (vm.searchString !== vm.lastValidSearchString) {
                 vm.searchStringError = false;
                 vm.itemNumberError = false;
-                vm.searchStringSkuWarning = config.partialSkuRegEx.test(
-                    vm.searchString);
+                vm.itemUnsupportedError = false;
+                vm.searchStringSkuWarning = config.partialSkuRegEx.test(vm.searchString);
                 if (config.partialItemNumberRegEx.test(vm.searchString)) {
                     vm.lastValidSearchString = vm.searchString;
                     if (config.itemNumberRegEx.test(vm.searchString)) {
                         vm.item = null;
                         inventory.getItem(vm.searchString).
                             then(function(item) {
-                                vm.item = item;
-                                vm.itemNumberError = false;
-                                // enable keypad submit button
-                                $('.bc-keypad__key-button--submit').
-                                    addClass('bc-keypad-submit-enabled');
+                                if (item) {
+                                    vm.item = item;
+                                    vm.itemNumberError = false;
+                                    vm.itemUnsupportedError = false;
+                                    if (vm.item.type && vm.item.type !== 'Unsupported') {
+                                        // enable keypad submit button
+                                        $('.bc-keypad__key-button--submit').addClass('bc-keypad-submit-enabled');
+                                    } else {
+                                        vm.itemUnsupportedError = true;
+                                    }
+                                } else {
+                                    if (vm.item === null) { // If vm.item is populated then a successful call to getItem was completed before this failure was returned.
+                                        vm.itemNumberError = true;
+                                        vm.itemUnsupportedError = false;
+                                    }
+                                }
                             }, function() {
                                 if (vm.item === null) { // If vm.item is populated then a successful call to getItem was completed before this failure was returned.
                                     vm.itemNumberError = true;
+                                    vm.itemUnsupportedError = false;
                                 }
                             });
                     } else {
@@ -227,7 +240,6 @@
                 vm.item = null;
                 vm.searchString = '';
                 $state.go('root.user.guide', $stateParams);
-
             }
         };
         // show modal for successful/failed sessions + enter item number for unrecognized devices

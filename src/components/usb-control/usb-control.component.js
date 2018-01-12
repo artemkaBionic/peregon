@@ -83,9 +83,9 @@
                 } else {
                     showBootDeviceProgress();
                 }
-            }).catch(function(err) {
+            })/*.catch(function(err) {
                 console.log(err);
-            });
+            })*/;
         }
 
         function usbProgress(progress) {
@@ -131,7 +131,7 @@
             });
         }
 
-        socket.on('device-add', function(usbData) {
+        socket.on('device-add', function() {
             checkUsbStatus();
         });
         socket.on('device-remove', function() {

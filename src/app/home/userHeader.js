@@ -29,7 +29,6 @@
                     }
                     toastr.clear(connectionNotification);
                 } else {
-                    console.log('show error');
                     toastr.clear(connectionNotification);
                     connectionNotification = toastr.error(
                         'Click here for more information',

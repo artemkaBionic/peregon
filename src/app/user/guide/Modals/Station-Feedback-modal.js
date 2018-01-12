@@ -14,7 +14,6 @@
             //debugger;
             //$state.go('root.user');
             vm.submitted = true;
-            console.log('called');
             $scope.$apply();
         };
         window.goHome = vm.goHome;

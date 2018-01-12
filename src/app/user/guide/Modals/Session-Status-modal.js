@@ -5,17 +5,10 @@
         controller('SessionStatusModalController',
             SessionStatusModalController);
 
-    SessionStatusModalController.$inject = [
-        'popupLauncher',
-        'data',
-        'config',
-        'inventoryService',
-        'sessionsService',
-        '$scope',
-        '$rootScope'];
+    SessionStatusModalController.$inject = ['popupLauncher', 'data', 'config', 'inventoryService', 'sessionsService', '$scope'];
 
     function SessionStatusModalController(
-        popupLauncher, data, config, inventory, sessions, $scope, $rootScope) {
+        popupLauncher, data, config, inventory, sessions, $scope) {
         /*jshint validthis: true */
         var vm = this;
         vm.searchString = '';

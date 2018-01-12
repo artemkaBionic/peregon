@@ -7,9 +7,9 @@
     angular.module('app.inventory').
         factory('inventoryService', inventoryService);
 
-    inventoryService.$inject = ['$q', '$http', 'stationService'];
+    inventoryService.$inject = ['$q', '$http'];
 
-    function inventoryService($q, $http, station) {
+    function inventoryService($q, $http) {
 
         var service = {};
 
@@ -30,28 +30,24 @@
             } else {
                 $http.get(url, {timeout: canceller.promise}).
                     then(function(result) {
-                        if (result.data.error) {
+                        /*if (result.data.error) {
                             station.getConnectionState().
                                 then(function(connectionState) {
                                     if (connectionState.isOnline) {
-                                        console.log(
-                                            'Item number not found. Please check the number and try again.');
+                                        console.log('Item number not found. Please check the number and try again.');
                                     } else {
-                                        console.log(
-                                            'Unable to lookup item because the Station is Offline.');
+                                        console.log('Unable to lookup item because the Station is Offline.');
                                     }
                                 });
                         }
 
-                        else if (isValidItem(result.data.item)) {
-                            console.log('valid item');
+                        else */if (isValidItem(result.data.item)) {
+                            //console.log('valid item');
                             service.items[id] = result.data.item;
                             canceller.resolve(result.data.item);
-                        }
-
-                        else {
+                        } else {
                             canceller.reject();
-                            console.log('Item not found. Please try again.');
+                            //console.log('Item not found. Please try again.');
                         }
                     });
             }

@@ -68,7 +68,7 @@
             vm.templateUrl ='app/user/guide/Windows/Components/WindowsGuideTemplates/ToshibaBios.html';
         };
 
-        $rootScope.$on('$locationChangeStart',function(event, next, current){
+        $rootScope.$on('$locationChangeStart',function(event){
             if (vm.templateUrl) {
                 vm.templateUrl = null;
                 //prevent the location change.
@@ -92,7 +92,7 @@
             var container = angular.element(document.querySelectorAll('#instructions'));
             var footer = angular.element(document.querySelector('.content-finish'));
             var lastStep = angular.element(document.querySelector('#instructions > #lastStep'));
-            console.log(container);
+            //console.log(container);
             container.on('scroll', function(){
                 if (parseInt(container[0].offsetHeight + container[0].scrollTop + 1)  >= container[0].scrollHeight) {
                     footer.css('display', 'none');
