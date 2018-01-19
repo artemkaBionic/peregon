@@ -58,8 +58,8 @@ app.set('view engine', 'jade');
 
 // uncomment after placing your favicon in ../src/assets/images
 //app.use(favicon(__dirname + '../src/assets/images/favicon.ico'));
-app.use(bodyParser.json({limit: '5mb'}));
-app.use(bodyParser.urlencoded({limit: '5mb', extended: false}));
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({limit: '50mb', extended: false}));
 //app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '/public')));
 

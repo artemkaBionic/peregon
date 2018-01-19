@@ -142,7 +142,7 @@ module.exports = function(io) {
 
     function readXboxSessions(device) {
         winston.info('Reading xbox sessions');
-        var systemUpdateDir = '/mnt/' + device + '1/$SystemUpdate';
+        var systemUpdateDir = '/mnt/' + device + config.usbXboxPartition + '/$SystemUpdate';
         var usbItemFile = '/mnt/' + device + config.usbStatusPartition + '/item.json';
         var unreportedSessions = 0;
         return fs.readFileAsync(systemUpdateDir + '/update.log', 'utf8').then(function(data) {
