@@ -71,11 +71,11 @@
 
         function guideTemplate($templateCache, $http, item) {
             var templateUrl = 'app/user/guide/unsupported.html';
-            if (item.type !== null) {
-                if (item.type === 'Mac' || item.type === 'XboxOne' || item.type === 'WindowsUsb') {
+            if (item.product.type !== null) {
+                if (item.product.type === 'Mac' || item.product.type === 'XboxOne' || item.product.type === 'WindowsUsb') {
                     templateUrl = 'app/user/guide/UsbGuides/UsbGuides.html';
-                } else if (item.type === 'Android' || item.type === 'Windows') {
-                    templateUrl = 'app/user/guide/' + item.type + '/' + item.type + '.html';
+                } else if (item.product.type === 'Android' || item.product.type === 'Windows') {
+                    templateUrl = 'app/user/guide/' + item.product.type + '/' + item.product.type + '.html';
                 } else {
                     templateUrl = 'app/user/guide/Manual/Manual.html';
                 }
@@ -95,14 +95,14 @@
 
         function guideController(item) {
             var controllerName = 'GuideControllerUnsupported';
-            // if (item.type !== null) {
-            //     controllerName = 'GuideController' + item.type;
+            // if (item.product.type !== null) {
+            //     controllerName = 'GuideController' + item.product.type;
             // }
-            if (item.type !== null) {
-                if (item.type === 'Mac' || item.type === 'XboxOne' || item.type === 'WindowsUsb') {
+            if (item.product.type !== null) {
+                if (item.product.type === 'Mac' || item.product.type === 'XboxOne' || item.product.type === 'WindowsUsb') {
                     controllerName = 'GuideControllerUsb';
-                } else if (item.type === 'Android' || item.type === 'Windows') {
-                    controllerName = 'GuideController' + item.type;
+                } else if (item.product.type === 'Android' || item.product.type === 'Windows') {
+                    controllerName = 'GuideController' + item.product.type;
                 } else {
                     controllerName = 'GuideControllerManual';
                 }

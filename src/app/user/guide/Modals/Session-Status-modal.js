@@ -68,7 +68,7 @@
                                     then(function(item) {
                                         vm.item = item;
                                         if (item !== null &&
-                                            item.type !== vm.deviceType) {
+                                            item.product.type !== vm.deviceType) {
                                             vm.wrongDeviceType = true;
                                         }
                                         vm.itemNumberError = false;

@@ -26,22 +26,22 @@
         vm.mac = false;
         vm.xBox = false;
         vm.android = false;
-        if (!vm.item.CalledFromHome && angular.lowercase(vm.item.type) !== 'android') {
+        if (!vm.item.CalledFromHome && angular.lowercase(vm.item.product.type) !== 'android') {
             vm.height = {'height':'72vh'};
         }
-        if (angular.lowercase(vm.item.manufacturer) === 'hp' && angular.lowercase(vm.item.type) === 'windowsusb') {
+        if (angular.lowercase(vm.item.product.manufacturer) === 'hp' && angular.lowercase(vm.item.product.type) === 'windowsusb') {
             vm.hp = true;
         }
-        if (angular.lowercase(vm.item.manufacturer) === 'dell' && angular.lowercase(vm.item.type) === 'windowsusb') {
+        if (angular.lowercase(vm.item.product.manufacturer) === 'dell' && angular.lowercase(vm.item.product.type) === 'windowsusb') {
             vm.dell = true;
         }
-        if (angular.lowercase(vm.item.type) === 'mac') {
+        if (angular.lowercase(vm.item.product.type) === 'mac') {
             vm.mac = true;
         }
-        if (angular.lowercase(vm.item.type) === 'xboxone') {
+        if (angular.lowercase(vm.item.product.type) === 'xboxone') {
             vm.xbox = true;
         }
-        if (angular.lowercase(vm.item.type) === 'android') {
+        if (angular.lowercase(vm.item.product.type) === 'android') {
             vm.android = true;
         }
         vm.openModal = function(src) {

@@ -7,9 +7,6 @@ var config = require('./config.js');
 var path = require('path');
 var fs = require('fs');
 var request = require('requestretry');
-var INVENTORY_LOOKUP_URL = 'https://' + config.apiHost + '/api/inventorylookup/';
-var SERIAL_LOOKUP_URL = 'https://' + config.apiHost + '/api/seriallookup/';
-var API_URL = 'https://api2.basechord.com';
 var Promise = require('bluebird');
 Promise.config({
     warnings: false
@@ -19,38 +16,15 @@ exports.getSerialLookup = getSerialLookup;
 exports.getItem = getItem;
 exports.lockDevice = lockDevice;
 exports.unlockDevice = unlockDevice;
-exports.changeDeviceFormat = changeDeviceFormat;
-
-// Reverse lookup to Azure in case if not found in our Mongo DB
-function getItemFromAzure(id, callback) {
-    winston.info('Getting item from azure with Item Id: ' + id);
-    request({
-        url: INVENTORY_LOOKUP_URL + id,
-        headers: {
-            'Authorization': config.apiAuthorization
-        },
-        rejectUnauthorized: false,
-        json: true
-    }, function(error, response, body) {
-        if (error) {
-            winston.error('Error getting item from Azure', error);
-            callback({error: error, item: null});
-        }
-        else {
-            winston.info('Azure server returned: ', body);
-            callback({error: null, item: changeDeviceFormat(body)});
-        }
-    });
-}
 
 // Item lookup from our Mongo DB
 function getItem(id, callback) {
-    winston.info(API_URL + '/aarons/inventorylookup' + id);
+    winston.info('Getting item ' + id + ' from server');
     request({
         rejectUnauthorized: false,
-        uri: API_URL + '/aarons/inventorylookup' + id,
+        uri: 'https://' + config.apiHost + '/inventory/' + id,
         headers: {
-            'Authorization': config.api2Authorization
+            'Authorization': config.apiAuthorization
         }
     }, function(error, response) {
         if (error) {
@@ -58,21 +32,21 @@ function getItem(id, callback) {
             callback({error: error, item: null});
         }
         else {
-            winston.info('NodeJS server returned: ', response.body);
-            var data = JSON.parse(response.body);
-            if (data.message) {
-                winston.info('Calling item lookup from Azure with Id: ' + id);
-                getItemFromAzure(id, callback);
+            winston.info('NodeJS server returned staus: ' + response.statusCode + ' body: ', response.body);
+            if (response.statusCode === 200) {
+                callback({error: null, item: JSON.parse(response.body)});
             } else {
-                callback({error: null, item: changeDeviceFormat(data)});
+                winston.info('Item ' + id + ' not found.');
+                callback({error: 'Item not found', item: null});
             }
         }
     });
 }
 
-function getSerialLookup(imei, callback) {
+function getSerialLookup(serial, callback) {
+    winston.info('Getting item from server with serial number ' + serial);
     request({
-        url: SERIAL_LOOKUP_URL + imei,
+        url: 'https://' + config.apiHost + '/inventory/serial_number/' + serial,
         headers: {
             'Authorization': config.apiAuthorization
         },
@@ -94,9 +68,9 @@ function unlockDevice(imei, forService, callback) {
     winston.info('Unlocking imei ' + imei);
     request({
         method: 'POST',
-        url: API_URL + '/unlockapi/unlock',
+        url: 'https://' + config.apiHost + '/unlockapi/unlock',
         headers: {
-            'Authorization': config.api2Authorization
+            'Authorization': config.apiAuthorization
         },
         body: {'IMEI': imei, 'unlocked_for_service': forService},
         rejectUnauthorized: false,
@@ -116,9 +90,9 @@ function unlockDevice(imei, forService, callback) {
 function lockDevice(imei, callback) {
     request({
         method: 'POST',
-        url: API_URL + '/unlockapi/lock',
+        url: 'https://' + config.apiHost + '/unlockapi/lock',
         headers: {
-            'Authorization': config.api2Authorization
+            'Authorization': config.apiAuthorization
         },
         body: {'IMEI': imei},
         rejectUnauthorized: false,
@@ -148,51 +122,4 @@ function filesExist(directory, files) {
             return false;
         }
     }
-}
-
-function changeDeviceFormat(device) {
-    var newDevice = {};
-    for (var prop in device) {
-        if (device.hasOwnProperty(prop)) {
-            switch (prop) {
-                case 'Sku':
-                    newDevice.sku = device.Sku;
-                    break;
-                case 'InventoryNumber':
-                    newDevice.item_number = device.InventoryNumber;
-                    break;
-                case 'Model':
-                    newDevice.model = device.Model;
-                    break;
-                case 'Manufacturer':
-                    newDevice.manufacturer = device.Manufacturer;
-                    break;
-                case 'Serial':
-                    newDevice.serial_number = device.Serial;
-                    break;
-                case 'Type':
-                    newDevice.type = device.Type;
-                    break;
-                case 'SubType':
-                    newDevice.sub_type = device.SubType;
-                    break;
-                case 'Description':
-                    newDevice.description = device.Description;
-                    break;
-                case 'numberOfAuto':
-                    newDevice.number_of_auto = device.numberOfAuto;
-                    break;
-                case 'numberOfManual':
-                    newDevice.number_of_manual = device.numberOfManual;
-                    break;
-                case 'failedTests':
-                    newDevice.failed_tests = device.failedTests;
-                    break;
-                case 'adbSerial':
-                    newDevice.adb_serial = device.adbSerial;
-                    break;
-            }
-        }
-    }
-    return newDevice;
 }

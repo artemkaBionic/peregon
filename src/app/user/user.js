@@ -189,7 +189,7 @@
                                     vm.item = item;
                                     vm.itemNumberError = false;
                                     vm.itemUnsupportedError = false;
-                                    if (!vm.item.type || vm.item.type === 'Unsupported') {
+                                    if (!vm.item.product.type || vm.item.product.type === 'Unsupported') {
                                         vm.itemUnsupportedError = true;
                                     }
                                 } else {
@@ -224,7 +224,7 @@
                 mixpanel.track(
                     'Session Start',
                     {
-                        'item_type': vm.item.type,
+                        'item_type': vm.item.product.type,
                         'item_number': vm.item.item_number
                     }
                 );

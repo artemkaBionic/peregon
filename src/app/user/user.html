@@ -21,7 +21,7 @@
               <div class="item-buttons text-center">
                 <button ng-disabled="vm.item === null || vm.itemUnsupportedError" type="submit" class="btn-primary btn-rounded">Start</button>
               </div>
-              <div class="item-buttons text-center" ng-show="vm.isServiceCenter && vm.item.type === 'Android'">
+              <div class="item-buttons text-center" ng-show="vm.isServiceCenter && vm.item.product.type === 'Android'">
                 <button type="button" class="btn-primary btn-rounded" ng-click="vm.unlockForService()">Unlock for
                   Service
                 </button>
@@ -32,7 +32,7 @@
       </div>
       <div class="row text-center item-error-row">
         <div ng-hide="vm.item === null || vm.itemUnsupportedError">
-          <button class="item-button" type="submit"><strong>SKU: {{vm.item.sku}}</strong><br/>{{vm.item.description}}
+          <button class="item-button" type="submit"><strong>SKU: {{vm.item.sku}}</strong><br/>{{vm.item.product.full_description}}
           </button>
         </div>
         <div class="item-button-error" ng-show="vm.itemNumberError">

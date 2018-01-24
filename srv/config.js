@@ -9,10 +9,8 @@ config.packagPackagePath = '/srv/packages';
 config.kioskDataPath = '/var/lib/kiosk';
 config.kioskTempPath = '/var/lib/kiosk/tmp';
 config.connectionStateFile = '/var/lib/rswatcher/connectionState.json';
-config.apiHost = 'api.ar.appchord.com';
-config.apiPort = 443;
-config.apiAuthorization = 'Basic YXBwY2hvcmQuYWFyb25zLmFwaTplfjEjOUwkN0t6Zlt9MEo=';
-config.api2Authorization = 'Basic YWFyb25zOllXRnliMjV6T2s1NU5UTjJjRlpU';
+config.apiHost = 'api.basechord.com';
+config.apiAuthorization = 'Basic YWFyb25zOllXRnliMjV6T2s1NU5UTjJjRlpU';
 config.deviceUnlockTimeout = 3600000;
 config.usbDeviceIdRegEx = /^sd[c-z]$/;
 

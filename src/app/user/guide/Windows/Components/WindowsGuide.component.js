@@ -23,7 +23,7 @@
         vm.templateUrl = getTemplate();
         function getTemplate(){
             var template = null;
-            var manufacturer = vm.item.manufacturer.toUpperCase();
+            var manufacturer = vm.item.product.manufacturer.toUpperCase();
             if (manufacturer === 'ASUS') {
                 template = 'AsusUefi';
             } else if (manufacturer === 'DELL' || manufacturer === 'DELL USA') {

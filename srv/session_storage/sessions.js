@@ -13,7 +13,6 @@ module.exports = function(io) {
     Promise.config({
         warnings: false
     });
-    var API_URL = 'https://api2.basechord.com';
     var RESEND_SESSIONS_INTERVAL = 900000; // 15 minutes
 
     //Periodically resend unsent sessions
@@ -266,9 +265,9 @@ module.exports = function(io) {
             winston.info('Sending session with this ID:' + sessionID + ' for device: ' + session.device.item_number);
             request({
                 method: 'POST',
-                url: API_URL + '/session',
+                url: 'https://' + config.apiHost + '/session',
                 headers: {
-                    'Authorization': config.api2Authorization
+                    'Authorization': config.apiAuthorization
                 },
                 body: session,
                 rejectUnauthorized: false,
