@@ -45,7 +45,7 @@ module.exports = function(io) {
     }
 
     function insert(session) {
-        winston.info('Adding session with id: ' + session._id);
+        winston.info('Adding session ' + session._id);
         return new Promise(function(resolve, reject) {
             sessions.update({_id: session._id}, session,
                 {upsert: true, setDefaultsOnInsert: true},
@@ -61,7 +61,7 @@ module.exports = function(io) {
     }
 
     function update(session) {
-        winston.info('Updating session with id: ' + session._id);
+        winston.info('Updating session ' + session._id);
         return new Promise(function(resolve, reject) {
             sessions.update({_id: session._id}, session,
                 {upsert: true, setDefaultsOnInsert: true},
@@ -153,11 +153,11 @@ module.exports = function(io) {
                     '_id': sessionStartDate
                 };
                 insert(newSession).then(function() {
-                    winston.info('Session with ID: ' + sessionStartDate + ' was inserted succesfully.');
+                    winston.info('Session ' + sessionStartDate + ' was inserted succesfully.');
                     io.emit('session-started', newSession);
                     resolve(newSession);
                 }).catch(function(err) {
-                    winston.error('Error while inserting session with ID:' + sessionStartDate, err);
+                    winston.error('Error inserting session ' + sessionStartDate, err);
                     reject(err);
                 });
             });
@@ -194,11 +194,11 @@ module.exports = function(io) {
                     '_id': sessionId
                 };
                 insert(newSession).then(function(session) {
-                    winston.info('Session with ID:' + sessionId + ' was inserted succesfully');
+                    winston.info('Session ' + sessionId + ' was inserted succesfully');
                     io.emit('session-complete', newSession);
                     resolve(session);
                 }).catch(function(err) {
-                    winston.error('Error while inserting session with ID:' + sessionId, err);
+                    winston.error('Error inserting session ' + sessionId, err);
                     reject(err);
                 });
             });
@@ -215,7 +215,7 @@ module.exports = function(io) {
             'message': message,
             'details': details
         };
-        winston.info('Adding log entry for session ' + sessionId + ': ' + logEntry);
+        winston.info('Adding log entry for session ' + sessionId, logEntry);
         return new Promise(function(resolve) {
             sessions.update(
                 {_id: sessionId},
@@ -262,7 +262,7 @@ module.exports = function(io) {
         var sessionID = session._id;
         if (session.device.item_number) {
             delete session.tmp;
-            winston.info('Sending session with this ID:' + sessionID + ' for device: ' + session.device.item_number);
+            winston.info('Sending session ' + sessionID + ' for device: ' + session.device.item_number);
             request({
                 method: 'POST',
                 url: 'https://' + config.apiHost + '/session',
@@ -276,12 +276,12 @@ module.exports = function(io) {
                 // update status is sent
                 session.is_sent = true;
                 update(session);
-                winston.info('Session with this this ID:' + sessionID + ' was sent.');
+                winston.info('Session ' + sessionID + ' was sent.');
             }).catch(function(err) {
-                winston.error('Unable to send session.', err);
+                winston.error('Unable to send session ' + sessionID, err);
             });
         } else {
-            winston.info('Session with this ID not sent:' + sessionID);
+            winston.info('Session ' + sessionID + ' was not sent.');
         }
     }
 
@@ -299,7 +299,7 @@ module.exports = function(io) {
                 }
             }).
             catch(function(err) {
-                winston.error('Error resending session', err);
+                winston.error('Error resending sessions', err);
             });
     }
 
