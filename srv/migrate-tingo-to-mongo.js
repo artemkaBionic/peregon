@@ -19,7 +19,7 @@ module.exports = function(io) {
         }
         for (var i = 0, len = newSession.logs.length; i < len; i++) {
             if (newSession.logs[i].details) {
-                newSession.logs[i].details = JSON.stringify(newSession.logs[i].details).replace(/^\s+{+\s+|\s+}+\s+$/g, '')
+                newSession.logs[i].details = JSON.stringify(newSession.logs[i].details).replace(/^\s*{*\s*|\s*}*\s*$/g, '').replace('failedTests', 'Failed tests');
             }
         }
         mongoSession.findOneAndUpdate({'start_time': newSession.start_time}, newSession, {upsert: true}).then(function() {
