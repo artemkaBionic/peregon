@@ -92,11 +92,11 @@ gulp.task('injector:js', ['env', 'analyze', 'injector:css'], function () {
 
 gulp.task('partials', function () {
     return gulp.src('src/{app,components}/**/*.html')
-        .pipe($.minifyHtml({
+        /*.pipe($.minifyHtml({
             empty: true,
             spare: true,
             quotes: true
-        }))
+        }))*/
         .pipe($.angularTemplatecache('templateCacheHtml.js', {
             module: 'app'
         }))
@@ -120,7 +120,7 @@ gulp.task('html', ['wiredep', 'injector:css', 'injector:js', 'partials'], functi
         .pipe(jsFilter)
         .pipe($.debug({title: 'js'}))
         .pipe($.ngAnnotate({ add: true, single_quotes: true }))
-        .pipe($.uglify({preserveComments: $.uglifySaveLicense}))
+        //.pipe($.uglify({preserveComments: $.uglifySaveLicense}))
         .pipe(jsFilter.restore())
         .pipe(cssFilter)
         .pipe($.debug({title: 'css'}))
@@ -136,11 +136,11 @@ gulp.task('html', ['wiredep', 'injector:css', 'injector:js', 'partials'], functi
         .pipe($.useref())
         .pipe($.revReplace())
         .pipe(htmlFilter)
-        .pipe($.minifyHtml({
+        /*.pipe($.minifyHtml({
             empty: true,
             spare: true,
             quotes: true
-        }))
+        }))*/
         .pipe(htmlFilter.restore())
         .pipe(gulp.dest('dist/public/'))
         .pipe($.size({title: 'dist/public/', showFiles: true}));
@@ -199,10 +199,12 @@ gulp.task('mics', function () {
 
 gulp.task('copySrv', function () {
     gulp.src([
+        './srv/android/**/*',
         './srv/bin/**/*',
+        './srv/controllers/**/*',
+        './srv/lib/**/*',
+        './srv/models/**/*',
         './srv/usbonly/**/*',
-        './srv/simultaneous/**/*',
-        './srv/session_storage/**/*',
         './srv/views/**/*',
         './srv/*.js',
         './srv/*.json'

@@ -1,8 +1,7 @@
 (function() {
     'use strict';
 
-    angular.module('app.user').
-        controller('GuideControllerAndroid', GuideControllerAndroid);
+    angular.module('app.user').controller('GuideControllerAndroid', GuideControllerAndroid);
 
     GuideControllerAndroid.$inject = [
         '$scope',
@@ -23,7 +22,6 @@
         var timeouts = [];
         vm.item = item;
         vm.step = null;
-        vm.error = '';
         /*=================Checking for Android Refresh process finished to lock the device===============*/
         $scope.$on('$destroy', function() {
             timeouts.forEach(function(timeout) {
@@ -33,51 +31,32 @@
         /*=================End Checking for Android Refresh process finished to lock the device===============*/
         /*================= Device lock and unlock functions ==============*/
         vm.activate = function() {
-            vm.androidFinished = false;//Gonna be 'true' when finish
-            vm.deviceLockService = 'none';
-            vm.AndroidDisconnected = false;
-            vm.deviceLockServiceUnlocked = false;
-            vm.Broken = false; //The reason for the transition to the Fail finish
-            vm.NotLocked = false;
-            //vm.NotConnected = false;
-            vm.buttonBackShow = false; //If Checkboxes passed but device not connected
-            vm.TestsFault = false; // The reason for the transition to the Fail finish
-            vm.manualShowLastAction = false; //After tests end hides Orbicular Progress Bar and show complete message
-            vm.autoSize = 0;
-            vm.manualSize = 0;
-            vm.autoPassed = 0;
-            vm.manualPassed = 0;
-            vm.failedTests = [];
             vm.sessionId = null;
-            vm.step = vm.steps.startOne; //!!! Definition for first Guide Step
-
-            sessions.getSessionByParams({
-                'device.item_number': vm.item.item_number,
-                'status': 'Incomplete'
-            }).then(function(session) {
-                updateSession(session);
-            });
+            vm.autoTestsTotal = 0;
+            vm.autoTestsComplete = 0;
+            vm.manualTestsTotal = 0;
+            vm.manualTestsComplete = 0;
+            vm.failedTests = [];
+            vm.step = vm.steps.checkCondition; //!!! Definition for first Guide Step
+            checkSession();
             unlockDevice();
         };
 
-        function unlockDevice() {
-            if (vm.item) {
-                inventory.unlock(vm.item.serial_number, false).
-                    then(function(data) {
-                        if (!data.error) {
-                            vm.deviceLockService = data.result.service;
-                            vm.deviceLockServiceUnlocked = true;
-                            if (vm.step === vm.steps.waitForUnlock) {
-                                vm.step = vm.steps.preparationOne;
-                            }
-                        }
+        function checkSession() {
+            sessions.getIncomplete(vm.item.item_number).then(function(session) {
+                if (session) {
+                    updateSession(session);
+                } else {
+                    sessions.start(item, {'currentStep': 'checkCondition'}).then(function(session) {
+                        updateSession(session);
                     });
-            }
+                }
+            });
         }
 
-        function lockDevice() {
+        function unlockDevice() {
             if (vm.item) {
-                inventory.lock(vm.item.serial_number);
+                inventory.unlock(vm.item.serial_number, false);
             }
         }
 
@@ -93,55 +72,65 @@
         /*=================End Device lock and unlock functions ==============*/
         /*=================Guide Steps definition===============*/
         vm.steps = {
-            startOne: {
-                name: 'startOne',
+            checkCondition: {
+                name: 'checkCondition',
                 number: 1,
                 title: 'Inspect Device'
             },
-            preparationOne: {
-                name: 'preparationOne',
+            prepareDevice: {
+                name: 'prepareDevice',
                 number: 2,
                 title: 'Prepare Device'
             },
-            enableYesButton: {
-                name: 'enableYesButton',
+            authorizeDebug: {
+                name: 'authorizeDebug',
                 number: 3,
-                title: 'Click Yes on phone screen'
+                title: 'Tap Yes or OK'
             },
             waitForAppStart: {
                 name: 'waitForAppStart',
                 number: 4,
                 title: 'Loading'
             },
+            appInstallFailed: {
+                name: 'appInstallFailed',
+                number: 5,
+                title: 'App Install Failed.'
+            },
+            disconnected: {
+                name: 'disconnected',
+                number: 6,
+                title: 'Disconnected'
+            },
             autoTesting: {
                 name: 'autoTesting',
-                number: 5,
+                number: 7,
                 title: 'Automatic Diagnostics'
             },
             manualTesting: {
                 name: 'manualTesting',
-                number: 6,
+                number: 8,
                 title: 'Manual Diagnostics'
             },
             finishSuccess: {
                 name: 'finishSuccess',
-                number: 7,
-                title: 'Successfully refurbished'
+                number: 9,
+                title: 'Successfully Refurbished'
             },
             finishFail: {
                 name: 'finishFail',
-                number: 8,
-                title: 'Refresh failed.'
+                number: 10,
+                title: 'Refresh Failed.'
             },
-            sessionExpired: {
-                name: 'sessionExpired',
-                number: 9,
+            finishExpired: {
+                name: 'finishExpired',
+                number: 11,
                 title: 'Session Expired'
             },
-            appInstallFail: {
-                name: 'appInstallFail',
-                number: 10,
-                title: 'App install failed.'
+            finishBroken: {
+                name: 'finishBroken',
+                nymber: 12,
+                title: 'Device Broken'
             }
         };
 
@@ -157,60 +146,38 @@
                         if (session.tmp.currentStep !== undefined && vm.steps[session.tmp.currentStep] !== undefined) {
                             vm.step = vm.steps[session.tmp.currentStep];
                         }
-                        if (session.tmp.numberOfAuto !== undefined) {
-                            vm.autoSize = session.tmp.numberOfAuto;
+                        if (session.tmp.autoTestsTotal !== undefined) {
+                            vm.autoTestsTotal = session.tmp.autoTestsTotal;
                         }
-                        if (session.tmp.passedAuto !== undefined) {
-                            vm.autoPassed = session.tmp.passedAuto;
+                        if (session.tmp.autoTestsComplete !== undefined) {
+                            vm.autoTestsComplete = session.tmp.autoTestsComplete;
                         }
-                        if (session.tmp.numberOfManual !== undefined) {
-                            vm.manualSize = session.tmp.numberOfManual;
+                        if (session.tmp.manualTestsTotal !== undefined) {
+                            vm.manualTestsTotal = session.tmp.manualTestsTotal;
                         }
-                        if (session.tmp.passedManual !== undefined) {
-                            vm.manualPassed = session.tmp.passedManual;
+                        if (session.tmp.manualTestsComplete !== undefined) {
+                            vm.manualTestsComplete = session.tmp.manualTestsComplete;
                         }
                     }
-                    vm.failedTests = session.failedTests;
+                    vm.failedTests = session.failed_tests;
                 });
             }
         }
 
         /*=================Guide Steps functions===============*/
+        function setStep(step) {
+            return sessions.updateCurrentStep(vm.sessionId, step.name);
+        }
+
         vm.deviceGood = function() {
-            vm.step = vm.steps.preparationOne;
+            return setStep(vm.steps.prepareDevice);
         };
         vm.deviceBad = function() {
-            vm.androidFinished = true;
-            vm.Broken = true;
-            if (vm.sessionId === null) {
-                vm.sessionId = new Date().toISOString();
-            }
-            sessions.deviceBroken(item);
-            vm.finishFail();
-        };
-        vm.sessionExpired = function() {
-            lockDevice();
-            vm.step = vm.steps.sessionExpired;
-        };
-
-        vm.finishFail = function() {
-            vm.step = vm.steps.finishFail;
-        };
-
-        vm.finishSuccess = function() {
-            vm.step = vm.steps.finishSuccess;
-        };
-
-        vm.finish = function() {
-            vm.androidFinished = true;
-            if (vm.TestsFault || vm.AndroidDisconnected) {
-                vm.finishFail();
-            } else {
-                vm.finishSuccess();
-            }
+            return sessions.addLogEntry(vm.sessionId, 'Info', 'Device is broken', '').then(function() {
+                return sessions.finish(vm.sessionId, {'complete': false, 'reason': 'Broken'});
+            });
         };
         vm.refreshEnd = function() {
-            vm.androidFinished = true;
             $state.go('root.user');
         }; // Finish Button - Go to the Home Screen
         /*=================End Guide Steps functions===============*/
@@ -219,26 +186,6 @@
             $state.go('root.user');
         };
 
-        function enableYesButton() {
-            vm.step = vm.steps.enableYesButton;
-        }
-
-        socket.on('android-add', function() {
-            vm.AndroidDisconnected = false;
-            toastr.clear(vm.AndroidNotification);
-            vm.AndroidNotification = toastr.info(
-                'Follow the instructions on the Android Device',
-                'Android Device Connected', {
-                    'tapToDismiss': true,
-                    'timeOut': 3000,
-                    'closeButton': true
-                });//Toast Pop-Up notification parameters
-            if (vm.androidFinished) {
-                return;
-            } else {
-                enableYesButton();
-            }
-        });
         socket.on('installation-started', function() {
             vm.step = vm.steps.waitForAppStart;
         });
@@ -246,36 +193,9 @@
             vm.error = data.error;
             vm.step = vm.steps.appInstallFail;
         });
-        socket.on('android-remove', function() {
-            toastr.clear(vm.AndroidNotification);
-            if (vm.androidFinished) {
-                vm.AndroidNotification = toastr.info(
-                    'Refresh completed',
-                    'Android Device has been Disconnected', {
-                        'tapToDismiss': true,
-                        'timeOut': 3000,
-                        'closeButton': true
-                    });//Toast Pop-Up notification parameters
-            } else {
-                vm.AndroidDisconnected = true;
-                vm.finish();
-            }
-        });
 
         socket.on('session-updated', function(session) {
             updateSession(session);
-        });
-
-        socket.on('android-session-expired', function(data) {
-            if (vm.sessionId === data.sessionId) {
-                vm.sessionExpired();
-                toastr.warning('Session expired for device:' + data.device,
-                    {
-                        'tapToDismiss': true,
-                        'timeOut': 3000,
-                        'closeButton': true
-                    });
-            }
         });
 
         vm.activate();

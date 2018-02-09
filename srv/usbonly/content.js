@@ -24,10 +24,12 @@ module.exports = function(io) {
     var rsyncParameters = '--recursive --copy-links --times --modify-window=1 --delete-before --no-inc-recursive --exclude=packages/97fc1b7c-049f-4933-88e5-cb19362e3360/Images/install.wim --exclude=packages/97fc1b7c-049f-4933-88e5-cb19362e3360/Drivers/HP-* --exclude=packages/97fc1b7c-049f-4933-88e5-cb19362e3360/Drivers/Hewlett-Packard-* --exclude=packages/97fc1b7c-049f-4933-88e5-cb19362e3360/Drivers/Dell-*';
 
     function updateProgress(device, value) {
-        winston.info('Progress for device: ' + device + ' is: ' + value + '%');
+        winston.info('Progress for ' + device + ' is ' + value + '%');
         usbDrives.updateProgress(device, value);
-        var minProgress = usbDrives.getLowestUsbInProgress();
-        io.emit('usb-progress', minProgress.progress);
+        usbDrives.getLowestUsbProgress().then(function(minProgress) {
+            winston.info('Lowest progress of all devices is ' + minProgress + '%');
+            io.emit('usb-progress', minProgress);
+        });
     }
 
     function copyFiles(device, contentTemp, copyFilesSize, totalSize) {
@@ -64,7 +66,7 @@ module.exports = function(io) {
                     winston.info('Copying files to USB has been cancelled.');
                 } else if (code !== 0) {
                     winston.info('rsync process exited with code ' + code.toString());
-                    reject(new Error(err));
+                    reject(Error(err));
                 } else {
                     resolve();
                 }
@@ -106,7 +108,7 @@ module.exports = function(io) {
                     winston.info('Applying Mac image has been cancelled.');
                 } else if (code !== 0) {
                     winston.error('dd process exited with code ' + code.toString());
-                    reject(new Error(err));
+                    reject(Error(err));
                 } else {
                     resolve();
                 }
@@ -131,9 +133,11 @@ module.exports = function(io) {
 
     function copyFilesAndApplyImages(device, contentTemp, copyFilesSize, macImageSize, applyMac) {
         var totalSize = macImageSize + copyFilesSize;
-        return copyFiles(device, contentTemp, copyFilesSize, totalSize).
-            then(function() {return applyMac ? applyMacImage(device, macImageSize, totalSize) : Promise.resolve();}).
-            then(function() {return finishApplyContent(device);});
+        return copyFiles(device, contentTemp, copyFilesSize, totalSize).then(function() {
+            return applyMac ? applyMacImage(device, macImageSize, totalSize) : Promise.resolve();
+        }).then(function() {
+            return finishApplyContent(device);
+        });
     }
 
     function updateContent(device) {
@@ -161,7 +165,7 @@ module.exports = function(io) {
                         path.join(contentTemp, device + config.usbWindowsPartition, 'packages');
                     shell.exec(command, function(code, stdout, stderr) {
                         if (code !== 0) {
-                            reject(new Error(stderr));
+                            reject(Error(stderr));
                         } else {
                             // Get size of files to copy
                             shell.exec('rsync ' + rsyncParameters + ' --stats --dry-run ' +
@@ -169,7 +173,7 @@ module.exports = function(io) {
                                 ' /mnt/ | grep "Total transferred file size:" | awk \'{print $5;}\' | sed \'s/,//g\'',
                                 function(code, stdout, stderr) {
                                     if (code !== 0) {
-                                        reject(new Error(stderr));
+                                        reject(Error(stderr));
                                     } else {
                                         var copyFilesSize = parseInt(stdout.trim().split(os.EOL));
                                         if (usbVersions === null || usbVersions.mac !== currentVersions.mac) {
@@ -177,7 +181,7 @@ module.exports = function(io) {
                                                 ' | awk \'END {print $1;}\'', {silent: true},
                                                 function(code, stdout, stderr) {
                                                     if (code !== 0) {
-                                                        reject(new Error(stderr));
+                                                        reject(Error(stderr));
                                                     } else {
                                                         var macImageSize = parseInt(stdout.trim().split(os.EOL));
                                                         resolve(

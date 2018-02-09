@@ -12,7 +12,7 @@
         var service = {};
 
         service.getDevices = function() {
-            var url = '/data/devices';
+            var url = '/devices';
             var deferred = $q.defer();
 
             $http.get(url).then(function(result) {
@@ -23,7 +23,7 @@
         };
 
         service.getDevice = function(id) {
-            var url = '/data/devices/' + id;
+            var url = '/devices/' + id;
             var deferred = $q.defer();
 
             $http.get(url).then(function(result) {

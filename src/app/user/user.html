@@ -7,7 +7,6 @@
     </button>
     <div id="Header-anchor"></div>
     <form ng-submit="vm.showGuide()" style="height: 165px">
-      <!--<button ng-click="vm.openFeedbackModal()">Feed</button>-->
       <div class="row">
         <div id="item-container">
           <div id="item-centered">
@@ -113,8 +112,6 @@
               <button class="simultaneous-sort-button dropdown-toggle" type="button" data-toggle="dropdown">
                 {{vm.sessionType}}
                 <span class="fa fa-chevron-down"></span></button>
-              <!--<button class="btn btn-test btn-default dropdown-toggle" type="button" data-toggle="dropdown">{{vm.sessionType}}-->
-              <!--<span class="caret"></span></button>-->
               <ul class="dropdown-menu">
                 <li><a ng-click="vm.changeFilter('All Sessions')">All Sessions</a></li>
                 <li><a ng-click="vm.changeFilter('Failed Sessions')">Failed Sessions</a></li>
@@ -136,18 +133,16 @@
                     <a id="col3" class="simultaneous-sorting-btn"
                        ng-click="vm.sortType = 'device.item_number'; vm.sortReverse = !vm.sortReverse">
                       <span style="font-size:13.5px">Item Number</span>
-                      <span ng-show="vm.sortType == 'device.item_number' && !vm.sortReverse"
-                            class="fa fa-caret-down"></span>
-                      <span ng-show="vm.sortType == 'device.item_number' && vm.sortReverse"
-                            class="fa fa-caret-up"></span>
+                      <span ng-show="vm.sortType == 'device.item_number' && !vm.sortReverse" class="fa fa-caret-up"></span>
+                      <span ng-show="vm.sortType == 'device.item_number' && vm.sortReverse" class="fa fa-caret-down"></span>
                     </a>
                   </div>
                   <div class="col-xs-4 text-ellipsis">
                     <a id="col4" class="simultaneous-sorting-btn"
                        ng-click="vm.sortType = 'device.sku'; vm.sortReverse = !vm.sortReverse">
                       SKU
-                      <span ng-show="vm.sortType == 'device.sku' && !vm.sortReverse" class="fa fa-caret-down"></span>
-                      <span ng-show="vm.sortType == 'device.sku' && vm.sortReverse" class="fa fa-caret-up"></span>
+                      <span ng-show="vm.sortType == 'device.sku' && !vm.sortReverse" class="fa fa-caret-up"></span>
+                      <span ng-show="vm.sortType == 'device.sku' && vm.sortReverse" class="fa fa-caret-down"></span>
                     </a>
                   </div>
                 </div>
@@ -156,16 +151,16 @@
                 <a id="col1" class="simultaneous-sorting-btn"
                    ng-click="vm.sortType = 'device.type'; vm.sortReverse = !vm.sortReverse">
                   Type
-                  <span ng-show="vm.sortType == 'device.type' && !vm.sortReverse" class="fa fa-caret-down"></span>
-                  <span ng-show="vm.sortType == 'device.type' && vm.sortReverse" class="fa fa-caret-up"></span>
+                  <span ng-show="vm.sortType == 'device.type' && !vm.sortReverse" class="fa fa-caret-up"></span>
+                  <span ng-show="vm.sortType == 'device.type' && vm.sortReverse" class="fa fa-caret-down"></span>
                 </a>
               </div>
               <div class="col-xs-6">
                 <a id="col5" class="simultaneous-sorting-btn"
                    ng-click="vm.sortType = 'device.model'; vm.sortReverse = !vm.sortReverse">
                   Model
-                  <span ng-show="vm.sortType == 'device.model' && !vm.sortReverse" class="fa fa-caret-down"></span>
-                  <span ng-show="vm.sortType == 'device.model' && vm.sortReverse" class="fa fa-caret-up"></span>
+                  <span ng-show="vm.sortType == 'device.model' && !vm.sortReverse" class="fa fa-caret-up"></span>
+                  <span ng-show="vm.sortType == 'device.model' && vm.sortReverse" class="fa fa-caret-down"></span>
                 </a>
               </div>
             </div>
@@ -177,16 +172,16 @@
                    ng-click="vm.sortType = 'device.serial_number'; vm.sortReverse = !vm.sortReverse">
                   Serial Number
                   <span ng-show="vm.sortType == 'device.serial_number' && !vm.sortReverse"
-                        class="fa fa-caret-down"></span>
-                  <span ng-show="vm.sortType == 'device.serial_number' && vm.sortReverse" class="fa fa-caret-up"></span>
+                        class="fa fa-caret-up"></span>
+                  <span ng-show="vm.sortType == 'device.serial_number' && vm.sortReverse" class="fa fa-caret-down"></span>
                 </a>
               </div>
               <div class="col-xs-6">
                 <a id="col6" class="simultaneous-sorting-btn"
                    ng-click="vm.sortType = 'status'; vm.sortReverse = !vm.sortReverse">
                   Status
-                  <span ng-show="vm.sortType == 'status' && !vm.sortReverse" class="fa fa-caret-down"></span>
-                  <span ng-show="vm.sortType == 'status' && vm.sortReverse" class="fa fa-caret-up"></span>
+                  <span ng-show="vm.sortType == 'status' && !vm.sortReverse" class="fa fa-caret-up"></span>
+                  <span ng-show="vm.sortType == 'status' && vm.sortReverse" class="fa fa-caret-down"></span>
                 </a>
               </div>
             </div>
@@ -195,15 +190,15 @@
             <a id="col7" class="simultaneous-sorting-btn"
                ng-click="vm.sortType = 'start_time'; vm.sortReverse = !vm.sortReverse">
               Date & Time
-              <span ng-show="vm.sortType == 'start_time' && !vm.sortReverse" class="fa fa-caret-down"></span>
-              <span ng-show="vm.sortType == 'start_time' && vm.sortReverse" class="fa fa-caret-up"></span>
+              <span ng-show="vm.sortType == 'start_time' && !vm.sortReverse" class="fa fa-caret-up"></span>
+              <span ng-show="vm.sortType == 'start_time' && vm.sortReverse" class="fa fa-caret-down"></span>
             </a>
           </div>
           <div id="background"><br/></div>
         </div>
         <ul class="list-group">
           <li class="list-group-item simultaneous-item clickable-item"
-              ng-repeat="session in vm.sessions | inputFilter:vm.filterParam | orderBy:vm.sortType:vm.sortReverse | limitTo: vm.limit track by $index"
+              ng-repeat="session in vm.sessions | inputFilter:vm.filterParam | orderBy:vm.sortType:vm.sortReverse | limitTo: vm.limit track by session._id"
               ng-click="vm.showGuideForCards(session)">
             <div class="row">
               <div class="col-xs-7 ">
@@ -212,10 +207,9 @@
                     <div class="row">
                       <div class="col-xs-8 text-ellipsis" data-toggle="tooltip" title="{{session.device.item_number}}">
                         {{session.device.item_number}}
-                        <button ng-show="session.status === 'Device Unrecognized' || !session.device.item_number"
+                        <button ng-show="session.status === 'Device Unrecognized' || session.device.item_number === undefined || session.device.item_number === null"
                                 type="button" class="btn btn-primary btn-xs enter-item-number-btn">Enter item number
                         </button>
-
                       </div>
                       <div class="col-xs-4 text-ellipsis" data-toggle="tooltip" title="{{session.device.sku}}">
                         {{session.device.sku}}
@@ -237,13 +231,13 @@
                     {{session.device.serial_number}}
                   </div>
                   <div style="font-weight: 600" class="col-xs-6 text-ellipsis">
-                    <span ng-show="session.status === 'Success' && session.device.item_number" class="button-successful"
+                    <span ng-show="session.status === 'Success' && session.device.item_number !== undefined && session.device.item_number !== null" class="button-successful"
                           data-toggle="tooltip" title="Refresh Successful"> Refresh Successful</span>
-                    <span ng-show="session.status === 'Fail' && session.device.item_number" class="button-failed"
+                    <span ng-show="session.status === 'Fail' && session.device.item_number !== undefined && session.device.item_number !== null" class="button-failed"
                           data-toggle="tooltip" title="Refresh Failed">Refresh Failed</span>
-                    <span ng-show="!session.device.item_number" class="button-failed" data-toggle="tooltip"
+                    <span ng-show="session.device.item_number === undefined || session.device.item_number === null" class="button-failed" data-toggle="tooltip"
                           title="Device Unrecognized">Device Unrecognized</span>
-                    <span ng-show="session.status === 'Incomplete' && session.device.item_number"
+                    <span ng-show="session.status === 'Incomplete' && session.device.item_number !== undefined && session.device.item_number !== null"
                           class="button-in-progress" data-toggle="tooltip" title="In Progress">In Progress <span
                       class="fa fa-step-forward"></span></span>
                   </div>

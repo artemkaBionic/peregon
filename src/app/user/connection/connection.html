@@ -49,11 +49,11 @@
     <div class="anim-modal-step modal-enter" ng-switch-when="connectToNetwork">
 
       <div class="row modal-contents">
-        <div ng-if="vm.connectionState.displayDescription == null">
+        <div ng-if="vm.connectionState.displayDescription === undefined || vm.connectionState.displayDescription === null">
           <p>Please connect the Refresh Station to:<br/>port <strong>{{vm.selectedNetworkDevice.correctPort}}</strong>
             of the <strong>{{vm.selectedNetworkDevice.displayDescription}}</strong> (see diagram).</p>
         </div>
-        <div ng-if="vm.connectionState.displayDescription != null">
+        <div ng-if="vm.connectionState.displayDescription !== undefined && vm.connectionState.displayDescription !== null">
           <div
             ng-if="vm.connectionState.displayDescription == vm.selectedNetworkDevice.displayDescription && vm.connectionState.port == vm.selectedNetworkDevice.correctPort">
             <p>Refresh Station is <strong>correctly connected</strong> to:<br/>

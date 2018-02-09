@@ -4,8 +4,7 @@
 (function() {
     'use strict';
 
-    angular.module('app.sessions').
-        factory('sessionsService', sessionsService);
+    angular.module('app.sessions').factory('sessionsService', sessionsService);
 
     sessionsService.$inject = ['$q', '$http'];
 
@@ -13,8 +12,8 @@
 
         var service = {};
 
-        service.start = function(sessionId, item, tmp) {
-            var url = '/data/sessions/' + sessionId + '/start';
+        service.start = function(item, tmp) {
+            var url = '/sessions/start';
             var deferred = $q.defer();
 
             $http.post(url, {'item': item, 'tmp': tmp}).then(function(result) {
@@ -25,7 +24,7 @@
         };
 
         service.updateCurrentStep = function(sessionId, currentStep) {
-            var url = '/data/sessions/' + sessionId + '/updateCurrentStep';
+            var url = '/sessions/' + sessionId + '/updateCurrentStep';
             var deferred = $q.defer();
 
             $http.post(url, {'currentStep': currentStep}).then(function(result) {
@@ -35,8 +34,8 @@
             return deferred.promise;
         };
 
-        service.deviceBroken = function(item) {
-            var url = '/data/sessions/deviceBroken';
+        service.updateItem = function(sessionId, item) {
+            var url = '/sessions/' + sessionId + '/updateItem';
             var deferred = $q.defer();
 
             $http.post(url, item).then(function(result) {
@@ -46,19 +45,8 @@
             return deferred.promise;
         };
 
-        service.updateItem = function(sessionId, item) {
-            var url = '/data/sessions/' + sessionId + '/updateItem';
-            var deferred = $q.defer();
-
-            $http.post(url, {'item': item}).then(function(result) {
-                deferred.resolve(result.data);
-            });
-
-            return deferred.promise;
-        };
-
         service.addLogEntry = function(sessionId, level, message, details) {
-            var url = '/data/sessions/' + sessionId + '/addLogEntry';
+            var url = '/sessions/' + sessionId + '/addLogEntry';
             var deferred = $q.defer();
 
             //console.log(message);
@@ -67,16 +55,15 @@
                     'level': level,
                     'message': message,
                     'details': details
-                }).
-                then(function() {
-                    deferred.resolve();
-                });
+                }).then(function() {
+                deferred.resolve();
+            });
 
             return deferred.promise;
         };
 
         service.finish = function(sessionId, details) {
-            var url = '/data/sessions/' + sessionId + '/finish';
+            var url = '/sessions/' + sessionId + '/finish';
             var deferred = $q.defer();
 
             $http.post(url, details).then(function(result) {
@@ -86,26 +73,24 @@
             return deferred.promise;
         };
 
-        service.getSessionByParams = function(params) {
+        service.getIncomplete = function(itemNumber) {
             var deferred = $q.defer();
             $http({
-                url: '/getSessionByParams',
-                method: 'POST',
-                headers: {'content-type': 'application/json'},
-                data: params
+                url: '/sessions/incomplete/' + itemNumber,
+                method: 'GET',
+                headers: {'content-type': 'application/json'}
             }).then(function(result) {
                 deferred.resolve(result.data);
             });
             return deferred.promise;
         };
 
-        service.getAllSessionsByParams = function(params) {
+        service.getAll = function() {
             var deferred = $q.defer();
             $http({
-                url: '/getSessionsByParams',
-                method: 'POST',
-                headers: {'content-type': 'application/json'},
-                data: params
+                url: '/sessions',
+                method: 'GET',
+                headers: {'content-type': 'application/json'}
             }).then(function(result) {
                 deferred.resolve(result.data);
             });

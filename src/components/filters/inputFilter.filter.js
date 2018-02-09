@@ -4,9 +4,9 @@
         .filter('inputFilter', function() {
             return function(input, filterStr) {
                 var arr = Object.keys(input).map(function(key) { return input[key]; });
-                if (!angular.isUndefined(filterStr)) {
+                if (angular.isDefined(filterStr)) {
                     var tokens = filterStr.split(' ');
-                    for (var i = 0; i < tokens.length; i++){
+                    for (var i = 0, len = tokens.length; i < len; i++){
                         tokens[i] = tokens[i].replace(/['"]+/g, '');
                         if (tokens[i] === 'AllSessions') {
                             tokens.splice(i,1);
@@ -21,16 +21,19 @@
                 } else {
                     return input;
                 }
-                //console.log(tokens);
-                var items = arr.filter(function(obj) {
+                return arr.filter(function(obj) {
                     // gets values from items array
                     var values = [];
                     if (angular.isDefined(obj.device)) {
                         values = Object.keys(obj.device).map(function(key) {
-                            return obj.device[key].toString().toLowerCase();
+                            if (obj.device[key] === undefined || obj.device[key] === null) {
+                                return '';
+                            } else {
+                                return obj.device[key].toString().toLowerCase();
+                            }
                         });
                     }
-                    for (var i = 0; i < values.length; i++) {
+                    for (var i = 0, len = values.length; i < len; i++) {
                         if (values[i] === obj.device.item_number) {
                             values.push(obj.status.toLowerCase());
                         }
@@ -49,7 +52,6 @@
                     });
                     return keysExistsInObj.length === tokens.length;
                 });
-                return items;
             };
         });
 }());

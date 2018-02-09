@@ -9,7 +9,7 @@
         /*jshint validthis: true */
         var vm = this;
         vm.item = item;
-        vm.session = {};
+        vm.sessionId = null;
         vm.showInstruction = true;
         vm.refreshEnd = function() {
             $state.go('root.user');
@@ -44,7 +44,7 @@
 
         function setStep(step) {
             vm.step = step;
-            return sessions.updateCurrentStep(vm.session._id, step.name);
+            return sessions.updateCurrentStep(vm.sessionId, step.name);
         }
 
         vm.openFeedbackModal = function() {
@@ -59,15 +59,11 @@
         checkSession();
 
         function checkSession() {
-            sessions.getSessionByParams({
-                'device.item_number': vm.item.item_number,
-                'status': 'Incomplete'
-            }).then(function(session) {
+            sessions.getIncomplete(vm.item.item_number).then(function(session) {
                 if (session) {
                     updateSession(session);
                 } else {
-                    var sessionId = new Date().toISOString();
-                    sessions.start(sessionId, item, {'currentStep': 'checkCondition'}).then(function(session) {
+                    sessions.start(item, {'currentStep': 'checkCondition'}).then(function(session) {
                         updateSession(session);
                     });
                 }
@@ -75,10 +71,10 @@
         }
 
         function updateSession(session) {
-            vm.session = session;
-            if (vm.session.status === 'Success') {
+            vm.sessionId = session._id;
+            if (session.status === 'Success') {
                 vm.step = vm.steps.complete;
-            } else if (vm.session.status === 'Incomplete') {
+            } else if (session.status === 'Incomplete') {
                 vm.step = vm.steps[session.tmp.currentStep];
             } else {
                 vm.step = vm.steps.failed;
@@ -90,19 +86,19 @@
         };
         vm.deviceBad = function() {
             setStep(vm.steps.broken).then(function() {
-                return sessions.addLogEntry(vm.session._id, 'Info', 'Device is broken', '');
+                return sessions.addLogEntry(vm.sessionId, 'Info', 'Device is broken', '');
             }).then(function() {
-                return sessions.finish(vm.session._id, {'complete': false});
+                return sessions.finish(vm.sessionId, {'complete': false});
             });
         };
         $scope.$on('refreshSuccess', function() {
             setStep(vm.steps.complete).then(function() {
-                return sessions.finish(vm.session._id, {'complete': true});
+                return sessions.finish(vm.sessionId, {'complete': true});
             });
         });
         $scope.$on('refreshFailed', function() {
             setStep(vm.steps.failed).then(function() {
-                return sessions.finish(vm.session._id, {'complete': false});
+                return sessions.finish(vm.sessionId, {'complete': false});
             });
         });
         vm.retry = function() {

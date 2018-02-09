@@ -4,7 +4,6 @@
 /*jslint node: true */
 var config = {};
 
-config.mediaPackagePath = '/srv/media';
 config.packagPackagePath = '/srv/packages';
 config.kioskDataPath = '/var/lib/kiosk';
 config.kioskTempPath = '/var/lib/kiosk/tmp';

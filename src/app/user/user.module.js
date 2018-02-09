@@ -24,14 +24,6 @@
             templateProvider: guideTemplate,
             controllerProvider: guideController,
             controllerAs: 'vm'
-        }).state('root.media', {
-            url: '/media/',
-            params: {
-                deviceId: null
-            },
-            templateUrl: 'app/user/media/media.html',
-            controller: 'MediaController',
-            controllerAs: 'vm'
         }).state('root.usbGuides', {
             url: '/usbGuides/:type/:manufacturer',
             templateUrl: 'app/user/guide/HomeUsbGuides/HomeUsbGuides.template.html',
@@ -41,15 +33,6 @@
             url: '/productFeedback',
             templateUrl: 'app/user/guide/Feedback/Feedback.template.html',
             controller: 'FeedbackController',
-            controllerAs: 'vm'
-        }).state('root.media.package', {
-            url: '/media/package/',
-            params: {
-                device: null,
-                package: null
-            },
-            templateUrl: 'app/user/media/package/package.html',
-            controller: 'MediaPackageController',
             controllerAs: 'vm'
         });
 

@@ -53,7 +53,7 @@
 
             var queries = [loadNetworkDevices(), loadConnectionState()];
             $q.all(queries).then(function() {
-                for (var i = 0; i < vm.networkDevices.length; ++i) {
+                for (var i = 0, len = vm.networkDevices.length; i < len; ++i) {
                     if (vm.networkDevices[i].description ===
                         vm.connectionState.description) {
                         vm.connectionState.displayDescription = vm.networkDevices[i].displayDescription;
@@ -81,7 +81,7 @@
         function loadNetworkDevices() {
 
             return station.isServiceCenter().then(function(isServiceCenter) {
-                for (var i = 0; i < config.networkDevices.length; ++i) {
+                for (var i = 0, len = config.networkDevices.length; i < len; ++i) {
                     if (config.networkDevices[i].isServiceCenterConfig ===
                         isServiceCenter) {
                         vm.networkDevices.push(config.networkDevices[i]);

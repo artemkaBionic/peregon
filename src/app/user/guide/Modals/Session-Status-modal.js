@@ -18,6 +18,7 @@
         vm.showItemInput = false;
         vm.lastValidSearchString = '';
         vm.item = null;
+        vm.sessionId = null;
         vm.showLoader = false;
         vm.showAuthCheck = false;
         vm.showAuth = true;
@@ -29,10 +30,8 @@
             vm.errors = data.errors;
         } else {
             vm.message = data.message;
-            if (data.sessionId) {
-                vm.sessionId = data.sessionId;
-            }
             if (data.session) {
+                vm.sessionId = data.session._id;
                 vm.showUnrecoginzedDeviceFooter = true;
                 vm.serialNo = data.session.device.serial_number;
                 vm.deviceType = data.session.device.type;
@@ -46,7 +45,7 @@
                 vm.searchString = '';
             };
 
-            if (vm.sessionId !== undefined) {
+            if (vm.sessionId !== null) {
                 vm.showItemInput = true;
 
                 vm.searchStringChange = function() {

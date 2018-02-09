@@ -51,7 +51,7 @@
         function hasRoles(roles) {
             checkInitialized();
 
-            for (var i = 0; i < roles.length; i++) {
+            for (var i = 0, len = roles.length; i < len; i++) {
                 var role = roles[i];
                 if (service.user.roles.indexOf(role) === -1) {
                     return false;

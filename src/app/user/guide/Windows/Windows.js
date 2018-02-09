@@ -53,10 +53,7 @@
         activate();
 
         function activate() {
-            sessions.getSessionByParams({
-                'device.item_number': vm.item.item_number,
-                'status': 'Incomplete'
-            }).then(function(session) {
+            sessions.getIncomplete(vm.item.item_number).then(function(session) {
                 updateSession(session);
             });
             checkIsSkuGuideAvailable();
@@ -98,7 +95,6 @@
                         vm.step = vm.steps.failed;
                     }
                 }
-                vm.failedTests = session.failedTests;
             }
         }
 
@@ -108,9 +104,6 @@
         vm.deviceBad = function() {
             vm.androidFinished = true;
             vm.Broken = true;
-            if (vm.sessionId === null) {
-                vm.sessionId = new Date().toISOString();
-            }
             sessions.deviceBroken(item);
             vm.step = vm.steps.broken;
         };
@@ -123,9 +116,6 @@
         };
 
         socket.on('session-updated', function(session) {
-            updateSession(session);
-        });
-        socket.on('session-complete', function(session) {
             updateSession(session);
         });
     }

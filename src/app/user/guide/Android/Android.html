@@ -10,6 +10,7 @@
             </div>
             <img class="guide-logo" src="/assets/images/Logo.png">
           </div>
+          l
           <div class="home-header">Android Refresh</div>
         </div>
       </div>
@@ -28,19 +29,16 @@
         <li ng-class="{'active': vm.step.number >= 1 && vm.step.number <= 2, 'done': vm.step.number > 2}">
           <span>Prepare Refresh</span>
         </li>
-        <li ng-class="{'active': vm.step.number >= 3 && vm.step.number <= 6, 'done': vm.step.number > 6}">
+        <li ng-class="{'active': vm.step.number >= 3 && vm.step.number <= 8, 'done': vm.step.number > 8}">
           <span>Refresh Android</span>
         </li>
-        <li ng-class="{'active': vm.step.number >= 7}">
+        <li ng-class="{'active': vm.step.number >= 9}">
           <span>Finish</span>
         </li>
       </ul>
     </div>
-    <!--<button ng-click="vm.finishFail()">Fail</button>-->
-    <!--<button ng-click="vm.finishSuccess()">Success</button>-->
-    <!--<button ng-click="vm.sessionExpired()">Fail</button>-->
     <div ng-switch="vm.step.name" class="row wizard">
-      <div class="anim-wizard-step" id="first" ng-switch-when="startOne">
+      <div class="anim-wizard-step" id="first" ng-switch-when="checkCondition">
         <div style="text-align: center">
           <h2>Inspect device and make sure that:</h2>
           <div class="container instruction-list">
@@ -58,26 +56,28 @@
           </div>
         </div>
         <div class="row text-center">
-          <button id="android-good" style="margin-right: 25px;margin-top:5px" class="instruction-btn btn btn-success btn-rounded" type="submit" ng-click="vm.deviceGood()">
+          <button id="android-good" style="margin-right: 25px;margin-top:5px"
+                  class="instruction-btn btn btn-success btn-rounded" type="submit" ng-click="vm.deviceGood()">
             Device is in good condition
           </button>
-          <button id="android-bad" style="margin-top:5px" class="instruction-btn btn btn-danger btn-rounded" type="submit" ng-click="vm.deviceBad()">
+          <button id="android-bad" style="margin-top:5px" class="instruction-btn btn btn-danger btn-rounded"
+                  type="submit" ng-click="vm.deviceBad()">
             Device is in poor condition or faulty
           </button>
         </div>
       </div>
 
-      <div class="anim-wizard-step preparation-one" ng-switch-when="preparationOne">
+      <div class="anim-wizard-step preparation-one" ng-switch-when="prepareDevice">
         <usb-guide data-item="vm.item"></usb-guide>
       </div>
-      <div class="anim-wizard-step" ng-switch-when="enableYesButton">
+      <div class="anim-wizard-step" ng-switch-when="authorizeDebug">
         <div class="row">
           <div class="col-md-12 text-center">
-            <img class="connect-gif" src="../assets/images/android-connect.gif" alt="">
+            <img class="connect-gif" src="../assets/images/android-allow-usb-debugging.png" alt="">
           </div>
         </div>
         <div class="row text-center">
-          <h2>You may need give the access on the Android device for the Station</h2>
+          <h2>Allow USB debugging</h2>
           <h3>Choose <strong>Yes</strong> or <strong>OK</strong> on the device</h3>
         </div>
       </div>
@@ -93,19 +93,67 @@
         </div>
       </div>
 
+      <div class="anim-wizard-step" ng-switch-when="appInstallFailed">
+        <div class="step-header">
+          <i class="fa fa-clock-o warning-icon"></i>
+          <h2 class="text-align-center">Android App Install Failed</h2>
+          <h3 class="text-align-center">Disconnect and reconnect the device to try again. If the problem persists,
+            contact support.</h3>
+        </div>
+        <div class="row nav-btn">
+          <div class="col-md-6 col-sm-6">
+            <button ng-click="vm.refreshEnd()" class="btn btn-primary btn-rounded center">
+              Abort
+            </button>
+          </div>
+          <div class="text-center">
+            <div>Help us to improve Device Refresh Station</div>
+            <button class="feedback-button" ng-click="vm.openFeedbackModal()">
+              <i class="fa fa-comment-o" aria-hidden="true"></i> Leave feedback
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="anim-wizard-step" ng-switch-when="disconnected">
+        <div class="step-header">
+          <i class="fa fa-clock-o warning-icon"></i>
+          <h2 class="text-align-center">Android Device has been disconnected</h2>
+          <h3 class="text-align-center">Disconnect and reconnect the device to try again. If the problem persists,
+            contact support.</h3>
+        </div>
+        <div class="row nav-btn">
+          <div class="col-md-6 col-sm-6">
+            <button ng-click="vm.refreshEnd()" class="btn btn-primary btn-rounded center">
+              Abort
+            </button>
+          </div>
+          <div class="text-center">
+            <div>Help us to improve Device Refresh Station</div>
+            <button class="feedback-button" ng-click="vm.openFeedbackModal()">
+              <i class="fa fa-comment-o" aria-hidden="true"></i> Leave feedback
+            </button>
+          </div>
+        </div>
+      </div>
+
       <div class="anim-wizard-step" ng-switch-when="autoTesting">
         <div class="step-header-diagnostic">
           <h2 class="text-align-center">
             <i class="fa fa-check check-green medium-icon"></i>
-            Android device connected successfully</h2>
+            Android device connected successfully
+          </h2>
           <div class="row">
           </div>
         </div>
-        <div class="row"><h3 class="text-align-center automated-anim">Performing automatic diagnostics...</h3>
+        <div class="row">
+          <h3 class="text-align-center automated-anim">
+            Performing automatic diagnostics...
+          </h3>
         </div>
         <div class="row">
           <div class="center circle-bar">
-            <orbicular progression="vm.autoPassed" total="vm.autoSize" counterclockwise>
+            <orbicular progression="vm.autoTestsComplete" total="vm.autoTestsTotal" clockwise>
               <div>
                 <i class="fa fa-cog fa-spin large-icon"></i>
               </div>
@@ -115,39 +163,35 @@
       </div>
 
       <div class="anim-wizard-step" ng-switch-when="manualTesting">
-        <div ng-hide="vm.manualShowLastAction" class="step-header-diagnostic">
-          <h2 class="text-align-center"><i class="fa fa-check check-green medium-icon"></i>
-            Automatic diagnostics complete</h2>
-        </div>
-        <div ng-show="vm.manualShowLastAction" class="row android-manual-complete">
+        <div class="step-header-diagnostic">
           <h2 class="text-align-center">
             <i class="fa fa-check check-green medium-icon"></i>
-            Diagnostics complete
+            Automatic diagnostics complete
           </h2>
-        </div>
-        <div ng-hide="vm.manualShowLastAction">
           <div class="row">
-            <h3 class="text-align-center automated-anim">Follow instructions on the Android Device for manual diagnostics...</h3>
           </div>
-          <div class="row">
-            <div class="col-xl-12 col-lg-12 col-md-6 col-sm-6 col-xs-12 hide-small-raspberry">
-              <div class="center circle-bar">
-                <orbicular progression="vm.manualPassed" total="vm.manualSize" counterclockwise>
-                  <div ng-click="vm.manualInspection()">
-                    <i class="fa fa-cog fa-spin large-icon"></i>
-                  </div>
-                </orbicular>
+        </div>
+        <div class="row">
+          <h3 class="text-align-center automated-anim">
+            Follow instructions on the Android Device for manual diagnostics...
+          </h3>
+        </div>
+        <div class="row">
+          <div class="center circle-bar">
+            <orbicular progression="vm.manualTestsComplete" total="vm.manualTestsTotal" clockwise>
+              <div>
+                <i class="fa fa-cog fa-spin large-icon"></i>
               </div>
-            </div>
-            <div ng-hide="vm.manualShowLastAction" class="col-xl-12 col-lg-12 col-md-6 col-sm-6 col-xs-12">
-              <h3 class="text-align-center automated-anim-medium automated-anim">Manual Test
-                <strong>{{vm.manualPassed}}</strong> of <strong>{{vm.manualSize}}</strong>
-              </h3>
-            </div>
+            </orbicular>
           </div>
         </div>
-
-        <div ng-show="vm.manualShowLastAction" class="row android-manual-complete">
+        <div ng-show="vm.manualTestsComplete < vm.manualTestsTotal"
+             class="col-xl-12 col-lg-12 col-md-6 col-sm-6 col-xs-12">
+          <h3 class="text-align-center automated-anim-medium automated-anim">
+            <strong>{{vm.manualTestsComplete}}</strong> of <strong>{{vm.manualTestsTotal}}</strong> tests complete
+          </h3>
+        </div>
+        <div ng-show="vm.manualTestsComplete >= vm.manualTestsTotal" class="row android-manual-complete">
           <h3 class="text-align-center">Press <strong>Activate</strong> on the device to continue...</h3>
         </div>
       </div>
@@ -164,7 +208,9 @@
           </button>
           <div class="text-center" style="margin-top: 15px">
             <div>Help us to improve Device Refresh Station</div>
-            <button class="feedback-button" ng-click="vm.openFeedbackModal()"><i class="fa fa-comment-o" aria-hidden="true"></i> Leave feedback</button>
+            <button class="feedback-button" ng-click="vm.openFeedbackModal()"><i class="fa fa-comment-o"
+                                                                                 aria-hidden="true"></i> Leave feedback
+            </button>
           </div>
         </div>
       </div>
@@ -172,54 +218,79 @@
       <div class="anim-wizard-step android-finish-failed" ng-switch-when="finishFail">
         <div class="step-header text-align-center">
           <i class="fa fa-ban warning-icon"></i>
-          <h2 ng-show="(vm.Broken || vm.TestsFault) && !vm.AndroidDisconnected">Device needs to be repaired</h2>
-          <h3 class="step-header text-align-center" ng-show="(vm.Broken || vm.TestsFault) && !vm.AndroidDisconnected">Ship it to WSA for repair</h3>
-          <h2 ng-show="vm.TestsFault">The following tests failed:</h2>
-          <h3 class="failed-tests" ng-show="vm.TestsFault " ng-repeat="testName in vm.failedTests">{{testName}}</h3>
-          <h2 ng-show="vm.AndroidDisconnected">Android Device has been disconnected</h2>
+          <h2 class="text-align-center">Device needs to be repaired</h2>
+          <h3 class="step-header text-align-center">
+            Ship it to WSA for repair</h3>
+          <h3>The following tests failed:</h3>
+          <h4 class="failed-tests" ng-repeat="testName in vm.failedTests">{{testName}}</h4>
         </div>
         <div class="row nav-btn">
           <div class="col-md-6 col-sm-6">
-            <button id="android-failed-restart" ng-click="vm.activate()" class="btn btn-choose-med btn-info pull-right">Restart
+            <button ng-click="vm.activate()" class="btn btn-choose-med btn-info pull-right">
+              Restart
             </button>
           </div>
           <div class="col-md-6 col-sm-6">
-            <button id="android-failed-finish" ng-click="vm.refreshEnd()" class="btn btn-choose-med btn-danger pull-left">Finish
+            <button ng-click="vm.refreshEnd()" class="btn btn-choose-med btn-danger pull-left">
+              Finish
             </button>
           </div>
           <div class="text-center">
             <div>Help us to improve Device Refresh Station</div>
-            <button class="feedback-button" ng-click="vm.openFeedbackModal()"><i class="fa fa-comment-o" aria-hidden="true"></i> Leave feedback</button>
+            <button class="feedback-button" ng-click="vm.openFeedbackModal()">
+              <i class="fa fa-comment-o" aria-hidden="true"></i> Leave feedback
+            </button>
           </div>
         </div>
-
       </div>
 
-      <div class="anim-wizard-step" ng-switch-when="sessionExpired">
+      <div class="anim-wizard-step" ng-switch-when="finishExpired">
         <div class="step-header">
           <i class="fa fa-clock-o warning-icon"></i>
           <h2 class="text-align-center">Session Expired</h2>
-          <h3 class="text-align-center">For security reasons your session expired<span
-            ng-if="vm.deviceLockService === 'siperlock'">&nbsp;and siperLOCK has been locked</span><span
-            ng-if="vm.deviceLockService === 'wsa'">&nbsp;and WSA has been locked</span></h3>
+          <h3 class="text-align-center">
+            For security reasons the session expired. If applicable, the device has been locked.
+          </h3>
         </div>
         <div class="row nav-btn">
           <div class="col-md-6 col-sm-6">
-            <button id="android-expired-restart" ng-click="vm.activate()" class="btn btn-choose-med btn-info pull-right">Restart
+            <button ng-click="vm.activate()" class="btn btn-choose-med btn-info pull-right">
+              Restart
             </button>
           </div>
           <div class="col-md-6 col-sm-6">
-            <button id="android-expired-cancel" ng-click="vm.refreshEnd()" class="btn btn-choose-med btn-danger pull-left">Finish
+            <button ng-click="vm.refreshEnd()" class="btn btn-choose-med btn-danger pull-left">
+              Finish
+            </button>
+          </div>
+          <div class="text-center">
+            <div>Help us to improve Device Refresh Station</div>
+            <button class="feedback-button" ng-click="vm.openFeedbackModal()">
+              <i class="fa fa-comment-o" aria-hidden="true"></i> Leave feedback
             </button>
           </div>
         </div>
       </div>
 
-      <div class="anim-wizard-step" ng-switch-when="appInstallFail">
+      <div class="anim-wizard-step" ng-switch-when="finishBroken">
         <div class="step-header">
           <i class="fa fa-clock-o warning-icon"></i>
-          <h2 class="text-align-center">{{vm.error}}</h2>
-          <h3 class="text-align-center">Disconnect and reconnect the device to try again. If the problem persists, contact support.</h3>
+          <h2 class="text-align-center">Device needs to be repaired</h2>
+          <h3 class="step-header text-align-center">
+            Ship it to WSA for repair</h3>
+        </div>
+        <div class="row nav-btn">
+          <div class="col-md-6 col-sm-6">
+            <button ng-click="vm.refreshEnd()" class="btn btn-primary btn-rounded center">
+              Finish
+            </button>
+          </div>
+          <div class="text-center">
+            <div>Help us to improve Device Refresh Station</div>
+            <button class="feedback-button" ng-click="vm.openFeedbackModal()">
+              <i class="fa fa-comment-o" aria-hidden="true"></i> Leave feedback
+            </button>
+          </div>
         </div>
       </div>
 

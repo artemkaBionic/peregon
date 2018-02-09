@@ -1,48 +1,47 @@
 /*jslint node: true */
 'use strict';
-var express = require('express');
-var socketIo = require('socket.io');
-var path = require('path');
-var fs = require('fs');
-var shell = require('shelljs');
-var bodyParser = require('body-parser');
-var childProcess = require('child_process');
+
+/**
+ * Module dependencies.
+ */
+var Promise = require('bluebird');
 var config = require('./config.js');
-var station = require('./station.js');
-// Express
+var express = require('express');
 var app = express();
-// Socket.io
-var io = socketIo();
-app.io = io;
+var server = require('http').Server(app);
+var io = require('socket.io')(server);
+var bodyParser = require('body-parser');
+require('./lib/log');
+var winston = require('winston');
+var path = require('path');
+var fs = Promise.promisifyAll(require('fs'));
+var shell = require('shelljs');
+var routes = require('./routes.js')(io);
+var station = require('./controllers/stationController.js');
+require('./android/android.js')(io);
+require('./migrate-tingo-to-mongo')(io);
+
 // Common data
 var isDevelopment = process.env.NODE_ENV === 'development';
 
-require('./log');
-var winston = require('winston');
-
-var routes = require('./routes.js')(io);
-require('./simultaneous/simultaneous.js')(io);
-
 // Create data directory
-fs.mkdir(config.kioskDataPath, function(err) {
-    if (err && err.code !== 'EEXIST') {
+fs.mkdirAsync(config.kioskDataPath).catch(function (err) {
+    if (err.code !== 'EEXIST') {
         winston.error('Failed to create directory ' + config.kioskDataPath, err);
     }
 });
 
 // Create temp directory
-fs.mkdir(config.kioskTempPath, function(err) {
-    if (err) {
-        if (err.code === 'EEXIST') {
-            shell.rm('-rf', path.join(config.kioskTempPath, '*'));
-        } else {
-            winston.error('Failed to create directory ' + config.kioskDataPath, err);
-        }
+fs.mkdirAsync(config.kioskTempPath).catch(function (err) {
+    if (err.code === 'EEXIST') {
+        shell.rm('-rf', path.join(config.kioskTempPath, '*'));
+    } else {
+        winston.error('Failed to create directory ' + config.kioskDataPath, err);
     }
 });
 
 // Clear mount directory
-shell.exec('sync && umount /mnt/*', {silent: true}, function(code, stdout, stderr) {
+shell.exec('sync && umount /mnt/*', {silent: true}, function (code, stdout, stderr) {
     stderr = stderr.replace(/umount:.*not found\n/g, '').replace(/umount:.*not mounted\n/g, '');
     if (stderr.length === 0) {
         winston.info('Unmounted all devices successfully');
@@ -52,105 +51,68 @@ shell.exec('sync && umount /mnt/*', {silent: true}, function(code, stdout, stder
     shell.rm('-rf', '/mnt/*');
 });
 
-// view engine setup
+/**
+ * Express configuration.
+ */
+//app.set('host', '0.0.0.0');
+app.set('port', process.env.PORT || 80);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
-
-// uncomment after placing your favicon in ../src/assets/images
-//app.use(favicon(__dirname + '../src/assets/images/favicon.ico'));
 app.use(bodyParser.json({limit: '50mb'}));
-app.use(bodyParser.urlencoded({limit: '50mb', extended: false}));
-//app.use(cookieParser());
-app.use(express.static(path.join(__dirname, '/public')));
-
+app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
+app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', routes);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
     var err = new Error(req.originalUrl + ' not found');
     err.status = 404;
     next(err);
 });
 
-// error handlers
-// development error handler
-// will print stacktrace
 if (isDevelopment) {
-    app.use(function(err, req, res, next) {
+    // error handlers
+    // development error handler
+    // will print stacktrace
+    app.use(function (err, req, res, next) {
         res.status(err.status || 500);
         res.render('error', {
             message: err.message,
             error: err
         });
     });
+} else {
+    // production error handler
+    // no stacktraces leaked to user
+    app.use(function (err, req, res, next) {
+        winston.error('Unhandled error', err);
+        res.status(err.status || 500);
+        res.render('error', {
+            message: err.message,
+            error: {}
+        });
+    });
 }
 
-// production error handler
-// no stacktraces leaked to user
-app.use(function(err, req, res, next) {
-    winston.error('Unhandled error', err);
-    res.status(err.status || 500);
-    res.render('error', {
-        message: err.message,
-        error: {}
-    });
-});
-
 // socket.io events
-io.on('connection', function(socket) {
+io.on('connection', function (socket) {
     winston.info('A client connected');
-    socket.on('device-apply', function(data) {
-        if (isDevelopment) {
-            winston.info('A client requested to apply media to device.', data);
-            winston.info('Simulating applying a device in a development environment by waiting 3 seconds.');
-            setTimeout(function() {
-                io.emit('device-apply-progress',
-                    {progress: 100, device: data.device});
-            }, 3000);
-        } else {
-            if (typeof data.media === 'undefined' || data.media === null) {
-                winston.error('A client requested to apply an undefined media package.');
-                io.emit('device-apply-failed', {
-                    message: 'Media package is missing.',
-                    device: data.device
-                });
-            } else {
-                winston.info('A client requested to apply "' +
-                    data.media.name + '" to the ' + data.device.type +
-                    ' device ' + data.device.id);
-                var mediaPackagePath = path.join(config.mediaPackagePath,
-                    data.media.id);
-                var mediaPackageFile = path.join(mediaPackagePath,
-                    '.package.json');
-                fs.readFile(mediaPackageFile, 'utf8',
-                    function(err, packageFileData) {
-                        var mediaPackage = JSON.parse(packageFileData);
-                        var fileSystem = 'fat32';
-                        if (mediaPackage.subtype === 'xbox-one') {
-                            fileSystem = 'ntfs';
-                        }
-
-                        var python = childProcess.spawn('python', [
-                            '/opt/kiosk/apply_media.py',
-                            '--package',
-                            data.media.id,
-                            '--device',
-                            data.device.id,
-                            '--file-system',
-                            fileSystem]);
-                        python.on('close', function(code) {
-                            io.emit('device-apply-progress',
-                                {progress: 100, device: data.device});
-                        });
-                    });
-            }
-        }
-    });
-    station.getConnectionState(function(connectionState) {
+    station.getConnectionState(function (connectionState) {
         if (connectionState) {
             socket.emit('connection-status', connectionState);
         }
     });
+    socket.on('disconnect', function () {
+        winston.info('A client disconnected');
+    });
+});
+
+/**
+ * Start Express server.
+ */
+server.listen(app.get('port'), function () {
+    winston.info('App is running at http://localhost:%d in %s mode', app.get('port'), app.get('env'));
+    winston.info('  Press CTRL-C to stop\n');
 });
 
 module.exports = app;

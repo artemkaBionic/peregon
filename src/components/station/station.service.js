@@ -10,7 +10,7 @@
         var service = {};
 
         service.isServiceCenter = function() {
-            var url = '/data/isServiceCenter';
+            var url = '/isServiceCenter';
             var deferred = $q.defer();
 
             $http.get(url).then(function(result) {
@@ -31,7 +31,7 @@
         };
 
         service.getConnectionState = function() {
-            var url = '/data/getConnectionState';
+            var url = '/getConnectionState';
             var deferred = $q.defer();
 
             $http.get(url).then(function(result) {

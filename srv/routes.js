@@ -3,195 +3,190 @@
 'use strict';
 module.exports = function(io) {
     var express = require('express');
-    var fs = require('fs');
-    var path = require('path');
-    var config = require('./config.js');
-    var inventory = require('./inventory.js');
-    var station = require('./station.js');
-    var controller = require('./usbonly/controller.js')(io);
-    var simultaneous = require('./simultaneous/simultaneous.js');
+    var inventory = require('./controllers/inventoryController.js');
+    var station = require('./controllers/stationController.js');
     var usbDrives = require('./usbonly/usbCache.js');
-    var sessions = require('./session_storage/sessions.js')(io);
+    var usb = require('./usbonly/controller.js')(io);
+    var Session = require('./models/session.js')(io);
     var winston = require('winston');
 
     var router = express.Router();
 
-    var isDevelopment = process.env.NODE_ENV === 'development';
+    router.get('/devices', function(req, res) {
+        station.getUsbDrives().then(function(devices) {
+            res.json(devices);
+        }).catch(function(err) {
+            winston.error('Failed to get usb drives', err);
+            res.status(500).send();
+        });
+    });
 
-    function getDirectories(srcpath) {
-        return fs.readdirSync(srcpath).filter(function(file) {
-            return fs.statSync(path.join(srcpath, file)).isDirectory();
+    router.get('/devices/:id', function(req, res) {
+        station.getUsbDrive(req.params.id).then(function(device) {
+            res.json(device);
+        }).catch(function(err) {
+            winston.error('Failed to get usb drive ' + req.params.id, err);
+            res.status(500).send();
+        });
+    });
+
+    router.get('/inventory/:id', function(req, res) {
+        inventory.getItem(req.params.id).then(function(item) {
+            res.json(item);
+        }).catch(function(err) {
+            winston.error('Failed to get item ' + req.params.id, err);
+            res.status(500).send();
+        });
+    });
+
+    router.post('/inventory/lock/:imei', function(req, res) {
+        inventory.lockDevice(req.params.imei).then(function(result) {
+            res.json(result);
+        }).catch(function(err) {
+            winston.error('Failed to lock device ' + req.params.imei, err);
+            res.status(500).send();
+        });
+    });
+
+    router.post('/inventory/unlock/:imei', function(req, res) {
+        inventory.unlockDevice(req.params.imei, req.body.forService).then(function(result) {
+            res.json(result);
+        }).catch(function(err) {
+            winston.error('Failed to unlock device ' + req.params.imei, err);
+            res.status(500).send();
+        })
+    });
+
+    function startSession(id, reqBody, res) {
+        var item;
+        var tmp = {};
+        if (reqBody.item === undefined) {
+            item = reqBody;
+        } else {
+            item = reqBody.item;
+            if (reqBody.tmp !== undefined) {
+                tmp = reqBody.tmp;
+            }
+        }
+        var session = new Session();
+        if (id !== null) {
+            session._id = id;
+        }
+        return session.start(item, tmp).then(function(result) {
+            res.send(result);
+        }).catch(function(err) {
+            winston.error('Failed to start session', err);
+            res.status(500).send();
         });
     }
 
-    router.get('/data/devices', function(req, res) {
-        station.getUsbDrives(function(err, devices) {
-            res.json(devices);
-        });
+    router.post('/sessions/start', function(req, res) {
+        startSession(null, req.body, res);
     });
 
-    router.get('/data/devices/:id', function(req, res) {
-        station.getUsbDrive(req.params.id, function(err, device) {
-            res.json(device);
-        });
+    router.post('/sessions/:id/start', function(req, res) {
+        startSession(req.params.id, req.body, res);
     });
 
-    router.get('/data/inventory/:id', function(req, res) {
-        winston.info('Request for get item which was sent');
-        inventory.getItem(req.params.id, function(item) {
-            res.json(item);
-        });
-    });
-
-    router.post('/data/inventory/lock/:imei', function(req, res) {
-        inventory.lockDevice(req.params.imei, function(result) {
-            res.json(result);
-        });
-    });
-    router.post('/data/inventory/unlock/:imei', function(req, res) {
-        inventory.unlockDevice(req.params.imei, req.body.forService,
-            function(result) {
-                res.json(result);
-            });
-    });
-
-    router.post('/data/sessions/:id/start', function(req, res) {
-        if (req.body.item === undefined) {
-            sessions.start(req.params.id, req.body, {}).then(function(result) {
-                res.json(result);
-            }).catch(function(err) {
-                res.status(500).send();
-            });
-        } else if (req.body.tmp === undefined) {
-            sessions.start(req.params.id, req.body.item, {}).then(function(result) {
-                res.json(result);
-            }).catch(function(err) {
-                res.status(500).send();
-            });
-        } else {
-            sessions.start(req.params.id, req.body.item, req.body.tmp).then(function(result) {
-                res.json(result);
-            }).catch(function(err) {
-                res.status(500).send();
-            });
-        }
-    });
-    router.post('/data/sessions/:id/updateCurrentStep', function(req, res) {
-        sessions.updateCurrentStep(req.params.id, req.body.currentStep).then(function(result) {
-            res.json(result);
+    router.post('/sessions/:id/updateCurrentStep', function(req, res) {
+        Session.findOneAndUpdate({_id: req.params.id}, {$set: {'tmp.currentStep': req.body.currentStep}}).then(function() {
+            res.send();
         }).catch(function(err) {
             winston.error('Unable to update current step for session ' + req.params.id, err);
             res.status(500).send();
         });
     });
-    router.post('/data/sessions/:id/updateItem', function(req, res) {
-        sessions.updateItem(req.params.id, req.body.item).then(function(result) {
-            res.json(result);
+
+    router.post('/sessions/:id/updateItem', function(req, res) {
+        var id = req.params.id;
+        var item = req.body;
+        Session.findOne({_id: id}).then(function(session) {
+            session.device.item_number = item.item_number;
+            session.device.type = item.product.type;
+            session.device.sku = item.sku;
+            if (!session.device.manufacturer) {
+                session.device.manufacturer = item.manufacturer;
+            }
+            if (!session.device.model) {
+                session.device.model = item.model;
+            }
+            session.save();
+            res.send();
         }).catch(function(err) {
             winston.error('Unable to update item for session ' + req.params.id, err);
             res.status(500).send();
         });
     });
-    router.post('/data/sessions/deviceBroken', function(req, res) {
-        sessions.deviceBroken(req.body).then(function(result) {
-            res.json(result);
-        });
-    });
-    router.post('/data/sessions/:id/addLogEntry', function(req, res) {
-        sessions.addLogEntry(req.params.id, req.body.level, req.body.message, req.body.details).then(function() {
-            res.json();
+
+    router.post('/sessions/:id/addLogEntry', function(req, res) {
+        var logEntry = {
+            'timestamp': new Date(),
+            'level': req.body.level,
+            'message': req.body.message,
+            'details': req.body.details
+        };
+        Session.findOneAndUpdate({_id: req.params.id}, {$push: {logs: logEntry}}).then(function() {
+            res.send();
         }).catch(function(err) {
+            winson.error('Failed to add log entry', err);
             res.status(500).send();
         });
     });
 
-    router.post('/data/sessions/:id/finish', function(req, res) {
-        sessions.finish(req.params.id, req.body).then(function(result) {
-            res.json(result);
-        }).catch(function(err) {
-            res.status(500).send();
-        });
-    });
-    router.get('/data/packages/:contentType/:contentSubtype?',
-        function(req, res) {
-            try {
-                winston.info('Client requests ' +
-                    req.params.contentSubtype + ' ' + req.params.contentType +
-                    ' packages');
-                switch (req.params.contentType) {
-                    case 'media':
-                        if (isDevelopment) {
-                            res.json([
-                                {
-                                    'type': 'media',
-                                    'subtype': 'xbox-one',
-                                    'id': 'bc76b9f7-02f9-42e3-a9b7-3383b5287f07',
-                                    'name': 'Xbox One Refresh',
-                                    'size': 24204
-                                },
-                                {
-                                    'type': 'media',
-                                    'subtype': 'xbox-one',
-                                    'id': '6984e794-7934-4ecb-851a-da141da5a774',
-                                    'name': 'Xbox One Update',
-                                    'size': 2000268
-                                }
-                            ]);
-                        } else {
-                            var packages = [];
-                            winston.info('Searching for media packages in ' + config.mediaPackagePath);
-                            var dirs = getDirectories(config.mediaPackagePath);
-                            var len = dirs.length;
-                            for (var i = 0; i < len; ++i) {
-                                var fullDir = path.join(config.mediaPackagePath,
-                                    dirs[i]);
-                                var packageFile = path.join(fullDir,
-                                    '.package.json');
-                                winston.info('Attempting to parse ' + packageFile);
-                                try {
-                                    var pkg = JSON.parse(
-                                        fs.readFileSync(packageFile, 'utf8'));
-                                    if (pkg.type === 'media' &&
-                                        ((typeof req.params.contentSubtype ===
-                                            'undefined' && pkg.subtype ===
-                                            'advertisement') ||
-                                            (typeof req.params.contentSubtype !==
-                                                'undefined' &&
-                                                pkg.subtype ===
-                                                req.params.contentSubtype))) {
-                                        packages.push(pkg);
-                                    }
-                                } catch (err) {
-                                    winston.error('Error trying to read ' + packageFile, err);
-                                }
-                            }
-                            res.json(packages);
-                        }
-                        break;
-                    default:
-                        res.json(null);
-                        break;
-                }
-            } catch (err) {
-                winston.error('Unable to get ' + req.params.contentType + ' packages.', err);
+    router.post('/sessions/:id/finish', function(req, res) {
+        Session.findOne({_id: req.params.id}).then(function(session) {
+            if (session === null) {
+                winston.error('Unable to finish, session ' + req.params.id + ' not found. Session completion details ' + JSON.stringify(req.body))
+            } else {
+                session.finish(req.body.complete, req.body.diagnose_only, req.body.reason).then(function() {
+                    res.send();
+                }).catch(function(err) {
+                    winston.error('Failed to finish session', err);
+                    res.status(500).send();
+                });
             }
         });
+    });
 
-    router.get('/data/isServiceCenter', function(req, res) {
-        station.getIsServiceCenter(function(data) {
-            res.json(data);
+    router.get('/sessions', function(req, res) {
+        Session.find().then(function(sessions) {
+            res.json(sessions);
+        }).catch(function(err) {
+            winston.error('Failed to get all sessions by parameters', err);
+            res.status(500).send();
         });
     });
-    router.get('/data/package/:sku', function(req, res) {
-        station.getPackage(req.params.sku, function(data) {
-            res.json(data);
+
+    router.get('/sessions/incomplete/:itemNumber', function(req, res) {
+        Session.findOne({
+            'device.item_number': req.params.itemNumber,
+            'status': 'Incomplete'
+        }).then(function(session) {
+            res.json(session);
+        }).catch(function(err) {
+            winston.error('Failed to get incomplete session for item ' + req.params.itemNumber, err);
+            res.status(500).send();
         });
     });
-    router.get('/data/getConnectionState', function(req, res) {
-        station.getConnectionState(function(connectionState) {
+
+    router.get('/isServiceCenter', function(req, res) {
+        station.getIsServiceCenter().then(function(data) {
+            res.json(data);
+        }).catch(function(err) {
+            winston.error('Failed to detect if this is a service center station', err);
+            res.status(500).send();
+        });
+    });
+
+    router.get('/getConnectionState', function(req, res) {
+        station.getConnectionState().then(function(connectionState) {
             res.json(connectionState);
+        }).catch(function(err) {
+            winston.error('Failed to get connection state', err);
+            res.status(500).send();
         });
     });
+
     router.post('/event/:name', function(req, res) {
         var event = {};
         event.name = req.params.name;
@@ -205,19 +200,23 @@ module.exports = function(io) {
             }
             io.emit(event.name, event.data);
         } else if (event.name === 'device-add') {
-            controller.addUsb(event.data).then(function() {
+            usb.add(event.data).then(function() {
                 io.emit(event.name, event.data);
+            }).catch(function(err) {
+                winston.error('Failed to add usb', err);
             });
         } else if (event.name === 'device-remove') {
-            controller.removeUsb(event.data).then(function() {
+            usb.remove(event.data).then(function() {
                 io.emit(event.name, event.data);
+            }).catch(function(err) {
+                winston.error('Failed to remove usb', err);
             });
         }
         else {
             io.emit(event.name, event.data);
         }
 
-        res.json();
+        res.send();
     });
 
     router.post('/system/reboot', function(req, res) {
@@ -231,40 +230,44 @@ module.exports = function(io) {
     });
 
     router.post('/prepareAllUsb', function(req, res) {
-        controller.prepareAllUsb().then(function() {
+        usb.prepareAll().then(function() {
             res.status(200).send();
-        });
-    });
-
-    router.post('/getSessionsByParams', function(req, res) {
-        sessions.getSessionsByParams(req.body).then(function(response) {
-            res.json(response);
-        });
-    });
-
-    router.post('/getSessionByParams', function(req, res) {
-        sessions.getSessionByParams(req.body).then(function(session) {
-            res.json(session);
+        }).catch(function(err) {
+            winston.error('Failed to prepare usb drives', err);
+            res.status(500).send();
         });
     });
 
     router.get('/getAllUsbDrives', function(req, res) {
-        res.json(usbDrives.getAllUsbDrives());
-    });
-    router.get('/getLowestUsbInProgress', function(req, res) {
-        res.json(usbDrives.getLowestUsbInProgress());
-    });
-    router.post('/createItemFiles', function(req, res) {
-        controller.createItemFiles(req.body.item).then(function() {
-            res.status(200).send();
+        usbDrives.getAllUsbDrives().then(function(drives) {
+            res.json(drives);
+        }).catch(function(err) {
+            winston.error('Failed to get all usb drives', err);
+            res.status(500).send();
         });
     });
-    router.post('/updateStatus', function(req, res) {
-        usbDrives.setStatus('sdc', 'in_progress');
-        res.json({success: true});
+
+    router.get('/getLowestUsbProgress', function(req, res) {
+        usbDrives.getLowestUsbProgress().then(function(minProgress) {
+            res.json(minProgress);
+        }).catch(function(err) {
+            winston.error('Failed to get lowest usb drive in progress', err);
+            res.status(500).send();
+        });
     });
+
+    router.post('/createItemFiles', function(req, res) {
+        usb.createItemFiles(req.body.item).then(function() {
+            res.status(200).send();
+        }).catch(function(err) {
+            winston.error('Failed to create item files', err);
+            res.status(500).send();
+        });
+    });
+
     router.get('/getStationName', function(req, res) {
         res.json(station.getName());
     });
+
     return router;
 };

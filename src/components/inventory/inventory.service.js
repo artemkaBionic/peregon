@@ -4,8 +4,7 @@
 (function() {
     'use strict';
 
-    angular.module('app.inventory').
-        factory('inventoryService', inventoryService);
+    angular.module('app.inventory').factory('inventoryService', inventoryService);
 
     inventoryService.$inject = ['$q', '$http'];
 
@@ -21,57 +20,51 @@
 
         var canceller = $q.defer();
         service.getItem = function(id) {
-            var url = '/data/inventory/' + id;
+            var url = '/inventory/' + id;
             canceller.resolve(null);
             canceller = $q.defer();
 
             if (isValidItem(service.items[id])) {
                 canceller.resolve(service.items[id]);
             } else {
-                $http.get(url, {timeout: canceller.promise}).
-                    then(function(result) {
-                        /*if (result.data.error) {
-                            station.getConnectionState().
-                                then(function(connectionState) {
-                                    if (connectionState.isOnline) {
-                                        console.log('Item number not found. Please check the number and try again.');
-                                    } else {
-                                        console.log('Unable to lookup item because the Station is Offline.');
-                                    }
-                                });
-                        }
-
-                        else */if (isValidItem(result.data.item)) {
-                            //console.log('valid item');
-                            service.items[id] = result.data.item;
-                            canceller.resolve(result.data.item);
-                        } else {
-                            canceller.reject();
-                            //console.log('Item not found. Please try again.');
-                        }
-                    });
+                $http.get(url, {timeout: canceller.promise}).then(function(result) {
+                    if (isValidItem(result.data)) {
+                        service.items[id] = result.data;
+                        canceller.resolve(result.data);
+                    } else {
+                        canceller.reject();
+                    }
+                });
             }
 
             return canceller.promise;
         };
 
         service.lock = function(imei) {
-            var url = '/data/inventory/lock/' + imei;
+            var url = '/inventory/lock/' + imei;
             var deferred = $q.defer();
 
             $http.post(url).then(function(result) {
-                deferred.resolve(result.data);
+                if (result.code === 200) {
+                    deferred.resolve(result.data);
+                } else {
+                    deferred.reject();
+                }
             });
 
             return deferred.promise;
         };
 
         service.unlock = function(imei, forService) {
-            var url = '/data/inventory/unlock/' + imei;
+            var url = '/inventory/unlock/' + imei;
             var deferred = $q.defer();
 
             $http.post(url, {'forService': forService}).then(function(result) {
-                deferred.resolve(result.data);
+                if (result.code === 200) {
+                    deferred.resolve(result.data);
+                } else {
+                    deferred.reject();
+                }
             });
 
             return deferred.promise;
@@ -85,9 +78,9 @@
             return deferred.promise;
         };
 
-        service.getLowestUsbInProgress = function() {
+        service.getLowestUsbProgress = function() {
             var deferred = $q.defer();
-            $http.get('/getLowestUsbInProgress').then(function(result) {
+            $http.get('/getLowestUsbProgress').then(function(result) {
                 deferred.resolve(result.data);
             });
             return deferred.promise;

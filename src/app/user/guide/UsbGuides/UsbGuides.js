@@ -1,8 +1,7 @@
 (function() {
     'use strict';
 
-    angular.module('app.user').
-        controller('GuideControllerUsb', GuideControllerUsb);
+    angular.module('app.user').controller('GuideControllerUsb', GuideControllerUsb);
 
     GuideControllerUsb.$inject = [
         '$scope',
@@ -12,12 +11,11 @@
         'socketService',
         'popupLauncher'];
 
-    function GuideControllerUsb(
-        $scope, item, sessions, $state, socket, popupLauncher) {
+    function GuideControllerUsb($scope, item, sessions, $state, socket, popupLauncher) {
         /*jshint validthis: true */
         var vm = this;
         vm.item = item;
-        vm.session = {};
+        vm.sessionId = null;
         vm.steps = {
             checkCondition: {
                 name: 'checkCondition',
@@ -57,8 +55,7 @@
         };
 
         function setStep(step) {
-            vm.step = step;
-            return sessions.updateCurrentStep(vm.session._id, step.name);
+            return sessions.updateCurrentStep(vm.sessionId, step.name);
         }
 
         vm.sessionExpired = function() {
@@ -84,15 +81,11 @@
         checkSession();
 
         function checkSession() {
-            sessions.getSessionByParams({
-                'device.item_number': vm.item.item_number,
-                'status': 'Incomplete'
-            }).then(function(session) {
+            sessions.getIncomplete(vm.item.item_number).then(function(session) {
                 if (session) {
                     updateSession(session);
                 } else {
-                    var sessionId = new Date().toISOString();
-                    sessions.start(sessionId, item, {'currentStep': 'checkCondition'}).then(function(session) {
+                    sessions.start(item, {'currentStep': 'checkCondition'}).then(function(session) {
                         updateSession(session);
                     });
                 }
@@ -100,10 +93,12 @@
         }
 
         function updateSession(session) {
-            vm.session = session;
-            if (vm.session.status === 'Success') {
+            if (vm.sessionId === null) {
+                vm.sessionId = session._id;
+            }
+            if (session.status === 'Success') {
                 vm.step = vm.steps.complete;
-            } else if (vm.session.status === 'Incomplete') {
+            } else if (session.status === 'Incomplete') {
                 vm.step = vm.steps[session.tmp.currentStep];
             } else {
                 vm.step = vm.steps.failed;
@@ -111,13 +106,11 @@
         }
 
         vm.startSession = function() {
-            setStep(vm.steps.usbControl);
+            return setStep(vm.steps.usbControl);
         };
         vm.deviceBad = function() {
-            setStep(vm.steps.broken).then(function() {
-                return sessions.addLogEntry(vm.session._id, 'Info', 'Device is broken', '');
-            }).then(function() {
-                return sessions.finish(vm.session._id, {'complete': false});
+            return sessions.addLogEntry(vm.sessionId, 'Info', 'Device is broken', '').then(function() {
+                return sessions.finish(vm.sessionId, {'complete': false, 'reason': 'Broken'});
             });
         };
 
@@ -127,11 +120,11 @@
 
         function refreshDevicesStart() {
             setStep(vm.steps.refreshDevice);
-            sessions.addLogEntry(vm.session._id, 'Info', 'Refresh Started', '');
+            sessions.addLogEntry(vm.sessionId, 'Info', 'Refresh Started', '');
         }
 
-        socket.on('session-complete', function(session) {
-            if (session._id === vm.session._id) {
+        socket.on('session-updated', function(session) {
+            if (session._id === vm.sessionId) {
                 updateSession(session);
             }
         });

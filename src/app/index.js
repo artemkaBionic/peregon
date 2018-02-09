@@ -14,7 +14,6 @@
         'app.inventory',
         'app.sessions',
         'app.user',
-        'app.package',
         /*
         * 3-rd Party
          */

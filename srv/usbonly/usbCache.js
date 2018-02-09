@@ -1,127 +1,7 @@
 /*jslint node: true */
 'use strict';
 var winston = require('winston');
-
-function UsbCache() {
-    this._usbDrives = {};
-}
-
-Object.setPrototypeOf(UsbCache.prototype, Object.prototype);
-
-UsbCache.prototype.set = function(key, device) {
-    winston.info('Adding this device to usb cache:' + key);
-    this._usbDrives[key] = device;
-    this._usbDrives[key].updatePromise = null;
-};
-
-UsbCache.prototype.delete = function(key) {
-    this.cancelUpdate(key);
-    delete this._usbDrives[key];
-};
-
-UsbCache.prototype.getAllUsbDrives = function() {
-    // return this._usbDrives;
-    var usbDrives = this._usbDrives;
-    usbDrives.usbData = {};
-    usbDrives.usbData.numberOfDevices = 0;
-    usbDrives.usbData.notReadyDevices = 0;
-    usbDrives.usbData.inProgressDevices = 0;
-    usbDrives.usbData.readyDevices = 0;
-    for (var key in usbDrives) {
-        if (usbDrives.hasOwnProperty(key)) {
-            if (usbDrives[key].status) {
-                usbDrives.usbData.numberOfDevices++;
-            }
-            if (usbDrives.usbData.numberOfDevices !== 0 &&
-                usbDrives[key].status === 'not_ready') {
-                usbDrives.usbData.notReadyDevices++;
-            }
-            if (usbDrives.usbData.numberOfDevices !== 0 &&
-                usbDrives[key].status === 'in_progress') {
-                usbDrives.usbData.inProgressDevices++;
-            }
-            if (usbDrives.usbData.numberOfDevices !== 0 &&
-                usbDrives[key].status === 'ready') {
-                usbDrives.usbData.readyDevices++;
-            }
-            if (usbDrives[key].size < 30000000000) {
-                usbDrives.usbData.isSmallUsbDriveInserted = true;
-            }
-        }
-    }
-    // statuses for front-end
-    if (usbDrives.usbData.notReadyDevices > 0) {
-        usbDrives.usbData.status = 'newBootDevice';
-    } else if (usbDrives.usbData.inProgressDevices > 0) {
-        usbDrives.usbData.status = 'bootDevicesProcessing';
-    } else if (usbDrives.usbData.numberOfDevices === 0) {
-        usbDrives.usbData.status = 'noBootDevices';
-    } else {
-        usbDrives.usbData.status = 'bootDevicesReady';
-    }
-    return usbDrives;
-};
-
-UsbCache.prototype.startUpdate = function(key, promise) {
-    this._usbDrives[key].updatePromise = promise;
-};
-UsbCache.prototype.endUpdate = function(key) {
-    if (this._usbDrives.hasOwnProperty(key)) {
-        this._usbDrives[key].updatePromise = null;
-    }
-};
-UsbCache.prototype.cancelUpdate = function(key) {
-    if (this._usbDrives[key].updatePromise) {
-        this._usbDrives[key].updatePromise.cancel();
-        this._usbDrives[key].updatePromise = null;
-    }
-};
-
-UsbCache.prototype.updateProgress = function(key, progress) {
-    winston.info('Updating progress for usb ' + key);
-    if (this._usbDrives.hasOwnProperty(key)) {
-        this._usbDrives[key].status = 'in_progress';
-        this._usbDrives[key].progress = progress;
-    }
-};
-UsbCache.prototype.finishProgress = function(key) {
-    winston.info('Finishing progress for usb ' + key);
-    if (this._usbDrives.hasOwnProperty(key)) {
-        this._usbDrives[key].status = 'ready';
-        this._usbDrives[key].progress = 100;
-    }
-};
-UsbCache.prototype.setStatus = function(key, status) {
-    winston.info('Setting status ' + status + ' for usb ' + key);
-    if (this._usbDrives.hasOwnProperty(key)) {
-        this._usbDrives[key].status = status;
-        this._usbDrives[key].progress = 0;
-    }
-};
-UsbCache.prototype.getLowestUsbInProgress = function() {
-    winston.info('Getting lowest usb in progress');
-    var obj = this._usbDrives;
-    if (!isEmptyObject(obj)) {
-        // convert object to array to use reduce method;
-        var usbDrives = Object.keys(obj).
-            map(function(key) { return obj[key]; });
-
-        // getting all usb drives which are in progress
-        var usbDrivesInProgress = usbDrives.filter(function(obj) {
-            return obj.status === 'in_progress';
-        });
-        // searching for min in all usb in progress;
-        if (usbDrivesInProgress.length > 0) {
-            var min = usbDrivesInProgress.reduce(function(prev, current) {
-                return (prev.progress < current.progress) ? prev : current;
-            });//returns object with min progress;
-            return min;
-        } else {
-            return null;
-        }
-    }
-    return null;
-};
+var usbDrives = {};
 
 function isEmptyObject(obj) {
     for (var prop in obj) {
@@ -132,5 +12,111 @@ function isEmptyObject(obj) {
     return true;
 }
 
-module.exports = new UsbCache();
+exports.add = function (key, device) {
+    winston.info('Adding this device to usb cache:' + key);
+    usbDrives[key] = device;
+    usbDrives[key].updatePromise = null;
+};
 
+exports.remove = function (key) {
+    this.cancelUpdate(key);
+    delete usbDrives[key];
+};
+
+exports.getAllUsbDrives = function () {
+    return new Promise(function (resolve) {
+        var drives = usbDrives;
+        drives.usbData = {};
+        drives.usbData.numberOfDevices = 0;
+        drives.usbData.notReadyDevices = 0;
+        drives.usbData.inProgressDevices = 0;
+        drives.usbData.readyDevices = 0;
+        for (var key in drives) {
+            if (drives.hasOwnProperty(key)) {
+                if (drives[key].status) {
+                    drives.usbData.numberOfDevices++;
+                }
+                if (drives.usbData.numberOfDevices !== 0 &&
+                    drives[key].status === 'not_ready') {
+                    drives.usbData.notReadyDevices++;
+                }
+                if (drives.usbData.numberOfDevices !== 0 &&
+                    drives[key].status === 'in_progress') {
+                    drives.usbData.inProgressDevices++;
+                }
+                if (drives.usbData.numberOfDevices !== 0 &&
+                    drives[key].status === 'ready') {
+                    drives.usbData.readyDevices++;
+                }
+                if (drives[key].size < 30000000000) {
+                    drives.usbData.isSmallUsbDriveInserted = true;
+                }
+            }
+        }
+        // statuses for front-end
+        if (drives.usbData.notReadyDevices > 0) {
+            drives.usbData.status = 'newBootDevice';
+        } else if (drives.usbData.inProgressDevices > 0) {
+            drives.usbData.status = 'bootDevicesProcessing';
+        } else if (drives.usbData.numberOfDevices === 0) {
+            drives.usbData.status = 'noBootDevices';
+        } else {
+            drives.usbData.status = 'bootDevicesReady';
+        }
+        resolve(drives);
+    });
+};
+
+exports.startUpdate = function (key, promise) {
+    usbDrives[key].updatePromise = promise;
+};
+
+exports.endUpdate = function (key) {
+    if (usbDrives.hasOwnProperty(key)) {
+        usbDrives[key].updatePromise = null;
+    }
+};
+
+exports.cancelUpdate = function (key) {
+    if (usbDrives[key].updatePromise) {
+        usbDrives[key].updatePromise.cancel();
+        usbDrives[key].updatePromise = null;
+    }
+};
+
+exports.updateProgress = function (key, progress) {
+    winston.info('Updating progress for usb ' + key);
+    if (usbDrives.hasOwnProperty(key)) {
+        usbDrives[key].status = 'in_progress';
+        usbDrives[key].progress = progress;
+    }
+};
+
+exports.finishProgress = function (key) {
+    winston.info('Finishing progress for usb ' + key);
+    if (usbDrives.hasOwnProperty(key)) {
+        usbDrives[key].status = 'ready';
+        usbDrives[key].progress = 100;
+    }
+};
+
+exports.setStatus = function (key, status) {
+    winston.info('Setting status ' + status + ' for usb ' + key);
+    if (usbDrives.hasOwnProperty(key)) {
+        usbDrives[key].status = status;
+        usbDrives[key].progress = 0;
+    }
+};
+
+exports.getLowestUsbProgress = function () {
+    return new Promise(function (resolve) {
+        winston.info('Getting lowest usb in progress');
+        var lowestProgress = 100;
+        for (var key in usbDrives) {
+            if(usbDrives.hasOwnProperty(key) && usbDrives[key].status === 'in_progress' && usbDrives[key].progress < lowestProgress) {
+                lowestProgress = usbDrives[key].progress;
+            }
+        }
+        resolve(lowestProgress);
+    });
+};

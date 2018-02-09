@@ -15,10 +15,7 @@
         'toastr',
         'popupLauncher'];
 
-    function UserController(
-        $q, $state, config, station, inventory, sessions,
-        socket, $scope,
-        toastr, popupLauncher) {
+    function UserController($q, $state, config, station, inventory, sessions, socket, $scope, toastr, popupLauncher) {
         /*jshint validthis: true */
         var vm = this;
         vm.ready = false;
@@ -53,21 +50,18 @@
         displayBanner();
 
         function getSessions() {
-            var deferred = $q.defer();
-            sessions.getAllSessionsByParams({}).then(function(sessions) {
+            return sessions.getAll().then(function(sessions) {
                 vm.sessions = sessions;
-                deferred.resolve(sessions);
             });
-            return deferred.promise;
         }
 
         function updateSession(session) {
-            var sessionsArrayLength = vm.sessions.length;
             var updated = false;
-            for (var i = 0; i < sessionsArrayLength; i++) {
+            for (var i = 0, len = vm.sessions.length; i < len; i++) {
                 if (vm.sessions[i]._id === session._id) {
                     vm.sessions[i] = session;
                     updated = true;
+                    break;
                 }
             }
             if (!updated) {
@@ -88,16 +82,11 @@
             vm.step = vm.steps.bootDevices;
         };
         vm.viewSessions();
-        // $scope.$on('$stateChangeSuccess', function() {
-        //     getSessions();
-        // });
         $scope.$watch('vm.textToFilter', function(newTextToFilter) {
             $scope.$watch('vm.sessionType', function(newDropdown, oldDropdown) {
                 var dropDownChoice = newDropdown ? newDropdown : oldDropdown;
                 if (newTextToFilter) {
-                    vm.filterParam = dropDownChoice.replace(/\s/g, '').
-                        concat(' ').
-                        concat(newTextToFilter);
+                    vm.filterParam = dropDownChoice.replace(/\s/g, '').concat(' ').concat(newTextToFilter);
                 } else {
                     vm.filterParam = dropDownChoice.replace(/\s/g, '');
                 }
@@ -183,27 +172,26 @@
                     vm.lastValidSearchString = vm.searchString;
                     if (config.itemNumberRegEx.test(vm.searchString)) {
                         vm.item = null;
-                        inventory.getItem(vm.searchString).
-                            then(function(item) {
-                                if (item) {
-                                    vm.item = item;
-                                    vm.itemNumberError = false;
-                                    vm.itemUnsupportedError = false;
-                                    if (!vm.item.product.type || vm.item.product.type === 'Unsupported') {
-                                        vm.itemUnsupportedError = true;
-                                    }
-                                } else {
-                                    if (vm.item === null) { // If vm.item is populated then a successful call to getItem was completed before this failure was returned.
-                                        vm.itemNumberError = true;
-                                        vm.itemUnsupportedError = false;
-                                    }
+                        inventory.getItem(vm.searchString).then(function(item) {
+                            if (item) {
+                                vm.item = item;
+                                vm.itemNumberError = false;
+                                vm.itemUnsupportedError = false;
+                                if (!vm.item.product.type || vm.item.product.type === 'Unsupported') {
+                                    vm.itemUnsupportedError = true;
                                 }
-                            }, function() {
+                            } else {
                                 if (vm.item === null) { // If vm.item is populated then a successful call to getItem was completed before this failure was returned.
                                     vm.itemNumberError = true;
                                     vm.itemUnsupportedError = false;
                                 }
-                            });
+                            }
+                        }, function() {
+                            if (vm.item === null) { // If vm.item is populated then a successful call to getItem was completed before this failure was returned.
+                                vm.itemNumberError = true;
+                                vm.itemUnsupportedError = false;
+                            }
+                        });
                     } else {
                         vm.item = null;
                     }
@@ -235,8 +223,10 @@
         };
         // show modal for successful/failed sessions + enter item number for unrecognized devices
         vm.showGuideForCards = function(session) {
-            if (session.device.item_number) {
-                if (session._id && session.status === 'Incomplete') {
+            if (session.device.item_number === undefined || session.device.item_number === null) {
+                openHelpModal('sm-to-xs', 'Unrecognized Device', session);
+            } else {
+                if (session.status === 'Incomplete') {
                     var $stateParams = {};
                     $stateParams.itemNumber = session.device.item_number;
                     $stateParams.sessionId = session._id;
@@ -244,19 +234,17 @@
                     vm.searchString = '';
                     $state.go('root.user.guide', $stateParams);
                 } else if (session.status === 'Fail') {
-                    if (session.failedTests && session.failedTests.length > 0) {
-                        vm.failedTests = session.failedTests;
-                        if (vm.failedTests.length <= 4) {
-                            openHelpModal('xxs', vm.failedTests);
+                    if (session.failed_tests && session.failed_tests.length > 0) {
+                        if (session.failed_tests.length <= 4) {
+                            openHelpModal('xxs', session.failed_tests);
                         } else {
-                            openHelpModal('sm-to-xs', vm.failedTests);
+                            openHelpModal('sm-to-xs', session.failed_tests);
                         }
                     } else {
                         if (session.logs.length > 0) {
                             var isBroken = false;
                             var sessionExpired = false;
-                            for (var i = 0; i <
-                            session.logs.length; i++) {
+                            for (var i = 0, len = session.logs.length; i < len; i++) {
                                 if (session.logs[i].message === 'Device is broken') {
                                     isBroken = true;
                                 } else if (session.logs[i].message === 'Session expired') {
@@ -275,8 +263,6 @@
                 } else {
                     openHelpModal('xxs', 'Device refreshed successfully.');
                 }
-            } else {
-                openHelpModal('sm-to-xs', 'Unrecognized Device', session._id, session);
             }
         };
         vm.openFeedbackModal = function() {
@@ -298,11 +284,10 @@
             });
         };
 
-        function openHelpModal(modalSize, data, sessionId, session) {
+        function openHelpModal(modalSize, data, session) {
             if (typeof(data) === 'string') {
                 vm.data = {
                     message: data,
-                    sessionId: sessionId,
                     session: session
                 };
             } else {
@@ -323,27 +308,24 @@
         // jscs: enable
         vm.unlockForService = function() {
             if (vm.item) {
-                inventory.unlock(vm.item.serial_number, true).
-                    then(function(data) {
-                        if (data.error) {
-                            toastr.error(
-                                'Failed to unlock device. Please try again. If the problem continues, contact support.',
-                                'Device NOT Unlocked', {
-                                    'tapToDismiss': true,
-                                    'timeOut': 10000,
-                                    'closeButton': true
-                                });
-                        } else {
-                            toastr.info('Device is unlocked by ' +
-                                data.result.service, 'Device Unlocked', {
-                                'tapToDismiss': true,
-                                'timeOut': 3000,
-                                'closeButton': true
-                            });
-                            vm.item = null;
-                            vm.searchString = '';
-                        }
+                inventory.unlock(vm.item.serial_number, true).then(function(data) {
+                    toastr.info('Device is unlocked by ' +
+                        data.result.service, 'Device Unlocked', {
+                        'tapToDismiss': true,
+                        'timeOut': 3000,
+                        'closeButton': true
                     });
+                    vm.item = null;
+                    vm.searchString = '';
+                }).catch(function() {
+                    toastr.error(
+                        'Failed to unlock device. Please try again. If the problem continues, contact support.',
+                        'Device NOT Unlocked', {
+                            'tapToDismiss': true,
+                            'timeOut': 10000,
+                            'closeButton': true
+                        });
+                });
             }
         };
 
@@ -353,10 +335,9 @@
 
         function activate() {
             var queries = [
-                station.isServiceCenter().
-                    then(function(isServiceCenter) {
-                        vm.isServiceCenter = isServiceCenter;
-                    })];
+                station.isServiceCenter().then(function(isServiceCenter) {
+                    vm.isServiceCenter = isServiceCenter;
+                })];
             return $q.all(queries).then(function() {
                 vm.ready = true;
             });
@@ -387,23 +368,8 @@
                 'closeButton': true
             });
         });
-        socket.on('session-started', function(session) {
-            updateSession(session);
-            vm.viewSessions();
-        });
         socket.on('session-updated', function(session) {
             updateSession(session);
-        });
-        socket.on('session-complete', function(session) {
-            updateSession(session);
-            if (session !== null) {
-                toastr.info('Refresh finished', {
-                    'tapToDismiss': true,
-                    'timeOut': 3000,
-                    'closeButton': true
-                });
-            }
-            vm.viewSessions();
         });
         socket.on('session-error', function() {
             toastr.error('Something went wrong while reading sessions', {

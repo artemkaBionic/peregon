@@ -111,8 +111,8 @@
         }
 
         function showBootDeviceProgress() {
-            inventory.getLowestUsbInProgress().then(function(minProgress) {
-                usbProgress(minProgress.progress);
+            inventory.getLowestUsbProgress().then(function(minProgress) {
+                usbProgress(minProgress);
             });
         }
 
