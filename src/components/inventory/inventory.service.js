@@ -45,7 +45,7 @@
             var deferred = $q.defer();
 
             $http.post(url).then(function(result) {
-                if (result.code === 200) {
+                if (result.status === 200) {
                     deferred.resolve(result.data);
                 } else {
                     deferred.reject();
@@ -60,7 +60,7 @@
             var deferred = $q.defer();
 
             $http.post(url, {'forService': forService}).then(function(result) {
-                if (result.code === 200) {
+                if (result.status === 200) {
                     deferred.resolve(result.data);
                 } else {
                     deferred.reject();

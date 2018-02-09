@@ -310,7 +310,7 @@
             if (vm.item) {
                 inventory.unlock(vm.item.serial_number, true).then(function(data) {
                     toastr.info('Device is unlocked by ' +
-                        data.result.service, 'Device Unlocked', {
+                        data.service, 'Device Unlocked', {
                         'tapToDismiss': true,
                         'timeOut': 3000,
                         'closeButton': true
