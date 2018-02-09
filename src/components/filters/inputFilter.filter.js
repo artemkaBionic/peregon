@@ -3,13 +3,15 @@
     angular.module('app.user')
         .filter('inputFilter', function() {
             return function(input, filterStr) {
-                var arr = Object.keys(input).map(function(key) { return input[key]; });
+                var arr = Object.keys(input).map(function(key) {
+                    return input[key];
+                });
                 if (angular.isDefined(filterStr)) {
                     var tokens = filterStr.split(' ');
-                    for (var i = 0, len = tokens.length; i < len; i++){
+                    for (var i = tokens.length - 1; i >= 0; i--) { //Processing the array backwards doesn't break when we remove elements form the array.
                         tokens[i] = tokens[i].replace(/['"]+/g, '');
                         if (tokens[i] === 'AllSessions') {
-                            tokens.splice(i,1);
+                            tokens.splice(i, 1);
                         } else if (tokens[i] === 'SessionsInProgress') {
                             tokens[i] = 'incomplete';
                         } else if (tokens[i] === 'FailedSessions') {
