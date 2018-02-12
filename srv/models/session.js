@@ -130,7 +130,7 @@ module.exports = function (io) {
 
     SessionSchema.post('save', function (doc) {
         var session = doc.toObject();
-        winston.info('Session ' + session._id + ' saved.', JSON.stringify(session));
+        //winston.info('Session ' + session._id + ' saved.', JSON.stringify(session));
         io.emit('session-updated', session);
     });
 
@@ -141,7 +141,7 @@ module.exports = function (io) {
 
     SessionSchema.post('findOneAndUpdate', function (doc) {
         var session = doc.toObject();
-        winston.info('Session ' + session._id + ' updated.', JSON.stringify(session));
+        //winston.info('Session ' + session._id + ' updated.', JSON.stringify(session));
         io.emit('session-updated', session);
     });
 
