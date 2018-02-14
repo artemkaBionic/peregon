@@ -76,6 +76,11 @@ module.exports = function (io) {
         manualTestsComplete: {
             type: Number,
             required: false
+        },
+        is_active: {
+            type: Boolean,
+            required: false,
+            default: false
         }
     }, {
         usePushEach: true

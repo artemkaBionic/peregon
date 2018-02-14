@@ -88,8 +88,21 @@ module.exports = function(io) {
         startSession(req.params.id, req.body, res);
     });
 
-    router.post('/sessions/:id/updateCurrentStep', function(req, res) {
-        Session.findOneAndUpdate({_id: req.params.id}, {$set: {'tmp.currentStep': req.body.currentStep}}).then(function() {
+    router.post('/sessions/:id/setActive', function(req, res) {
+        var isActive = req.body.isActive;
+        Session.update({'tmp.is_active': true}, {$set: {'tmp.is_active': false}}, {multi: true}).then(function() {
+            Session.findOneAndUpdate({_id: req.params.id}, {$set: {'tmp.is_active': isActive}}).then(function() {
+                res.send();
+            }).catch(function(err) {
+                winston.error('Unable to update current step for session ' + req.params.id, err);
+                res.status(500).send();
+            });
+        });
+    });
+
+    router.post('/sessions/:id/setCurrentStep', function(req, res) {
+        var currentStep = req.body.currentStep;
+        Session.findOneAndUpdate({_id: req.params.id}, {$set: {'tmp.currentStep': currentStep}}).then(function() {
             res.send();
         }).catch(function(err) {
             winston.error('Unable to update current step for session ' + req.params.id, err);
@@ -152,7 +165,7 @@ module.exports = function(io) {
         Session.find().then(function(sessions) {
             res.json(sessions);
         }).catch(function(err) {
-            winston.error('Failed to get all sessions by parameters', err);
+            winston.error('Failed to get all sessions', err);
             res.status(500).send();
         });
     });
@@ -206,11 +219,8 @@ module.exports = function(io) {
                 winston.error('Failed to add usb', err);
             });
         } else if (event.name === 'device-remove') {
-            usb.remove(event.data).then(function() {
-                io.emit(event.name, event.data);
-            }).catch(function(err) {
-                winston.error('Failed to remove usb', err);
-            });
+            usb.remove(event.data);
+            io.emit(event.name, event.data);
         }
         else {
             io.emit(event.name, event.data);
@@ -252,15 +262,6 @@ module.exports = function(io) {
             res.json(minProgress);
         }).catch(function(err) {
             winston.error('Failed to get lowest usb drive in progress', err);
-            res.status(500).send();
-        });
-    });
-
-    router.post('/createItemFiles', function(req, res) {
-        usb.createItemFiles(req.body.item).then(function() {
-            res.status(200).send();
-        }).catch(function(err) {
-            winston.error('Failed to create item files', err);
             res.status(500).send();
         });
     });

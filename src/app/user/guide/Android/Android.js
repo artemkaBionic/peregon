@@ -166,7 +166,7 @@
 
         /*=================Guide Steps functions===============*/
         function setStep(step) {
-            return sessions.updateCurrentStep(vm.sessionId, step.name);
+            return sessions.setCurrentStep(vm.sessionId, step.name);
         }
 
         vm.deviceGood = function() {

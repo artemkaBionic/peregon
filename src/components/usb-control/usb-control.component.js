@@ -4,8 +4,7 @@
     angular.module('app.user').component('usbControl',
         {
             bindings: {
-                session: '<',
-                item: '<'
+                guide: '<'
             },
             controller: usbControlController,
             controllerAs: 'vm',
@@ -38,9 +37,13 @@
             bootDevicesReady: {
                 name: 'bootDevicesReady',
                 number: 4
+            },
+            bootDevicesFailed: {
+                name: 'bootDevicesFailed',
+                number: 5
             }
         };
-        if (vm.item) {
+        if (vm.guide) {
             vm.iconBackground = {
                 'width': '100px',
                 'height': '100px',
@@ -63,51 +66,35 @@
             inventory.getAllUsbDrives().then(function(usbDrives) {
                 vm.usbDrives = usbDrives;
                 vm.showSmallUsbError = usbDrives.usbData.isSmallUsbDriveInserted;
-                if (usbDrives.usbData.status === 'newBootDevice') {
-                    newBootDevice();
-                } else if (usbDrives.usbData.status === 'bootDevicesReady') {
-                    if (vm.item !== undefined) {
-                        $http({
-                            url: '/createItemFiles',
-                            method: 'POST',
-                            headers: {'content-type': 'application/json'},
-                            data: {item: vm.item}
-                        }).then(function() {
-                            prepareRefreshUsbComplete();
-                        });
-                    } else {
-                        prepareRefreshUsbComplete();
-                    }
-                } else if (usbDrives.usbData.status === 'noBootDevices') {
-                    prepareRefreshUsbStart();
-                } else {
-                    showBootDeviceProgress();
+                switch (usbDrives.usbData.status) {
+                    case 'newBootDevice':
+                        vm.step = vm.steps.newBootDevice;
+                        break;
+                    case 'bootDevicesProcessing':
+                        showBootDeviceProgress();
+                        break;
+                    case 'bootDevicesFailed':
+                        vm.step = vm.steps.bootDevicesFailed;
+                        break;
+                    case 'noBootDevices':
+                        vm.step = vm.steps.noBootDevices;
+                        break;
+                    case 'bootDevicesReady':
+                        if (vm.step !== vm.steps.bootDevicesFailed) {
+                            if (vm.guide) {
+                                $rootScope.$broadcast('bootDevicesReady');
+                            } else {
+                                vm.step = vm.steps.bootDevicesReady;
+                            }
+                        }
+                        break;
                 }
-            })/*.catch(function(err) {
-                console.log(err);
-            })*/;
+            });
         }
 
         function usbProgress(progress) {
             vm.step = vm.steps.bootDevicesProcessing;
             vm.percentageComplete = progress;
-        }
-
-        function prepareRefreshUsbStart() {
-            vm.step = vm.steps.noBootDevices;
-        }
-
-        function newBootDevice() {
-            vm.step = vm.steps.newBootDevice;
-        }
-
-        function prepareRefreshUsbComplete() {
-            vm.step = vm.steps.bootDevicesReady;
-            waitForUsbRemove(emitToController);
-        }
-
-        function emitToController() {
-            $rootScope.$broadcast('bootDevicesReady');
         }
 
         function showBootDeviceProgress() {
@@ -124,12 +111,6 @@
                 headers: {'content-type': 'application/json'}
             });
         };
-
-        function waitForUsbRemove(callback) {
-            socket.on('device-remove', function() {
-                callback();
-            });
-        }
 
         socket.on('device-add', function() {
             checkUsbStatus();

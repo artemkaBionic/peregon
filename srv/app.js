@@ -11,7 +11,7 @@ var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 var bodyParser = require('body-parser');
-require('./lib/log');
+require('./lib/log.js');
 var winston = require('winston');
 var path = require('path');
 var fs = Promise.promisifyAll(require('fs'));
@@ -54,7 +54,6 @@ shell.exec('sync && umount /mnt/*', {silent: true}, function (code, stdout, stde
 /**
  * Express configuration.
  */
-//app.set('host', '0.0.0.0');
 app.set('port', process.env.PORT || 80);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -71,9 +70,7 @@ app.use(function (req, res, next) {
 });
 
 if (isDevelopment) {
-    // error handlers
-    // development error handler
-    // will print stacktrace
+    // development error handler will print stacktrace
     app.use(function (err, req, res, next) {
         res.status(err.status || 500);
         res.render('error', {
@@ -82,8 +79,7 @@ if (isDevelopment) {
         });
     });
 } else {
-    // production error handler
-    // no stacktraces leaked to user
+    // production error handler. No stacktraces leaked to user
     app.use(function (err, req, res, next) {
         winston.error('Unhandled error', err);
         res.status(err.status || 500);

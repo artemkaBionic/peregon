@@ -44,7 +44,7 @@
 
         function setStep(step) {
             vm.step = step;
-            return sessions.updateCurrentStep(vm.sessionId, step.name);
+            return sessions.setCurrentStep(vm.sessionId, step.name);
         }
 
         vm.openFeedbackModal = function() {
@@ -102,6 +102,7 @@
             });
         });
         vm.retry = function() {
+            vm.sessionId = null;
             checkSession();
         };
         vm.refreshEnd = function() {

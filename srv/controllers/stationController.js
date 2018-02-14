@@ -20,10 +20,10 @@ exports.getServiceTag = function() {
                 resolve(service_tag);
             } else {
                 shell.exec('dmidecode -s system-serial-number',
-                    function (code, stdout, stderr) {
+                    function(code, stdout, stderr) {
                         if (code !== 0) {
                             winston.error('Error reported from dmidecode', stderr);
-                            reject(Error(stderr));
+                            reject(new Error(stderr));
                         } else {
                             service_tag = stdout.substr(0, stdout.indexOf('\n')); // First line
                             resolve(service_tag);
@@ -46,16 +46,16 @@ exports.getName = function() {
 exports.getUsbDrives = function() {
     return new Promise(function(resolve, reject) {
         var devices = [];
-        fs.readdir('/sys/block/', function (err, files) {
+        fs.readdir('/sys/block/', function(err, files) {
             if (err) {
                 reject(err);
             } else {
-                files.filter(function (file) {
+                files.filter(function(file) {
                     return file.match(config.usbDeviceIdRegEx);
                 });
-                var promises = files.map(function (file) {
-                    return new Promise(function (resolve, reject) {
-                        exports.getUsbDrive(file, function (err, device) {
+                var promises = files.map(function(file) {
+                    return new Promise(function(resolve, reject) {
+                        exports.getUsbDrive(file, function(err, device) {
                             if (device !== null) {
                                 devices.push(device);
                             }
@@ -63,7 +63,7 @@ exports.getUsbDrives = function() {
                         });
                     });
                 });
-                Promise.all(promises).then(function () {
+                Promise.all(promises).then(function() {
                     resolve(devices);
                 });
             }
@@ -75,16 +75,16 @@ exports.getUsbDrive = function(id) {
     return new Promise(function(resolve, reject) {
         winston.info('Getting USB drive information for ' + id);
         shell.exec('udevadm info --query=property --path=/sys/block/' + id,
-            {silent: true}, function (code, stdout, stderr) {
+            {silent: true}, function(code, stdout, stderr) {
                 if (code !== 0) {
-                    reject(Error(stderr));
+                    reject(new Error(stderr));
                 } else {
                     var deviceInfo = stdout.trim().split(os.EOL);
                     var device = {
                         id: id,
                         type: null
                     };
-                    deviceInfo.forEach(function (element) {
+                    deviceInfo.forEach(function(element) {
                         if (element === 'ID_BUS=usb') {
                             device.type = 'USB';
                         }
@@ -93,9 +93,9 @@ exports.getUsbDrive = function(id) {
                         resolve(null);
                     } else {
                         shell.exec('blockdev --getsize64 /dev/' + id,
-                            function (code, stdout, stderr) {
+                            function(code, stdout, stderr) {
                                 if (code !== 0) {
-                                    reject(Error(stderr));
+                                    reject(new Error(stderr));
                                 } else {
                                     device.size = stdout;
                                     resolve(device);
@@ -110,7 +110,7 @@ exports.getUsbDrive = function(id) {
 exports.getConnectionState = function() {
     return new Promise(function(resolve, reject) {
         if (connectionState === null) {
-            fs.readFile(config.connectionStateFile, 'utf8', function (err, data) {
+            fs.readFile(config.connectionStateFile, 'utf8', function(err, data) {
                 if (err) {
                     winston.error('Error reading connections state', err);
                 } else {
@@ -134,7 +134,7 @@ exports.getIsServiceCenter = function() {
             winston.info('Simulating service center check in a Windows development environment.');
             resolve(true);
         } else {
-            fs.stat('/srv/packages/ServiceCenter.mode', function (err, stat) {
+            fs.stat('/srv/packages/ServiceCenter.mode', function(err, stat) {
                 if (err === null) {
                     winston.info('isServiceCenter = true');
                     resolve(true);

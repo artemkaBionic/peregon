@@ -84,7 +84,7 @@ function unlockDevice(imei, forService) {
                 resolve(response.body);
             } else {
                 winston.info('Failed to unlock device with imei ' + imei);
-                reject(Error(response.body.error));
+                reject(new Error(response.body.error));
             }
         });
     }).catch(function(err) {
@@ -109,7 +109,7 @@ function lockDevice(imei) {
                 resolve(response.body);
             } else {
                 winston.info('Failed to lock device with imei ' + imei);
-                reject(Error(response.body.error));
+                reject(new Error(response.body.error));
             }
         });
     }).catch(function(err) {

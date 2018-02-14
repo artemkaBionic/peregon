@@ -31,22 +31,22 @@ exports.getAllUsbDrives = function () {
         drives.usbData.notReadyDevices = 0;
         drives.usbData.inProgressDevices = 0;
         drives.usbData.readyDevices = 0;
+        drives.usbData.failedDevices = 0;
         for (var key in drives) {
             if (drives.hasOwnProperty(key)) {
                 if (drives[key].status) {
                     drives.usbData.numberOfDevices++;
                 }
-                if (drives.usbData.numberOfDevices !== 0 &&
-                    drives[key].status === 'not_ready') {
-                    drives.usbData.notReadyDevices++;
-                }
-                if (drives.usbData.numberOfDevices !== 0 &&
-                    drives[key].status === 'in_progress') {
-                    drives.usbData.inProgressDevices++;
-                }
-                if (drives.usbData.numberOfDevices !== 0 &&
-                    drives[key].status === 'ready') {
-                    drives.usbData.readyDevices++;
+                if (drives.usbData.numberOfDevices !== 0) {
+                    if (drives[key].status === 'not_ready') {
+                        drives.usbData.notReadyDevices++;
+                    } else if (drives[key].status === 'in_progress') {
+                        drives.usbData.inProgressDevices++;
+                    } else if (drives[key].status === 'ready') {
+                        drives.usbData.readyDevices++;
+                    } else if (drives[key].status === 'failed') {
+                        drives.usbData.failedDevices++;
+                    }
                 }
                 if (drives[key].size < 30000000000) {
                     drives.usbData.isSmallUsbDriveInserted = true;
@@ -58,6 +58,8 @@ exports.getAllUsbDrives = function () {
             drives.usbData.status = 'newBootDevice';
         } else if (drives.usbData.inProgressDevices > 0) {
             drives.usbData.status = 'bootDevicesProcessing';
+        } else if (drives.usbData.failedDevices > 0) {
+            drives.usbData.status = 'bootDevicesFailed';
         } else if (drives.usbData.numberOfDevices === 0) {
             drives.usbData.status = 'noBootDevices';
         } else {

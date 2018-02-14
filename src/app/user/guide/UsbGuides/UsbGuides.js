@@ -32,8 +32,8 @@
                 number: 3,
                 title: 'Refresh the Device'
             },
-            verifyRefresh: {
-                name: 'verifyRefresh',
+            askRetry: {
+                name: 'askRetry',
                 number: 4,
                 title: 'Verify Refresh'
             },
@@ -55,7 +55,7 @@
         };
 
         function setStep(step) {
-            return sessions.updateCurrentStep(vm.sessionId, step.name);
+            return sessions.setCurrentStep(vm.sessionId, step.name);
         }
 
         vm.sessionExpired = function() {
@@ -83,9 +83,10 @@
         function checkSession() {
             sessions.getIncomplete(vm.item.item_number).then(function(session) {
                 if (session) {
+                    sessions.setActive(session._id, true);
                     updateSession(session);
                 } else {
-                    sessions.start(item, {'currentStep': 'checkCondition'}).then(function(session) {
+                    sessions.start(item, {'currentStep': 'checkCondition', 'is_active': true}).then(function(session) {
                         updateSession(session);
                     });
                 }
@@ -93,13 +94,18 @@
         }
 
         function updateSession(session) {
-            if (vm.sessionId === null) {
+            var isFirstLoad = vm.sessionId === null;
+            if (isFirstLoad) {
                 vm.sessionId = session._id;
             }
             if (session.status === 'Success') {
                 vm.step = vm.steps.complete;
             } else if (session.status === 'Incomplete') {
-                vm.step = vm.steps[session.tmp.currentStep];
+                if (isFirstLoad && session.tmp.currentStep === 'refreshDevice') {
+                    vm.step = vm.steps.usbControl;
+                } else {
+                    vm.step = vm.steps[session.tmp.currentStep];
+                }
             } else {
                 vm.step = vm.steps.failed;
             }
@@ -109,26 +115,37 @@
             return setStep(vm.steps.usbControl);
         };
         vm.deviceBad = function() {
-            return sessions.addLogEntry(vm.sessionId, 'Info', 'Device is broken', '').then(function() {
+            return sessions.addLogEntry(vm.sessionId, 'info', 'Device is broken', '').then(function() {
                 return sessions.finish(vm.sessionId, {'complete': false, 'reason': 'Broken'});
             });
         };
 
-        $scope.$on('bootDevicesReady', function() {
-            refreshDevicesStart();
-        });
+        vm.retryUsb = function() {
+            return setStep(vm.steps.usbControl);
+        };
+        vm.retry = function() {
+            vm.sessionId = null;
+            checkSession();
+        };
+        vm.fail = function() {
+            return sessions.finish(vm.sessionId, {'complete': false, 'reason': 'Broken'});
+        };
 
-        function refreshDevicesStart() {
-            setStep(vm.steps.refreshDevice);
-            sessions.addLogEntry(vm.sessionId, 'Info', 'Refresh Started', '');
-        }
+        $scope.$on('bootDevicesReady', function() {
+            if (vm.step !== vm.steps.askRetry) {
+                setStep(vm.steps.refreshDevice);
+                sessions.addLogEntry(vm.sessionId, 'info', 'Refresh Started', '');
+            }
+        });
 
         socket.on('session-updated', function(session) {
             if (session._id === vm.sessionId) {
                 updateSession(session);
             }
         });
-        vm.refreshEnd = function() {
+
+        vm.goHome = function() {
+            sessions.setActive(vm.sessionId, false);
             $state.go('root.user');
         };
     }

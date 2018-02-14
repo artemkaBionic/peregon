@@ -23,8 +23,19 @@
             return deferred.promise;
         };
 
-        service.updateCurrentStep = function(sessionId, currentStep) {
-            var url = '/sessions/' + sessionId + '/updateCurrentStep';
+        service.setActive = function(sessionId, isActive) {
+            var url = '/sessions/' + sessionId + '/setActive';
+            var deferred = $q.defer();
+
+            $http.post(url, {'isActive': isActive}).then(function(result) {
+                deferred.resolve(result.data);
+            });
+
+            return deferred.promise;
+        };
+
+        service.setCurrentStep = function(sessionId, currentStep) {
+            var url = '/sessions/' + sessionId + '/setCurrentStep';
             var deferred = $q.defer();
 
             $http.post(url, {'currentStep': currentStep}).then(function(result) {

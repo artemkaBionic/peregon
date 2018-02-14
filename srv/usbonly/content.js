@@ -66,7 +66,7 @@ module.exports = function(io) {
                     winston.info('Copying files to USB has been cancelled.');
                 } else if (code !== 0) {
                     winston.info('rsync process exited with code ' + code.toString());
-                    reject(Error(err));
+                    reject(new Error(err));
                 } else {
                     resolve();
                 }
@@ -84,7 +84,7 @@ module.exports = function(io) {
             var err = '';
             var sentProgress = 0;
             var progressRatio = macImageSize / totalSize;
-            var progressStart = 1 - progressRatio;
+            var progressStart = 100 - (100 * progressRatio);
 
             var ddCommand = 'dd ibs=4M if=' + config.macContent + ' | pv --numeric --size ' + macImageSize +
                 ' | dd obs=4M of=/dev/' + device + config.usbMacPartition + ' oflag=direct && sync';
@@ -108,7 +108,7 @@ module.exports = function(io) {
                     winston.info('Applying Mac image has been cancelled.');
                 } else if (code !== 0) {
                     winston.error('dd process exited with code ' + code.toString());
-                    reject(Error(err));
+                    reject(new Error(err));
                 } else {
                     resolve();
                 }
@@ -118,12 +118,6 @@ module.exports = function(io) {
                 shell.exec('pkill -15 -P ' + dd.pid.toString());
             });
         });
-    }
-
-    function createItemFile(device, item) {
-        var usbItemFile = '/mnt/' + device + config.usbStatusPartition + '/item.json';
-        var json = JSON.stringify(item);
-        return fs.writeFileAsync(usbItemFile, json);
     }
 
     function finishApplyContent(device) {
@@ -165,7 +159,7 @@ module.exports = function(io) {
                         path.join(contentTemp, device + config.usbWindowsPartition, 'packages');
                     shell.exec(command, function(code, stdout, stderr) {
                         if (code !== 0) {
-                            reject(Error(stderr));
+                            reject(new Error(stderr));
                         } else {
                             // Get size of files to copy
                             shell.exec('rsync ' + rsyncParameters + ' --stats --dry-run ' +
@@ -173,7 +167,7 @@ module.exports = function(io) {
                                 ' /mnt/ | grep "Total transferred file size:" | awk \'{print $5;}\' | sed \'s/,//g\'',
                                 function(code, stdout, stderr) {
                                     if (code !== 0) {
-                                        reject(Error(stderr));
+                                        reject(new Error(stderr));
                                     } else {
                                         var copyFilesSize = parseInt(stdout.trim().split(os.EOL));
                                         if (usbVersions === null || usbVersions.mac !== currentVersions.mac) {
@@ -181,7 +175,7 @@ module.exports = function(io) {
                                                 ' | awk \'END {print $1;}\'', {silent: true},
                                                 function(code, stdout, stderr) {
                                                     if (code !== 0) {
-                                                        reject(Error(stderr));
+                                                        reject(new Error(stderr));
                                                     } else {
                                                         var macImageSize = parseInt(stdout.trim().split(os.EOL));
                                                         resolve(
@@ -226,7 +220,6 @@ module.exports = function(io) {
     }
 
     return {
-        'createItemFile': createItemFile,
         'updateContent': updateContent,
         'clearStatus': clearStatus
     };

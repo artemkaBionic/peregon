@@ -12,7 +12,7 @@ function doesMbrExist(device) {
             function(code, stdout, stderr) {
                 if (code !== 0) {
                     winston.error('Failed to check if USB ' + device + ' has a MBR, parted returned error code ' + code + ' ' + stdout);
-                    reject(Error(stderr));
+                    reject(new Error(stderr));
                 } else {
                     var deviceInfo = stdout.trim().split(os.EOL)[1].split(':');
                     var mbrExists = deviceInfo[5] === 'msdos';
@@ -27,7 +27,7 @@ function doPartitionsExist(device) {
         shell.exec('lsblk --output name,label,size --pairs /dev/' + device, {silent: true},
             function(code, stdout, stderr) {
                 if (code !== 0) {
-                    reject(Error(stderr));
+                    reject(new Error(stderr));
                 } else {
                     var partitionsInfo = stdout.trim().split(os.EOL);
                     var correctPartitionsExist = partitionsInfo.length === 5 &&
@@ -42,7 +42,9 @@ function doPartitionsExist(device) {
 }
 
 function checkPartitioning(device) {
-    return doesMbrExist(device).then(function(mbrExists) {return mbrExists ? doPartitionsExist(device) : false;});
+    return doesMbrExist(device).then(function(mbrExists) {
+        return mbrExists ? doPartitionsExist(device) : false;
+    });
 }
 
 function unmountPartitions(device) {
@@ -75,7 +77,7 @@ function mountPartitions(device) {
             function(code, stdout, stderr) {
                 if (code !== 0) {
                     unmountPartitions(device).then(function() {
-                        reject(Error(stderr));
+                        reject(new Error(stderr));
                     });
                 } else {
                     resolve();
@@ -98,7 +100,7 @@ function updatePartitions(device) {
                     ' unit MiB print | awk -F: \'FNR==2{print $2}\'',
                     function(code, stdout, stderr) {
                         if (code !== 0) {
-                            reject(Error(stderr));
+                            reject(new Error(stderr));
                         } else {
                             var totalDiskSize = parseInt(
                                 stdout.split(os.EOL)[0].replace('MiB', ''));
@@ -129,7 +131,7 @@ function updatePartitions(device) {
                             script += '\nmkpart primary fat32 ' + partitionStart + 'MiB 100%';
                             shell.exec('parted --script /dev/' + device + ' ' + script, function(code, stdout, stderr) {
                                 if (code !== 0) {
-                                    reject(Error(stderr));
+                                    reject(new Error(stderr));
                                 } else {
                                     // Build Xbox File System
                                     var command = 'mkfs.ntfs -f -L "XboxRefresh" /dev/' + device +
@@ -145,7 +147,7 @@ function updatePartitions(device) {
                                         config.usbStatusPartition;
                                     shell.exec(command, function(code, stdout, sdterr) {
                                         if (code !== 0) {
-                                            reject(Error(stderr));
+                                            reject(new Error(stderr));
                                         } else {
                                             resolve(mountPartitions(device));
                                         }
