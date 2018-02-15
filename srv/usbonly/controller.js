@@ -114,15 +114,19 @@ module.exports = function(io) {
         var sessionsDirectory = '/mnt/' + deviceId + config.usbStatusPartition + '/sessions';
         return fs.readdirAsync(sessionsDirectory).then(function(files) {
             var promise = Promise.resolve();
-            for (var i = 0, len = files.length; i < len; i++) {
-                winston.info('Session file found: ' + files[i]);
-                promise = promise.then(function(file) {
-                    return fs.readFileAsync(sessionsDirectory + '/' + file, 'utf8').then(processUsbSession).catch(function(err) {
-                        if (err.code !== 'ENOENT') {
-                            throw err;
-                        }
-                    });
-                }(files[i]));
+            if (files.length > 0) {
+                for (var i = 0, len = files.length; i < len; i++) {
+                    winston.info('Session file found: ' + files[i]);
+                    promise = promise.then(function(file) {
+                        return fs.readFileAsync(sessionsDirectory + '/' + file, 'utf8').then(processUsbSession).catch(function(err) {
+                            if (err.code !== 'ENOENT') {
+                                throw err;
+                            }
+                        });
+                    }(files[i]));
+                }
+            } else {
+                return reportNoUsbSessions();
             }
             return promise;
         }).catch(function(err) {
@@ -132,11 +136,21 @@ module.exports = function(io) {
         });
     }
 
-    function removeEmpty(obj) {
-        // Remove blank attributes
+    function reportNoUsbSessions() {
+        winston.info('No completed WindowsUsb or Mac sessions found');
+        return Session.findOne({$or: [{'device.type': 'WindowsUsb'}, {'device.type': 'Mac'}], 'tmp.is_active': true}).then(function(session) {
+            if (session !== null) {
+                session.log('warn', 'USB drive inserted without successful refresh', '');
+                session.tmp.currentStep = 'askRetry';
+                return session.save();
+            }
+        });
+    }
+
+    function removeEmptyAttributes(obj) {
         Object.keys(obj).forEach(function(key) {
             if (obj[key] && typeof obj[key] === 'object') {
-                removeEmpty(obj[key]);
+                removeEmptyAttributes(obj[key]);
             }
             else if (obj[key] === null || obj[key] === '') {
                 delete obj[key];
@@ -148,17 +162,40 @@ module.exports = function(io) {
         // Remove non-printable characters
         data = data.replace(/[^\x20-\x7E]+/g, '');
         var usbSession = JSON.parse(data);
-        removeEmpty(usbSession);
+        removeEmptyAttributes(usbSession);
         var usbSessionSuccess = usbSession.status === 'Success';
         winston.info('Refresh Session details', JSON.stringify(usbSession));
-        return Session.findOneAndUpdate({
-            'device.item_number': usbSession.device.item_number,
-            'status': 'Incomplete'
-        }, usbSession, {
-            upsert: true,
-            returnNewDocument: true
-        }).then(function(sessionAfterUpdate) {
-            return sessionAfterUpdate.finish(usbSessionSuccess);
+        return Session.aggregate([{
+            $match: {
+                'device.type': usbSession.device.type,
+                'status': 'Incomplete'
+            }
+        }, {$project: {"serial_number_matches": {$cond: [{$eq: ["$device.serial_number", usbSession.device.serial_number]}, 1, 0]}}}, {
+            $sort: {
+                'serial_number_matches': -1,
+                'document.tmp.is_active': -1,
+                'document.start_time': 1
+            }
+        }]).limit(1).then(function(sessions) {
+            if (sessions.length > 0) {
+                return Session.findOne({'_id': sessions[0]._id}).then(function(session) {
+                    session.status = usbSession.status;
+                    session.start_time = usbSession.start_time;
+                    session.end_time = usbSession.end_time;
+
+                    // Item Number, Type, and SKU originate from Inventory data (in session.device)
+                    // Manufacturer, Model, and Serial Number originate from the device (in usbSession.device)
+                    session.device.manufacturer = usbSession.device.manufacturer;
+                    session.device.model = usbSession.device.model;
+                    session.device.serial_number = usbSession.device.serial_number;
+
+                    session.logs = usbSession.logs;
+                    return session.finish(usbSessionSuccess);
+                });
+            } else {
+                var session = new Session(usbSession);
+                return session.finish(usbSessionSuccess);
+            }
         });
     }
 

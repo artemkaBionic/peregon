@@ -114,13 +114,15 @@ module.exports = function(io) {
         var id = req.params.id;
         var item = req.body;
         Session.findOne({_id: id}).then(function(session) {
+            // Item Number, Type, and SKU originate from Inventory data (in item)
+            // Manufacturer, Model, and Serial Number originate from the device (in session.device)
             session.device.item_number = item.item_number;
             session.device.type = item.product.type;
             session.device.sku = item.sku;
-            if (!session.device.manufacturer) {
+            if (session.device.manufacturer === undefined || session.device.manufacturer === null) {
                 session.device.manufacturer = item.manufacturer;
             }
-            if (!session.device.model) {
+            if (session.device.model === undefined || session.device.model === null) {
                 session.device.model = item.model;
             }
             session.save();
