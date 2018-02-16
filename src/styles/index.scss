@@ -409,7 +409,7 @@ figcaption {
   border: 0;
   border-radius: 16px;
   height: 90vh;
-
+  width: 100%
 }
 
 .modal-lg {
@@ -467,21 +467,20 @@ figcaption {
 }
 
 .modal-sm-to-lg {
+  width: 550px;
   .modal-content {
-    width: 500px;
     border: 0;
     border-radius: 16px;
     height: 600px !important;
     position: fixed !important;
     z-index: 999 !important;
     top: 25% !important;
-    margin-left: 50px !important;
     margin-top: -100px !important;
   }
 }
 
 .modal-xs {
-  width: 35vw;
+  width: 90vw;
   .modal-content {
     border: 0;
     border-radius: 16px;
@@ -489,13 +488,12 @@ figcaption {
     position: fixed !important;
     z-index: 999 !important;
     top: 25% !important;
-    margin-left: -20px !important;
     margin-top: -100px !important;
   }
 }
 
 .modal-xxs {
-  width: 35vw;
+  width: 85vw;
   .modal-content {
     border: 0;
     border-radius: 16px;
@@ -503,12 +501,12 @@ figcaption {
     position: fixed !important;
     z-index: 999 !important;
     top: 25% !important;
-    margin-left: -20px !important;
   }
 }
 
 .modal-sm-to-xs {
-  width: 45vw;
+  width: 85vw;
+  max-width: 550px;
   .modal-content {
     border: 0;
     border-radius: 16px;
@@ -516,7 +514,6 @@ figcaption {
     position: fixed !important;
     z-index: 999 !important;
     top: 50% !important;
-    margin-left: 40px !important;
     margin-top: -220px !important;
   }
 }

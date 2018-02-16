@@ -77,14 +77,6 @@
             });
             return deferred.promise;
         };
-
-        service.getLowestUsbProgress = function() {
-            var deferred = $q.defer();
-            $http.get('/getLowestUsbProgress').then(function(result) {
-                deferred.resolve(result.data);
-            });
-            return deferred.promise;
-        };
         return service;
     }
 })();

@@ -188,7 +188,8 @@ module.exports = function(io) {
                                                 copyFilesAndApplyImages(device, contentTemp, copyFilesSize, 0, false));
                                         }
                                     }
-                                });
+                                }
+                            );
                         }
                     });
                 });

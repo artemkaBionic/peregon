@@ -16,9 +16,11 @@
         '$http',
         'inventoryService',
         'socketService',
-        '$rootScope'];
+        '$rootScope',
+        'toastr'];
 
-    function usbControlController($http, inventory, socket, $rootScope) {
+    function usbControlController($http, inventory, socket, $rootScope, toastr) {
+        var usbProgressNotification = null;
         var vm = this;
         vm.showSmallUsbError = false;
         vm.steps = {
@@ -68,18 +70,31 @@
                 vm.showSmallUsbError = usbDrives.usbData.isSmallUsbDriveInserted;
                 switch (usbDrives.usbData.status) {
                     case 'newBootDevice':
+                        toastr.clear(usbProgressNotification);
                         vm.step = vm.steps.newBootDevice;
                         break;
                     case 'bootDevicesProcessing':
-                        showBootDeviceProgress();
+                        if (!vm.guide && (usbProgressNotification === null || !usbProgressNotification.isOpened)) {
+                            usbProgressNotification = toastr.warning('Updating USB drive, do not unplug.', {
+                                'timeOut': 0,
+                                'extendedTimeOut': 0,
+                                'tapToDismiss': false,
+                                'newest-on-top': false,
+                                'closeButton': false
+                            });
+                        }
+                        usbProgress(usbDrives.lowestProgress);
                         break;
                     case 'bootDevicesFailed':
+                        toastr.clear(usbProgressNotification);
                         vm.step = vm.steps.bootDevicesFailed;
                         break;
                     case 'noBootDevices':
+                        toastr.clear(usbProgressNotification);
                         vm.step = vm.steps.noBootDevices;
                         break;
                     case 'bootDevicesReady':
+                        toastr.clear(usbProgressNotification);
                         if (vm.step !== vm.steps.bootDevicesFailed) {
                             if (vm.guide) {
                                 $rootScope.$broadcast('bootDevicesReady');
@@ -95,12 +110,6 @@
         function usbProgress(progress) {
             vm.step = vm.steps.bootDevicesProcessing;
             vm.percentageComplete = progress;
-        }
-
-        function showBootDeviceProgress() {
-            inventory.getLowestUsbProgress().then(function(minProgress) {
-                usbProgress(minProgress);
-            });
         }
 
         vm.createBootDrives = function() {

@@ -24,7 +24,9 @@
         vm.showAuth = true;
         vm.sessionAlreadyInProgress = false;
         vm.wrongDeviceType = false;
-        vm.showUnrecoginzedDeviceFooter = false;
+        vm.showUnrecognizedDeviceFooter = false;
+        vm.manufacturer = null;
+        vm.model = null;
         vm.serialNo = null;
         if (data.errors) {
             vm.errors = data.errors;
@@ -32,7 +34,9 @@
             vm.message = data.message;
             if (data.session) {
                 vm.sessionId = data.session._id;
-                vm.showUnrecoginzedDeviceFooter = true;
+                vm.showUnrecognizedDeviceFooter = true;
+                vm.manufacturer = data.session.device.manufacturer;
+                vm.model = data.session.device.model;
                 vm.serialNo = data.session.device.serial_number;
                 vm.deviceType = data.session.device.type;
             }
@@ -66,8 +70,7 @@
                                 inventory.getItem(vm.searchString).
                                     then(function(item) {
                                         vm.item = item;
-                                        if (item !== null &&
-                                            item.product.type !== vm.deviceType) {
+                                        if (item !== null && !vm.deviceType.startsWith(item.product.type)) {
                                             vm.wrongDeviceType = true;
                                         }
                                         vm.itemNumberError = false;

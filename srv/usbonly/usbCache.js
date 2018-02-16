@@ -32,6 +32,7 @@ exports.getAllUsbDrives = function () {
         drives.usbData.inProgressDevices = 0;
         drives.usbData.readyDevices = 0;
         drives.usbData.failedDevices = 0;
+        drives.lowestProgress = 100;
         for (var key in drives) {
             if (drives.hasOwnProperty(key)) {
                 if (drives[key].status) {
@@ -42,6 +43,9 @@ exports.getAllUsbDrives = function () {
                         drives.usbData.notReadyDevices++;
                     } else if (drives[key].status === 'in_progress') {
                         drives.usbData.inProgressDevices++;
+                        if (usbDrives[key].progress < drives.lowestProgress) {
+                            drives.lowestProgress = usbDrives[key].progress;
+                        }
                     } else if (drives[key].status === 'ready') {
                         drives.usbData.readyDevices++;
                     } else if (drives[key].status === 'failed') {

@@ -1,8 +1,5 @@
 <horizontal-ui-sheet horizontal-scroll1="" class="shuffle-animation apc-sheet-full modal-android">
   <div class="manual-modal-content">
-    <div class="text-center">
-      <img class="imageManualModal" ng-src="{{vm.data.image}}"/>
-    </div>
     <div class="modalTextManual text-center">
       <div ng-show="vm.errors" class="modalErrors">
         <h3>These tests failed:</h3>
@@ -11,8 +8,8 @@
         </div>
       </div>
       <div ng-show="vm.message">
-        <h4 ng-show="vm.serialNo">{{vm.message}} <span > with <strong>Serial: {{vm.serialNo}}</strong></span></h4>
-        <h3 ng-hide="vm.serialNo">{{vm.message}}</h3>
+        <h3>{{vm.message}}</h3>
+        <h4 ng-show="vm.serialNo">{{vm.manufacturer}} {{vm.model}}<br>with <strong>serial {{vm.serialNo}}</strong></h4>
       </div>
       <div ng-show="vm.showItemInput">
         <div class="row">
@@ -57,12 +54,12 @@
       </div>
     </div>
     <div class="navigtion-buttons manual-modal-footer">
-      <div class="row simultaneous-modal-footer-btns" ng-show="vm.showUnrecoginzedDeviceFooter">
+      <div class="row simultaneous-modal-footer-btns" ng-show="vm.showUnrecognizedDeviceFooter">
         <button ng-disabled="vm.item === null || vm.wrongDeviceType || vm.showAuthCheck || vm.sessionAlreadyInProgress" type="submit"
                 class="btn-success btn-rounded" ng-click="vm.authorize()">Ok</button>
         <button type="submit" class="btn-primary btn-rounded" ng-click="vm.closeModal()">Cancel</button>
       </div>
-      <div class="row text-center" style="margin-top: 15px" ng-hide="vm.showUnrecoginzedDeviceFooter">
+      <div class="row text-center" style="margin-top: 15px" ng-hide="vm.showUnrecognizedDeviceFooter">
         <button type="submit" class="btn-primary btn-rounded" ng-click="vm.closeModal()">Close</button>
       </div>
     </div>

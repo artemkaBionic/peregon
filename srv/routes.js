@@ -259,15 +259,6 @@ module.exports = function(io) {
         });
     });
 
-    router.get('/getLowestUsbProgress', function(req, res) {
-        usbDrives.getLowestUsbProgress().then(function(minProgress) {
-            res.json(minProgress);
-        }).catch(function(err) {
-            winston.error('Failed to get lowest usb drive in progress', err);
-            res.status(500).send();
-        });
-    });
-
     router.get('/getStationName', function(req, res) {
         res.json(station.getName());
     });
