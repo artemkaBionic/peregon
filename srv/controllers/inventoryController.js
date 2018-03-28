@@ -21,7 +21,7 @@ exports.unlockDevice = unlockDevice;
 function getItem(id) {
         winston.info('Getting item ' + id + ' from server');
         return request({
-            uri: 'https://' + config.apiHost + '/inventory/' + id,
+            uri: 'https://' + config.apiHost + '/inventory/items/' + id,
             headers: {
                 'Authorization': config.apiAuthorization
             },
@@ -46,7 +46,7 @@ function getItem(id) {
 function getSerialLookup(serial) {
     winston.info('Getting item from server with serial number ' + serial);
     return request({
-        url: 'https://' + config.apiHost + '/inventory/serial_number/' + serial,
+        url: 'https://' + config.apiHost + '/inventory/items/serial_number/' + serial,
         headers: {
             'Authorization': config.apiAuthorization
         },
