@@ -211,7 +211,7 @@ module.exports = function(io) {
         if (event.name === 'connection-status') {
             var connectionState = event.data;
             if (connectionState.isOnline) {
-                sessions.resend();
+                Session.sendUnsentSessions();
             }
             io.emit(event.name, event.data);
         } else if (event.name === 'device-add') {
