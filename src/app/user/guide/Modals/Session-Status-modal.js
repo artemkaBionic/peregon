@@ -1,14 +1,12 @@
 (function() {
     'use strict';
 
-    angular.module('app.user').
-        controller('SessionStatusModalController',
-            SessionStatusModalController);
+    angular.module('app.user').controller('SessionStatusModalController',
+        SessionStatusModalController);
 
-    SessionStatusModalController.$inject = ['popupLauncher', 'data', 'config', 'inventoryService', 'sessionsService', '$scope'];
+    SessionStatusModalController.$inject = ['$q', 'popupLauncher', 'data', 'config', 'inventoryService', 'sessionsService', '$scope'];
 
-    function SessionStatusModalController(
-        popupLauncher, data, config, inventory, sessions, $scope) {
+    function SessionStatusModalController($q, popupLauncher, data, config, inventory, sessions, $scope) {
         /*jshint validthis: true */
         var vm = this;
         vm.searchString = '';
@@ -52,11 +50,17 @@
             if (vm.sessionId !== null) {
                 vm.showItemInput = true;
 
+                var canceller = null;
                 var getItem = function() {
                     vm.item = null;
                     if (vm.searchString !== '') {
                         vm.itemNumberLoading = true;
-                        inventory.getItem(vm.searchString).then(function(item) {
+                        if (canceller !== null) {
+                            canceller.resolve(null);
+                            canceller = null;
+                        }
+                        canceller = $q.defer();
+                        inventory.getItem(vm.searchString, canceller).then(function(item) {
                             if (item) {
                                 vm.item = item;
                                 vm.itemNumberLoading = false;
@@ -84,6 +88,10 @@
                     vm.sessionAlreadyInProgress = false;
                     vm.searchString = vm.searchString.toUpperCase();
                     if (vm.searchString !== vm.lastValidSearchString) {
+                        if (canceller !== null) {
+                            canceller.resolve(null);
+                            canceller = null;
+                        }
                         vm.searchStringError = false;
                         vm.itemNumberLoading = false;
                         vm.itemNumberError = false;

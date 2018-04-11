@@ -16,15 +16,16 @@
             return item && item.sku;
         }
 
-        var canceller = $q.defer();
-        service.getItem = function(id) {
-            var url = '/inventory/' + id;
+        service.getItem = function(id, canceller) {
             var deferred = $q.defer();
+            var url = '/inventory/' + id;
+            var config = {};
 
-            canceller.resolve(null);
-            canceller = $q.defer();
+            if (canceller) {
+                config.timeout = canceller.promise;
+            }
 
-            $http.get(url, {timeout: canceller.promise}).then(function(result) {
+            $http.get(url, config).then(function(result) {
                 if (isValidItem(result.data)) {
                     deferred.resolve(result.data);
                 } else {

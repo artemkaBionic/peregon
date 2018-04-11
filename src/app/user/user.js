@@ -161,11 +161,17 @@
             vm.sessionType = filter;
         };
 
+        var canceller = null;
         function getItem() {
             vm.item = null;
             if (vm.searchString !== '') {
                 vm.itemNumberLoading = true;
-                inventory.getItem(vm.searchString).then(function(item) {
+                if (canceller !== null) {
+                    canceller.resolve(null);
+                    canceller = null;
+                }
+                canceller = $q.defer();
+                inventory.getItem(vm.searchString, canceller).then(function(item) {
                     if (item) {
                         vm.item = item;
                         vm.itemNumberLoading = false;
@@ -192,6 +198,10 @@
         vm.searchStringChange = function() {
             vm.searchString = vm.searchString.toUpperCase();
             if (vm.searchString !== vm.lastValidSearchString) {
+                if (canceller !== null) {
+                    canceller.resolve(null);
+                    canceller = null;
+                }
                 vm.searchStringError = false;
                 vm.itemNumberLoading = false;
                 vm.itemNumberError = false;
