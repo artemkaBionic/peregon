@@ -12,8 +12,6 @@
 
         var service = {};
 
-        service.items = {};
-
         function isValidItem(item) {
             return item && item.sku;
         }
@@ -21,23 +19,20 @@
         var canceller = $q.defer();
         service.getItem = function(id) {
             var url = '/inventory/' + id;
+            var deferred = $q.defer();
+
             canceller.resolve(null);
             canceller = $q.defer();
 
-            if (isValidItem(service.items[id])) {
-                canceller.resolve(service.items[id]);
-            } else {
-                $http.get(url, {timeout: canceller.promise}).then(function(result) {
-                    if (isValidItem(result.data)) {
-                        service.items[id] = result.data;
-                        canceller.resolve(result.data);
-                    } else {
-                        canceller.reject();
-                    }
-                });
-            }
+            $http.get(url, {timeout: canceller.promise}).then(function(result) {
+                if (isValidItem(result.data)) {
+                    deferred.resolve(result.data);
+                } else {
+                    deferred.reject();
+                }
+            });
 
-            return canceller.promise;
+            return deferred.promise;
         };
 
         service.lock = function(imei) {

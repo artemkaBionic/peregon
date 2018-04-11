@@ -19,7 +19,6 @@ var shell = require('shelljs');
 var routes = require('./routes.js')(io);
 var station = require('./controllers/stationController.js');
 require('./android/android.js')(io);
-require('./migrate-tingo-to-mongo')(io);
 
 // Common data
 var isDevelopment = process.env.NODE_ENV === 'development';

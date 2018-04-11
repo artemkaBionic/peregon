@@ -160,38 +160,48 @@
         vm.changeFilter = function(filter) {
             vm.sessionType = filter;
         };
-        // get item number
+
+        function getItem() {
+            vm.item = null;
+            vm.itemNumberLoading = true;
+            inventory.getItem(vm.searchString).then(function(item) {
+                if (item) {
+                    vm.item = item;
+                    vm.itemNumberLoading = false;
+                    vm.itemNumberError = false;
+                    vm.itemUnsupportedError = !vm.item.product.type || vm.item.product.type === 'Unsupported';
+                } else {
+                    if (vm.item === null) { // If vm.item is populated then a successful call to getItem was completed before this failure was returned.
+                        vm.itemNumberLoading = false;
+                        vm.itemNumberError = true;
+                        vm.itemUnsupportedError = false;
+                    }
+                }
+            }, function() {
+                if (vm.item === null) { // If vm.item is populated then a successful call to getItem was completed before this failure was returned.
+                    vm.itemNumberLoading = false;
+                    vm.itemNumberError = true;
+                    vm.itemUnsupportedError = false;
+                }
+            });
+
+        }
+
+        var searchStringChangeTimeout;
         vm.searchStringChange = function() {
             vm.searchString = vm.searchString.toUpperCase();
             if (vm.searchString !== vm.lastValidSearchString) {
                 vm.searchStringError = false;
+                vm.itemNumberLoading = false;
                 vm.itemNumberError = false;
                 vm.itemUnsupportedError = false;
                 vm.searchStringSkuWarning = config.partialSkuRegEx.test(vm.searchString);
                 if (config.partialItemNumberRegEx.test(vm.searchString)) {
                     vm.lastValidSearchString = vm.searchString;
                     if (config.itemNumberRegEx.test(vm.searchString)) {
-                        vm.item = null;
-                        inventory.getItem(vm.searchString).then(function(item) {
-                            if (item) {
-                                vm.item = item;
-                                vm.itemNumberError = false;
-                                vm.itemUnsupportedError = false;
-                                if (!vm.item.product.type || vm.item.product.type === 'Unsupported') {
-                                    vm.itemUnsupportedError = true;
-                                }
-                            } else {
-                                if (vm.item === null) { // If vm.item is populated then a successful call to getItem was completed before this failure was returned.
-                                    vm.itemNumberError = true;
-                                    vm.itemUnsupportedError = false;
-                                }
-                            }
-                        }, function() {
-                            if (vm.item === null) { // If vm.item is populated then a successful call to getItem was completed before this failure was returned.
-                                vm.itemNumberError = true;
-                                vm.itemUnsupportedError = false;
-                            }
-                        });
+                        //Wait to make sure user is done typing
+                        clearTimeout(searchStringChangeTimeout);
+                        searchStringChangeTimeout = setTimeout(getItem, 500);
                     } else {
                         vm.item = null;
                     }

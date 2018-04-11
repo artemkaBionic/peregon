@@ -36,6 +36,9 @@
           <button class="item-button" type="submit"><strong>SKU: {{vm.item.sku}}</strong><br/>{{vm.item.product.full_description}}
           </button>
         </div>
+        <div class="item-button" ng-show="vm.itemNumberLoading">
+          Loading Item...
+        </div>
         <div class="item-button-error" ng-show="vm.itemNumberError">
           <strong>Item not found</strong><br/>Check the Item Number
         </div>
