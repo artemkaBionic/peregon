@@ -21,49 +21,57 @@ exports.unlockDevice = unlockDevice;
 function getItem(itemNumber) {
     winston.info('Getting item ' + itemNumber + ' from server');
     return new Promise(function(resolve) {
-        InventoryItem.findOne({'item_number': itemNumber}).then(function(item) {
-            if (item === null) {
-                request({
-                    uri: 'https://' + config.apiHost + '/inventory/items/' + itemNumber,
-                    headers: {
-                        'Authorization': config.apiAuthorization
-                    },
-                    rejectUnauthorized: false,
-                    json: true
-                }).then(function(response) {
-                    winston.info('NodeJS server returned staus: ' + response.statusCode + ' body: ', response.body);
-                    if (response.statusCode === 200) {
-                        item = response.body;
-                        InventoryItem.findOneAndUpdate({'item_number': item.item_number}, item, {upsert: true}, function(err) {
-                            if (err) {
-                                winston.error('Failed to save inventory item ' + item.item_number, err);
-                            }
-                        });
-                        getProduct(item.sku).then(function(product) {
-                            if (product === null) {
-                                resolve(null);
-                            } else {
-                                item.product = product;
-                                resolve(item);
-                            }
-                        });
-                    } else {
-                        winston.info('Item ' + itemNumber + ' not found.', response.body);
-                        resolve(null);
-                    }
-                }).catch(function(err) {
-                    winston.error('Error getting item', err);
-                    throw(err);
-                });
+        InventoryItem.findOne({'item_number': itemNumber}).lean().exec(function(err, item) {
+            if (err) {
+                winston.error('Failed to find item', err);
             } else {
-                getProduct(item.sku).then(function(product) {
-                    if (product === null) {
-                        resolve(null);
-                    } else {
-                        item.product = product;
-                        resolve(item);
-                    }
-                });
+                if (item === null) {
+                    request({
+                        uri: 'https://' + config.apiHost + '/inventory/items/' + itemNumber,
+                        headers: {
+                            'Authorization': config.apiAuthorization
+                        },
+                        rejectUnauthorized: false,
+                        json: true
+                    }).then(function(response) {
+                        winston.info('NodeJS server returned staus: ' + response.statusCode + ' body: ', response.body);
+                        if (response.statusCode === 200) {
+                            //ToDo: remove this after product is no longer sent with item from inventory service
+                            if (response.body.hasOwnProperty('product')) {
+                                delete response.body.product;
+                            }
+                            item = new InventoryItem(response.body);
+                            item.save(function(err) {
+                                if (err) {
+                                    winston.error('Failed to save inventory item ' + item.item_number, err);
+                                }
+                            });
+                            getProduct(item.sku).then(function(product) {
+                                if (product === null) {
+                                    resolve(null);
+                                } else {
+                                    response.body.product = product;
+                                    resolve(response.body);
+                                }
+                            });
+                        } else {
+                            winston.info('Item ' + itemNumber + ' not found.', response.body);
+                            resolve(null);
+                        }
+                    }).catch(function(err) {
+                        winston.error('Error getting item', err);
+                        throw(err);
+                    });
+                } else {
+                    getProduct(item.sku).then(function(product) {
+                        if (product === null) {
+                            resolve(null);
+                        } else {
+                            item.product = product;
+                            resolve(item);
+                        }
+                    });
+                }
             }
         });
     });
@@ -72,35 +80,40 @@ function getItem(itemNumber) {
 function getProduct(sku) {
     winston.info('Getting product ' + sku + ' from server');
     return new Promise(function(resolve) {
-        InventoryProduct.findOne({'sku': sku}).then(function(product) {
-            if (product === null) {
-                request({
-                    uri: 'https://' + config.apiHost + '/inventory/products/' + sku,
-                    headers: {
-                        'Authorization': config.apiAuthorization
-                    },
-                    rejectUnauthorized: false,
-                    json: true
-                }).then(function(response) {
-                    winston.info('NodeJS server returned staus: ' + response.statusCode + ' body: ', response.body);
-                    if (response.statusCode === 200) {
-                        var product = response.body;
-                        InventoryProduct.findOneAndUpdate({sku: product.sku}, product, {upsert: true}, function(err) {
-                            if (err) {
-                                winston.error('Failed to save inventory product ' + product.sku, err);
-                            }
-                        });
-                        resolve(product);
-                    } else {
-                        winston.info('Product ' + sku + ' not found.', response.body);
-                        resolve(null);
-                    }
-                }).catch(function(err) {
-                    winston.error('Error getting product', err);
-                    throw(err);
-                });
+        InventoryProduct.findOne({'sku': sku}).lean().exec(function(err, product) {
+            if (err) {
+                winston.error('Failed to find product', err);
+                resolve(null);
             } else {
-                resolve(product);
+                if (product === null) {
+                    request({
+                        uri: 'https://' + config.apiHost + '/inventory/products/' + sku,
+                        headers: {
+                            'Authorization': config.apiAuthorization
+                        },
+                        rejectUnauthorized: false,
+                        json: true
+                    }).then(function(response) {
+                        winston.info('NodeJS server returned staus: ' + response.statusCode + ' body: ', response.body);
+                        if (response.statusCode === 200) {
+                            var product = new InventoryProduct(response.body);
+                            product.save(function(err) {
+                                if (err) {
+                                    winston.error('Failed to save inventory product ' + product.sku, err);
+                                }
+                            });
+                            resolve(product);
+                        } else {
+                            winston.info('Product ' + sku + ' not found.', response.body);
+                            resolve(null);
+                        }
+                    }).catch(function(err) {
+                        winston.error('Error getting product', err);
+                        throw(err);
+                    });
+                } else {
+                    resolve(product);
+                }
             }
         });
     });

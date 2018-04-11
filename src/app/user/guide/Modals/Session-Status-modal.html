@@ -33,8 +33,11 @@
             <span  type="submit"><strong>{{'SKU: ' + vm.item.sku}}</strong><br/>{{vm.item.product.full_description}}
             </span>
           </div>
-          <div class="item-button-error" ng-show="vm.itemNumberError"><strong>Item not found</strong><br/>Check
-            the Item Number
+          <div class="item-button" ng-show="vm.itemNumberLoading">
+            Loading Item...
+          </div>
+          <div class="item-button-error" ng-show="vm.itemNumberError">
+            <strong>Item not found</strong><br/>Check the Item Number
           </div>
           <div class="item-button-error" ng-show="vm.wrongDeviceType"><strong>Item Number entered is for {{vm.item.product.type}}</strong>
             <br/> Make sure you are typing Item Number for {{vm.deviceType}}

@@ -52,33 +52,49 @@
             if (vm.sessionId !== null) {
                 vm.showItemInput = true;
 
+                var getItem = function() {
+                    vm.item = null;
+                    if (vm.searchString !== '') {
+                        vm.itemNumberLoading = true;
+                        inventory.getItem(vm.searchString).then(function(item) {
+                            if (item) {
+                                vm.item = item;
+                                vm.itemNumberLoading = false;
+                                vm.itemNumberError = false;
+                                vm.wrongDeviceType = !vm.deviceType.startsWith(item.product.type);
+                            } else {
+                                if (vm.item === null) { // If vm.item is populated then a successful call to getItem was completed before this failure was returned.
+                                    vm.itemNumberLoading = false;
+                                    vm.itemNumberError = true;
+                                    vm.wrongDeviceType = false;
+                                }
+                            }
+                        }, function() {
+                            if (vm.item === null) { // If vm.item is populated then a successful call to getItem was completed before this failure was returned.
+                                vm.itemNumberLoading = false;
+                                vm.itemNumberError = true;
+                                vm.wrongDeviceType = false;
+                            }
+                        });
+                    }
+                };
+
+                var searchStringChangeTimeout;
                 vm.searchStringChange = function() {
                     vm.sessionAlreadyInProgress = false;
-                    vm.wrongDeviceType = false;
                     vm.searchString = vm.searchString.toUpperCase();
                     if (vm.searchString !== vm.lastValidSearchString) {
                         vm.searchStringError = false;
+                        vm.itemNumberLoading = false;
                         vm.itemNumberError = false;
-                        //vm.sessionAlreadyInProgress = false;
-                        vm.searchStringSkuWarning = config.partialSkuRegEx.test(
-                            vm.searchString);
-                        if (config.partialItemNumberRegEx.test(
-                                vm.searchString)) {
+                        vm.wrongDeviceType = false;
+                        vm.searchStringSkuWarning = config.partialSkuRegEx.test(vm.searchString);
+                        if (config.partialItemNumberRegEx.test(vm.searchString)) {
                             vm.lastValidSearchString = vm.searchString;
                             if (config.itemNumberRegEx.test(vm.searchString)) {
-                                vm.item = null;
-                                inventory.getItem(vm.searchString).
-                                    then(function(item) {
-                                        vm.item = item;
-                                        if (item !== null && !vm.deviceType.startsWith(item.product.type)) {
-                                            vm.wrongDeviceType = true;
-                                        }
-                                        vm.itemNumberError = false;
-                                    }, function() {
-                                        if (vm.item === null) { // If vm.item is populated then a successful call to getItem was completed before this failure was returned.
-                                            vm.itemNumberError = true;
-                                        }
-                                    });
+                                //Wait to make sure user is done typing
+                                clearTimeout(searchStringChangeTimeout);
+                                searchStringChangeTimeout = setTimeout(getItem, 500);
                             } else {
                                 vm.item = null;
                             }
