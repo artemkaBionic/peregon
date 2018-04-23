@@ -84,7 +84,7 @@ exports.endUpdate = function (key) {
 };
 
 exports.cancelUpdate = function (key) {
-    if (usbDrives[key].updatePromise) {
+    if (usbDrives[key] && usbDrives[key].updatePromise) {
         usbDrives[key].updatePromise.cancel();
         usbDrives[key].updatePromise = null;
     }
