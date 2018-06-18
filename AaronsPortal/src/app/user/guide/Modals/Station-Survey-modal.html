@@ -1,0 +1,119 @@
+<horizontal-ui-sheet horizontal-scroll1="" class="shuffle-animation apc-sheet-full modal-android">
+  <div class="manual-modal-content">
+    <div class="scrollable-modal-content">
+    <script type="text/javascript">var submitted = false;</script>
+    <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"
+            onload="if(submitted)  {vm.goHome()}"></iframe>
+    <form class="modal-form" action="https://docs.google.com/forms/d/e/1FAIpQLSdFWuaXXsMM45_jKMUhwPwFMC5e9jXtkyE4rifyQi3LHVkTOw/formResponse"
+      onsubmit="goHome()" method="post" target="hidden_iframe" ng-hide="vm.submitted">
+      <h3 class="text-center">Device Refresh Station Survey</h3>
+      <div class="form-group">
+        <div style="font-weight: 100;" class="form-group">
+          Please help us serve you better by taking few seconds to tell us about your product and service experience so far.
+          We appreciate your duty and want to make sure we meet your expectations.
+        </div>
+        <h5>Are you satisfied with current Device Refresh Station <br>performance?<span style="color:red"> *</span></h5>
+        <ul class="submit-modal-list" role="radiogroup" aria-label="Are you satisfied with current Device Refresh Station performance?">
+          <li >
+            <label>
+              <span >
+                <input type="radio" name="entry.316890418" value="Yes" id="group_316890418_1" role="radio"
+                    aria-label="Yes" required="" aria-required="true">
+              </span>
+              <span >Yes</span>
+            </label>
+          </li>
+          <li >
+            <label>
+              <span >
+                <input type="radio" name="entry.316890418" value="No" id="group_316890418_2" role="radio"
+                        aria-label="No" required="" aria-required="true"></span>
+              <span >No</span>
+            </label>
+          </li>
+        </ul>
+      </div>
+      <div class="form-group">
+        <h5>How often do you use Device Refresh Station?</h5>
+        <ul class="submit-modal-list" role="radiogroup" aria-label="How often do you use Device Refresh Station  ">
+          <li >
+            <label><span >
+              <input type="radio" name="entry.1678315719" value="Everyday" id="group_1678315719_1" role="radio"
+                      aria-label="Everyday"></span>
+              <span >Everyday</span>
+            </label>
+          </li>
+          <li >
+            <label>
+              <span >
+                <input type="radio" name="entry.1678315719" value="Every Few Days" id="group_1678315719_2" role="radio"
+                        aria-label="Every Few Days"></span>
+              <span >Every few days</span>
+            </label>
+          </li>
+          <li >
+            <label>
+              <span >
+                <input type="radio" name="entry.1678315719" value="Few Times a Month" id="group_1678315719_3" role="radio"
+                      aria-label="Few Times a Month">
+              </span>
+              <span >Few times in a month</span>
+            </label>
+          </li>
+        </ul>
+      </div>
+      <div class="form-group">
+        <h5>How helpful our refresh instructions are?</h5>
+        <ul class="submit-modal-list" role="radiogroup" aria-label="How helpful our refresh instructions are?  ">
+          <li>
+            <label>
+              <span>
+                <input type="radio" name="entry.1460102954" value="Very helpful" id="group_1460102954_2" role="radio">
+              </span>
+              <span >Very helpful</span>
+            </label>
+          </li>
+          <li>
+            <label>
+              <span>
+                <input type="radio" name="entry.1460102954" value="Helpful" id="group_1460102954_1" role="radio" aria-label="Helpful">
+              </span>
+              <span >Helpful</span>
+            </label>
+          </li>
+          <li>
+            <label>
+              <span>
+                <input type="radio" name="entry.1460102954" value="Not helpful" id="group_1460102954_3" role="radio"  aria-label="Not helpful">
+              </span>
+              <span>Not helpful</span>
+            </label>
+          </li>
+        </ul>
+      </div>
+      <div class="form-group">
+        <h5>What can be improved?</h5>
+        <textarea class="modal-textarea" name="entry.1539610425" rows="8"
+                  cols="0" id="entry_1539610425" dir="auto" aria-label="What can be improved?"></textarea>
+      </div>
+
+      <div class="navigtion-buttons manual-modal-footer">
+        <div class="row simultaneous-modal-footer-btns">
+          <input type="submit" class="submit-modal-btn" value="SEND"/>
+          <button type="submit" class="btn-primary btn-rounded" ng-click="vm.closeModal()">Cancel</button>
+        </div>
+      </div>
+
+      <textarea ng-show="false" name="entry.1214528763" rows="8" cols="0" class="ss-q-long" id="entry_1214528763" dir="auto" aria-label="Station Id  " ng-model="vm.stationName"></textarea>
+    </form>
+      <div ng-show="vm.submitted" class="text-center submit-modal-success">
+        <i class="fa fa-check-circle success-icon"></i>
+        <h3>Thank you for your feedback!</h3>
+        <div style="margin-top: 20px" class="row text-center">
+          <button type="submit" class="btn-primary btn-rounded" ng-click="vm.closeModal()">Close</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</horizontal-ui-sheet>

@@ -1,0 +1,66 @@
+<div id="instructions" class="instructions-manual no-footer">
+  <h2 style="text-align: center; color:black;padding-bottom: 15px">Follow these steps to refresh Toshiba (Windows 8 and later):</h2>
+  <div class="container instruction-list">
+    <div class="row">
+      <div class="col-md-7">
+        <p>1. Power on the computer and repeatedly press the F2 key until the Setup Utility appears.</p>
+      </div>
+      <div class="col-md-5 text-center">
+        <div class="instruction-img-border">
+          <img class="instruction-img" ng-click="vm.openModal('/assets/images/toshiba-uefi-setup.png')" src="/assets/images/toshiba-uefi-setup.png">
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-7">
+        <p>2. Press the F9 key to load setup defaults, then select YES and press ENTER to confirm.</p>
+      </div>
+      <div class="col-md-5 text-center">
+        <div class="instruction-img-border">
+          <img class="instruction-img" ng-click="vm.openModal('/assets/images/toshiba-uefi-load-setup-defaults.png')" src="/assets/images/toshiba-uefi-load-setup-defaults.png">
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-7">
+        <p>3. Navigate to Advanced settings, select System Configuration, and press ENTER.</p>
+        <p>4. Select Boot Mode and press ENTER.</p>
+        <p>5. Select UEFI Boot and press ENTER.</p>
+      </div>
+      <div class="col-md-5 text-center">
+        <div class="instruction-img-border">
+          <img class="instruction-img" ng-click="vm.openModal('/assets/images/toshiba-uefi-enable-uefi.png')" src="/assets/images/toshiba-uefi-enable-uefi.png">
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-7">
+        <p>6. Press the F10 key to save changes and exit, then select Yes and press ENTER to confirm.</p>
+      </div>
+      <div class="col-md-5 text-center">
+        <div class="instruction-img-border">
+          <img class="instruction-img" ng-click="vm.openModal('/assets/images/toshiba-uefi-save-changes.png')" src="/assets/images/toshiba-uefi-save-changes.png">
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-7">
+        <p>7. While rebooting, repeatedly press the F12 key until the Boot Menu appears.</p>
+        <p>8. Select LAN and press ENTER.</p>
+      </div>
+      <div class="col-md-5 text-center">
+        <div class="instruction-img-border">
+          <img class="instruction-img" ng-click="vm.openModal('/assets/images/toshiba-uefi-network-boot-menu.png')" src="/assets/images/toshiba-uefi-network-boot-menu.png">
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <p>9. When the Refresh Environment has loaded, follow the instructions to start the refresh.</p>
+      <p>10. After the refresh is finished, click the OK button to turn off the computer.</p>
+    </div>
+  </div>
+  <!-- The Modal -->
+  <div id="myModal" class="modal-instruction absolute block" ng-click="vm.close()">
+    <img class="modal-content-guide centered" id="img01">
+  </div>
+</div>

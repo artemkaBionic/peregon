@@ -1,0 +1,74 @@
+<form name="inspection-form" class="content-finish" novalidate>
+  <div class="inspect-mode">
+    <div class="row text-center">
+      <span style="font-size: 20px; font-weight: 400;margin-left: -3%" data-toggle="tooltip">Is refresh successful?
+        <i ng-click="vm.openHelpModal('xxs','If after going through steps device rebooted with factory settings then refresh was successful.','')"
+           class="fa fa-question-circle" aria-hidden="true"></i>
+        <button id="manual-footer-refresh-success" ng-click="vm.refreshSuccess()" style="border-radius: 10%" class="btn btn-success btn-sm">Yes</button>
+        <button id="manual-footer-refresh-fail" ng-click="vm.refreshFailed();" style="border-radius: 10%" class="btn btn-danger btn-sm">No</button>
+      </span>
+    </div>
+  </div>
+</form>
+<div id="instructions" class="instructions-manual">
+  <h2 style="text-align: center; color:black;padding-bottom: 15px">Follow this steps to refresh Sony Smart TV:</h2>
+  <div class="container instruction-list">
+    <p>1. Plug out TV power cord from electrical outlet for a minute;</p>
+    <p>2. Plug in TV power cord to electrical outlet. TV will automatically turn on;</p>
+    <div class="row">
+      <div class="col-xs-7">
+        <p>3. Press and hold <b><i class="fa fa-arrow-up" aria-hidden="true"></i> button</b> on remote control;</p>
+      </div>
+      <div class="col-xs-5 text-center">
+        <div class="instruction-img-border">
+          <img class="instruction-img" ng-click="vm.openModal('/assets/images/sony1.png')" src="/assets/images/sony1.png">
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-7">
+        <p>4. While holding <b><i class="fa fa-arrow-up" aria-hidden="true"></i> button</b> on remote, tab the
+          <b>Power button</b> on side of the TV;</p>
+      </div>
+      <div class="col-xs-5 text-center">
+        <div class="instruction-img-border">
+          <img class="instruction-img" ng-click="vm.openModal('/assets/images/sony2.png')" src="/assets/images/sony2.png">
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-7">
+        <p>5. Wait until <b>'Reset'</b> message is displayed on the bottom left side of the screen;</p>
+      </div>
+      <div class="col-xs-5 text-center">
+        <div class="instruction-img-border">
+          <img class="instruction-img" ng-click="vm.openModal('/assets/images/sony3.png')" src="/assets/images/sony3.png">
+        </div>
+      </div>
+    </div>
+    <p>6. Release <b><i class="fa fa-arrow-up" aria-hidden="true"></i> button</b> on remote control and wait for TV to complete the reset;</p>
+  </div>
+  <br>
+  <div id="lastStep">
+    <div class="container instruction-list">
+      <p class="lg-line-height">
+        7. If after going through steps device rebooted with factory settings then refresh was successful.
+      </p>
+    </div>
+    <div id="checkButtons" class="row text-center">
+      <h2 style="text-align: center; color:black;padding-bottom: 5px">Is refresh successful?</h2>
+      <button id="manual-refresh-success" style="margin-right: 25px;margin-top:5px" class="instruction-btn btn btn-success btn-rounded" type="submit"
+              ng-click="vm.refreshSuccess()">
+        Refresh successful
+      </button>
+      <button id="manual-refresh-fail" style="margin-top:5px" class="instruction-btn btn btn-danger btn-rounded" type="submit" ng-click="vm.refreshFailed();">
+        Refresh failed
+      </button>
+    </div>
+    <br>
+  </div>
+  <!-- The Modal -->
+  <div id="myModal" class="modal-instruction absolute block" ng-click="vm.close()">
+    <img class="modal-content-guide centered" id="img01">
+  </div>
+</div>

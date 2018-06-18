@@ -1,0 +1,6 @@
+#!/bin/sh
+# This hook increments kiosk version
+cd srv/
+npm version patch
+cd ..
+git add srv/package.json

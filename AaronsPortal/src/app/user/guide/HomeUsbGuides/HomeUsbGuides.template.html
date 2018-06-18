@@ -1,0 +1,23 @@
+<horizontal-ui-sheet class="apc-sheet-full">
+  <header class="guide-header">
+    <div class="row header-row">
+      <div class="col-sm-7 header-col">
+        <div class="header-middle-col">
+          <div class="home-link" ui-sref="root.user" ng-click="vm.goHome()">
+            <div class="home-button">
+              <i class="fa fa-home home-button-icon"></i>
+              <span class="home-button-text">Home</span>
+            </div>
+            <img class="guide-logo" src="/assets/images/Logo.png">
+          </div>
+          <div class="home-header" style="font-size: 4vh;">{{vm.title}}</div>
+        </div>
+      </div>
+      <div class="col-sm-5 header-col">
+      </div>
+    </div>
+  </header>
+  <div horizontal-ui-sheet-content>
+    <usb-guide data-item="vm.item"></usb-guide>
+  </div>
+</horizontal-ui-sheet>

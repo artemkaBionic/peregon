@@ -1,0 +1,39 @@
+<ng-include ng-if="vm.templateUrl" src="vm.templateUrl"></ng-include>
+<div ng-if="!vm.templateUrl" id="instructions" class="instructions-manual no-footer">
+  <h2 style="text-align: center; color:black;padding-bottom: 15px">What best describes the computer you want to refresh?</h2>
+  <div class="container instruction-list">
+    <div class="row">
+      <div class="col-md-7">
+        <h3>Windows 8 and Later</h3>
+        <p>Many computers designed for Windows 8 or later do not have a sticker designating the version of Windows. If the computer has a touch screen or was manufactured after 2012, then it is most likely designed for Windows 8 or greater. Choose the system Manufacturer for instructions to perform a refresh.</p>
+        <ul>
+          <li><a href="" ng-click="vm.asusUefi()">ASUS</a></li>
+          <li><a href="" ng-click="vm.dellUefi()">Dell</a></li>
+          <li><a href="" ng-click="vm.hpUefi()">Hewlett Packard (HP)</a></li>
+          <li><a href="" ng-click="vm.toshibaUefi()">Toshiba</a></li>
+        </ul>
+      </div>
+      <div class="col-md-5 text-center">
+        <div class="instruction-img-border">
+          <img class="instruction-img" ng-click="vm.openModal('/assets/images/windows-8-login.png')" src="/assets/images/windows-8-login.png">
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-7">
+        <h3>Windows 7 and Earlier</h3>
+        <p>Many computers designed for Windows 7 or earlier have a sticker designating the version of Windows. If the computer was manufactured before 2012, then it is most likely designed for Windows 7 or lower. Choose the system Manufacturer for instructions to perform a refresh.</p>
+        <ul>
+          <li><a href="" ng-click="vm.dellBios()">Dell</a></li>
+          <li><a href="" ng-click="vm.hpBios()">Hewlett Packard (HP)</a></li>
+          <li><a href="" ng-click="vm.toshibaBios()">Toshiba</a></li>
+        </ul>
+      </div>
+      <div class="col-md-5 text-center">
+        <div class="instruction-img-border">
+          <img class="instruction-img" ng-click="vm.openModal('/assets/images/windows-7-login.png')" src="/assets/images/windows-7-login.png">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,199 @@
+// VARIABLES
+$sheet-border-color: rgba($brand-primary-300, .7);
+$background-gray-light-color: #f5f5f5;
+
+// HEADERS
+// main header
+.main-header {
+ // position: absolute;
+  left: 0;
+  right: 0;
+  height: $apc-sheet-header-height-sm;
+  margin: 0 $grid-gutter-width;
+  border-bottom: 2px solid $sheet-border-color;
+  color: $gray;
+
+  @media (min-width: $screen-sm-min) {
+    height: $apc-sheet-header-height;
+    padding: 22px 15px;
+  }
+}
+
+.logo{
+  margin: 6px 0 0;
+  @media (max-width: $screen-xs-max) {
+    display: none;
+  }
+}
+
+.userbar {
+  padding-top: 3px;
+  @media (min-width: $screen-sm-min) {
+    padding-top: 0;
+    float: right;
+  }
+  .user {
+    &-image {
+      i {
+        padding-top: 2px;
+        color:  $brand-primary;
+        @media (max-width: $screen-sm-min) {
+          padding-top: 4px;
+          font-size: 28px;
+        }
+      }
+
+      img, i {
+        height: 50px;
+        width: 50px;
+        border: 2px solid $brand-primary;
+        background-color: #FFF;
+        @media (max-width: $screen-xs-max) {
+          width: 42px;
+          height: 42px;
+        }
+      }
+    }
+
+    &-info {
+      @media (min-width: $screen-sm-min) {
+        line-height: 25px;
+      }
+      margin-right: 15px;
+    }
+  }
+}
+
+// device details header
+.device-details-header {
+  .apc-sheet-statusbar {
+    position: relative;
+    z-index: 1; /*OVERLAPS CONTENT - REMOVED*/
+  }
+
+  .apc-sheet-title{
+    display: block;
+    @media (min-width: $screen-sm-min) {
+      display: none;
+    }
+  }
+
+  &-content {
+    margin-top: -50px;
+
+    dt, dd {
+      line-height: $line-height-small;
+    }
+
+    dt {
+      &:not(:first-of-type) {
+        margin-top: 3px;
+      }
+    }
+  }
+}
+
+// sheet sizes
+.sheet-md{
+  @media (min-width: $screen-sm-min) {
+    width: calc(50vw - #{$apc-sidebar-width/2});
+    min-width: 560px;
+    max-width: 700px;
+  }
+}
+
+.sheet-sm{
+  @media (min-width: $screen-sm-min) {
+    width: calc(100vw/3 - #{$apc-sidebar-width/3});
+    min-width: 373px;
+    max-width: 500px;
+  }
+}
+
+a, .btn{
+  @include transition(background-color .15s ease-in-out, color .15s ease-in-out);
+}
+
+//HELPERS
+.row-centered {
+  text-align:center;
+}
+
+.col-centered {
+  display:inline-block;
+  float:none;
+}
+
+// this removes default top and side paddings from apc-sheet-content
+.sticky-top {
+  margin-top: -$line-height-computed / 2;
+  margin-left: -$line-height-computed / 2;
+  margin-right: -$line-height-computed / 2;
+}
+
+.disabled {
+  p{
+    opacity: 0.5;
+  }
+}
+
+.grayed {
+  opacity: 0.4;
+  filter: alpha(opacity=40);
+}
+
+
+// BACKGROUND VARIANTS
+.gray-light-bg {
+  background-color: $background-gray-light-color;
+}
+
+.gray-lighter-bg {
+  background-color: $gray-lighter;
+}
+
+//NO CONTENT WRAPPER
+.no-content-wrapper {
+  padding-top: 50px;
+  text-align: center;
+  & a {
+    text-decoration: none;
+  }
+}
+
+//ERROR PAGE
+.message-center {
+  width: 100%;
+  height: 300px;
+  color: #FFF;
+
+  position: absolute;
+  top:0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  margin: auto;
+}
+h3.accordion{
+  margin: 0;
+}
+.accordion a{
+  padding: 10px;
+  background: #ddd;
+  color: #333;
+  text-decoration: none;
+  font-weight: bold;
+  display: block;
+  margin-bottom: 1px;
+}
+.accordion-content{
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin: 1px 0;
+}
+.scroll{
+  height: 450px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}

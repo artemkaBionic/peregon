@@ -1,0 +1,32 @@
+//COLORS
+$theme-color-white:             #FFF !default;
+$theme-color-black:             #000 !default;
+$theme-color-base:              #927CB3 !default;
+$theme-color-light:             #F4F4F5 !default;
+$theme-color-inactive:          #BDB0D1 !default;
+$theme-color-neutral:           #E0E0E5 !default;
+//TEXT COLORS
+$theme-text-color:              #333335;
+$theme-link-color:              $theme-color-base !default;
+$theme-link-hover-color:        $theme-color-black !default;
+$theme-link-header-color:       $theme-color-inactive !default;
+$theme-link-header-hover-color: $theme-color-white !default;
+$theme-icon-color:              $theme-color-base !default;
+//STATUS COLORS
+$status-color-success:          #6CAB1C !default;
+$status-color-info:             #1D8EC5 !default;
+$status-color-warning:          #F8CF2B !default;
+$status-color-danger:           #D5484A !default;
+$status-color-neutral:          #D0D0D5 !default;
+//FONT_WEIGHT
+$theme-text-bold:               550 !default;
+$theme-text-semi-bold:          450 !default;
+$theme-text-normal:             350 !default;
+$theme-text-thin:               250 !default;
+//FONT SIZES
+$font-size-xs:                  11px;
+$font-size-sm:                  12px;
+$font-size-md:                  14px;
+$font-size-lg:                  18px;
+$font-size-xl:                  22px;
+$font-size-xxl:                 32px;

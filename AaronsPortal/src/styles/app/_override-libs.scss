@@ -1,0 +1,40 @@
+// PACE
+.pace .pace-activity{
+  top: 65px
+}
+
+
+// PARSLEY
+button.parsley-error {
+  border-color: #d5484a;
+  box-shadow: inset 0 1px 1px rgba(213, 72, 74, 0.075);
+}
+
+.valid-select {
+  button.parsley-error {
+    border-color: #ccc;
+    box-shadow: none;
+  }
+
+  .parsley-errors-list {
+    display: none;
+  }
+}
+
+
+// portal override and extensions ONLY!
+.apc-sheet + .apc-sheet {
+  .apc-sheet-header, .apc-sheet-content {
+    border-left-color: #c0c0c0;
+  }
+}
+
+.apc-sidebar-group-content .group-block .group-list-item{
+  .fa-tablet, .fa-mobile{
+    font-size: 42px;
+  }
+}
+
+.table .table {
+  background-color: transparent;
+}

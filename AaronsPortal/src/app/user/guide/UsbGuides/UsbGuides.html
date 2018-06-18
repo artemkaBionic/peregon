@@ -1,0 +1,181 @@
+<horizontal-ui-sheet class="apc-sheet-full guide xbox-one">
+  <header class="guide-header">
+    <div class="row header-row">
+      <div class="col-sm-7 header-col">
+        <div class="header-middle-col">
+          <div id="go-home-usb" class="home-link" ng-click="vm.goHome()">
+            <div class="home-button">
+              <i class="fa fa-home home-button-icon"></i>
+              <span class="home-button-text">Home</span>
+            </div>
+            <img class="guide-logo" src="/assets/images/Logo.png">
+          </div>
+          <!--<div ng-show="vm.item.product.type==='XboxOne'" class="home-header">Xbox One Refresh</div>-->
+          <!--<div ng-show="vm.item.product.type==='Mac'" class="home-header">Mac Refresh</div>-->
+          <!--<div ng-show="vm.item.product.type==='WindowsUsb'" class="home-header">Windows Usb Refresh</div>-->
+        </div>
+      </div>
+      <div class="col-sm-5 header-col">
+        <div class="header-middle-col-right">
+          <img ng-show="vm.item.product.type==='XboxOne'" class="header-item-icon" src="/assets/images/xbox-logo.png">
+          <i ng-show="vm.item.product.type==='WindowsUsb'" class="fa fa-windows header-item-icon"></i>
+          <i ng-show="vm.item.product.type==='Mac'" class="fa fa-apple header-item-icon"></i>
+          <div class="home-header-right">{{vm.item.product.full_description}}</div>
+        </div>
+      </div>
+    </div>
+  </header>
+  <div horizontal-ui-sheet-content>
+    <div class="row">
+      <ul id="progress-tracker" data-steps="3">
+        <li ng-class="{'active': vm.step.number >= 1 && vm.step.number <= 2, 'done': vm.step.number > 2}">
+          <span>Prepare</span>
+        </li>
+        <li ng-class="{'active': vm.step.number === 3, 'done': vm.step.number > 3}">
+          <span ng-show="vm.item.product.type==='WindowsUsb'">
+            Refresh the Windows laptop
+          </span>
+          <span ng-show="vm.item.product.type==='Mac'">
+            Refresh Mac
+          </span>
+          <span ng-show="vm.item.product.type==='XboxOne'">
+            Refresh X-Box
+          </span>
+        </li>
+        <li ng-class="{'active': vm.step.number >= 4}"><span>Finish</span><i></i></li>
+      </ul>
+    </div>
+    <!--<button ng-click="vm.finishFail()">Fail</button>-->
+    <!--<button ng-click="vm.finishSuccess()">Success</button>-->
+    <!--<button ng-click="vm.sessionExpired()">Fail</button>-->
+    <div ng-switch="vm.step.name" class="row wizard">
+      <div ng-switch-when="checkCondition">
+        <div style="text-align: center">
+          <h2>Inspect device and make sure that:</h2>
+          <div class="container instruction-list">
+            <ul>
+              <li>
+                Device turns on;
+              </li>
+              <li>
+                Screen and casing are in good condition;
+              </li>
+              <li ng-hide="vm.item.product.type === 'XboxOne'">
+                Keyboard and touchpad are working;
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="row text-center">
+          <button id="usb-device-good" style="margin-right: 25px;margin-top:5px"
+                  class="instruction-btn btn btn-success btn-rounded" type="submit"
+                  ng-click="vm.startSession()">
+            Device is in good condition
+          </button>
+          <button id="usb-device-bad" style="margin-top:5px" class="instruction-btn btn btn-danger btn-rounded"
+                  type="submit" ng-click="vm.deviceBad()">
+            Device is in poor condition or faulty
+          </button>
+        </div>
+      </div>
+
+      <div class="anim-wizard-step text-center" ng-switch-when="usbControl">
+        <usb-control guide="true"></usb-control>
+      </div>
+
+      <div class="anim-wizard-step" ng-switch-when="refreshDevice">
+        <usb-guide data-item="vm.item"></usb-guide>
+        <div class="guide-footer">
+          <div class="row text-center">
+            <div class="guide-footer-content">When refresh is complete, reinsert USB drive to continue.
+              <span style="margin-left: -4px">
+                <span class="two">.</span><span class="three">.</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div ng-switch-when="askRetry">
+        <div style="text-align: center">
+          <h2>USB inserted without successful refresh. Do you want to try again?</h2>
+        </div>
+        <div class="row text-center">
+          <button style="margin-right: 25px;margin-top:5px" class="instruction-btn btn btn-success btn-rounded"
+                  type="submit" ng-click="vm.retryUsb()">
+            Yes
+          </button>
+          <button style="margin-top:5px" class="instruction-btn btn btn-danger btn-rounded" type="submit"
+                  ng-click="vm.fail()">
+            No
+          </button>
+        </div>
+      </div>
+
+      <div class="anim-wizard-step" ng-switch-when="complete">
+        <div class="step-header text-align-center">
+          <i class="fa fa-check-circle success-icon"></i>
+          <h2>Success</h2>
+          <h3>You have successfully refreshed device</h3>
+        </div>
+        <div class="row finish-success-button">
+          <button id="usb-session-finish" class="btn btn-primary btn-rounded center" ui-sref="^" href="#/user/home">
+            Finish <i class="fa fa-caret-right"></i>
+          </button>
+          <div class="text-center" style="margin-top: 15px">
+            <div>Help us to improve Device Refresh Station</div>
+            <button class="feedback-button" ng-click="vm.openFeedbackModal()"><i class="fa fa-comment-o"
+                                                                                 aria-hidden="true"></i> Leave feedback
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="anim-wizard-step" ng-switch-when="failed">
+        <div class="step-header text-align-center">
+          <i class="fa fa-exclamation warning-icon"></i>
+          <h2>Refresh failed</h2>
+          <h3>Please try again.<br/> If error persists, contact support.</h3>
+        </div>
+        <div class="row nav-btn">
+          <div class="col-md-6 col-sm-6">
+            <button id="usb-failed-session-retry" class="btn btn-primary btn-rounded center pull-right"
+                    ng-click="vm.retry()">
+              <i class="fa fa-repeat"></i> Retry
+            </button>
+          </div>
+          <div class="col-md-6 col-sm-6">
+            <button id="usb-failed-session-finish" class="btn btn-danger btn-rounded center pull-left" ui-sref="^"
+                    href="#/user/home">
+              Finish <i class="fa fa-caret-right"></i>
+            </button>
+          </div>
+        </div>
+        <div class="text-center" style="margin-top: 15px">
+          <div>Help us to improve Device Refresh Station</div>
+          <button class="feedback-button" ng-click="vm.openFeedbackModal()"><i class="fa fa-comment-o"
+                                                                               aria-hidden="true"></i> Leave feedback
+          </button>
+        </div>
+      </div>
+      <div class="anim-wizard-step" ng-switch-when="broken">
+        <div class="step-header text-align-center">
+          <i class="fa fa-exclamation warning-icon"></i>
+          <h2>Device broken</h2>
+          <h3>Please ship it to Aarons Service Center.</h3>
+        </div>
+        <div class="row nav-btn">
+          <button id="usb-device-broken" class="btn btn-primary btn-rounded center" ui-sref="^" href="#/user/home">
+            Finish <i class="fa fa-caret-right"></i>
+          </button>
+          <div class="text-center" style="margin-top: 15px">
+            <div>Help us to improve Device Refresh Station</div>
+            <button class="feedback-button" ng-click="vm.openFeedbackModal()"><i class="fa fa-comment-o"
+                                                                                 aria-hidden="true"></i> Leave feedback
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</horizontal-ui-sheet>

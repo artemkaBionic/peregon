@@ -1,0 +1,54 @@
+$font-size-smaller:       ceil(($font-size-base * 0.75)) !default; // ~11px
+$font-size-smallest:      ceil(($font-size-base * 0.70)) !default; // ~10px
+
+$line-height-small: 1.2;
+
+// TITLES
+.title-important {
+  text-transform: uppercase;
+  color: #111;
+  font-weight: $font-weight-bold;
+  font-size: $font-size-base;
+  line-height: $headings-line-height;
+}
+
+.title-bold {
+  color: $gray-900;
+  font-weight: $font-weight-bold;
+  font-size: 24px;
+}
+
+.title-primary {
+  font-size: 22px;
+  font-weight: $font-weight-semi-bold;
+  color: $brand-primary-800;
+}
+
+// REGULAR text
+.text-bold {
+  font-weight: $font-weight-bold;
+}
+
+.text-strong {
+  color: $gray-900;
+  font-weight: $font-weight-bold;
+}
+
+.text-small {
+  font-size: $font-size-small;
+}
+
+.text-smaller {
+  font-size: $font-size-smaller;
+  color: $text-color;
+}
+
+// FA ICONS
+.icon-lg {
+  color: $brand-primary-600;
+  padding: 15px;
+}
+
+.icon-default {
+  color: $brand-primary-600;
+}

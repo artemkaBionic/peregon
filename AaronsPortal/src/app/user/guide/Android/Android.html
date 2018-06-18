@@ -1,0 +1,299 @@
+<horizontal-ui-sheet class="apc-sheet-full guide-android">
+  <header class="guide-header">
+    <div class="row header-row">
+      <div class="col-sm-7 header-col">
+        <div class="header-middle-col">
+          <div id="go-home-android" class="home-link" ng-click="vm.goHome()">
+            <div class="home-button">
+              <i class="fa fa-home home-button-icon"></i>
+              <span class="home-button-text">Home</span>
+            </div>
+            <img class="guide-logo" src="/assets/images/Logo.png">
+          </div>
+          l
+          <div class="home-header">Android Refresh</div>
+        </div>
+      </div>
+      <div class="col-sm-5 header-col">
+        <div class="header-middle-col-right">
+          <i class="fa fa-android header-item-icon"></i>
+          <div class="home-header-right">{{vm.item.product.full_description}}</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div horizontal-ui-sheet-content>
+    <div class="row" ng-hide="vm.step.number > 8">
+      <ul id="progress-tracker" data-steps="3">
+        <li ng-class="{'active': vm.step.number >= 1 && vm.step.number <= 2, 'done': vm.step.number > 2}">
+          <span>Prepare Refresh</span>
+        </li>
+        <li ng-class="{'active': vm.step.number >= 3 && vm.step.number <= 8, 'done': vm.step.number > 8}">
+          <span>Refresh Android</span>
+        </li>
+        <li ng-class="{'active': vm.step.number >= 9}">
+          <span>Finish</span>
+        </li>
+      </ul>
+    </div>
+    <div ng-switch="vm.step.name" class="row wizard">
+      <div class="anim-wizard-step" id="first" ng-switch-when="checkCondition">
+        <div style="text-align: center">
+          <h2>Inspect device and make sure that:</h2>
+          <div class="container instruction-list">
+            <ul>
+              <li>
+                Device turns on;
+              </li>
+              <li>
+                Screen and casing are in good condition;
+              </li>
+              <li>
+                Keyboard and touchpad are working;
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="row text-center">
+          <button id="android-good" style="margin-right: 25px;margin-top:5px"
+                  class="instruction-btn btn btn-success btn-rounded" type="submit" ng-click="vm.deviceGood()">
+            Device is in good condition
+          </button>
+          <button id="android-bad" style="margin-top:5px" class="instruction-btn btn btn-danger btn-rounded"
+                  type="submit" ng-click="vm.deviceBad()">
+            Device is in poor condition or faulty
+          </button>
+        </div>
+      </div>
+
+      <div class="anim-wizard-step preparation-one" ng-switch-when="prepareDevice">
+        <usb-guide data-item="vm.item"></usb-guide>
+      </div>
+      <div class="anim-wizard-step" ng-switch-when="authorizeDebug">
+        <div class="row">
+          <div class="col-md-12 text-center">
+            <img class="connect-gif" src="../assets/images/android-allow-usb-debugging.png" alt="">
+          </div>
+        </div>
+        <div class="row text-center">
+          <h2>Allow USB debugging</h2>
+          <h3>Choose <strong>Yes</strong> or <strong>OK</strong> on the device</h3>
+        </div>
+      </div>
+      <div class="anim-wizard-step" ng-switch-when="waitForAppStart">
+        <div class="row wizard-graphics">
+          <div class="la-ball-clip-rotate-multiple la-2x spinner">
+            <div></div>
+            <div></div>
+          </div>
+        </div>
+        <div class="row wizard-contents">
+          <h2 class="text-align-center">Loading Android Refresh App, please wait...</h2>
+        </div>
+      </div>
+
+      <div class="anim-wizard-step" ng-switch-when="appInstallFailed">
+        <div class="step-header">
+          <i class="fa fa-clock-o warning-icon"></i>
+          <h2 class="text-align-center">Android App Install Failed</h2>
+          <h3 class="text-align-center">Disconnect and reconnect the device to try again. If the problem persists,
+            contact support.</h3>
+        </div>
+        <div class="row nav-btn">
+          <div class="col-md-6 col-sm-6">
+            <button ng-click="vm.refreshEnd()" class="btn btn-primary btn-rounded center">
+              Abort
+            </button>
+          </div>
+          <div class="text-center">
+            <div>Help us to improve Device Refresh Station</div>
+            <button class="feedback-button" ng-click="vm.openFeedbackModal()">
+              <i class="fa fa-comment-o" aria-hidden="true"></i> Leave feedback
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="anim-wizard-step" ng-switch-when="disconnected">
+        <div class="step-header">
+          <i class="fa fa-clock-o warning-icon"></i>
+          <h2 class="text-align-center">Android Device has been disconnected</h2>
+          <h3 class="text-align-center">Disconnect and reconnect the device to try again. If the problem persists,
+            contact support.</h3>
+        </div>
+        <div class="row nav-btn">
+          <div class="col-md-6 col-sm-6">
+            <button ng-click="vm.refreshEnd()" class="btn btn-primary btn-rounded center">
+              Abort
+            </button>
+          </div>
+          <div class="text-center">
+            <div>Help us to improve Device Refresh Station</div>
+            <button class="feedback-button" ng-click="vm.openFeedbackModal()">
+              <i class="fa fa-comment-o" aria-hidden="true"></i> Leave feedback
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="anim-wizard-step" ng-switch-when="autoTesting">
+        <div class="step-header-diagnostic">
+          <h2 class="text-align-center">
+            <i class="fa fa-check check-green medium-icon"></i>
+            Android device connected successfully
+          </h2>
+          <div class="row">
+          </div>
+        </div>
+        <div class="row">
+          <h3 class="text-align-center automated-anim">
+            Performing automatic diagnostics...
+          </h3>
+        </div>
+        <div class="row">
+          <div class="center circle-bar">
+            <orbicular progression="vm.autoTestsComplete" total="vm.autoTestsTotal" clockwise>
+              <div>
+                <i class="fa fa-cog fa-spin large-icon"></i>
+              </div>
+            </orbicular>
+          </div>
+        </div>
+      </div>
+
+      <div class="anim-wizard-step" ng-switch-when="manualTesting">
+        <div class="step-header-diagnostic">
+          <h2 class="text-align-center">
+            <i class="fa fa-check check-green medium-icon"></i>
+            Automatic diagnostics complete
+          </h2>
+          <div class="row">
+          </div>
+        </div>
+        <div class="row">
+          <h3 class="text-align-center automated-anim">
+            Follow instructions on the Android Device for manual diagnostics...
+          </h3>
+        </div>
+        <div class="row">
+          <div class="center circle-bar">
+            <orbicular progression="vm.manualTestsComplete" total="vm.manualTestsTotal" clockwise>
+              <div>
+                <i class="fa fa-cog fa-spin large-icon"></i>
+              </div>
+            </orbicular>
+          </div>
+        </div>
+        <div ng-show="vm.manualTestsComplete < vm.manualTestsTotal"
+             class="col-xl-12 col-lg-12 col-md-6 col-sm-6 col-xs-12">
+          <h3 class="text-align-center automated-anim-medium automated-anim">
+            <strong>{{vm.manualTestsComplete}}</strong> of <strong>{{vm.manualTestsTotal}}</strong> tests complete
+          </h3>
+        </div>
+        <div ng-show="vm.manualTestsComplete >= vm.manualTestsTotal" class="row android-manual-complete">
+          <h3 class="text-align-center">Press <strong>Activate</strong> on the device to continue...</h3>
+        </div>
+      </div>
+
+      <div class="anim-wizard-step" ng-switch-when="finishSuccess">
+        <div class="step-header text-align-center">
+          <i class="fa fa-check-circle success-icon"></i>
+          <h2>Success</h2>
+          <h3>You have successfully refreshed the Android device</h3>
+        </div>
+        <div class="row finish-success-button">
+          <button id="android-finish-success" class="btn btn-primary btn-rounded center" ng-click="vm.refreshEnd()">
+            Finish <i class="fa fa-caret-right"></i>
+          </button>
+          <div class="text-center" style="margin-top: 15px">
+            <div>Help us to improve Device Refresh Station</div>
+            <button class="feedback-button" ng-click="vm.openFeedbackModal()"><i class="fa fa-comment-o"
+                                                                                 aria-hidden="true"></i> Leave feedback
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="anim-wizard-step android-finish-failed" ng-switch-when="finishFail">
+        <div class="step-header text-align-center">
+          <i class="fa fa-ban warning-icon"></i>
+          <h2 class="text-align-center">Device needs to be repaired</h2>
+          <h3 class="step-header text-align-center">
+            Ship it to WSA for repair</h3>
+          <h3>The following tests failed:</h3>
+          <h4 class="failed-tests" ng-repeat="testName in vm.failedTests">{{testName}}</h4>
+        </div>
+        <div class="row nav-btn">
+          <div class="col-md-6 col-sm-6">
+            <button ng-click="vm.activate()" class="btn btn-choose-med btn-info pull-right">
+              Restart
+            </button>
+          </div>
+          <div class="col-md-6 col-sm-6">
+            <button ng-click="vm.refreshEnd()" class="btn btn-choose-med btn-danger pull-left">
+              Finish
+            </button>
+          </div>
+          <div class="text-center">
+            <div>Help us to improve Device Refresh Station</div>
+            <button class="feedback-button" ng-click="vm.openFeedbackModal()">
+              <i class="fa fa-comment-o" aria-hidden="true"></i> Leave feedback
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="anim-wizard-step" ng-switch-when="finishExpired">
+        <div class="step-header">
+          <i class="fa fa-clock-o warning-icon"></i>
+          <h2 class="text-align-center">Session Expired</h2>
+          <h3 class="text-align-center">
+            For security reasons the session expired. If applicable, the device has been locked.
+          </h3>
+        </div>
+        <div class="row nav-btn">
+          <div class="col-md-6 col-sm-6">
+            <button ng-click="vm.activate()" class="btn btn-choose-med btn-info pull-right">
+              Restart
+            </button>
+          </div>
+          <div class="col-md-6 col-sm-6">
+            <button ng-click="vm.refreshEnd()" class="btn btn-choose-med btn-danger pull-left">
+              Finish
+            </button>
+          </div>
+          <div class="text-center">
+            <div>Help us to improve Device Refresh Station</div>
+            <button class="feedback-button" ng-click="vm.openFeedbackModal()">
+              <i class="fa fa-comment-o" aria-hidden="true"></i> Leave feedback
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="anim-wizard-step" ng-switch-when="finishBroken">
+        <div class="step-header">
+          <i class="fa fa-clock-o warning-icon"></i>
+          <h2 class="text-align-center">Device needs to be repaired</h2>
+          <h3 class="step-header text-align-center">
+            Ship it to WSA for repair</h3>
+        </div>
+        <div class="row nav-btn">
+          <div class="col-md-6 col-sm-6">
+            <button ng-click="vm.refreshEnd()" class="btn btn-primary btn-rounded center">
+              Finish
+            </button>
+          </div>
+          <div class="text-center">
+            <div>Help us to improve Device Refresh Station</div>
+            <button class="feedback-button" ng-click="vm.openFeedbackModal()">
+              <i class="fa fa-comment-o" aria-hidden="true"></i> Leave feedback
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</horizontal-ui-sheet>

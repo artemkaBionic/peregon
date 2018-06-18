@@ -1,0 +1,41 @@
+<div id="guide-no-images-sm">
+  <h2 class="text-center">Follow these steps to refresh Phillips TV:</h2>
+  <div class="container instruction-list">
+    <p class="lg-line-height">
+      1. Turn on <b>Phillips TV</b>.
+    </p>
+    <p class="lg-line-height">
+      2. Go to <b>Home/Menu</b> and select <b>Setup</b>.
+    </p>
+    <p class="lg-line-height">
+      4. Select <b>Installation</b> then click on <b>Restore all settings</b>.
+    </p>
+    <p class="lg-line-height">
+      4. Click <b>Start now</b>, enter pin <b>'0000'</b> and click <b>Yes</b>.
+    </p>
+  </div>
+  <div id="lastStepNoImage">
+    <div class="container instruction-list">
+      <p class="lg-line-height">
+        6. If the TV reboots with factory settings, then refresh was successful.
+      </p>
+    </div>
+    <div id="checkButtons" class="row text-center">
+      <h2 style="text-align: center; color:black;padding-bottom: 5px">Is refresh successful?</h2>
+      <button id="manual-refresh-success" style="margin-right: 25px;margin-top:5px"
+              class="instruction-btn btn btn-success btn-rounded" type="submit" ng-click="vm.refreshSuccess()">
+        Refresh successful
+      </button>
+      <button id="manual-refresh-fail" style="margin-top:5px" class="instruction-btn btn btn-danger btn-rounded"
+              type="submit" ng-click="vm.refreshFailed();">
+        Refresh failed
+      </button>
+    </div>
+    <br>
+  </div>
+
+  <!-- The Modal -->
+  <div id="myModal" class="modal-instruction absolute block" ng-click="vm.close()">
+    <img class="modal-content-guide centered" id="img01">
+  </div>
+</div>

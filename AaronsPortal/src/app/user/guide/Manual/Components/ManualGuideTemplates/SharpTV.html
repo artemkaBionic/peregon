@@ -1,0 +1,71 @@
+<form name="inspection-form" class="content-finish" novalidate>
+  <div class="inspect-mode">
+    <div class="row text-center">
+      <span style="font-size: 20px; font-weight: 400;margin-left: -3%">Is refresh successful?
+        <i ng-click="vm.openHelpModal('xxs','If after going through steps device rebooted with factory settings then refresh was successful.','')"
+           class="fa fa-question-circle" aria-hidden="true"></i>
+        <button id="manual-footer-refresh-success" ng-click="vm.refreshSuccess()" style="border-radius: 10%" class="btn btn-success btn-sm">Yes</button>
+        <button id="manual-footer-refresh-fail" ng-click="vm.refreshFailed();" style="border-radius: 10%" class="btn btn-danger btn-sm">No</button>
+      </span>
+    </div>
+  </div>
+</form>
+<div id="instructions" class="instructions-manual">
+  <h2 class="text-center">Follow these steps to refresh Sharp TV:</h2>
+  <div class="container instruction-list">
+    <p class="lg-line-height">
+      1. Turn on <b>Sharp TV</b>.
+    </p>
+    <p class="lg-line-height">
+      2. Unplug the AC cord of the TV.
+    </p>
+    <p class="lg-line-height">
+      3. Press and hold the <b>[INPUT]</b> and <b>[VOL-]</b> buttons on the TV itself.
+    </p>
+    <p class="lg-line-height">
+      4. While continuing to hold those buttons, plug the AC cord in.
+    </p>
+    <p class="lg-line-height">
+      5. Wait until the Sharp logo appears, then let go of the buttons.
+    </p>
+    <p class="lg-line-height">
+      6. After the TV completely boots up, a <b>'K'</b> should appear in the upper left corner of the screen.
+    </p>
+    <p>
+      7. Once you see the <b>'K'</b>, press the buttons <b>[VOL-]</b> and <b>[CH-]</b> together one time (press them both together and let go).
+    </p>
+    <p class="lg-line-height">
+      8. This should open the <b>Service Menu</b> of the TV.
+    </p>
+    <p class="lg-line-height">
+      9. Using the remote control, press the <b>Down arrow</b> one time (to move to the 2nd page of the service menu).
+    </p>
+    <p class="lg-line-height">
+      10. With the <b>Industry INIT</b> row highlighted, press <b>Enter</b> on the remote.
+      This will start the resetting process.
+    </p>
+  </div>
+  <div id="lastStep">
+    <div class="container instruction-list">
+      <p class="lg-line-height">
+        11. When complete, the screen should turn green, indicating it was successful.
+      </p>
+    </div>
+    <div id="checkButtons" class="row text-center">
+      <h2 style="text-align: center; color:black;padding-bottom: 5px">Is refresh successful?</h2>
+      <button id="manual-refresh-success" style="margin-right: 25px;margin-top:5px" class="instruction-btn btn btn-success btn-rounded" type="submit"
+              ng-click="vm.refreshSuccess()">
+        Refresh successful
+      </button>
+      <button id="manual-refresh-fail" style="margin-top:5px" class="instruction-btn btn btn-danger btn-rounded" type="submit" ng-click="vm.refreshFailed();">
+        Refresh failed
+      </button>
+    </div>
+    <br>
+  </div>
+
+  <!-- The Modal -->
+  <div id="myModal" class="modal-instruction absolute block" ng-click="vm.close()">
+    <img class="modal-content-guide centered" id="img01">
+  </div>
+</div>

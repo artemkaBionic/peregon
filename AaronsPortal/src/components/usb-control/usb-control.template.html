@@ -1,0 +1,102 @@
+<div class="row" ng-style="vm.guideStyle">
+  <div ng-show="vm.step.name === 'noBootDevices'">
+    <div class="boot-instruction-row">
+      <div class="usb-icon" ng-style="vm.iconBackground">
+        <i class="fa fa-usb" aria-hidden="true"></i>
+      </div>
+    </div>
+    <div class="boot-instruction-row boot-instruction-title-grey" ng-style="vm.guideTitle">
+      <span>Connect USB drive to get started.</span>
+    </div>
+    <div class="boot-instruction-row">
+      <span style="color:grey">USB drive should be 32GB or larger.</span>
+    </div>
+  </div>
+  <div ng-show="vm.step.name === 'newBootDevice'">
+    <div class="boot-instruction-row">
+      <div class="usb-icon" ng-style="vm.iconBackground">
+        <i class="fa fa-usb" aria-hidden="true" ng-style="vm.usbIcon"></i>
+      </div>
+    </div>
+    <div class="boot-instruction-row boot-instruction-title-grey" ng-style="vm.guideTitle">
+      <span><ng-pluralize count="vm.usbDrives.usbData.notReadyDevices" when="{'0': 'No New USB drives are connected',
+            'one': '1 New USB drive is connected',
+            'other': '{} New USB drives are connected'}">
+      </ng-pluralize></span>
+    </div>
+    <div class="boot-instruction-row">
+      <span style="color:grey" ng-hide="vm.showSmallUsbError">Now you can create your Bootable <ng-pluralize
+        count="vm.usbDrives.usbData.notReadyDevices"
+        when="{'one': ' USB drive', 'other': ' USB drives'}"></ng-pluralize><br>
+        <strong>Warning!</strong> This will wipe all information you have on <ng-pluralize
+          count="vm.usbDrives.usbData.notReadyDevices"
+          when="{'one': ' USB drive', 'other': ' USB drives'}"></ng-pluralize>.
+      </span>
+      <span style="color:grey;" ng-show="vm.showSmallUsbError">
+        You've inserted USB drive which is smaller then 32GB. Make sure you are inserting 32GB USB drive.
+      </span>
+
+    </div>
+    <div class="boot-instruction-row">
+      <button id="create-bootable-drive" class="btn btn-success btn-rounded" ng-click="vm.createBootDrives()"
+              ng-disabled="vm.showSmallUsbError">
+        Create Bootable
+        <ng-pluralize count="vm.usbDrives.usbData.notReadyDevices"
+                      when="{'one': ' USB drive', 'other': ' USB drives'}"></ng-pluralize>
+      </button>
+      <!--<button class="btn btn-danger btn-rounded" ng-click="vm.cancelBootDrive()">Cancel</button>-->
+    </div>
+  </div>
+  <div ng-show="vm.step.name === 'bootDevicesProcessing'">
+    <div class="row wizard-contents text-center" ng-style="vm.guideTitle">
+      <div>Preparing USB drive</div>
+      <div>This may take up to 30 minutes...</div>
+    </div>
+    <div class="row wizard-contents text-center">
+      <div class="center circle-bar">
+        <orbicular progression="vm.percentageComplete" total="100">{{vm.data.counter}}</orbicular>
+      </div>
+      <div>
+        <p>{{vm.percentageComplete}}% complete</p>
+      </div>
+    </div>
+  </div>
+  <div ng-show="vm.step.name === 'bootDevicesReady'">
+    <div class="boot-instruction-row">
+      <i style="color:forestgreen" class="fa fa-check-circle fa-5x" ng-style="vm.iconBackground" aria-hidden="true"></i>
+    </div>
+    <div class="boot-instruction-row boot-instruction-title-grey" ng-style="vm.guideTitle">
+      <span><ng-pluralize count="vm.usbDrives.usbData.readyDevices"
+                          when="{'one': 'Bootable USB drive is ready', 'other': 'Bootable USB drives are ready'}"></span>
+    </div>
+    <div class="boot-instruction-row">
+      <span style="color:grey">Remove USB drive from Refresh Station and start refresh.</span>
+      <span>
+        <br>
+        <strong>Warning!</strong> Do not forget to insert
+        <ng-pluralize count="vm.usbDrives.usbData.readyDevices"
+                      when="{'one': 'Bootable USB drive back to station once refreshes will be completed.',
+                      'other': 'Bootable USB drives back to station once refreshes will be completed.'}">
+      </span>
+    </div>
+  </div>
+  <div ng-show="vm.step.name === 'bootDevicesFailed'">
+    <div class="boot-instruction-row">
+      <div class="usb-icon" ng-style="vm.iconBackground">
+        <i class="fa fa-ban" aria-hidden="true"></i>
+      </div>
+    </div>
+    <div class="boot-instruction-row boot-instruction-title-grey" ng-style="vm.guideTitle">
+      <span ng-show="vm.usbDrives.usbData.numberOfDevices === 1">USB drive failed to update</span>
+      <span ng-show="vm.usbDrives.usbData.numberOfDevices > 1">
+        <ng-pluralize count="vm.usbDrives.usbData.failedDevices"
+                      when="{'one': '1 USB drive failed to update', 'other': '{} USB drives failed to update'}"></ng-pluralize>
+      </span>
+    </div>
+    <div class="boot-instruction-row">
+      <span style="color:grey">Remove and re-insert all USB drives and try again. If the problem continues, contact support.</span>
+    </div>
+  </div>
+</div>
+</div>
+
